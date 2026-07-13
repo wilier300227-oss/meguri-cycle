@@ -56,17 +56,52 @@ html {
 
 /* ヒーロー下の細い虹ライン */
 .rainbow-line {
-  width: 100px;
-  height: 3px;
+  width: 140px;
+  height: 4px;
   background: var(--rainbow);
   border-radius: 99px;
 }
 
 /* セクション区切り線 */
 .rainbow-divider {
-  height: 2px;
+  height: 3px;
   background: var(--rainbow);
-  opacity: 0.6;
+  opacity: 0.75;
+}
+
+/* ヒーロー背景のやわらかい色ブロブ */
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.hero-blob-1 {
+  width: 420px;
+  height: 420px;
+  top: -120px;
+  left: -140px;
+  background: linear-gradient(135deg, #FFD6A5, #FFADAD);
+}
+
+.hero-blob-2 {
+  width: 380px;
+  height: 380px;
+  bottom: -100px;
+  right: -120px;
+  background: linear-gradient(135deg, #A0C4FF, #BDB2FF);
+}
+
+/* ヒーローイラスト */
+.hero-img {
+  width: 100%;
+  max-width: 640px;
+  margin: 3rem auto 0;
+  border-radius: 18px;
+  box-shadow: 0 8px 40px rgba(32, 48, 46, 0.12);
+  display: block;
 }
 
 /* -----------------------------------
@@ -78,6 +113,17 @@ html {
   font-weight: 700;
   line-height: 1.35;
   color: var(--color-ink);
+}
+
+/* 見出し下の虹アクセント */
+.section-heading::after {
+  content: '';
+  display: block;
+  width: 52px;
+  height: 3px;
+  background: var(--rainbow);
+  border-radius: 99px;
+  margin: 0.7rem auto 0;
 }
 
 /* -----------------------------------
@@ -97,15 +143,33 @@ html {
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.3rem 0.85rem;
+  padding: 0.35rem 0.9rem;
   border: 1px solid rgba(32, 48, 46, 0.14);
   border-radius: 999px;
   font-size: 0.72rem;
   font-family: "Zen Kaku Gothic New", sans-serif;
   background: #fff;
-  color: rgba(32, 48, 46, 0.65);
+  color: rgba(32, 48, 46, 0.7);
   letter-spacing: 0.02em;
+  box-shadow: 0 1px 4px rgba(32, 48, 46, 0.05);
 }
+
+/* バッジ先頭のカラードット（虹の順に色付け） */
+.badge::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.45rem;
+  background: var(--badge-dot, #1F5FA8);
+  flex-shrink: 0;
+}
+
+.badge:nth-child(1) { --badge-dot: #E53935; }
+.badge:nth-child(2) { --badge-dot: #FB8C00; }
+.badge:nth-child(3) { --badge-dot: #43A047; }
+.badge:nth-child(4) { --badge-dot: #8E24AA; }
 
 /* -----------------------------------
    CTAボタン
@@ -182,14 +246,21 @@ html {
 
 .why-num {
   font-family: "Barlow Semi Condensed", sans-serif;
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--color-accent);
-  opacity: 0.4;
+  opacity: 0.85;
   min-width: 2.25rem;
   line-height: 1.4;
   flex-shrink: 0;
 }
+
+/* 理由番号を虹の順に色付け */
+.why-item:nth-child(1) .why-num { color: #E53935; }
+.why-item:nth-child(2) .why-num { color: #FB8C00; }
+.why-item:nth-child(3) .why-num { color: #43A047; }
+.why-item:nth-child(4) .why-num { color: #1E88E5; }
+.why-item:nth-child(5) .why-num { color: #8E24AA; }
 
 /* -----------------------------------
    タグ（#target）
@@ -207,6 +278,14 @@ html {
   color: var(--color-accent);
   border: 1px solid rgba(31, 95, 168, 0.18);
 }
+
+/* 強化買取タグを虹色サイクルで色付け */
+.tag-accent:nth-child(6n+1) { background: rgba(229, 57, 53, 0.08);  color: #C62828; border-color: rgba(229, 57, 53, 0.25); }
+.tag-accent:nth-child(6n+2) { background: rgba(251, 140, 0, 0.09);  color: #E65100; border-color: rgba(251, 140, 0, 0.28); }
+.tag-accent:nth-child(6n+3) { background: rgba(249, 168, 37, 0.12); color: #B28704; border-color: rgba(249, 168, 37, 0.35); }
+.tag-accent:nth-child(6n+4) { background: rgba(67, 160, 71, 0.09);  color: #2E7D32; border-color: rgba(67, 160, 71, 0.28); }
+.tag-accent:nth-child(6n+5) { background: rgba(30, 136, 229, 0.08); color: #1565C0; border-color: rgba(30, 136, 229, 0.25); }
+.tag-accent:nth-child(6n+6) { background: rgba(142, 36, 170, 0.08); color: #6A1B9A; border-color: rgba(142, 36, 170, 0.25); }
 
 /* -----------------------------------
    料金テーブル（#price）
@@ -257,24 +336,33 @@ html {
 .flow-item:not(:last-child)::before {
   content: '';
   position: absolute;
-  left: 1.05rem; /* flow-num の中心 */
-  top: 2.5rem;
-  bottom: -2rem;
-  width: 1px;
+  left: 1.25rem; /* flow-num の中心 */
+  top: 3rem;
+  bottom: -2.25rem;
+  width: 2px;
   background: rgba(32, 48, 46, 0.1);
 }
 
 .flow-num {
   font-family: "Barlow Semi Condensed", sans-serif;
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: 600;
-  color: var(--color-accent);
-  opacity: 0.35;
-  min-width: 2.25rem;
-  line-height: 1.2;
+  color: #fff;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  text-align: center;
+  box-shadow: 0 3px 10px rgba(32, 48, 46, 0.15);
 }
+
+/* ステップ番号を虹の順に色付け */
+.flow-item:nth-child(1) .flow-num { background: linear-gradient(150deg, #FF5252, #D50000); }
+.flow-item:nth-child(2) .flow-num { background: linear-gradient(150deg, #FF9800, #E65100); }
+.flow-item:nth-child(3) .flow-num { background: linear-gradient(150deg, #43A047, #00897B); }
+.flow-item:nth-child(4) .flow-num { background: linear-gradient(150deg, #2979FF, #1565C0); }
 
 /* -----------------------------------
    FAQアコーディオン（#faq）
@@ -323,6 +411,14 @@ html {
   transform: rotate(45deg);
 }
 
+/* FAQの＋アイコンを虹の順に色付け */
+.faq-item:nth-child(6n+1) .faq-q::after { color: #E53935; }
+.faq-item:nth-child(6n+2) .faq-q::after { color: #FB8C00; }
+.faq-item:nth-child(6n+3) .faq-q::after { color: #F9A825; }
+.faq-item:nth-child(6n+4) .faq-q::after { color: #43A047; }
+.faq-item:nth-child(6n+5) .faq-q::after { color: #1E88E5; }
+.faq-item:nth-child(6n+6) .faq-q::after { color: #8E24AA; }
+
 .faq-a {
   padding: 0.75rem 1.25rem 1.1rem;
   font-size: 0.85rem;
@@ -355,4 +451,79 @@ html {
    ----------------------------------- */
 #site-nav.scrolled {
   box-shadow: 0 2px 16px rgba(32, 48, 46, 0.08);
+}
+
+/* ナビ上端の虹ライン */
+#site-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--rainbow);
+}
+
+/* -----------------------------------
+   サービスカード（#choice）
+   ----------------------------------- */
+.service-card {
+  position: relative;
+  overflow: hidden;
+  border-left: none !important;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: var(--sc-grad);
+}
+
+.service-kaitori  { --sc-grad: linear-gradient(180deg, #FF5252, #D50000); }
+.service-hikitori { --sc-grad: linear-gradient(180deg, #FF9800, #E65100); }
+
+.service-card .service-img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1.1rem;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* -----------------------------------
+   コンタクトカード（#contact）
+   ----------------------------------- */
+.contact-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--cc-color);
+}
+
+.contact-card-line { --cc-color: #06C755; } /* LINEブランドグリーン */
+.contact-card-form { --cc-color: #1E88E5; }
+.contact-card-mail { --cc-color: #8E24AA; }
+
+/* -----------------------------------
+   セクション内イラスト
+   ----------------------------------- */
+.section-img {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 14px;
+  margin: 0 auto 2rem;
+  display: block;
+  box-shadow: 0 4px 24px rgba(32, 48, 46, 0.08);
 }

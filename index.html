@@ -6,6 +6,13 @@
   <!-- SEO タイトル・説明 — 変更しやすいようここにまとめています -->
   <title>めぐり自転車｜石川の自転車出張買取・引取（かほく・金沢）</title>
   <meta name="description" content="石川県かほく市発。整備士が出張買取・出張引取。査定・出張は無料。防犯登録抹消も代行。E-bike・ロードバイク・シティ車に対応。">
+  <!-- OGP（SNSシェア用） -->
+  <meta property="og:title" content="めぐり自転車｜石川の自転車出張買取・引取">
+  <meta property="og:description" content="整備士が出張買取・出張引取。査定・出張は無料。防犯登録抹消も代行します。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://meguri-cycle.com/">
+  <meta property="og:image" content="https://meguri-cycle.com/images/ogp.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +24,7 @@
       theme: {
         extend: {
           colors: {
-            base: '#FAFAF8',
+            paper: '#FAFAF8',
             ink: '#20302E',
             accent: '#1F5FA8',
           },
@@ -32,10 +39,10 @@
   </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-base text-ink font-gothic">
+<body class="bg-paper text-ink font-gothic">
 
   <!-- ナビゲーション -->
-  <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-base/95 backdrop-blur border-b border-ink/10 transition-shadow">
+  <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-paper/95 backdrop-blur border-b border-ink/10 transition-shadow">
     <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
       <a href="#hero" class="font-mincho text-lg font-semibold tracking-wider">めぐり自転車</a>
       <div class="hidden sm:flex gap-5 text-sm">
@@ -53,8 +60,11 @@
   <!-- ========================
        #hero
        ======================== -->
-  <section id="hero" class="pt-28 pb-20 px-4">
-    <div class="max-w-3xl mx-auto text-center">
+  <section id="hero" class="relative pt-28 pb-20 px-4 overflow-hidden">
+    <!-- やわらかい色の背景ブロブ -->
+    <div class="hero-blob hero-blob-1" aria-hidden="true"></div>
+    <div class="hero-blob hero-blob-2" aria-hidden="true"></div>
+    <div class="max-w-3xl mx-auto text-center relative">
       <p class="text-xs tracking-widest text-ink/40 mb-5 uppercase font-gothic">石川県かほく市発 ・ 出張対応</p>
       <h1 class="font-mincho text-3xl md:text-5xl font-bold leading-snug mb-4">
         整備士がいる、<br>自転車の出張買取・出張引取
@@ -76,6 +86,7 @@
         <a href="#contact" class="cta-primary">買取査定を申し込む</a>
         <a href="#contact" class="cta-secondary">出張引取を申し込む</a>
       </div>
+      <img src="images/hero.jpg" alt="自宅の庭先に停められた自転車" class="hero-img">
     </div>
   </section>
 
@@ -91,20 +102,22 @@
       <div class="grid md:grid-cols-2 gap-6">
 
         <!-- 出張買取 -->
-        <div class="card border-l-4 border-accent">
-          <div class="text-accent font-barlow text-xs tracking-widest mb-3 uppercase">Service 01</div>
+        <div class="card service-card service-kaitori">
+          <img src="images/service-kaitori.jpg" alt="整備士が自転車のフレームを点検している様子" class="service-img">
+          <div class="font-barlow text-xs tracking-widest mb-3 uppercase" style="color:#D50000;">Service 01</div>
           <h3 class="font-mincho text-2xl font-semibold mb-3">出張買取</h3>
           <p class="text-ink/65 text-sm leading-relaxed mb-5">価値のある車体を現金または振込でお買い取りします。</p>
-          <p class="text-lg font-bold text-accent">査定・出張は無料</p>
+          <p class="text-lg font-bold" style="color:#D50000;">査定・出張は無料</p>
           <p class="text-xs text-ink/45 mt-1">成立・不成立を問わず、費用は一切かかりません</p>
         </div>
 
         <!-- 出張引取 -->
-        <div class="card border-l-4 border-ink/20">
-          <div class="text-ink/35 font-barlow text-xs tracking-widest mb-3 uppercase">Service 02</div>
+        <div class="card service-card service-hikitori">
+          <img src="images/service-hikitori.jpg" alt="自転車を積み込む白いバン" class="service-img">
+          <div class="font-barlow text-xs tracking-widest mb-3 uppercase" style="color:#E65100;">Service 02</div>
           <h3 class="font-mincho text-2xl font-semibold mb-3">出張引取</h3>
           <p class="text-ink/65 text-sm leading-relaxed mb-5">値がつかない車体もご自宅まで引き取りに伺います。</p>
-          <p class="text-lg font-bold">処分費 0円・出張費のみ</p>
+          <p class="text-lg font-bold" style="color:#E65100;">処分費 0円・出張費のみ</p>
           <p class="text-xs text-ink/45 mt-1">防犯登録の抹消手続きも代行します</p>
         </div>
 
@@ -164,6 +177,7 @@
   <section id="target" class="py-20 px-4">
     <div class="max-w-3xl mx-auto">
       <h2 class="section-heading text-center mb-12">買取・引取の対象</h2>
+      <img src="images/ebike.jpg" alt="電動アシスト自転車のバッテリーを点検する様子" class="section-img">
 
       <div class="space-y-10">
         <!-- 強化買取 -->
@@ -268,6 +282,7 @@
   <section id="flow" class="py-20 px-4">
     <div class="max-w-3xl mx-auto">
       <h2 class="section-heading text-center mb-12">ご利用の流れ</h2>
+      <img src="images/flow-photo.jpg" alt="スマホで自転車の写真を撮っている様子" class="section-img">
       <ol class="space-y-10">
         <li class="flow-item">
           <div class="flow-num" aria-hidden="true">1</div>
@@ -396,8 +411,8 @@
       <div class="grid sm:grid-cols-3 gap-4 mb-8 text-left">
 
         <!-- LINE（推奨） -->
-        <div class="card flex flex-col">
-          <div class="text-accent text-xs font-barlow tracking-widest uppercase mb-2">推奨</div>
+        <div class="card contact-card contact-card-line flex flex-col">
+          <div class="text-xs font-barlow tracking-widest uppercase mb-2" style="color:#06C755;">推奨</div>
           <h3 class="font-semibold mb-2">LINE</h3>
           <p class="text-sm text-ink/55 mb-4 flex-1">写真の送付が最も簡単です。お気軽にどうぞ。</p>
           <!-- TODO: LINEの公式アカウントURLを確認の上、差し替えてください -->
@@ -405,16 +420,16 @@
         </div>
 
         <!-- 査定フォーム -->
-        <div class="card flex flex-col">
-          <div class="text-ink/30 text-xs font-barlow tracking-widest uppercase mb-2">フォーム</div>
+        <div class="card contact-card contact-card-form flex flex-col">
+          <div class="text-xs font-barlow tracking-widest uppercase mb-2" style="color:#1E88E5;">フォーム</div>
           <h3 class="font-semibold mb-2">査定フォーム</h3>
           <p class="text-sm text-ink/55 mb-4 flex-1">Googleフォームで受け付けています。<br>写真添付にはGoogleログインが必要です。</p>
           <a href="https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform" target="_blank" rel="noopener noreferrer" class="contact-link">フォームを開く →</a>
         </div>
 
         <!-- メール -->
-        <div class="card flex flex-col">
-          <div class="text-ink/30 text-xs font-barlow tracking-widest uppercase mb-2">メール</div>
+        <div class="card contact-card contact-card-mail flex flex-col">
+          <div class="text-xs font-barlow tracking-widest uppercase mb-2" style="color:#8E24AA;">メール</div>
           <h3 class="font-semibold mb-2">メール</h3>
           <p class="text-sm text-ink/55 mb-4 flex-1">お問い合わせや写真添付でのご連絡も承ります。</p>
           <a href="mailto:wilier30.0227@gmail.com" class="contact-link">メールを送る →</a>
