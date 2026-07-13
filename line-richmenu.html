@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- LINE リッチメニュー画像用ファイル
+       DevTools でサイズを 2500×1686 に設定してスクリーンショットを撮影してください -->
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@700;900&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 2500px;
+      height: 1686px;
+      background: #1a2a28;
+      font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif;
+      overflow: hidden;
+    }
+
+    /* 虹グラデーション */
+    :root {
+      --rainbow: linear-gradient(90deg, #E53935 0%, #FB8C00 20%, #FDD835 40%, #43A047 55%, #1E88E5 72%, #8E24AA 100%);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      width: 100%;
+      height: 100%;
+      gap: 8px;
+      padding: 8px;
+      background: #18252300;
+    }
+
+    /* ── 共通セル ── */
+    .cell {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      border-radius: 20px;
+      overflow: hidden;
+      padding: 56px 40px 48px;
+    }
+
+    /* 虹ライン（上部） */
+    .cell::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 8px;
+      background: var(--rainbow);
+      opacity: 0.85;
+    }
+
+    /* ── レインボー6色 ── */
+    .cell-buy    { background: linear-gradient(150deg, #FF5252 0%, #D50000 100%); } /* 赤 */
+    .cell-pickup { background: linear-gradient(150deg, #FF9800 0%, #E65100 100%); } /* オレンジ */
+    .cell-photo  { background: linear-gradient(150deg, #FFD600 0%, #F9A825 100%); } /* 黄 */
+    .cell-site   { background: linear-gradient(150deg, #69F0AE 0%, #00897B 100%); } /* 緑 */
+    .cell-faq    { background: linear-gradient(150deg, #2979FF 0%, #1565C0 100%); } /* 青 */
+    .cell-area   { background: linear-gradient(150deg, #E040FB 0%, #7B1FA2 100%); } /* 紫 */
+
+    /* ── アイコン円 ── */
+    .icon-wrap {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 3px solid rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 90px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    /* ── テキスト ── */
+    .label {
+      font-size: 76px;
+      font-weight: 900;
+      color: #fff;
+      text-align: center;
+      line-height: 1.25;
+      letter-spacing: 0.02em;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    .sub {
+      font-size: 42px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      line-height: 1.4;
+      letter-spacing: 0.01em;
+    }
+
+    /* 黄色セルは文字を暗くして視認性を確保 */
+    .cell-photo .label,
+    .cell-site .label  { color: #1a2a28; text-shadow: none; }
+    .cell-photo .sub,
+    .cell-site .sub    { color: rgba(0,0,0,0.5); }
+    .cell-photo .icon-wrap,
+    .cell-site .icon-wrap { border-color: rgba(0,0,0,0.15); background: rgba(0,0,0,0.08); }
+
+    /* ── 無料バッジ（買取査定に追加） ── */
+    .badge {
+      position: absolute;
+      top: 36px;
+      right: 40px;
+      background: var(--rainbow);
+      color: #fff;
+      font-size: 36px;
+      font-weight: 900;
+      padding: 10px 28px;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+      text-shadow: none;
+    }
+
+    /* ── 処分費バッジ ── */
+    .badge-green {
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="grid">
+
+    <!-- 1: 買取査定 -->
+    <div class="cell cell-buy">
+      <span class="badge">査定・出張 無料</span>
+      <div class="icon-wrap">💰</div>
+      <div class="label">買取査定を<br>申し込む</div>
+      <div class="sub">写真を送るだけでOK</div>
+    </div>
+
+    <!-- 2: 出張引取 -->
+    <div class="cell cell-pickup">
+      <div class="icon-wrap">🚲</div>
+      <div class="label">出張引取を<br>申し込む</div>
+      <div class="sub badge-green" style="padding:12px 36px;border-radius:999px;font-size:40px;">処分費 0円・出張費のみ</div>
+    </div>
+
+    <!-- 3: 写真を送る -->
+    <div class="cell cell-photo">
+      <div class="icon-wrap">📷</div>
+      <div class="label">写真を<br>ここに送る</div>
+      <div class="sub">LINEで送るのが一番簡単</div>
+    </div>
+
+    <!-- 4: サービスを見る -->
+    <div class="cell cell-site">
+      <div class="icon-wrap">🌐</div>
+      <div class="label">サービスを<br>見る</div>
+      <div class="sub">公式サイトへ</div>
+    </div>
+
+    <!-- 5: よくある質問 -->
+    <div class="cell cell-faq">
+      <div class="icon-wrap">❓</div>
+      <div class="label">よくある<br>質問</div>
+      <div class="sub">FAQ</div>
+    </div>
+
+    <!-- 6: 対応エリア・料金 -->
+    <div class="cell cell-area">
+      <div class="icon-wrap">📍</div>
+      <div class="label">対応エリア<br>・料金</div>
+      <div class="sub">石川県中心・北陸対応</div>
+    </div>
+
+  </div>
+</body>
+</html>
