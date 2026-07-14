@@ -3,12 +3,13 @@
  * Google Apps Script (GAS) 用
  *
  * ── 機能 ──
- * 1. リッチメニュー「写真を送る」タップ（=「写真をおくります。」受信）
- *    → 撮影ガイド7枚 + ボタン（カメラロール／カメラ／電動）を返信
- * 2. 「電動」受信 → 電動アシスト用の追加ガイドを返信
- * 3. 画像を受信 → お礼＋必要情報3点の質問＋ボタン（買取希望／処分希望／エリア）を返信
- * 4. 「買取希望」「処分希望」「対応エリア・出張費」→ それぞれの案内を返信
- * 5. その他のテキスト → 初回の1回だけ受付確認を返信（2回目以降は沈黙し手動チャットに任せる）
+ * 1. リッチメニュー「買取査定」「出張引取」→ 受付＋必要事項＋写真ガイドを2通で返信
+ * 2. リッチメニュー「写真を送る」→ 撮影ガイド7枚＋カメラボタンを返信
+ * 3. 「電動」→ 電動アシスト用の追加ガイドを返信
+ * 4. 画像を受信 → お礼＋必要情報3点の質問＋選択ボタンを返信
+ * 5. 「買取希望」「処分希望」「対応エリア・出張費」→ それぞれの案内を返信
+ * 6. メッセージに市町名が含まれる → その地域の出張費目安を自動返信
+ * 7. その他のテキスト → 初回の1回だけ受付確認（以降は沈黙し手動チャットに任せる）
  *
  * ── 設定 ──
  * CHANNEL_ACCESS_TOKEN に LINE Developers コンソールで発行した
@@ -17,7 +18,7 @@
 
 const CHANNEL_ACCESS_TOKEN = 'ここにチャネルアクセストークンを貼り付け';
 
-/** 出張費の目安（サイトの料金表と合わせること） */
+/** 出張費の目安表（サイトの料金表と合わせること） */
 const AREA_FEE_TEXT = [
   '【出張費の目安（かほく市からの片道距離）】',
   '・〜10km：1,400円',
@@ -27,6 +28,46 @@ const AREA_FEE_TEXT = [
   '・40〜50km：2,700円',
   '・50km超：応相談',
 ].join('\n');
+
+/**
+ * 市区町村 → 出張費の目安
+ * ⚠️ 金額は仮の目安です。デプロイ前に必ず実際の距離で確認・修正してください。
+ * 追加したい地名はこの表に行を足すだけでOKです。
+ */
+const CITY_FEES = {
+  // 石川県
+  'かほく市': '1,400円',
+  '津幡町': '1,400円',
+  '内灘町': '1,700円',
+  '宝達志水町': '1,700円',
+  '金沢市': '1,700円〜2,000円（市内の場所によります）',
+  '羽咋市': '2,000円',
+  '野々市市': '2,000円〜2,400円',
+  '野々市': '2,000円〜2,400円',
+  '白山市': '2,400円〜（市内の場所によります）',
+  '能美市': '2,400円',
+  '川北町': '2,400円',
+  '志賀町': '2,400円',
+  '中能登町': '2,400円',
+  '七尾市': '2,700円',
+  '小松市': '2,700円',
+  '加賀市': '応相談（少し遠方のため、まずはご相談ください）',
+  '輪島市': '応相談（少し遠方のため、まずはご相談ください）',
+  '珠洲市': '応相談（少し遠方のため、まずはご相談ください）',
+  '穴水町': '応相談（少し遠方のため、まずはご相談ください）',
+  '能登町': '応相談（少し遠方のため、まずはご相談ください）',
+  // 富山県
+  '氷見市': '2,400円',
+  '高岡市': '2,400円',
+  '小矢部市': '2,400円',
+  '射水市': '2,700円',
+  '砺波市': '2,700円',
+  '富山市': '応相談（少し遠方のため、まずはご相談ください）',
+  '南砺市': '応相談（少し遠方のため、まずはご相談ください）',
+  // 県名だけの場合（市町名のマッチを優先するため最後に置く）
+  '富山県': '応相談（市町村を教えていただければ目安をご案内します）',
+  '福井県': '応相談（まずはお気軽にご相談ください）',
+};
 
 /** LINEからのWebhookを受け取る入口 */
 function doPost(e) {
@@ -61,7 +102,12 @@ function handleEvent(event) {
     } else if (text === '対応エリア・出張費' || text === '対応エリア' || text === 'エリア') {
       replyArea(event.replyToken);
     } else {
-      firstContactAck(event); // 初回のみ受付確認。以降は手動チャットに任せて沈黙
+      const hit = detectCityFee(text);
+      if (hit) {
+        replyCityFee(event.replyToken, hit, event);
+      } else {
+        firstContactAck(event); // 初回のみ受付確認。以降は手動チャットに任せて沈黙
+      }
     }
 
   } else if (msg.type === 'image') {
@@ -69,8 +115,31 @@ function handleEvent(event) {
   }
 }
 
-/** 写真の送り方ガイド（通常） */
-function replyPhotoGuide(replyToken) {
+/** メッセージ内に既知の市町名があれば出張費情報を返す */
+function detectCityFee(text) {
+  for (const city in CITY_FEES) {
+    if (text.indexOf(city) !== -1) return { city: city, fee: CITY_FEES[city] };
+  }
+  return null;
+}
+
+/** 市町名を検出したときの出張費案内 */
+function replyCityFee(replyToken, hit, event) {
+  markAcked(event); // 受付確認の代わりになるので初回フラグも立てる
+  const text = [
+    '📍 ' + hit.city + 'ですね、対応エリアです！',
+    '',
+    '♻️ 引取（処分）の場合：出張費の目安は ' + hit.fee + ' です。',
+    '💰 買取の場合：査定・出張とも無料です。',
+    '',
+    '正確な金額は、査定のご連絡時に確定してお伝えします🚲',
+  ].join('\n');
+
+  reply(replyToken, [{ type: 'text', text: text }]);
+}
+
+/** 写真ガイドのメッセージ本体（単体でも申し込みフローの2通目でも使う） */
+function photoGuideMessage() {
   const text = [
     '📷 写真をお送りください！',
     '',
@@ -89,7 +158,7 @@ function replyPhotoGuide(replyToken) {
     '下のボタンから写真を送れます👇',
   ].join('\n');
 
-  reply(replyToken, [{
+  return {
     type: 'text',
     text: text,
     quickReply: { items: [
@@ -97,7 +166,47 @@ function replyPhotoGuide(replyToken) {
       qrCamera(),
       qrMessage('⚡電動アシストの方はこちら', '電動'),
     ]},
-  }]);
+  };
+}
+
+/** リッチメニュー「写真を送る」 */
+function replyPhotoGuide(replyToken) {
+  reply(replyToken, [photoGuideMessage()]);
+}
+
+/** リッチメニュー「買取査定」：受付＋必要事項 → 写真ガイド の2通 */
+function replyKaitoriApply(replyToken) {
+  const ack = [
+    '💰 買取査定のお申し込みありがとうございます！',
+    '',
+    '買取の場合、査定・出張・防犯登録の抹消代行まで、費用は一切かかりません。',
+    '',
+    'お手数ですが、次の2つをメッセージでお送りください：',
+    '1️⃣ お住まいの市区町村',
+    '2️⃣ メーカー名・車種（わかる範囲でOK）',
+    '',
+    'あわせて自転車の写真をお願いします（次のメッセージをご覧ください）。',
+    '確認のうえ、48時間以内に確定の査定額をご連絡します🚲',
+  ].join('\n');
+
+  reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
+}
+
+/** リッチメニュー「出張引取」：受付＋必要事項 → 写真ガイド の2通 */
+function replyHikitoriApply(replyToken) {
+  const ack = [
+    '♻️ 出張引取のお申し込みありがとうございます！',
+    '',
+    '処分費は0円。出張費のみで引取に伺います。',
+    '',
+    'お手数ですが「お住まいの市区町村」をメッセージでお送りください。',
+    '出張費はこちらで計算して、金額をご確認いただいてから訪問日を決めます。',
+    '',
+    'あわせて自転車の写真をお願いします（次のメッセージをご覧ください）。',
+    '状態によっては買取（費用なし＋お支払い）に切り替えられる場合もあります🚲',
+  ].join('\n');
+
+  reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
 }
 
 /** 電動アシスト用の追加ガイド */
@@ -153,55 +262,6 @@ function thankForPhoto(event) {
   }]);
 }
 
-/** リッチメニュー「買取査定」からの申し込み案内 */
-function replyKaitoriApply(replyToken) {
-  const text = [
-    '💰 買取査定のお申し込みありがとうございます！',
-    '',
-    '買取の場合、査定・出張・防犯登録の抹消代行まで、費用は一切かかりません。',
-    '',
-    '次の2つをお送りください：',
-    '1️⃣ 自転車の写真（下のボタンから送れます）',
-    '2️⃣ お住まいの市区町村とメーカー名・車種',
-    '',
-    '確認のうえ、48時間以内に確定の査定額をご連絡します🚲',
-  ].join('\n');
-
-  reply(replyToken, [{
-    type: 'text',
-    text: text,
-    quickReply: { items: [
-      qrCameraRoll(),
-      qrCamera(),
-      qrMessage('⚡電動アシストの方はこちら', '電動'),
-    ]},
-  }]);
-}
-
-/** リッチメニュー「出張引取」からの申し込み案内 */
-function replyHikitoriApply(replyToken) {
-  const text = [
-    '♻️ 出張引取のお申し込みありがとうございます！',
-    '',
-    '処分費は0円。出張費のみで引取に伺います。',
-    '',
-    '次の2つをお送りください：',
-    '1️⃣ 自転車の写真（下のボタンから送れます）',
-    '2️⃣ お住まいの市区町村',
-    '',
-    '市区町村がわかれば、出張費はこちらで計算してご案内します。',
-    AREA_FEE_TEXT,
-    '',
-    '金額をご確認いただいてから訪問日を決めますので、ご安心ください🚲',
-  ].join('\n');
-
-  reply(replyToken, [{
-    type: 'text',
-    text: text,
-    quickReply: { items: [qrCameraRoll(), qrCamera()] },
-  }]);
-}
-
 /** 「買取希望」への案内 */
 function replyKaitori(replyToken) {
   const text = [
@@ -245,6 +305,7 @@ function replyArea(replyToken) {
     '※ 出張費がかかるのは引取（処分）の場合のみ',
     '',
     '💰 買取の場合は、査定・出張ともすべて無料です！',
+    'お住まいの市区町村を送っていただければ、出張費の目安をすぐお答えします。',
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: text }]);
@@ -267,6 +328,13 @@ function firstContactAck(event) {
   ].join('\n');
 
   reply(event.replyToken, [{ type: 'text', text: text }]);
+}
+
+/** 初回受付フラグを立てる（別の自動応答が受付確認を兼ねた場合に使う） */
+function markAcked(event) {
+  const userId = event.source && event.source.userId;
+  if (!userId) return;
+  PropertiesService.getScriptProperties().setProperty('acked_' + userId, '1');
 }
 
 /** クイックリプライ：カメラロールを開くボタン（スマホのみ表示） */
