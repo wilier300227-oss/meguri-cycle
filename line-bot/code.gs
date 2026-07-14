@@ -50,6 +50,10 @@ function handleEvent(event) {
       replyPhotoGuide(event.replyToken);
     } else if (text === '電動') {
       replyEbikeGuide(event.replyToken);
+    } else if (text === '買取査定を申し込みます') {
+      replyKaitoriApply(event.replyToken);
+    } else if (text === '出張引取を申し込みます') {
+      replyHikitoriApply(event.replyToken);
     } else if (text === '買取希望') {
       replyKaitori(event.replyToken);
     } else if (text === '処分希望') {
@@ -146,6 +150,55 @@ function thankForPhoto(event) {
       qrMessage('♻️ 処分希望', '処分希望'),
       qrMessage('📍 対応エリア・出張費', '対応エリア・出張費'),
     ]},
+  }]);
+}
+
+/** リッチメニュー「買取査定」からの申し込み案内 */
+function replyKaitoriApply(replyToken) {
+  const text = [
+    '💰 買取査定のお申し込みありがとうございます！',
+    '',
+    '買取の場合、査定・出張・防犯登録の抹消代行まで、費用は一切かかりません。',
+    '',
+    '次の2つをお送りください：',
+    '1️⃣ 自転車の写真（下のボタンから送れます）',
+    '2️⃣ お住まいの市区町村とメーカー名・車種',
+    '',
+    '確認のうえ、48時間以内に確定の査定額をご連絡します🚲',
+  ].join('\n');
+
+  reply(replyToken, [{
+    type: 'text',
+    text: text,
+    quickReply: { items: [
+      qrCameraRoll(),
+      qrCamera(),
+      qrMessage('⚡電動アシストの方はこちら', '電動'),
+    ]},
+  }]);
+}
+
+/** リッチメニュー「出張引取」からの申し込み案内 */
+function replyHikitoriApply(replyToken) {
+  const text = [
+    '♻️ 出張引取のお申し込みありがとうございます！',
+    '',
+    '処分費は0円。出張費のみで引取に伺います。',
+    '',
+    '次の2つをお送りください：',
+    '1️⃣ 自転車の写真（下のボタンから送れます）',
+    '2️⃣ お住まいの市区町村',
+    '',
+    '市区町村がわかれば、出張費はこちらで計算してご案内します。',
+    AREA_FEE_TEXT,
+    '',
+    '金額をご確認いただいてから訪問日を決めますので、ご安心ください🚲',
+  ].join('\n');
+
+  reply(replyToken, [{
+    type: 'text',
+    text: text,
+    quickReply: { items: [qrCameraRoll(), qrCamera()] },
   }]);
 }
 
