@@ -515,6 +515,7 @@ html {
 .contact-card-line { --cc-color: #06C755; } /* LINEブランドグリーン */
 .contact-card-form { --cc-color: #1E88E5; }
 .contact-card-mail { --cc-color: #8E24AA; }
+.contact-card-insta { --cc-color: #E4405F; } /* Instagramブランドピンク */
 
 /* -----------------------------------
    セクション内イラスト
