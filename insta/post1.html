@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- Instagram投稿用 1080×1080 -->
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@700;900&family=Zen+Old+Mincho:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1080px; height: 1080px;
+      background: #1a2a28;
+      font-family: "Zen Kaku Gothic New", sans-serif;
+      color: #fff;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .rainbow-top {
+      height: 16px; flex-shrink: 0;
+      background: linear-gradient(90deg, #E53935 0%, #FB8C00 20%, #FDD835 40%, #43A047 55%, #1E88E5 72%, #8E24AA 100%);
+    }
+    .main {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 48px; padding: 60px 80px;
+      text-align: center;
+    }
+    .catch {
+      font-family: "Zen Old Mincho", serif;
+      font-size: 110px; font-weight: 900; line-height: 1.35;
+    }
+    .catch .accent {
+      background: linear-gradient(90deg, #E53935, #FB8C00, #FDD835, #43A047, #1E88E5, #8E24AA);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sub {
+      font-size: 44px; font-weight: 700; color: rgba(255,255,255,0.85);
+      line-height: 1.6;
+    }
+    .badge-row { display: flex; gap: 24px; }
+    .badge {
+      font-size: 34px; font-weight: 900;
+      padding: 18px 42px; border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.25);
+    }
+    .footer {
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 36px 70px 48px;
+      font-size: 30px; font-weight: 700; color: rgba(255,255,255,0.6);
+    }
+    .brand { font-family: "Zen Old Mincho", serif; font-size: 38px; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="rainbow-top"></div>
+  <div class="main">
+    <div class="catch">その自転車、<br><span class="accent">捨てる前に。</span></div>
+    <div class="sub">乗らなくなった自転車、<br>写真を送るだけで無料査定します。</div>
+    <div class="badge-row">
+      <div class="badge">査定無料</div>
+      <div class="badge">出張買取</div>
+      <div class="badge">1台からOK</div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="brand">めぐり自転車</div>
+    <div>石川県中心・北陸対応 🚲</div>
+  </div>
+</body>
+</html>
