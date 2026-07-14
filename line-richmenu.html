@@ -11,14 +11,9 @@
     body {
       width: 2500px;
       height: 1686px;
-      background: #1a2a28;
+      background: url('line-richmenu-bg.png') no-repeat center / cover;
       font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", sans-serif;
       overflow: hidden;
-    }
-
-    /* 虹グラデーション */
-    :root {
-      --rainbow: linear-gradient(90deg, #E53935 0%, #FB8C00 20%, #FDD835 40%, #43A047 55%, #1E88E5 72%, #8E24AA 100%);
     }
 
     .grid {
@@ -31,63 +26,20 @@
       padding: 8px;
     }
 
-    /* ── 共通セル ── */
+    /* ── 共通セル（背景画像に描かれたアイコンの下に文字だけ重ねる） ── */
     .cell {
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 36px;
-      border-radius: 20px;
-      overflow: hidden;
-      padding: 48px 32px 44px;
-    }
-
-    /* 虹ライン（上部） */
-    .cell::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 8px;
-      background: var(--rainbow);
-      opacity: 0.85;
-    }
-
-    /* ── レインボー6色 ── */
-    .cell-buy    { background: linear-gradient(150deg, #FF5252 0%, #D50000 100%); } /* 赤 */
-    .cell-pickup { background: linear-gradient(150deg, #FF9800 0%, #E65100 100%); } /* オレンジ */
-    .cell-photo  { background: linear-gradient(150deg, #FFD600 0%, #F9A825 100%); } /* 黄 */
-    .cell-site   { background: linear-gradient(150deg, #69F0AE 0%, #00897B 100%); } /* 緑 */
-    .cell-faq    { background: linear-gradient(150deg, #2979FF 0%, #1565C0 100%); } /* 青 */
-    .cell-area   { background: linear-gradient(150deg, #E040FB 0%, #7B1FA2 100%); } /* 紫 */
-
-    /* ── アイコン ── */
-    .icon-wrap {
-      width: 230px;
-      height: 230px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.14);
-      border: 4px solid rgba(255,255,255,0.22);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .icon-wrap svg {
-      width: 128px;
-      height: 128px;
-      stroke: #fff;
-      fill: none;
-      stroke-width: 1.7;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+      justify-content: flex-end;
+      gap: 14px;
+      padding: 0 36px 66px;
     }
 
     /* ── テキスト ── */
     .label {
-      font-size: 112px;
+      font-size: 108px;
       font-weight: 900;
       color: #fff;
       text-align: center;
@@ -98,7 +50,7 @@
     }
 
     .sub {
-      font-size: 48px;
+      font-size: 46px;
       font-weight: 700;
       color: rgba(255,255,255,0.92);
       text-align: center;
@@ -106,16 +58,6 @@
       letter-spacing: 0.01em;
       text-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
-
-    /* 黄・緑セルは文字を暗くして視認性を確保 */
-    .cell-photo .label,
-    .cell-site .label  { color: #14251c; text-shadow: none; }
-    .cell-photo .sub,
-    .cell-site .sub    { color: rgba(0,0,0,0.62); text-shadow: none; }
-    .cell-photo .icon-wrap,
-    .cell-site .icon-wrap { border-color: rgba(0,0,0,0.2); background: rgba(0,0,0,0.1); }
-    .cell-photo .icon-wrap svg,
-    .cell-site .icon-wrap svg { stroke: #14251c; }
 
     /* ── 無料バッジ ── */
     .badge {
@@ -136,91 +78,41 @@
 <body>
   <div class="grid">
 
-    <!-- 1: 買取査定 -->
-    <div class="cell cell-buy">
+    <!-- 1: 赤パネル（自転車アイコン）→ 買取査定 -->
+    <div class="cell">
       <span class="badge">査定 無料</span>
-      <div class="icon-wrap">
-        <!-- 紙幣アイコン -->
-        <svg viewBox="0 0 24 24">
-          <rect x="2" y="6" width="20" height="12" rx="2"/>
-          <circle cx="12" cy="12" r="2.6"/>
-          <path d="M5.5 12h.01"/>
-          <path d="M18.5 12h.01"/>
-        </svg>
-      </div>
       <div class="label">買取査定</div>
       <div class="sub">写真を送るだけ・査定無料</div>
     </div>
 
-    <!-- 2: 出張引取 -->
-    <div class="cell cell-pickup">
-      <div class="icon-wrap">
-        <!-- トラックアイコン -->
-        <svg viewBox="0 0 24 24">
-          <path d="M14 17.5V7a1.5 1.5 0 0 0-1.5-1.5H3.5A1.5 1.5 0 0 0 2 7v9.5a1 1 0 0 0 1 1h1.6"/>
-          <path d="M14.9 17.5H9.1"/>
-          <path d="M19.4 17.5h1.6a1 1 0 0 0 1-1v-3.2a1 1 0 0 0-.22-.62l-2.9-3.63a1 1 0 0 0-.78-.38H14"/>
-          <circle cx="17.2" cy="17.5" r="2.2"/>
-          <circle cx="6.8" cy="17.5" r="2.2"/>
-        </svg>
-      </div>
+    <!-- 2: オレンジパネル（トラックアイコン）→ 出張引取 -->
+    <div class="cell">
       <div class="label">出張引取</div>
       <div class="sub">処分費0円・出張費のみ</div>
     </div>
 
-    <!-- 3: 写真を送る -->
-    <div class="cell cell-photo">
-      <div class="icon-wrap">
-        <!-- カメラアイコン -->
-        <svg viewBox="0 0 24 24">
-          <path d="M14.8 4.5h-5.6L7.5 7H4.5A2 2 0 0 0 2.5 9v8.5a2 2 0 0 0 2 2h15a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-1.7-2.5z"/>
-          <circle cx="12" cy="13" r="3.4"/>
-        </svg>
-      </div>
-      <div class="label">写真を送る</div>
-      <div class="sub">ここに送るだけでOK</div>
+    <!-- 3: 黄パネル（カメラアイコン）→ 写真を送る -->
+    <div class="cell">
+      <div class="label" style="color:#14251c; text-shadow:none;">写真を送る</div>
+      <div class="sub" style="color:rgba(0,0,0,0.62); text-shadow:none;">ここに送るだけでOK</div>
     </div>
 
-    <!-- 4: 公式サイト -->
-    <div class="cell cell-site">
-      <div class="icon-wrap">
-        <!-- 自転車アイコン -->
-        <svg viewBox="0 0 24 24">
-          <circle cx="18.2" cy="16.8" r="3.6"/>
-          <circle cx="5.8" cy="16.8" r="3.6"/>
-          <circle cx="14.8" cy="4.8" r="1.1"/>
-          <path d="M11.8 16.8V13.5l-3.1-3 4.1-3 2 3h2.4"/>
-        </svg>
-      </div>
-      <div class="label">公式サイト</div>
-      <div class="sub">サービスの詳細はこちら</div>
+    <!-- 4: 緑パネル（地図ピンアイコン）→ 対応エリア -->
+    <div class="cell">
+      <div class="label">対応エリア</div>
+      <div class="sub">石川県中心・北陸対応</div>
     </div>
 
-    <!-- 5: よくある質問 -->
-    <div class="cell cell-faq">
-      <div class="icon-wrap">
-        <!-- 吹き出し？アイコン -->
-        <svg viewBox="0 0 24 24">
-          <path d="M8.2 19.8A9 9 0 1 0 4.2 15.9L2.5 21.5Z"/>
-          <path d="M9.4 9.3a2.7 2.7 0 0 1 5.25.9c0 1.8-2.7 2.4-2.7 2.4"/>
-          <path d="M12 16h.01"/>
-        </svg>
-      </div>
+    <!-- 5: 青パネル（吹き出しアイコン）→ よくある質問 -->
+    <div class="cell">
       <div class="label">よくある質問</div>
       <div class="sub">FAQ・お問い合わせ</div>
     </div>
 
-    <!-- 6: 対応エリア -->
-    <div class="cell cell-area">
-      <div class="icon-wrap">
-        <!-- 地図ピンアイコン -->
-        <svg viewBox="0 0 24 24">
-          <path d="M20 10.2c0 5.6-8 11.3-8 11.3s-8-5.7-8-11.3a8 8 0 0 1 16 0Z"/>
-          <circle cx="12" cy="10.2" r="3.1"/>
-        </svg>
-      </div>
-      <div class="label">対応エリア</div>
-      <div class="sub">石川県中心・北陸対応</div>
+    <!-- 6: 紫パネル（家アイコン）→ 公式サイト -->
+    <div class="cell">
+      <div class="label">公式サイト</div>
+      <div class="sub">サービスの詳細はこちら</div>
     </div>
 
   </div>
