@@ -1,0 +1,45 @@
+/* YouTubeショート用スライド共通スタイル (1080×1920) */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  width: 1080px; height: 1920px;
+  background: #1a2a28;
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  color: #fff;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.rainbow {
+  height: 20px; flex-shrink: 0;
+  background: linear-gradient(90deg, #E53935 0%, #FB8C00 20%, #FDD835 40%, #43A047 55%, #1E88E5 72%, #8E24AA 100%);
+}
+.main {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 70px; padding: 100px 90px;
+  text-align: center;
+}
+.icon { font-size: 200px; line-height: 1; }
+.big {
+  font-family: "Zen Old Mincho", serif;
+  font-size: 96px; font-weight: 900; line-height: 1.5;
+  white-space: nowrap;
+}
+.accent {
+  background: linear-gradient(90deg, #E53935, #FB8C00, #FDD835, #43A047, #1E88E5, #8E24AA);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.yellow { color: #FDD835; }
+.green { color: #69F0AE; }
+.sub {
+  font-size: 56px; font-weight: 700;
+  color: rgba(255,255,255,0.85); line-height: 1.7;
+}
+.brand {
+  flex-shrink: 0; text-align: center;
+  padding: 40px 0 60px;
+  font-family: "Zen Old Mincho", serif;
+  font-size: 48px; font-weight: 700; color: rgba(255,255,255,0.65);
+}
