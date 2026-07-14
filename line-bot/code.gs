@@ -4,10 +4,11 @@
  *
  * ── 機能 ──
  * 1. リッチメニュー「写真を送る」タップ（=「写真をおくります。」受信）
- *    → 撮影ガイド7枚 + クイックリプライボタン（カメラロール／カメラ／電動）を返信
+ *    → 撮影ガイド7枚 + ボタン（カメラロール／カメラ／電動）を返信
  * 2. 「電動」受信 → 電動アシスト用の追加ガイドを返信
- * 3. 画像を受信 → お礼メッセージを返信（連投対策で10分に1回まで）
- * 4. それ以外のメッセージには反応しない（手動チャットの邪魔をしない）
+ * 3. 画像を受信 → お礼＋必要情報3点の質問＋ボタン（買取希望／処分希望／エリア）を返信
+ * 4. 「買取希望」「処分希望」「対応エリア・出張費」→ それぞれの案内を返信
+ * 5. その他のテキスト → 初回の1回だけ受付確認を返信（2回目以降は沈黙し手動チャットに任せる）
  *
  * ── 設定 ──
  * CHANNEL_ACCESS_TOKEN に LINE Developers コンソールで発行した
@@ -15,6 +16,17 @@
  */
 
 const CHANNEL_ACCESS_TOKEN = 'ここにチャネルアクセストークンを貼り付け';
+
+/** 出張費の目安（サイトの料金表と合わせること） */
+const AREA_FEE_TEXT = [
+  '【出張費の目安（かほく市からの片道距離）】',
+  '・〜10km：1,400円',
+  '・10〜20km：1,700円',
+  '・20〜30km：2,000円',
+  '・30〜40km：2,400円',
+  '・40〜50km：2,700円',
+  '・50km超：応相談',
+].join('\n');
 
 /** LINEからのWebhookを受け取る入口 */
 function doPost(e) {
@@ -36,10 +48,17 @@ function handleEvent(event) {
     const text = msg.text.trim();
     if (text === '写真をおくります。' || text === '写真をおくります' || text === '写真を送ります') {
       replyPhotoGuide(event.replyToken);
-    } else if (text === '電動' || text === '⚡電動アシストの方はこちら') {
+    } else if (text === '電動') {
       replyEbikeGuide(event.replyToken);
+    } else if (text === '買取希望') {
+      replyKaitori(event.replyToken);
+    } else if (text === '処分希望') {
+      replyShobun(event.replyToken);
+    } else if (text === '対応エリア・出張費' || text === '対応エリア' || text === 'エリア') {
+      replyArea(event.replyToken);
+    } else {
+      firstContactAck(event); // 初回のみ受付確認。以降は手動チャットに任せて沈黙
     }
-    // それ以外のテキストはボットは沈黙 → 手動チャットで対応
 
   } else if (msg.type === 'image') {
     thankForPhoto(event);
@@ -72,7 +91,7 @@ function replyPhotoGuide(replyToken) {
     quickReply: { items: [
       qrCameraRoll(),
       qrCamera(),
-      { type: 'action', action: { type: 'message', label: '⚡電動アシストの方はこちら', text: '電動' } },
+      qrMessage('⚡電動アシストの方はこちら', '電動'),
     ]},
   }]);
 }
@@ -99,7 +118,7 @@ function replyEbikeGuide(replyToken) {
   }]);
 }
 
-/** 画像を受信したときのお礼（同一ユーザーには10分に1回だけ） */
+/** 画像を受信したときのお礼＋必要情報の質問（同一ユーザーには10分に1回だけ） */
 function thankForPhoto(event) {
   const userId = event.source && event.source.userId;
   if (userId) {
@@ -108,10 +127,93 @@ function thankForPhoto(event) {
     if (cache.get(key)) return; // 10分以内にお礼済み
     cache.put(key, '1', 600);
   }
+  const text = [
+    '📩 お写真ありがとうございます！',
+    '',
+    'あわせて、次の3点を教えてください：',
+    '1️⃣ お住まいの市区町村',
+    '2️⃣ メーカー名・車種（わかる範囲でOK）',
+    '3️⃣ ご希望（下のボタンからどうぞ）',
+    '',
+    '確認のうえ、48時間以内に査定額をご連絡します🚲',
+  ].join('\n');
+
   reply(event.replyToken, [{
     type: 'text',
-    text: '📩 お写真ありがとうございます！\n確認のうえ、48時間以内に査定額をご連絡します。\n追加の写真もこのままお送りください🚲',
+    text: text,
+    quickReply: { items: [
+      qrMessage('💰 買取希望', '買取希望'),
+      qrMessage('♻️ 処分希望', '処分希望'),
+      qrMessage('📍 対応エリア・出張費', '対応エリア・出張費'),
+    ]},
   }]);
+}
+
+/** 「買取希望」への案内 */
+function replyKaitori(replyToken) {
+  const text = [
+    '💰 買取のご希望、ありがとうございます！',
+    '',
+    '買取の場合、査定・出張・防犯登録の抹消代行まで、費用は一切かかりません。',
+    '',
+    'まだでしたら「お住まいの市区町村」と「メーカー名・車種」を教えてください。',
+    '写真とあわせて確認のうえ、48時間以内に確定の査定額をご連絡します🚲',
+  ].join('\n');
+
+  reply(replyToken, [{ type: 'text', text: text }]);
+}
+
+/** 「処分希望」への案内 */
+function replyShobun(replyToken) {
+  const text = [
+    '♻️ 処分（引取）のご希望、承知しました！',
+    '',
+    '処分費は0円。出張費のみで引取に伺います。',
+    '出張費はお住まいの場所で決まりますので、市区町村を教えてください。',
+    '',
+    AREA_FEE_TEXT,
+    '',
+    '出張費の金額をご確認いただいてから訪問日を決めますので、ご安心ください🚲',
+  ].join('\n');
+
+  reply(replyToken, [{ type: 'text', text: text }]);
+}
+
+/** 対応エリア・出張費の案内 */
+function replyArea(replyToken) {
+  const text = [
+    '📍 対応エリア・出張費のご案内',
+    '',
+    '【対応エリア】',
+    '石川県中心（かほく市・金沢市・白山市・七尾市など）',
+    '富山県・福井県も応相談です。',
+    '',
+    AREA_FEE_TEXT,
+    '※ 出張費がかかるのは引取（処分）の場合のみ',
+    '',
+    '💰 買取の場合は、査定・出張ともすべて無料です！',
+  ].join('\n');
+
+  reply(replyToken, [{ type: 'text', text: text }]);
+}
+
+/** その他のテキストへの受付確認（ユーザーごとに初回の1回だけ） */
+function firstContactAck(event) {
+  const userId = event.source && event.source.userId;
+  if (!userId) return;
+  const props = PropertiesService.getScriptProperties();
+  const key = 'acked_' + userId;
+  if (props.getProperty(key)) return; // 2回目以降は沈黙 → 手動チャットで対応
+  props.setProperty(key, '1');
+
+  const text = [
+    'メッセージありがとうございます🚲',
+    '内容を確認し、原則48時間以内にご返信します。',
+    '',
+    '📷 買取・引取のご相談は、下のメニューから「写真を送る」をタップすると案内が始まります。',
+  ].join('\n');
+
+  reply(event.replyToken, [{ type: 'text', text: text }]);
 }
 
 /** クイックリプライ：カメラロールを開くボタン（スマホのみ表示） */
@@ -122,6 +224,11 @@ function qrCameraRoll() {
 /** クイックリプライ：カメラを起動するボタン（スマホのみ表示） */
 function qrCamera() {
   return { type: 'action', action: { type: 'camera', label: '📸 カメラで撮る' } };
+}
+
+/** クイックリプライ：タップでテキストを送信するボタン */
+function qrMessage(label, text) {
+  return { type: 'action', action: { type: 'message', label: label, text: text } };
 }
 
 /** LINEへの返信共通処理 */
