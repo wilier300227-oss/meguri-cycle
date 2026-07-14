@@ -13,6 +13,32 @@
   <meta property="og:url" content="https://meguri-cycle.com/">
   <meta property="og:image" content="https://meguri-cycle.com/images/ogp.jpg">
   <meta name="twitter:card" content="summary_large_image">
+  <!-- favicon（絵文字SVG） -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚲</text></svg>">
+  <!-- 構造化データ（Googleのローカル検索向け） -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "めぐり自転車",
+    "description": "石川県かほく市を拠点とする自転車の出張買取・引取サービス。LINEで写真を送るだけで無料査定。買取は査定・出張無料、引取は処分費0円（出張費のみ）。防犯登録抹消も代行。",
+    "url": "https://meguri-cycle.com/",
+    "image": "https://meguri-cycle.com/images/ogp.jpg",
+    "email": "wilier30.0227@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "かほく市",
+      "addressRegion": "石川県",
+      "addressCountry": "JP"
+    },
+    "areaServed": ["かほく市", "金沢市", "津幡町", "内灘町", "白山市", "野々市市", "羽咋市", "宝達志水町", "七尾市", "小松市", "能美市", "志賀町", "中能登町", "氷見市", "高岡市", "小矢部市", "砺波市"],
+    "priceRange": "¥0～¥3,000",
+    "sameAs": [
+      "https://www.instagram.com/meguri_cycle_/",
+      "https://www.youtube.com/@meguri_cycle"
+    ]
+  }
+  </script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,13 +92,16 @@
     <div class="hero-blob hero-blob-2" aria-hidden="true"></div>
     <div class="max-w-3xl mx-auto text-center relative">
       <p class="text-xs tracking-widest text-ink/40 mb-5 uppercase font-gothic">石川県かほく市発 ・ 出張対応</p>
-      <h1 class="font-mincho text-3xl md:text-5xl font-bold leading-snug mb-4">
+      <h1 class="font-mincho text-2xl sm:text-4xl md:text-5xl font-bold leading-snug mb-4">
         整備士がいる、<br>自転車の出張買取・出張引取
       </h1>
       <!-- 虹のグラデーション下線（ヒーローのみ） -->
       <div class="rainbow-line mx-auto mt-4 mb-8" aria-hidden="true"></div>
-      <p class="text-ink/65 text-base md:text-lg leading-relaxed mb-10 max-w-xl mx-auto">
+      <p class="text-ink/65 text-base md:text-lg leading-relaxed mb-6 max-w-xl mx-auto">
         お持ち込み不要。写真を送って査定額を確認してから、<br class="hidden md:block">ご自宅へ伺います。買取なら査定・出張すべて無料。引取（処分）は出張費のみ頂きます。
+      </p>
+      <p class="text-ink/55 text-sm md:text-base leading-relaxed mb-10 max-w-xl mx-auto">
+        買取できるか処分になるか、迷わなくて大丈夫。<br class="hidden md:block">写真を拝見して、<strong class="text-ink/75">どちらになるかはこちらからご提案</strong>します。
       </p>
       <!-- 信頼バッジ -->
       <div class="flex flex-wrap justify-center gap-2 mb-10">
@@ -83,8 +112,8 @@
       </div>
       <!-- CTA -->
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="#contact" class="cta-primary">買取査定を申し込む</a>
-        <a href="#contact" class="cta-secondary">出張引取を申し込む</a>
+        <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer" class="cta-primary">LINEで無料査定（写真を送るだけ）</a>
+        <a href="#contact" class="cta-secondary">フォーム・メールで相談</a>
       </div>
       <img src="images/hero.jpg" alt="自宅の庭先に停められた自転車" class="hero-img">
     </div>
@@ -143,7 +172,7 @@
           <span class="why-num" aria-hidden="true">02</span>
           <div>
             <h3 class="font-semibold text-base mb-1">査定額は、写真・情報と現物が一致していれば変わりません</h3>
-            <p class="text-ink/55 text-sm leading-relaxed">事前にメールで確定額をお伝えし、現地での一方的な値下げはしません。</p>
+            <p class="text-ink/55 text-sm leading-relaxed">訪問前に確定額をお伝えし、現地での一方的な値下げはしません。</p>
           </div>
         </li>
         <li class="why-item">
@@ -209,7 +238,7 @@
             <li class="before:content-['–'] before:mr-2">防犯登録できない玩具（一輪車・子供用三輪車など）</li>
             <li class="before:content-['–'] before:mr-2">会社名義の自転車</li>
             <li class="before:content-['–'] before:mr-2">不法投棄品・出所が不明な自転車</li>
-            <li class="before:content-['–'] before:mr-2">パーツのみ（車体が伴わない場合）</li>
+            <li class="before:content-['–'] before:mr-2">値段のつかないパーツのみの引取（※価値のあるパーツ単体は買取対象になる場合があります。まずは写真をお送りください）</li>
           </ul>
         </div>
       </div>
@@ -224,14 +253,10 @@
        ======================== -->
   <section id="price" class="py-20 px-4 bg-ink/[0.025]">
     <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-3">出張費・対応エリア</h2>
-      <p class="text-center text-ink/50 text-sm mb-14">
-        ※ 出張買取（価値のある車体）は査定・出張とも無料です。<br>
-        以下は<strong>出張引取</strong>の場合のみ適用されます。
-      </p>
+      <h2 class="section-heading text-center mb-14">査定・出張費・対応エリア</h2>
 
       <!-- 査定の考え方 -->
-      <div class="card mb-10">
+      <div class="card mb-14">
         <h3 class="font-mincho text-xl font-semibold mb-4">査定の考え方</h3>
         <p class="text-ink/65 text-sm leading-relaxed">
           同型車の直近の市場相場（中古自転車の実勢価格）を基準に、整備・送料などのコストを差し引いた金額をお伝えします。
@@ -244,7 +269,11 @@
       </div>
 
       <!-- 出張費表 — 料金はここを変更してください -->
-      <h3 class="font-mincho text-xl font-semibold mb-6">出張費の目安（出張引取のみ）</h3>
+      <h3 class="font-mincho text-xl font-semibold mb-2">出張費の目安（出張引取のみ）</h3>
+      <p class="text-ink/50 text-sm mb-6">
+        ※ 買取が成立する車体の<strong>出張買取</strong>は、査定・出張とも無料です。<br>
+        以下の出張費がかかるのは、値段がつかない車体の<strong>出張引取（処分）</strong>の場合だけです。
+      </p>
       <table class="price-table w-full mb-2">
         <thead>
           <tr>
@@ -299,9 +328,9 @@
         <li class="flow-item">
           <div class="flow-num" aria-hidden="true">2</div>
           <div class="flex-1">
-            <h3 class="font-semibold text-lg mb-2">メールで確定額をお伝えします</h3>
+            <h3 class="font-semibold text-lg mb-2">確定額をお伝えします</h3>
             <p class="text-ink/60 text-sm leading-relaxed">
-              原則48時間以内に、メールで査定額（確定額）をご案内します。有効期限は14日間。
+              原則48時間以内に、LINE（またはメール）で査定額（確定額）をご案内します。有効期限は14日間。
               範囲ではなく一本の金額でお伝えします。
             </p>
           </div>
@@ -311,7 +340,7 @@
           <div class="flex-1">
             <h3 class="font-semibold text-lg mb-2">「その金額でお願いします」とご返信</h3>
             <p class="text-ink/60 text-sm leading-relaxed">
-              ご納得いただけたら、メールにその旨をご返信ください。この返信をもって、訪問日時の調整に進みます。
+              ご納得いただけたら、その旨をご返信ください。この返信をもって、訪問日時の調整に進みます。
               もちろん断っていただいても構いません（費用はかかりません）。
             </p>
           </div>
@@ -368,7 +397,7 @@
 
         <details class="faq-item">
           <summary class="faq-q">出張費はいつ・どうやって払いますか？</summary>
-          <p class="faq-a">出張引取の場合、現地でのお引き取り時に現金でお支払いいただきます。事前にメールで金額をご確認いただいた上でお伺いしますので、ご安心ください。</p>
+          <p class="faq-a">出張引取の場合、現地でのお引き取り時に現金でお支払いいただきます。事前に金額をご確認いただいた上でお伺いしますので、ご安心ください。</p>
         </details>
 
         <details class="faq-item">
@@ -464,7 +493,7 @@
           </tr>
           <tr class="border-b border-ink/8">
             <th scope="row" class="py-3 pr-6 text-left text-ink/45 font-normal whitespace-nowrap align-top">屋号（法的表示）</th>
-            <td class="py-3">RAINBOW</td>
+            <td class="py-3">RAINBOW<span class="text-ink/45 text-xs">（「めぐり自転車」はRAINBOWが運営するサービス名です）</span></td>
           </tr>
           <tr class="border-b border-ink/8">
             <th scope="row" class="py-3 pr-6 text-left text-ink/45 font-normal whitespace-nowrap align-top">代表者</th>
@@ -483,8 +512,13 @@
     </div>
   </section>
 
+  <!-- スマホ用固定CTAバー -->
+  <div class="fixed bottom-0 left-0 right-0 z-50 sm:hidden px-3 py-2.5 bg-paper/95 backdrop-blur border-t border-ink/10">
+    <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer" class="block text-center font-bold text-white text-sm py-3 rounded-full shadow-lg" style="background:#06C755;">LINEで無料査定を申し込む（写真を送るだけ）</a>
+  </div>
+
   <!-- フッター -->
-  <footer class="py-8 px-4 border-t border-ink/10">
+  <footer class="py-8 pb-24 sm:pb-8 px-4 border-t border-ink/10">
     <div class="max-w-3xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-ink/35">
       <div>
         <span class="font-mincho">めぐり自転車</span>（屋号：RAINBOW）

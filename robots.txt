@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /line-richmenu.html
+Disallow: /insta/
+Disallow: /yt/
+
+Sitemap: https://meguri-cycle.com/sitemap.xml
