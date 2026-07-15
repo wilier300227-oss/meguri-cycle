@@ -39,7 +39,7 @@ const EXCLUDED_SENDERS = ['accounts.google.com', 'linecorp.com', 'jmty.jp', 'ama
 function syncGmailToSheet() {
   const processedLabel = getOrCreateLabel_(GMAIL_PROCESSED_LABEL);
   const sheet = getInquirySheet_();
-  const knownIds = getKnownMessageIds_(sheet); // 既に転記済みのメールIDの集合（重複防止の最終防波堤）
+  const knownIds = getKnownIds_(sheet); // 既に転記済みのIDの集合（重複防止の最終防波堤）
 
   // 「査定問い合わせ」ラベルが付いていて、まだ「転記済み」ラベルが付いていないスレッドだけを取得
   const threads = GmailApp.search(
@@ -62,9 +62,9 @@ function syncGmailToSheet() {
         'Gmail',
         from,
         subject,
-        body,
+        flattenText_(body), // 改行を区切り記号に置き換えて1行に収める（行が縦に間延びしないように）
         '未対応',
-        id, // G列：重複防止用のメールID（非表示にしてOK）
+        id, // G列：重複防止用のID（非表示にしてOK）
       ]);
       knownIds.add(id);
       written++;
@@ -86,8 +86,13 @@ function isExcludedSender_(from) {
   return EXCLUDED_SENDERS.some(function (domain) { return from.indexOf(domain) !== -1; });
 }
 
-/** シートのG列（メールID）に既に記録されているIDの集合を取得する */
-function getKnownMessageIds_(sheet) {
+/** 改行や連続する空白を「 / 」に置き換え、スプレッドシートで1行に収まるようにする。Gmail・フォーム等で共通利用 */
+function flattenText_(text) {
+  return text.replace(/\s*\n+\s*/g, ' / ').trim();
+}
+
+/** シートのG列（ID）に既に記録されているIDの集合を取得する。Gmail・フォーム等、複数の経路から共通で使う */
+function getKnownIds_(sheet) {
   const values = sheet.getDataRange().getValues();
   const ids = new Set();
   for (let i = 1; i < values.length; i++) {
@@ -112,7 +117,7 @@ function getInquirySheet_() {
   if (!sheet) {
     sheet = ss.getSheets()[0];
     sheet.setName(INQUIRY_SHEET_NAME);
-    sheet.appendRow(['受信日時', '経路', '送信元', '件名', '内容（抜粋）', 'ステータス', 'メールID']);
+    sheet.appendRow(['受信日時', '経路', '送信元', '件名', '内容（抜粋）', 'ステータス', 'ID']);
     sheet.setFrozenRows(1);
   }
   return sheet;
