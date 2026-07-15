@@ -10,13 +10,23 @@
  * 5. 「買取希望」「処分希望」「対応エリア・出張費」→ それぞれの案内を返信
  * 6. メッセージに市町名が含まれる → その地域の出張費目安を自動返信
  * 7. その他のテキスト → 初回の1回だけ受付確認（以降は沈黙し手動チャットに任せる）
+ * 8. 写真を送ってくれたユーザーを記録し、REVIEW_REQUEST_DELAY_DAYS 日後に
+ *    Googleロコミ依頼を自動プッシュ送信（sendReviewRequests、要トリガー設定）
  *
  * ── 設定 ──
  * CHANNEL_ACCESS_TOKEN に LINE Developers コンソールで発行した
  * 「チャネルアクセストークン（長期）」を貼り付けてください。
+ * GOOGLE_REVIEW_URL に Googleビジネスプロフィール承認後の口コミ投稿リンクを貼り付けてください。
+ * 初回のみ GAS エディタで installReviewTrigger() を実行し、日次トリガーを作成してください。
  */
 
 const CHANNEL_ACCESS_TOKEN = 'ここにチャネルアクセストークンを貼り付け';
+
+/** Googleビジネスプロフィールの「口コミを書く」リンク（承認後、共有リンクに差し替え） */
+const GOOGLE_REVIEW_URL = 'ここにGoogleビジネスプロフィールの口コミ投稿リンクを貼り付け';
+
+/** 写真受信から何日後にレビュー依頼を送るか（実際の引取までの平均日数に合わせて調整） */
+const REVIEW_REQUEST_DELAY_DAYS = 5;
 
 /** 出張費の目安表（サイトの料金表と合わせること） */
 const AREA_FEE_TEXT = [
@@ -260,6 +270,76 @@ function thankForPhoto(event) {
       qrMessage('📍 対応エリア・出張費', '対応エリア・出張費'),
     ]},
   }]);
+
+  if (userId) queueReviewRequest_(userId);
+}
+
+/**
+ * ── レビュー依頼の自動送信 ──
+ * 写真を送ってくれたユーザーをスプレッドシートに記録し、
+ * REVIEW_REQUEST_DELAY_DAYS 日後に時間主導トリガー（sendReviewRequests）が
+ * Googleロコミ依頼をプッシュ送信する。
+ * 初回だけ GAS エディタで installReviewTrigger() を一度実行してください。
+ */
+function queueReviewRequest_(userId) {
+  const sheet = getReviewSheet_();
+  const rows = sheet.getDataRange().getValues();
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i][0] === userId) return; // 既に依頼予定 or 送信済み
+  }
+  sheet.appendRow([userId, new Date(), 'pending']);
+}
+
+function getReviewSheet_() {
+  const props = PropertiesService.getScriptProperties();
+  let ssId = props.getProperty('REVIEW_SHEET_ID');
+  let ss;
+  if (ssId) {
+    ss = SpreadsheetApp.openById(ssId);
+  } else {
+    ss = SpreadsheetApp.create('めぐり自転車_レビュー依頼キュー');
+    props.setProperty('REVIEW_SHEET_ID', ss.getId());
+  }
+  let sheet = ss.getSheetByName('queue');
+  if (!sheet) {
+    sheet = ss.getSheets()[0];
+    sheet.setName('queue');
+    sheet.appendRow(['userId', '写真受信日時', 'ステータス']);
+  }
+  return sheet;
+}
+
+/** 時間主導トリガー（毎日1回）で呼び出す：期限が来たユーザーにレビュー依頼をプッシュ送信 */
+function sendReviewRequests() {
+  const sheet = getReviewSheet_();
+  const rows = sheet.getDataRange().getValues();
+  const now = new Date();
+  for (let i = 1; i < rows.length; i++) {
+    const [userId, receivedAt, status] = rows[i];
+    if (status !== 'pending') continue;
+    const daysPassed = (now - new Date(receivedAt)) / (1000 * 60 * 60 * 24);
+    if (daysPassed < REVIEW_REQUEST_DELAY_DAYS) continue;
+    pushMessage_(userId, [{
+      type: 'text',
+      text: [
+        'この度はめぐり自転車をご利用いただきありがとうございました🚲',
+        '',
+        'もしご満足いただけましたら、今後のサービス向上のためGoogleロコミにひとこといただけると励みになります。',
+        GOOGLE_REVIEW_URL,
+        '',
+        '（まだお取引が完了していない場合はこのメッセージは読み流してください）',
+      ].join('\n'),
+    }]);
+    sheet.getRange(i + 1, 3).setValue('sent');
+  }
+}
+
+/** 初回のみ：sendReviewRequests を毎日実行する時間主導トリガーを作成する */
+function installReviewTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'sendReviewRequests') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('sendReviewRequests').timeBased().everyDays(1).atHour(10).create();
 }
 
 /** 「買取希望」への案内 */
@@ -359,6 +439,17 @@ function reply(replyToken, messages) {
     contentType: 'application/json',
     headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
     payload: JSON.stringify({ replyToken: replyToken, messages: messages }),
+    muteHttpExceptions: true,
+  });
+}
+
+/** LINEへのプッシュ送信共通処理（ユーザーの発言なしに、こちらから送るとき用） */
+function pushMessage_(userId, messages) {
+  UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+    payload: JSON.stringify({ to: userId, messages: messages }),
     muteHttpExceptions: true,
   });
 }
