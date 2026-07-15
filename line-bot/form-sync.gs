@@ -25,11 +25,7 @@ const FORM_ID = 'ここに査定フォームの編集用IDを貼り付け';
 /** フォーム送信時に呼ばれる：質問と回答をまとめて中央スプレッドシートに追記する */
 function onFormSubmitToInquirySheet(e) {
   const itemResponses = e.response.getItemResponses();
-  const sheet = getInquirySheet_();
   const id = 'form_' + e.response.getId();
-
-  const knownIds = getKnownIds_(sheet);
-  if (knownIds.has(id)) return; // 念のための重複防止
 
   let email = '';
   try {
@@ -44,15 +40,7 @@ function onFormSubmitToInquirySheet(e) {
     return title + '：' + formatAnswer_(ir.getResponse());
   });
 
-  sheet.appendRow([
-    new Date(),
-    'フォーム',
-    email,
-    '査定フォーム回答',
-    flattenText_(lines.join(' / ').slice(0, 500)), // 質問と回答を「 / 」区切りでつなげ、1行に収める
-    '未対応',
-    id,
-  ]);
+  appendInquiryRow_(new Date(), 'フォーム', email, '査定フォーム回答', lines.join(' / ').slice(0, 500), id);
 }
 
 /** フォームの回答値を文字列にする（チェックボックスなど配列で返る質問にも対応） */

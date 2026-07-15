@@ -13,15 +13,23 @@
  * 8. 写真を送ってくれたユーザーを記録し、REVIEW_REQUEST_DELAY_DAYS 日後に
  *    Googleロコミ依頼を自動プッシュ送信（sendReviewRequests、要トリガー設定）
  *    ※ 会話中にキャンセル系キーワードが出たら、そのユーザーへの依頼は自動的に取り消す
+ * 9. 「写真送信」「買取査定/出張引取の申し込み」「初回メッセージ」を中央スプレッドシート
+ *    （inquiry-sync.gs が使っているものと同じ）に記録し、オーナー個人のLINEに通知
  *
  * ── 設定 ──
  * CHANNEL_ACCESS_TOKEN に LINE Developers コンソールで発行した
  * 「チャネルアクセストークン（長期）」を貼り付けてください。
  * GOOGLE_REVIEW_URL に Googleビジネスプロフィール承認後の口コミ投稿リンクを貼り付けてください。
+ * OWNER_LINE_USER_ID に、あなた個人のLINEのuserIdを貼り付けてください。
+ *   取得方法：あなた個人のLINEで「めぐり自転車」を友だち追加し、"MYID" と送信すると
+ *   あなたのuserIdが返信されます。それをコピーして貼り付けてください。
  * 初回のみ GAS エディタで installReviewTrigger() を実行し、日次トリガーを作成してください。
  */
 
 const CHANNEL_ACCESS_TOKEN = 'ここにチャネルアクセストークンを貼り付け';
+
+/** オーナー個人のLINEのuserId（新規問い合わせの通知先）。取得方法は上記コメント参照 */
+const OWNER_LINE_USER_ID = 'ここに自分のuserIdを貼り付け';
 
 /** Googleビジネスプロフィールの「口コミを書く」リンク（承認後、共有リンクに差し替え） */
 const GOOGLE_REVIEW_URL = 'ここにGoogleビジネスプロフィールの口コミ投稿リンクを貼り付け';
@@ -102,6 +110,11 @@ function handleEvent(event) {
   if (msg.type === 'text') {
     const text = msg.text.trim();
     const userId = event.source && event.source.userId;
+    if (text === 'MYID') {
+      // オーナー自身のuserId確認用（一度取得したらOWNER_LINE_USER_IDに貼り付ければ以降は不要）
+      reply(event.replyToken, [{ type: 'text', text: 'あなたのuserId:\n' + userId }]);
+      return;
+    }
     if (userId && REVIEW_CANCEL_KEYWORDS.some(function (kw) { return text.indexOf(kw) !== -1; })) {
       skipReviewRequest_(userId);
     }
@@ -110,9 +123,9 @@ function handleEvent(event) {
     } else if (text === '電動') {
       replyEbikeGuide(event.replyToken);
     } else if (text === '買取査定を申し込みます') {
-      replyKaitoriApply(event.replyToken);
+      replyKaitoriApply(event.replyToken, userId);
     } else if (text === '出張引取を申し込みます') {
-      replyHikitoriApply(event.replyToken);
+      replyHikitoriApply(event.replyToken, userId);
     } else if (text === '買取希望') {
       replyKaitori(event.replyToken);
     } else if (text === '処分希望') {
@@ -193,7 +206,7 @@ function replyPhotoGuide(replyToken) {
 }
 
 /** リッチメニュー「買取査定」：受付＋必要事項 → 写真ガイド の2通 */
-function replyKaitoriApply(replyToken) {
+function replyKaitoriApply(replyToken, userId) {
   const ack = [
     '💰 買取査定のお申し込みありがとうございます！',
     '',
@@ -208,10 +221,11 @@ function replyKaitoriApply(replyToken) {
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
+  logLineInquiry_(userId, '買取査定を申し込み', '(リッチメニューから申し込み)', 'line_' + replyToken);
 }
 
 /** リッチメニュー「出張引取」：受付＋必要事項 → 写真ガイド の2通 */
-function replyHikitoriApply(replyToken) {
+function replyHikitoriApply(replyToken, userId) {
   const ack = [
     '♻️ 出張引取のお申し込みありがとうございます！',
     '',
@@ -225,6 +239,7 @@ function replyHikitoriApply(replyToken) {
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
+  logLineInquiry_(userId, '出張引取を申し込み', '(リッチメニューから申し込み)', 'line_' + replyToken);
 }
 
 /** 電動アシスト用の追加ガイド */
@@ -280,6 +295,7 @@ function thankForPhoto(event) {
   }]);
 
   if (userId) queueReviewRequest_(userId);
+  logLineInquiry_(userId, '写真を送信', '(画像メッセージ)', 'line_' + event.message.id);
 }
 
 /**
@@ -427,6 +443,7 @@ function firstContactAck(event) {
   ].join('\n');
 
   reply(event.replyToken, [{ type: 'text', text: text }]);
+  logLineInquiry_(userId, '初回メッセージ', event.message.text, 'line_' + event.message.id);
 }
 
 /** 初回受付フラグを立てる（別の自動応答が受付確認を兼ねた場合に使う） */
@@ -449,6 +466,63 @@ function qrCamera() {
 /** クイックリプライ：タップでテキストを送信するボタン */
 function qrMessage(label, text) {
   return { type: 'action', action: { type: 'message', label: label, text: text } };
+}
+
+/**
+ * ── 問い合わせ一元管理への記録 ──
+ * LINEでの主要なアクション（写真送信・申し込み・初回メッセージ）を中央スプレッドシートに記録し、
+ * オーナー個人のLINEに通知する。中央シート・通知の実体は inquiry-sync.gs 側の appendInquiryRow_ を使う。
+ */
+function logLineInquiry_(userId, subject, content, id) {
+  if (!userId) return;
+  // 同じ人の連続アクション（申し込み→写真送信→メッセージ等）は一連の1件として扱い、
+  // 最初の1回だけ記録・通知する（6時間以内の続きのアクションはスキップ）
+  const cache = CacheService.getScriptCache();
+  const key = 'inqlog_' + userId;
+  if (cache.get(key)) return;
+  cache.put(key, '1', 21600); // 21600秒 = 6時間（CacheServiceの上限）
+  const name = getDisplayName_(userId);
+  appendInquiryRow_(new Date(), 'LINE', name, subject, content, id);
+}
+
+/** LINEのプロフィールAPIで表示名を取得する（1時間キャッシュ、失敗時はuserIdをそのまま返す） */
+function getDisplayName_(userId) {
+  const cache = CacheService.getScriptCache();
+  const key = 'name_' + userId;
+  const cached = cache.get(key);
+  if (cached) return cached;
+
+  let name = userId;
+  try {
+    const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/profile/' + userId, {
+      headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+      muteHttpExceptions: true,
+    });
+    const profile = JSON.parse(res.getContentText());
+    if (profile.displayName) name = profile.displayName;
+  } catch (err) {
+    // 取得失敗時はuserIdのまま（友だち解除済み等）
+  }
+  cache.put(key, name, 3600);
+  return name;
+}
+
+/** 新しい問い合わせが中央スプレッドシートに記録されたとき、オーナー個人のLINEに通知する（inquiry-sync.gsから呼ばれる） */
+function notifyOwner_(channel, from, subject, content) {
+  if (!OWNER_LINE_USER_ID || OWNER_LINE_USER_ID.indexOf('ここに') === 0) return; // 未設定ならスキップ
+  const sheetId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+  const sheetUrl = sheetId ? 'https://docs.google.com/spreadsheets/d/' + sheetId + '/edit' : '';
+
+  const text = [
+    '📩 新しい問い合わせ（' + channel + '）',
+    from,
+    subject,
+    flattenText_(String(content)).slice(0, 200), // 空行だらけのメール本文でも通知は詰めて表示（flattenText_はinquiry-sync.gs側）
+    '',
+    sheetUrl,
+  ].filter(String).join('\n');
+
+  pushMessage_(OWNER_LINE_USER_ID, [{ type: 'text', text: text }]);
 }
 
 /** LINEへの返信共通処理 */
