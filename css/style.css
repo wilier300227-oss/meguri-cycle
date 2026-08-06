@@ -138,6 +138,45 @@ html {
 }
 
 /* -----------------------------------
+   訪問タイミングの注意書き（#hero・#contact）
+   ----------------------------------- */
+.notice-visit {
+  background: rgba(31, 95, 168, 0.045);
+  border: 1px solid rgba(31, 95, 168, 0.18);
+  border-left: 3px solid #1F5FA8;
+  border-radius: 8px;
+  padding: 1rem 1.15rem;
+  text-align: left;
+}
+
+.notice-visit-title {
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1F5FA8;
+  margin-bottom: 0.4rem;
+}
+
+.notice-visit-body {
+  font-size: 0.82rem;
+  line-height: 1.85;
+  color: rgba(32, 48, 46, 0.68);
+}
+
+/* -----------------------------------
+   撮影ガイド（#flow ステップ1）
+   ----------------------------------- */
+.photo-guide {
+  margin-top: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: rgba(32, 48, 46, 0.03);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  line-height: 1.9;
+  color: rgba(32, 48, 46, 0.7);
+}
+
+/* -----------------------------------
    信頼バッジ（#hero）
    ----------------------------------- */
 .badge {
