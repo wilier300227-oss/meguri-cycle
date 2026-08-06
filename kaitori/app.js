@@ -8,6 +8,7 @@
 /* ---- 事業者固定情報 ---- */
 const BIZ = {
   brand: 'RAINBOW',
+  tradeName: 'めぐり自転車',        // 顧客向けの通称。書類上は RAINBOW（めぐり自転車）と併記
   buyerName: '高多優典',            // 譲受人（連絡先はPDF非表示）
   license: '第511090015059号',
   licenseAuthority: '石川県公安委員会',
@@ -24,14 +25,19 @@ const $ = (id) => document.getElementById(id);
 const els = {};
 [
   'tradeNo','tradeDate','tradeType',
-  'pName','pAddress','pJob','pBirth','pAgeView',
-  'idType','licenseFields','licenseAuthority','licenseNumber','idNote',
-  'bItem','bQty','bMaker','bModel','bFrame','bColor','bRegist','bFeature',
+  'pName','pZip','btnZip','zipNote','pAddress','pJob','pJobOther','pJobOtherField',
+  'pBirth','pBirthY','pBirthM','pBirthD','pAgeView',
+  'idType','licenseFields','licenseAuthority','licenseAuthorityOther',
+  'licenseAuthorityOtherField','licenseNumber','idNote',
+  'bItem','bQty','bMaker','bMakerOther','bMakerOtherField',
+  'bModel','bModelOther','bModelOtherField',
+  'bColor','bColorOther','bColorOtherField',
+  'bFrame','bRegist','bFeature','btnFeatureAuto',
   'amount','payMethod','pledge',
-  'guardianCard','minorBanner','gName','gRelation','gContact',
+  'guardianCard','minorBanner','gName','gRelation','gRelationOther','gRelationOtherField','gContact',
   'sigSeller','sigGuardian','sigSellerPh','sigGuardianPh',
   'validation','outputPanel','confirmStamp','btnConfirm',
-  'btnPdfCert','btnPdfGuardian','sheetCert','sheetGuardian'
+  'btnPdfCert','btnPdfGuardian','btnImgCert','btnImgGuardian','sheetCert','sheetGuardian'
 ].forEach(k => els[k] = $(k));
 
 /* =========================================================
@@ -59,7 +65,58 @@ function commitTradeNo() {
 }
 
 /* =========================================================
-   2. 年齢自動算出 & 未成年判定
+   2. 生年月日プルダウン（年→月→日）
+      端末の日付ピッカーは指操作で「年」に到達しづらいため、
+      年を先に選べる3段プルダウンにして #pBirth(hidden) へ同期する。
+   ========================================================= */
+const BIRTH_YEAR_SPAN = 100;
+
+function fillSelect(sel, values, placeholder) {
+  const keep = sel.value;
+  sel.innerHTML = `<option value="">${placeholder}</option>` +
+    values.map(v => `<option value="${v}">${v}</option>`).join('');
+  if (values.includes(Number(keep)) || values.includes(keep)) sel.value = keep;
+}
+
+function daysInMonth(y, m) {
+  if (!y || !m) return 31;                      // 年月未選択のうちは31日まで出す
+  return new Date(Number(y), Number(m), 0).getDate();
+}
+
+function refreshBirthDays() {
+  const y = els.pBirthY.value, m = els.pBirthM.value;
+  const last = daysInMonth(y, m);
+  const prev = Number(els.pBirthD.value);
+  fillSelect(els.pBirthD, Array.from({ length: last }, (_, i) => i + 1), '日');
+  // 2/31 のような選択を持ち越さない
+  els.pBirthD.value = prev && prev <= last ? String(prev) : '';
+}
+
+function syncBirth() {
+  const y = els.pBirthY.value, m = els.pBirthM.value, d = els.pBirthD.value;
+  els.pBirth.value = (y && m && d)
+    ? `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+    : '';
+}
+
+function initBirthSelects() {
+  const thisYear = new Date().getFullYear();
+  const years = Array.from({ length: BIRTH_YEAR_SPAN + 1 }, (_, i) => thisYear - i);
+  fillSelect(els.pBirthY, years, '年');
+  fillSelect(els.pBirthM, Array.from({ length: 12 }, (_, i) => i + 1), '月');
+  refreshBirthDays();
+
+  const onChange = () => {
+    refreshBirthDays();
+    syncBirth();
+    updateAgeAndMinor();
+    runValidation();
+  };
+  [els.pBirthY, els.pBirthM, els.pBirthD].forEach(s => s.addEventListener('change', onChange));
+}
+
+/* =========================================================
+   3. 年齢自動算出 & 未成年判定
    ========================================================= */
 function calcAge(birthStr, refStr) {
   if (!birthStr) return null;
@@ -80,12 +137,41 @@ function updateAgeAndMinor() {
   const minor = isMinor();
   els.guardianCard.style.display = minor ? '' : 'none';
   els.btnPdfGuardian.style.display = minor ? '' : 'none';
+  els.btnImgGuardian.style.display = minor ? '' : 'none';
   // 署名パッドは表示後にサイズ確定させる
   if (minor && sigGuardian) requestAnimationFrame(() => resizeCanvas(els.sigGuardian, sigGuardian));
 }
 
+/* ---- プルダウン＋「その他」自由記述のペア ----
+   選択肢に無い値も記録できるよう、「その他」を選んだときだけ記述欄を出す。
+   [選択select, 記述input, 記述の入れ物] */
+const OTHER_PAIRS = [
+  ['pJob', 'pJobOther', 'pJobOtherField'],
+  ['bMaker', 'bMakerOther', 'bMakerOtherField'],
+  ['bModel', 'bModelOther', 'bModelOtherField'],
+  ['bColor', 'bColorOther', 'bColorOtherField'],
+  ['licenseAuthority', 'licenseAuthorityOther', 'licenseAuthorityOtherField'],
+  ['gRelation', 'gRelationOther', 'gRelationOtherField'],
+];
+
+function updateOtherFields() {
+  OTHER_PAIRS.forEach(([sel, other, wrap]) => {
+    const isOther = els[sel].value === 'その他';
+    els[wrap].style.display = isOther ? '' : 'none';
+    if (!isOther) els[other].value = '';
+  });
+}
+
+/* 台帳・PDFに出す実値（「その他」なら記述欄の内容） */
+function pick(sel) {
+  const v = els[sel].value;
+  if (v !== 'その他') return v;
+  const pair = OTHER_PAIRS.find(p => p[0] === sel);
+  return els[pair[1]].value.trim() || 'その他';
+}
+
 /* =========================================================
-   3. 本人確認区分による欄の出し分け
+   4. 本人確認区分による欄の出し分け
       運転免許証のみ「公安委員会名＋番号」を表示・保存。
       マイナンバー/保険証等では番号欄を一切出さない。
    ========================================================= */
@@ -95,11 +181,11 @@ function updateIdFields() {
   els.licenseFields.style.display = isLicense ? '' : 'none';
   if (!isLicense) {
     // 表示しないだけでなく値も保持しない
-    els.licenseAuthority.value = '';
-    els.licenseNumber.value = '';
-  } else if (!els.licenseAuthority.value) {
     els.licenseAuthority.value = BIZ.licenseAuthority;
+    els.licenseAuthorityOther.value = '';
+    els.licenseNumber.value = '';
   }
+  updateOtherFields();
   if (v === 'マイナンバーカード' || v === '健康保険証＋補完書類') {
     els.idNote.style.display = '';
     els.idNote.textContent = '※ この区分では番号・写しを記録しません（表示も保存もしません）。';
@@ -108,16 +194,104 @@ function updateIdFields() {
   }
 }
 
+/* ---- 免許証番号は数字12桁のみ保持（「第」「号」は入力させずPDF側で整形） ---- */
+function normalizeLicenseNumber() {
+  const digits = els.licenseNumber.value.replace(/\D/g, '').slice(0, 12);
+  if (els.licenseNumber.value !== digits) els.licenseNumber.value = digits;
+}
+function licenseNumberText() {
+  const n = els.licenseNumber.value.replace(/\D/g, '');
+  return n ? `第${n}号` : '';
+}
+
 /* =========================================================
-   4. 署名パッド（signature_pad）
+   5. 郵便番号 → 住所 自動入力
+      ※ 外部API（zipcloud）を使うためオンライン時のみ。
+        失敗しても手入力を妨げない（住所欄は常に編集可）。
+        フェーズ③のオフライン化では住所データのローカル同梱に置き換える。
+   ========================================================= */
+const ZIP_API = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode=';
+
+function zipDigits() { return els.pZip.value.replace(/\D/g, ''); }
+
+function showZipNote(msg, isError) {
+  els.zipNote.style.display = msg ? '' : 'none';
+  els.zipNote.textContent = msg || '';
+  els.zipNote.style.color = isError ? 'var(--danger)' : 'var(--muted)';
+}
+
+async function lookupZip(auto) {
+  if (isLocked) return;
+  const zip = zipDigits();
+  if (zip.length !== 7) {
+    if (!auto) showZipNote('郵便番号は数字7桁で入力してください。', true);
+    return;
+  }
+  showZipNote('住所を検索中…', false);
+  try {
+    const res = await fetch(ZIP_API + zip);
+    const json = await res.json();
+    const hit = json.results && json.results[0];
+    if (!hit) {
+      showZipNote('該当する住所が見つかりませんでした。住所は手入力してください。', true);
+      return;
+    }
+    const base = `${hit.address1}${hit.address2}${hit.address3}`;
+    // すでに入力済みなら上書きせず確認を促す（番地を消さないため）
+    if (els.pAddress.value.trim() && !els.pAddress.value.startsWith(base)) {
+      showZipNote(`候補：${base}（住所欄に入力済みのため自動反映していません）`, true);
+      return;
+    }
+    if (!els.pAddress.value.trim()) els.pAddress.value = base;
+    showZipNote('住所を入力しました。続けて番地・建物名を入力してください。', false);
+    els.pAddress.focus();
+    runValidation();
+  } catch (e) {
+    showZipNote('住所検索に失敗しました（オフラインの可能性）。住所は手入力してください。', true);
+  }
+}
+
+/* =========================================================
+   6. 特徴の自動生成
+      古物営業法の法定記載事項なので必須は維持しつつ、
+      選択済みの内容から下書きを自動で作って手入力の負担を無くす。
+      現場で手を入れた場合はその内容を尊重し、自動上書きしない。
+   ========================================================= */
+let featureTouched = false;
+
+function buildFeatureText() {
+  const parts = [];
+  const maker = pick('bMaker'), model = pick('bModel'), color = pick('bColor');
+  if (maker) parts.push(maker);
+  if (model) parts.push(model);
+  if (color) parts.push(`色：${color}`);
+  if (els.bFrame.value.trim()) parts.push(`フレーム番号：${els.bFrame.value.trim()}`);
+  if (els.bRegist.value.trim()) parts.push(`防犯登録：${els.bRegist.value.trim()}`);
+  return parts.join('／');
+}
+
+function autoFillFeature(force) {
+  if (isLocked) return;
+  if (featureTouched && !force) return;
+  const text = buildFeatureText();
+  if (!text) return;
+  els.bFeature.value = text;
+  if (force) featureTouched = false;
+  runValidation();
+}
+
+/* =========================================================
+   7. 署名パッド（signature_pad）
    ========================================================= */
 function resizeCanvas(canvas, pad) {
-  const box = canvas.parentElement;
-  if (!box.offsetWidth) return;
+  // 表示サイズはCSS（.sig-canvas-box canvas）が持つ。ここではCSSの実寸に
+  // devicePixelRatio を掛けた解像度を与えるだけにして、値の二重管理を避ける。
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  if (!w || !h) return;
   const ratio = Math.max(window.devicePixelRatio || 1, 1);
   const data = pad ? pad.toData() : null;
-  canvas.width = box.offsetWidth * ratio;
-  canvas.height = 180 * ratio;
+  canvas.width = w * ratio;
+  canvas.height = h * ratio;
   const ctx = canvas.getContext('2d');
   ctx.scale(ratio, ratio);
   if (pad) { pad.clear(); if (data) pad.fromData(data); }
@@ -127,6 +301,10 @@ function initSignaturePads() {
   sigGuardian = new SignaturePad(els.sigGuardian, { penColor: '#111', backgroundColor: 'rgba(255,255,255,0)' });
   sigSeller.addEventListener('beginStroke', () => { els.sigSellerPh.style.display = 'none'; });
   sigGuardian.addEventListener('beginStroke', () => { els.sigGuardianPh.style.display = 'none'; });
+  // 署名は input/change を発火しないため、描き終わりで明示的に再検証する
+  // （これが無いと「最後に署名」した場合に確定ボタンが不活性のままになる）
+  sigSeller.addEventListener('endStroke', runValidation);
+  sigGuardian.addEventListener('endStroke', runValidation);
   requestAnimationFrame(() => {
     resizeCanvas(els.sigSeller, sigSeller);
     resizeCanvas(els.sigGuardian, sigGuardian);
@@ -147,7 +325,7 @@ document.querySelectorAll('.sig-clear').forEach(btn => {
 });
 
 /* =========================================================
-   5. 検証（法定5項目 + 署名 + 誓約 + 未成年時の保護者）
+   6. 検証（法定5項目 + 署名 + 誓約 + 未成年時の保護者）
    ========================================================= */
 function isFilled(el) { return el && String(el.value).trim() !== ''; }
 
@@ -161,9 +339,13 @@ function collectMissing() {
   if (!isFilled(els.pName)) partyMiss.push('氏名');
   if (!isFilled(els.pAddress)) partyMiss.push('住所');
   if (!isFilled(els.pJob)) partyMiss.push('職業');
+  else if (els.pJob.value === 'その他' && !isFilled(els.pJobOther)) partyMiss.push('職業(その他の内容)');
   if (!isFilled(els.pBirth)) partyMiss.push('生年月日(年齢)');
   if (partyMiss.length) miss.push('相手方の' + partyMiss.join('・'));
   if (!isFilled(els.idType)) miss.push('本人確認方法');
+
+  // 代金受領書を兼ねるため金額は必須（引取＝0円の場合は 0 を入力）
+  if (!isFilled(els.amount)) miss.push('買取金額');
 
   // 誓約
   if (!els.pledge.checked) miss.push('誓約事項のチェック');
@@ -176,6 +358,7 @@ function collectMissing() {
     const g = [];
     if (!isFilled(els.gName)) g.push('氏名');
     if (!isFilled(els.gRelation)) g.push('続柄');
+    else if (els.gRelation.value === 'その他' && !isFilled(els.gRelationOther)) g.push('続柄(その他の内容)');
     if (!isFilled(els.gContact)) g.push('連絡先');
     if (g.length) miss.push('保護者の' + g.join('・'));
     if (!sigGuardian || sigGuardian.isEmpty()) miss.push('保護者の同意署名');
@@ -204,7 +387,7 @@ function runValidation() {
 }
 
 /* =========================================================
-   6. 確定 → ロック
+   7. 確定 → ロック
    ========================================================= */
 function lockForm() {
   isLocked = true;
@@ -238,12 +421,13 @@ function onConfirm() {
 }
 
 /* =========================================================
-   7. PDF生成（html2canvas → jsPDF, A4・1枚）
+   8. PDF生成（html2canvas → jsPDF, A4・1枚）
    ========================================================= */
 function esc(s) {
   return String(s == null ? '' : s)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+function brandText() { return `${BIZ.brand}（${BIZ.tradeName}）`; }
 function yen(v) {
   const n = Number(v);
   return isNaN(n) ? '—' : '¥' + n.toLocaleString('ja-JP');
@@ -258,8 +442,8 @@ function humanTime() {
 function idMethodText() {
   const t = els.idType.value;
   if (t === '運転免許証') {
-    const auth = esc(els.licenseAuthority.value || BIZ.licenseAuthority);
-    const num = esc(els.licenseNumber.value || '');
+    const auth = esc(pick('licenseAuthority') || BIZ.licenseAuthority);
+    const num = esc(licenseNumberText());
     return `${esc(t)}（${auth}${num ? '　' + num : ''}）`;
   }
   return esc(t);
@@ -276,7 +460,7 @@ function buildCertSheet() {
 
     <div class="sec-title">譲受人</div>
     <table class="kv">
-      <tr><th>屋号</th><td>${esc(BIZ.brand)}</td></tr>
+      <tr><th>屋号</th><td>${esc(brandText())}</td></tr>
       <tr><th>氏名</th><td>${esc(BIZ.buyerName)}</td></tr>
       <tr><th>古物商許可番号</th><td>${esc(BIZ.license)}（${esc(BIZ.licenseAuthority)}）</td></tr>
     </table>
@@ -285,7 +469,7 @@ function buildCertSheet() {
     <table class="kv">
       <tr><th>氏名</th><td>${esc(els.pName.value)}</td></tr>
       <tr><th>住所</th><td>${esc(els.pAddress.value)}</td></tr>
-      <tr><th>職業</th><td>${esc(els.pJob.value)}</td></tr>
+      <tr><th>職業</th><td>${esc(pick('pJob'))}</td></tr>
       <tr><th>生年月日 / 年齢</th><td>${esc(els.pBirth.value)}${age!==null?`　（${age}歳）`:''}</td></tr>
       <tr><th>本人確認方法</th><td>${idMethodText()}</td></tr>
     </table>
@@ -295,9 +479,9 @@ function buildCertSheet() {
       <tr><th>取引年月日</th><td>${esc(els.tradeDate.value)}</td></tr>
       <tr><th>取引区分</th><td>${esc(els.tradeType.value)}</td></tr>
       <tr><th>品目 / 数量</th><td>${esc(els.bItem.value)}　／　${esc(els.bQty.value)} 点</td></tr>
-      <tr><th>メーカー / 車種</th><td>${esc(els.bMaker.value)||'—'}　／　${esc(els.bModel.value)||'—'}</td></tr>
+      <tr><th>メーカー / 車種</th><td>${esc(pick('bMaker'))||'—'}　／　${esc(pick('bModel'))||'—'}</td></tr>
       <tr><th>フレーム番号</th><td>${esc(els.bFrame.value)||'—'}</td></tr>
-      <tr><th>色</th><td>${esc(els.bColor.value)||'—'}</td></tr>
+      <tr><th>色</th><td>${esc(pick('bColor'))||'—'}</td></tr>
       <tr><th>防犯登録番号</th><td>${esc(els.bRegist.value)||'—'}</td></tr>
       <tr><th>特徴</th><td>${esc(els.bFeature.value)}</td></tr>
       <tr><th>買取金額</th><td><b>${yen(els.amount.value)}</b>（${esc(els.payMethod.value)}）</td></tr>
@@ -340,16 +524,16 @@ function buildGuardianSheet() {
     <div class="sec-title">保護者</div>
     <table class="kv">
       <tr><th>氏名</th><td>${esc(els.gName.value)}</td></tr>
-      <tr><th>続柄</th><td>${esc(els.gRelation.value)}</td></tr>
+      <tr><th>続柄</th><td>${esc(pick('gRelation'))}</td></tr>
       <tr><th>連絡先</th><td>${esc(els.gContact.value)}</td></tr>
     </table>
 
     <div class="sec-title">取引の概要</div>
     <table class="kv">
       <tr><th>取引年月日</th><td>${esc(els.tradeDate.value)}</td></tr>
-      <tr><th>対象物品</th><td>${esc(els.bItem.value)}　${esc(els.bMaker.value)} ${esc(els.bModel.value)}　${esc(els.bQty.value)} 点</td></tr>
+      <tr><th>対象物品</th><td>${esc(els.bItem.value)}　${esc(pick('bMaker'))} ${esc(pick('bModel'))}　${esc(els.bQty.value)} 点</td></tr>
       <tr><th>買取金額</th><td><b>${yen(els.amount.value)}</b></td></tr>
-      <tr><th>譲受人</th><td>${esc(BIZ.brand)}（${esc(BIZ.buyerName)}）　古物商許可 ${esc(BIZ.license)}</td></tr>
+      <tr><th>譲受人</th><td>${esc(brandText())}　${esc(BIZ.buyerName)}　古物商許可 ${esc(BIZ.license)}</td></tr>
     </table>
 
     <div class="pledge">上記取引の内容を確認し、未成年者による当該物品の譲渡に同意します。</div>
@@ -369,30 +553,75 @@ function buildGuardianSheet() {
   els.sheetGuardian.innerHTML = html;
 }
 
+/* ---- ファイル名：署名直後にそのままお客さまへ送れる名前にする ----
+   例）8月6日 山田太郎様 買取.pdf
+   帳簿上の照合は書類本文に印字した取引番号で行う。
+   （フェーズ②のDrive保存では取引番号を先頭に付けた名前で保存すること） */
+function sanitizeFileName(s) {
+  return String(s == null ? '' : s).replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim();
+}
+function docFileName(kind, ext) {
+  const d = els.tradeDate.value ? new Date(els.tradeDate.value + 'T00:00:00') : new Date();
+  const md = `${d.getMonth() + 1}月${d.getDate()}日`;
+  const name = sanitizeFileName(els.pName.value) || 'お客様';
+  return `${sanitizeFileName(`${md} ${name}様 ${kind}`)}.${ext}`;
+}
+
+async function renderSheet(sheetEl) {
+  return html2canvas(sheetEl, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+}
+
+/* 画像（PNG）保存。LINE公式アカウントのチャットは画像送信が確実なため、
+   PDFと別に画像でも出せるようにする。 */
+function downloadCanvasPng(canvas, filename) {
+  canvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }, 'image/png');
+}
+
 async function sheetToPdf(sheetEl, filename) {
-  const canvas = await html2canvas(sheetEl, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+  const canvas = await renderSheet(sheetEl);
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
   const pageW = 210, pageH = 297;
-  const imgH = canvas.height * pageW / canvas.width;
-  const h = Math.min(imgH, pageH); // A4 1枚に収める
-  pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pageW, h);
+  // A4 1枚に収める。縦がはみ出す場合は縦横比を保ったまま高さ基準で縮小する
+  // （幅固定で高さだけ切り詰めると文字が縦方向に潰れるため）
+  let w = pageW, h = canvas.height * pageW / canvas.width;
+  if (h > pageH) { h = pageH; w = canvas.width * pageH / canvas.height; }
+  pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', (pageW - w) / 2, 0, w, h);
   pdf.save(filename);
 }
 
 async function generateCertPdf() {
   if (!isLocked) return;
   buildCertSheet();
-  await sheetToPdf(els.sheetCert, `${els.tradeNo.value}_譲渡証明書.pdf`);
+  await sheetToPdf(els.sheetCert, docFileName(els.tradeType.value, 'pdf'));
 }
 async function generateGuardianPdf() {
   if (!isLocked || !isMinor()) return;
   buildGuardianSheet();
-  await sheetToPdf(els.sheetGuardian, `${els.tradeNo.value}_保護者同意書.pdf`);
+  await sheetToPdf(els.sheetGuardian, docFileName('保護者同意書', 'pdf'));
+}
+async function generateCertImage() {
+  if (!isLocked) return;
+  buildCertSheet();
+  downloadCanvasPng(await renderSheet(els.sheetCert), docFileName(els.tradeType.value, 'png'));
+}
+async function generateGuardianImage() {
+  if (!isLocked || !isMinor()) return;
+  buildGuardianSheet();
+  downloadCanvasPng(await renderSheet(els.sheetGuardian), docFileName('保護者同意書', 'png'));
 }
 
 /* =========================================================
-   8. 初期化・イベント
+   9. 初期化・イベント
    ========================================================= */
 function init() {
   // 取引年月日 既定＝当日
@@ -401,12 +630,32 @@ function init() {
   refreshTradeNo();
 
   initSignaturePads();
+  initBirthSelects();
   updateIdFields();
+  updateOtherFields();
   updateAgeAndMinor();
 
   els.tradeDate.addEventListener('change', () => { refreshTradeNo(); updateAgeAndMinor(); runValidation(); });
-  els.pBirth.addEventListener('change', () => { updateAgeAndMinor(); runValidation(); });
   els.idType.addEventListener('change', () => { updateIdFields(); runValidation(); });
+  OTHER_PAIRS.forEach(([sel]) => {
+    els[sel].addEventListener('change', () => { updateOtherFields(); runValidation(); });
+  });
+
+  // 郵便番号 → 住所
+  els.btnZip.addEventListener('click', () => lookupZip(false));
+  els.pZip.addEventListener('input', () => { if (zipDigits().length === 7) lookupZip(true); });
+
+  // 免許証番号は数字のみに正規化
+  els.licenseNumber.addEventListener('input', normalizeLicenseNumber);
+
+  // 特徴の自動生成（手入力があればそれを優先）
+  ['bMaker', 'bMakerOther', 'bModel', 'bModelOther', 'bColor', 'bColorOther', 'bFrame', 'bRegist']
+    .forEach(id => {
+      els[id].addEventListener('change', () => autoFillFeature(false));
+      els[id].addEventListener('input', () => autoFillFeature(false));
+    });
+  els.bFeature.addEventListener('input', () => { featureTouched = true; });
+  els.btnFeatureAuto.addEventListener('click', () => autoFillFeature(true));
 
   // 入力のたびに検証
   document.querySelectorAll('#kaitoriForm input, #kaitoriForm select, #kaitoriForm textarea')
@@ -415,6 +664,8 @@ function init() {
   els.btnConfirm.addEventListener('click', onConfirm);
   els.btnPdfCert.addEventListener('click', generateCertPdf);
   els.btnPdfGuardian.addEventListener('click', generateGuardianPdf);
+  els.btnImgCert.addEventListener('click', generateCertImage);
+  els.btnImgGuardian.addEventListener('click', generateGuardianImage);
 
   runValidation();
 }

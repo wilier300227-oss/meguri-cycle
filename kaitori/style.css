@@ -127,6 +127,32 @@ main { max-width: 820px; margin: 0 auto; padding: 16px 14px 120px; }
   color: var(--accent-dark);
 }
 
+/* 郵便番号＋検索ボタン */
+.zip-row { display: flex; gap: 8px; align-items: stretch; }
+.zip-row input { flex: 1 1 auto; }
+.zip-row .btn { flex: 0 0 auto; white-space: nowrap; }
+
+/* 生年月日（年→月→日 の3プルダウン） */
+.birth-row { display: flex; align-items: center; gap: 6px; }
+.birth-row select {
+  padding: 11px 8px;
+  font-size: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-family: inherit;
+  min-width: 0;
+}
+.birth-row select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+.birth-row .birth-y { flex: 1.5 1 0; }
+.birth-row .birth-md { flex: 1 1 0; }
+.birth-row .unit { font-size: .85rem; color: var(--muted); flex: 0 0 auto; }
+
 .minor-banner {
   background: var(--warn-bg);
   border: 1px solid var(--warn-line);
@@ -147,7 +173,10 @@ main { max-width: 820px; margin: 0 auto; padding: 16px 14px 120px; }
   position: relative;
   touch-action: none;
 }
-.sig-canvas-box canvas { display: block; width: 100%; height: 180px; border-radius: 6px; }
+/* 署名欄はタッチペン・指どちらでも書けるよう広めに取る（実機フィードバック反映） */
+.sig-canvas-box canvas { display: block; width: 100%; height: 260px; border-radius: 6px; }
+/* 横向きで画面が低いときは詰める */
+@media (max-height: 620px) { .sig-canvas-box canvas { height: 190px; } }
 .sig-placeholder {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
@@ -205,6 +234,7 @@ main { max-width: 820px; margin: 0 auto; padding: 16px 14px 120px; }
   background: #f8fafc; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
 }
 .output-btns { display: grid; gap: 10px; }
+.out-hint { margin: 12px 0 8px; }
 
 /* ロック状態 */
 .form-locked input, .form-locked select, .form-locked textarea, .form-locked button.sig-clear {
@@ -223,10 +253,10 @@ main { max-width: 820px; margin: 0 auto; padding: 16px 14px 120px; }
   min-height: 1123px;        /* A4 高 @96dpi */
   background: #fff;
   color: #000;
-  padding: 48px 54px;
+  padding: 40px 46px;
   font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.55;
 }
 .a4-sheet .doc-title {
   text-align: center;
@@ -239,13 +269,13 @@ main { max-width: 820px; margin: 0 auto; padding: 16px 14px 120px; }
   text-align: right;
   font-size: 12px;
   color: #333;
-  margin: 0 0 16px;
+  margin: 0 0 10px;
 }
-.a4-sheet .lead { margin: 0 0 14px; font-size: 13px; }
+.a4-sheet .lead { margin: 0 0 10px; font-size: 13px; }
 .a4-sheet table.kv {
   width: 100%;
   border-collapse: collapse;
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-size: 13px;
 }
 .a4-sheet table.kv th {
@@ -254,18 +284,18 @@ main { max-width: 820px; margin: 0 auto; padding: 16px 14px 120px; }
   vertical-align: top;
   background: #f2f4f7;
   border: 1px solid #333;
-  padding: 6px 8px;
+  padding: 5px 8px;
   font-weight: 700;
 }
 .a4-sheet table.kv td {
   border: 1px solid #333;
-  padding: 6px 8px;
+  padding: 5px 8px;
   vertical-align: top;
 }
 .a4-sheet .sec-title {
   font-weight: 800;
   font-size: 14px;
-  margin: 16px 0 6px;
+  margin: 10px 0 4px;
   padding: 3px 8px;
   background: #1f2937;
   color: #fff;
@@ -274,27 +304,27 @@ main { max-width: 820px; margin: 0 auto; padding: 16px 14px 120px; }
   border: 1px solid #333;
   padding: 8px 10px;
   font-size: 12.5px;
-  margin: 12px 0;
+  margin: 10px 0;
 }
 .a4-sheet .sign-area {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-top: 20px;
+  margin-top: 14px;
   gap: 20px;
 }
 .a4-sheet .sign-box { flex: 1; }
 .a4-sheet .sign-box .sign-label { font-size: 12px; font-weight: 700; margin: 0 0 4px; }
 .a4-sheet .sign-box .sign-img {
   border-bottom: 1.5px solid #000;
-  height: 90px;
+  height: 76px;
   display: flex;
   align-items: flex-end;
 }
-.a4-sheet .sign-box .sign-img img { max-height: 88px; max-width: 100%; }
-.a4-sheet .confirm-time { font-size: 11.5px; color: #333; margin-top: 6px; }
+.a4-sheet .sign-box .sign-img img { max-height: 74px; max-width: 100%; }
+.a4-sheet .confirm-time { font-size: 11.5px; color: #333; margin-top: 5px; }
 .a4-sheet .footer-note {
-  margin-top: 24px;
+  margin-top: 10px;
   font-size: 11px;
   color: #444;
   border-top: 1px solid #999;
