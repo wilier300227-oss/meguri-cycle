@@ -25,7 +25,7 @@ const $ = (id) => document.getElementById(id);
 const els = {};
 [
   'tradeNo','tradeDate','tradeType',
-  'pName','pZip','btnZip','zipNote','pAddress','pJob','pJobOther','pJobOtherField',
+  'pName','pZip','btnZip','zipNote','pAddress','pTel','pJob','pJobOther','pJobOtherField',
   'pBirth','pBirthY','pBirthM','pBirthD','pAgeView',
   'idType','licenseFields','licenseAuthority','licenseAuthorityOther',
   'licenseAuthorityOtherField','licenseNumber','idNote',
@@ -33,8 +33,11 @@ const els = {};
   'bModel','bModelOther','bModelOtherField',
   'bColor','bColorOther','bColorOtherField',
   'bFrame','bRegist','bFeature','btnFeatureAuto',
-  'amount','payMethod','pledge',
-  'guardianCard','minorBanner','gName','gRelation','gRelationOther','gRelationOtherField','gContact',
+  'accKey','accKeyCount','accKeyCountWrap','accBattery','accCharger','accManual',
+  'amount','payMethod','pledge','pledgeCorp',
+  'registOwner','registOwnerFields','registOwnerName','registOwnerRelation','registOwnerConsent',
+  'guardianCard','minorBanner','gName','gRelation','gRelationOther','gRelationOtherField',
+  'gContact','gAddress','btnGuardianSameAddr','gIdMethod',
   'sigSeller','sigGuardian','sigSellerPh','sigGuardianPh',
   'validation','outputPanel','confirmStamp','btnConfirm',
   'btnPdfCert','btnPdfGuardian','btnImgCert','btnImgGuardian','sheetCert','sheetGuardian'
@@ -251,6 +254,35 @@ async function lookupZip(auto) {
   }
 }
 
+/* ---- 付属品（電動アシストのバッテリー・充電器の有無は後日トラブルになりやすい） ---- */
+function updateAccessoryFields() {
+  els.accKeyCountWrap.style.display = els.accKey.checked ? '' : 'none';
+}
+function accessoryText() {
+  const list = [];
+  if (els.accKey.checked) list.push(`鍵${els.accKeyCount.value || 1}本`);
+  if (els.accBattery.checked) list.push('バッテリー');
+  if (els.accCharger.checked) list.push('充電器');
+  if (els.accManual.checked) list.push('取扱説明書');
+  return list.length ? list.join('・') : 'なし';
+}
+
+/* ---- 防犯登録の名義人（盗品リスクの切り分け） ---- */
+function updateRegistOwnerFields() {
+  const other = els.registOwner.value === '本人以外';
+  els.registOwnerFields.style.display = other ? '' : 'none';
+  if (!other) {
+    els.registOwnerName.value = '';
+    els.registOwnerRelation.value = '';
+    els.registOwnerConsent.checked = false;
+  }
+}
+function registOwnerText() {
+  const v = els.registOwner.value;
+  if (v !== '本人以外') return v;
+  return `本人以外（${esc(els.registOwnerName.value)}・続柄 ${esc(els.registOwnerRelation.value)}／名義人の同意あり）`;
+}
+
 /* =========================================================
    6. 特徴の自動生成
       古物営業法の法定記載事項なので必須は維持しつつ、
@@ -338,6 +370,7 @@ function collectMissing() {
   const partyMiss = [];
   if (!isFilled(els.pName)) partyMiss.push('氏名');
   if (!isFilled(els.pAddress)) partyMiss.push('住所');
+  if (!isFilled(els.pTel)) partyMiss.push('電話番号');
   if (!isFilled(els.pJob)) partyMiss.push('職業');
   else if (els.pJob.value === 'その他' && !isFilled(els.pJobOther)) partyMiss.push('職業(その他の内容)');
   if (!isFilled(els.pBirth)) partyMiss.push('生年月日(年齢)');
@@ -348,7 +381,18 @@ function collectMissing() {
   if (!isFilled(els.amount)) miss.push('買取金額');
 
   // 誓約
-  if (!els.pledge.checked) miss.push('誓約事項のチェック');
+  if (!els.pledge.checked) miss.push('誓約事項（盗品でないこと）のチェック');
+  if (!els.pledgeCorp.checked) miss.push('誓約事項（法人名義でないこと）のチェック');
+
+  // 防犯登録の名義人
+  if (!isFilled(els.registOwner)) miss.push('防犯登録の名義人');
+  else if (els.registOwner.value === '本人以外') {
+    const r = [];
+    if (!isFilled(els.registOwnerName)) r.push('氏名');
+    if (!isFilled(els.registOwnerRelation)) r.push('続柄');
+    if (r.length) miss.push('名義人の' + r.join('・'));
+    if (!els.registOwnerConsent.checked) miss.push('名義人の同意の確認');
+  }
 
   // 署名
   if (!sigSeller || sigSeller.isEmpty()) miss.push('譲渡人の署名');
@@ -360,6 +404,8 @@ function collectMissing() {
     if (!isFilled(els.gRelation)) g.push('続柄');
     else if (els.gRelation.value === 'その他' && !isFilled(els.gRelationOther)) g.push('続柄(その他の内容)');
     if (!isFilled(els.gContact)) g.push('連絡先');
+    if (!isFilled(els.gAddress)) g.push('住所');
+    if (!isFilled(els.gIdMethod)) g.push('本人確認');
     if (g.length) miss.push('保護者の' + g.join('・'));
     if (!sigGuardian || sigGuardian.isEmpty()) miss.push('保護者の同意署名');
   }
@@ -469,6 +515,7 @@ function buildCertSheet() {
     <table class="kv">
       <tr><th>氏名</th><td>${esc(els.pName.value)}</td></tr>
       <tr><th>住所</th><td>${esc(els.pAddress.value)}</td></tr>
+      <tr><th>電話番号</th><td>${esc(els.pTel.value)}</td></tr>
       <tr><th>職業</th><td>${esc(pick('pJob'))}</td></tr>
       <tr><th>生年月日 / 年齢</th><td>${esc(els.pBirth.value)}${age!==null?`　（${age}歳）`:''}</td></tr>
       <tr><th>本人確認方法</th><td>${idMethodText()}</td></tr>
@@ -483,11 +530,13 @@ function buildCertSheet() {
       <tr><th>フレーム番号</th><td>${esc(els.bFrame.value)||'—'}</td></tr>
       <tr><th>色</th><td>${esc(pick('bColor'))||'—'}</td></tr>
       <tr><th>防犯登録番号</th><td>${esc(els.bRegist.value)||'—'}</td></tr>
+      <tr><th>防犯登録の名義人</th><td>${registOwnerText()}</td></tr>
+      <tr><th>付属品</th><td>${esc(accessoryText())}</td></tr>
       <tr><th>特徴</th><td>${esc(els.bFeature.value)}</td></tr>
       <tr><th>買取金額</th><td><b>${yen(els.amount.value)}</b>（${esc(els.payMethod.value)}）</td></tr>
     </table>
 
-    <div class="pledge">本物品は盗品ではなく、譲渡人が正当な権原に基づき譲渡するものであることを誓約します。上記代金を確かに受領しました。</div>
+    <div class="pledge">本物品は盗品・遺失物・不法投棄品ではなく、譲渡人が正当な権原に基づき譲渡するものであることを誓約します。また、会社・法人名義の自転車ではありません。上記代金を確かに受領しました。</div>
 
     <div class="sign-area">
       <div class="sign-box">
@@ -525,7 +574,9 @@ function buildGuardianSheet() {
     <table class="kv">
       <tr><th>氏名</th><td>${esc(els.gName.value)}</td></tr>
       <tr><th>続柄</th><td>${esc(pick('gRelation'))}</td></tr>
+      <tr><th>住所</th><td>${esc(els.gAddress.value)}</td></tr>
       <tr><th>連絡先</th><td>${esc(els.gContact.value)}</td></tr>
+      <tr><th>本人確認</th><td>${esc(els.gIdMethod.value)}</td></tr>
     </table>
 
     <div class="sec-title">取引の概要</div>
@@ -633,6 +684,8 @@ function init() {
   initBirthSelects();
   updateIdFields();
   updateOtherFields();
+  updateAccessoryFields();
+  updateRegistOwnerFields();
   updateAgeAndMinor();
 
   els.tradeDate.addEventListener('change', () => { refreshTradeNo(); updateAgeAndMinor(); runValidation(); });
@@ -656,6 +709,14 @@ function init() {
     });
   els.bFeature.addEventListener('input', () => { featureTouched = true; });
   els.btnFeatureAuto.addEventListener('click', () => autoFillFeature(true));
+
+  els.accKey.addEventListener('change', updateAccessoryFields);
+  els.registOwner.addEventListener('change', () => { updateRegistOwnerFields(); runValidation(); });
+  els.btnGuardianSameAddr.addEventListener('click', () => {
+    if (isLocked) return;
+    els.gAddress.value = els.pAddress.value;
+    runValidation();
+  });
 
   // 入力のたびに検証
   document.querySelectorAll('#kaitoriForm input, #kaitoriForm select, #kaitoriForm textarea')
