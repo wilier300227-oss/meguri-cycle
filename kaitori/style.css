@@ -1,0 +1,302 @@
+/* タブレット買取記入システム — フェーズ①（ローカル完結） */
+/* 対象端末: Redmi Pad SE (Android / Chrome) */
+
+:root {
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --line: #d5dbe1;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-dark: #1d4ed8;
+  --danger: #dc2626;
+  --ok: #16a34a;
+  --warn-bg: #fff7ed;
+  --warn-line: #fdba74;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  color: #fff;
+  padding: 16px 18px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+.app-header h1 { margin: 0; font-size: 1.15rem; }
+.app-header .sub { margin: 4px 0 0; font-size: .8rem; opacity: .9; }
+.app-header .license { margin: 6px 0 0; font-size: .78rem; font-weight: 700; letter-spacing: .3px; }
+
+main { max-width: 820px; margin: 0 auto; padding: 16px 14px 120px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 0 0 16px;
+}
+.card > h2 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field { margin: 0 0 12px; }
+.field:last-child { margin-bottom: 0; }
+.field label {
+  display: block;
+  font-size: .85rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+.field .hint { font-weight: 400; color: var(--muted); font-size: .78rem; }
+.req::after { content: " *"; color: var(--danger); font-weight: 700; }
+
+.field input[type="text"],
+.field input[type="date"],
+.field input[type="number"],
+.field input[type="tel"],
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 11px 12px;
+  font-size: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-family: inherit;
+}
+.field textarea { min-height: 68px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+.field input[readonly] { background: #eef2f7; color: var(--muted); }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .row3 { grid-template-columns: 1fr 1fr; } }
+
+.readonly-badge {
+  display: inline-block;
+  padding: 8px 12px;
+  background: #eef2f7;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.checkbox-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.checkbox-line input { width: 22px; height: 22px; margin-top: 2px; flex: 0 0 auto; }
+.checkbox-line label { font-weight: 600; font-size: .9rem; }
+
+.computed {
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.minor-banner {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  color: #9a3412;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: .85rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+/* 署名 */
+.sig-wrap { margin: 0 0 8px; }
+.sig-canvas-box {
+  border: 2px dashed var(--line);
+  border-radius: 8px;
+  background: #fff;
+  position: relative;
+  touch-action: none;
+}
+.sig-canvas-box canvas { display: block; width: 100%; height: 180px; border-radius: 6px; }
+.sig-placeholder {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #b6bec8; font-size: .9rem; pointer-events: none;
+}
+.sig-actions { margin-top: 8px; }
+
+/* ボタン */
+.btn {
+  appearance: none;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-sm { padding: 8px 14px; font-size: .85rem; }
+.btn-ghost { background: #eef2f7; color: var(--ink); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:disabled { background: #9db4e6; cursor: not-allowed; }
+.btn-ok { background: var(--ok); color: #fff; }
+.btn-block { display: block; width: 100%; }
+
+/* 検証パネル */
+.validation {
+  margin: 0 0 12px;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: .88rem;
+}
+.validation.ng { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.validation.ok { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.validation ul { margin: 6px 0 0; padding-left: 20px; }
+
+/* 確定バー */
+.confirm-bar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: #fff;
+  border-top: 1px solid var(--line);
+  padding: 12px 14px;
+  box-shadow: 0 -2px 10px rgba(0,0,0,.08);
+  z-index: 30;
+}
+.confirm-bar .inner { max-width: 820px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.confirm-bar .inner .btn { flex: 1; }
+.locked-note { font-size: .82rem; color: var(--ok); font-weight: 700; text-align: center; }
+
+/* PDF出力パネル */
+.output-panel { display: none; }
+.output-panel.show { display: block; }
+.output-panel .stamp {
+  font-size: .82rem; color: var(--muted); margin: 0 0 12px;
+  background: #f8fafc; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+}
+.output-btns { display: grid; gap: 10px; }
+
+/* ロック状態 */
+.form-locked input, .form-locked select, .form-locked textarea, .form-locked button.sig-clear {
+  pointer-events: none;
+  opacity: .7;
+}
+
+/* --- 印刷用A4テンプレート（画面外・html2canvasで画像化） --- */
+.a4-stage {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+}
+.a4-sheet {
+  width: 794px;              /* A4 幅 @96dpi */
+  min-height: 1123px;        /* A4 高 @96dpi */
+  background: #fff;
+  color: #000;
+  padding: 48px 54px;
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.a4-sheet .doc-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  margin: 0 0 6px;
+}
+.a4-sheet .doc-no {
+  text-align: right;
+  font-size: 12px;
+  color: #333;
+  margin: 0 0 16px;
+}
+.a4-sheet .lead { margin: 0 0 14px; font-size: 13px; }
+.a4-sheet table.kv {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 14px;
+  font-size: 13px;
+}
+.a4-sheet table.kv th {
+  width: 130px;
+  text-align: left;
+  vertical-align: top;
+  background: #f2f4f7;
+  border: 1px solid #333;
+  padding: 6px 8px;
+  font-weight: 700;
+}
+.a4-sheet table.kv td {
+  border: 1px solid #333;
+  padding: 6px 8px;
+  vertical-align: top;
+}
+.a4-sheet .sec-title {
+  font-weight: 800;
+  font-size: 14px;
+  margin: 16px 0 6px;
+  padding: 3px 8px;
+  background: #1f2937;
+  color: #fff;
+}
+.a4-sheet .pledge {
+  border: 1px solid #333;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  margin: 12px 0;
+}
+.a4-sheet .sign-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 20px;
+  gap: 20px;
+}
+.a4-sheet .sign-box { flex: 1; }
+.a4-sheet .sign-box .sign-label { font-size: 12px; font-weight: 700; margin: 0 0 4px; }
+.a4-sheet .sign-box .sign-img {
+  border-bottom: 1.5px solid #000;
+  height: 90px;
+  display: flex;
+  align-items: flex-end;
+}
+.a4-sheet .sign-box .sign-img img { max-height: 88px; max-width: 100%; }
+.a4-sheet .confirm-time { font-size: 11.5px; color: #333; margin-top: 6px; }
+.a4-sheet .footer-note {
+  margin-top: 24px;
+  font-size: 11px;
+  color: #444;
+  border-top: 1px solid #999;
+  padding-top: 8px;
+}

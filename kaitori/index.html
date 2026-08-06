@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>出張買取 記入システム｜RAINBOW</title>
+<link rel="stylesheet" href="style.css">
+<!-- フェーズ①: ローカル完結。CDN読込（オフライン対応はフェーズ③で対応） -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>出張買取 記入システム</h1>
+  <p class="sub">屋号 RAINBOW／めぐり自転車　— タブレット完結記入</p>
+  <p class="license">古物商許可番号 第511090015059号（石川県公安委員会）</p>
+</header>
+
+<main>
+  <form id="kaitoriForm" autocomplete="off" novalidate>
+
+    <!-- 取引情報 -->
+    <section class="card">
+      <h2>取引情報</h2>
+      <div class="row2">
+        <div class="field">
+          <label>取引番号</label>
+          <input type="text" id="tradeNo" readonly>
+        </div>
+        <div class="field">
+          <label class="req">取引年月日</label>
+          <input type="date" id="tradeDate" data-legal="date">
+        </div>
+      </div>
+      <div class="field">
+        <label>取引区分</label>
+        <select id="tradeType">
+          <option value="買取">買取</option>
+          <option value="引取">引取</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- 相手方情報（法定） -->
+    <section class="card">
+      <h2>相手方情報（法定）</h2>
+      <div class="field">
+        <label class="req">氏名</label>
+        <input type="text" id="pName" data-legal="party" placeholder="例）山田 太郎">
+      </div>
+      <div class="field">
+        <label class="req">住所</label>
+        <input type="text" id="pAddress" data-legal="party" placeholder="例）石川県金沢市○○町1-2-3">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label class="req">職業</label>
+          <input type="text" id="pJob" data-legal="party" placeholder="例）会社員">
+        </div>
+        <div class="field">
+          <label class="req">生年月日</label>
+          <input type="date" id="pBirth" data-legal="party">
+        </div>
+      </div>
+      <div class="field">
+        <label>年齢（自動算出）</label>
+        <div><span class="computed" id="pAgeView">—</span></div>
+      </div>
+    </section>
+
+    <!-- 本人確認 -->
+    <section class="card">
+      <h2>本人確認</h2>
+      <div class="field">
+        <label class="req">確認区分</label>
+        <select id="idType" data-legal="idmethod">
+          <option value="">選択してください</option>
+          <option value="運転免許証">運転免許証</option>
+          <option value="マイナンバーカード">マイナンバーカード</option>
+          <option value="健康保険証＋補完書類">健康保険証＋補完書類</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <!-- 運転免許証を選んだ時だけ表示（番号を書き写せる区分のみ） -->
+      <div id="licenseFields" style="display:none;">
+        <div class="field">
+          <label>公安委員会名 <span class="hint">（例）石川県公安委員会</span></label>
+          <input type="text" id="licenseAuthority" placeholder="例）石川県公安委員会">
+        </div>
+        <div class="field">
+          <label>免許証番号</label>
+          <input type="text" id="licenseNumber" inputmode="numeric" placeholder="例）第000000000000号">
+        </div>
+      </div>
+      <p class="hint" id="idNote" style="display:none;"></p>
+    </section>
+
+    <!-- 対象自転車 -->
+    <section class="card">
+      <h2>対象自転車（古物）</h2>
+      <div class="row2">
+        <div class="field">
+          <label class="req">品目</label>
+          <input type="text" id="bItem" data-legal="goods" value="自転車">
+        </div>
+        <div class="field">
+          <label class="req">数量</label>
+          <input type="number" id="bQty" data-legal="goods" min="1" step="1" value="1">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>メーカー</label>
+          <input type="text" id="bMaker" placeholder="例）BRIDGESTONE">
+        </div>
+        <div class="field">
+          <label>車種</label>
+          <input type="text" id="bModel" placeholder="例）クロスバイク">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>フレーム番号</label>
+          <input type="text" id="bFrame">
+        </div>
+        <div class="field">
+          <label>色</label>
+          <input type="text" id="bColor">
+        </div>
+      </div>
+      <div class="field">
+        <label>防犯登録番号</label>
+        <input type="text" id="bRegist">
+      </div>
+      <div class="field">
+        <label class="req">特徴（古物の特徴）</label>
+        <textarea id="bFeature" data-legal="feature" placeholder="例）前カゴあり・傷少々・22インチ 等"></textarea>
+      </div>
+    </section>
+
+    <!-- 金額 -->
+    <section class="card">
+      <h2>金額</h2>
+      <div class="row2">
+        <div class="field">
+          <label class="req">買取金額（円）</label>
+          <input type="number" id="amount" min="0" step="1" placeholder="例）8000">
+        </div>
+        <div class="field">
+          <label>支払方法</label>
+          <select id="payMethod">
+            <option value="現金">現金</option>
+            <option value="振込">振込</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- 誓約事項 -->
+    <section class="card">
+      <h2>誓約事項</h2>
+      <div class="checkbox-line">
+        <input type="checkbox" id="pledge">
+        <label for="pledge">本物品は盗品ではなく、正当な権原に基づき譲渡するものであることを確認しました。</label>
+      </div>
+    </section>
+
+    <!-- 未成年時のみ表示 -->
+    <section class="card" id="guardianCard" style="display:none;">
+      <h2>保護者情報（未成年）</h2>
+      <div class="minor-banner" id="minorBanner">⚠ 相手方は未成年です。保護者の情報・同意署名が必要です。</div>
+      <div class="row2">
+        <div class="field">
+          <label class="req">保護者氏名</label>
+          <input type="text" id="gName">
+        </div>
+        <div class="field">
+          <label class="req">続柄</label>
+          <input type="text" id="gRelation" placeholder="例）父・母">
+        </div>
+      </div>
+      <div class="field">
+        <label class="req">連絡先</label>
+        <input type="tel" id="gContact" inputmode="tel" placeholder="例）090-0000-0000">
+      </div>
+
+      <div class="field sig-wrap">
+        <label class="req">保護者同意署名</label>
+        <div class="sig-canvas-box">
+          <canvas id="sigGuardian"></canvas>
+          <div class="sig-placeholder" id="sigGuardianPh">ここに署名してください</div>
+        </div>
+        <div class="sig-actions">
+          <button type="button" class="btn btn-sm btn-ghost sig-clear" data-target="guardian">署名をクリア</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 譲渡人署名 -->
+    <section class="card">
+      <h2>譲渡人署名</h2>
+      <div class="field sig-wrap">
+        <label class="req">譲渡人（相手方）署名</label>
+        <div class="sig-canvas-box">
+          <canvas id="sigSeller"></canvas>
+          <div class="sig-placeholder" id="sigSellerPh">ここに署名してください</div>
+        </div>
+        <div class="sig-actions">
+          <button type="button" class="btn btn-sm btn-ghost sig-clear" data-target="seller">署名をクリア</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 検証結果 -->
+    <div id="validation" class="validation ng" style="display:none;"></div>
+
+    <!-- PDF出力（確定後に表示） -->
+    <section class="card output-panel" id="outputPanel">
+      <h2>PDF出力</h2>
+      <div class="stamp" id="confirmStamp"></div>
+      <div class="output-btns">
+        <button type="button" class="btn btn-ok btn-block" id="btnPdfCert">譲渡証明書 兼 代金受領書・委任状（PDF）</button>
+        <button type="button" class="btn btn-ok btn-block" id="btnPdfGuardian" style="display:none;">保護者同意書（PDF）</button>
+      </div>
+    </section>
+
+  </form>
+</main>
+
+<!-- 確定バー -->
+<div class="confirm-bar">
+  <div class="inner">
+    <button type="button" class="btn btn-primary" id="btnConfirm">署名を確定する</button>
+  </div>
+</div>
+
+<!-- 画面外A4テンプレート（html2canvasで画像化） -->
+<div class="a4-stage" aria-hidden="true">
+  <div class="a4-sheet" id="sheetCert"></div>
+  <div class="a4-sheet" id="sheetGuardian"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
