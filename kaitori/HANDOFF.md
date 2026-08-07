@@ -161,7 +161,13 @@ GASを新規プロジェクトとしてデプロイ済み、実機で 署名→�
 - **郵便番号→住所のオフライン対応**：日本郵便データから**北陸3県（石川・富山・福井）**を抽出し `kaitori/data/zip_hokuriku.json`（7,595件・約316KB／gzip約61KB）として同梱。lookupは「ローカル辞書優先（オフラインでも即時）→ 県外はオンライン時 zipcloud → オフライン＋県外は手入力」。全国同梱は数MBになるため北陸3県に限定（出張範囲をカバー）。
 - アイコン：`kaitori/icons/`（192/512/512-maskable）を `logo/profile-1080.png` から生成。
 - 実機確認：シークレットウィンドウ（http://localhost 配信）で、オフライン時にページ表示・北陸の住所検索が動作することを確認。
-- ⚠ **SW更新の注意**：`sw.js` を変更したら `CACHE` の版数を上げる（現在 `kaitori-v3`）。開発中にコード変更が反映されない時は、DevTools→Application→Service Workers→Unregister＋Clear site data、またはシークレットで確認。
+- ⚠ **SW更新の注意**：`sw.js` を変更したら `CACHE` の版数を上げる（現在 `kaitori-v4`）。開発中にコード変更が反映されない時は、DevTools→Application→Service Workers→Unregister＋Clear site data、またはシークレットで確認。**タブレット側は旧版キャッシュを持つため、修正反映にはオンラインで一度開き直す（PWAは一度閉じて再起動）必要がある。**
+
+**③-A-3：タブレットPDF崩れ修正＋確定の確認ダイアログ —— ✅ 実装・本番反映（2026-08-07）**
+実機フィードバック対応。
+- **PDF/PNG崩れ（タブレットで枠切れ・拡大）**：原因は html2canvas がモバイルで `position: fixed` 要素を可視ビューポート基準でズレて拡大キャプチャする不具合。`.a4-stage` を `fixed→absolute` にし、`renderSheet()` に `width/height/windowWidth/windowHeight/scrollX,Y:0/x,y:0` を実寸で明示して端末非依存に固定。PC(dpr1.5)・本番v4で canvas 1588×2246・A4比0.7070を確認。
+- **お客さまの誤タップ対策**：「署名を確定する」押下時に確認ダイアログ（`#confirmModal`）を表示。検証NG時は出さず、OKで `doConfirm()` が実処理（ロック＋台帳自動送信）。native `confirm()` ではなく自前モーダル。`onConfirm()`＝検証＋ダイアログ表示、`doConfirm()`＝実確定、に分離。
+- SWキャッシュ v3→v4。ライブ検証：確認ダイアログの表示/キャンセル/外側タップ、PDF寸法を本番URLで確認済み。**タブレット実機での最終確認（崩れ解消・ダイアログ動作）は要実施**。
 
 **③-A-2：台帳連携の設定を「端末保存」に変更 —— ✅ 実装済み（2026-08-07。ブラウザ実機の最終確認は未了）**
 ③-A末尾の「⚠未確定（デプロイ設計）：config.js にトークンを載せるとGitHub Pages公開ソースから読める」問題への対応。
