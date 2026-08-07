@@ -1,5 +1,2 @@
 .DS_Store
 Thumbs.db
-
-# 買取システム: GAS WebApp URL・トークンは非コミット（config.sample.js を複製して作る）
-kaitori/config.js

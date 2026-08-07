@@ -161,8 +161,17 @@ GASを新規プロジェクトとしてデプロイ済み、実機で 署名→�
 - **郵便番号→住所のオフライン対応**：日本郵便データから**北陸3県（石川・富山・福井）**を抽出し `kaitori/data/zip_hokuriku.json`（7,595件・約316KB／gzip約61KB）として同梱。lookupは「ローカル辞書優先（オフラインでも即時）→ 県外はオンライン時 zipcloud → オフライン＋県外は手入力」。全国同梱は数MBになるため北陸3県に限定（出張範囲をカバー）。
 - アイコン：`kaitori/icons/`（192/512/512-maskable）を `logo/profile-1080.png` から生成。
 - 実機確認：シークレットウィンドウ（http://localhost 配信）で、オフライン時にページ表示・北陸の住所検索が動作することを確認。
-- ⚠ **SW更新の注意**：`sw.js` を変更したら `CACHE` の版数を上げる（現在 `kaitori-v2`）。開発中にコード変更が反映されない時は、DevTools→Application→Service Workers→Unregister＋Clear site data、またはシークレットで確認。
-- ⚠ **未確定（デプロイ設計）**：`config.js` は非コミットのため、GitHub Pages公開版には載らない。タブレットで台帳送信を使うには「config.jsを載せる（=トークン公開）／端末ローカル配信／限定URL」等の配信方針を決める必要（セキュリティ注記参照）。
+- ⚠ **SW更新の注意**：`sw.js` を変更したら `CACHE` の版数を上げる（現在 `kaitori-v3`）。開発中にコード変更が反映されない時は、DevTools→Application→Service Workers→Unregister＋Clear site data、またはシークレットで確認。
+
+**③-A-2：台帳連携の設定を「端末保存」に変更 —— ✅ 実装済み（2026-08-07。ブラウザ実機の最終確認は未了）**
+③-A末尾の「⚠未確定（デプロイ設計）：config.js にトークンを載せるとGitHub Pages公開ソースから読める」問題への対応。
+**トークンを公開ソースに置かず、各端末で一度だけ入力してlocalStorageに保存する方式**にした。
+- `config.js` は**空の既定値だけ**の公開安全版にして**コミット対象に変更**（`.gitignore` から除外を解除、`config.sample.js` は役割を終えたので削除）。
+- 画面下部に `<details>` の「⚙ 台帳連携の設定（この端末に保存）」カードを追加（`index.html`）。GAS URL・トークンを入力→「この端末に保存」で `localStorage['rb_ledger_config']` に保存、「消去」で削除。
+- `app.js`：`loadConfig()` が **localStorage優先→無ければ config.js の既定**で `CFG` を解決。`saveLedgerConfig()`/`clearLedgerConfig()`/`showCfgStatus()` を追加し `init()` で配線。保存成功時に未送信キューがあれば `flushQueue()` を呼ぶ。未設定時の送信ステータス文言も設定カードへ誘導する内容に更新。
+- `style.css`：`.settings-card` のスタイル追加。`sw.js`：`CACHE` を `v2→v3`。`config.js` は `OPTIONAL`（404許容）のまま。
+- **効果**：GitHub Pages に公開してもソースにトークンが載らない。タブレット側は初回に設定カードで入力すれば以後は端末内に保持。→ ③-A末尾の「未確定（デプロイ設計）」は解消。
+- ⚠ **残**：ブラウザでの保存/消去の動作確認は環境要因（拡張が権限を持つローカルサーバのポート＝`127.0.0.1:8765` が旧セッションの別ルートサーバに占有されていた）で最終確認未了。curlでは設定カードを含むHTMLの配信を確認済み。実機タブレットでの初回設定→送信の確認が本来の最終確認。
 
 **③-B：印刷仕上げ —— ⏸ 保留（プリンター選定中）**
 - Wi-Fi Direct 経由で EW-052A へ印刷する導線（端末標準印刷 or EPSON Smart Panel 連携）。**使用プリンター未確定のため保留**。決まり次第着手。

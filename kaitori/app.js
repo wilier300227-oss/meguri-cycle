@@ -41,7 +41,8 @@ const els = {};
   'sigSeller','sigGuardian','sigSellerPh','sigGuardianPh',
   'validation','outputPanel','confirmStamp','btnConfirm',
   'btnPdfCert','btnPdfGuardian','btnImgCert','btnImgGuardian','sheetCert','sheetGuardian',
-  'syncBox','syncStatus','btnSyncRetry'
+  'syncBox','syncStatus','btnSyncRetry',
+  'cfgUrl','cfgToken','btnSaveCfg','btnClearCfg','cfgStatus'
 ].forEach(k => els[k] = $(k));
 
 /* =========================================================
@@ -717,10 +718,45 @@ async function generateGuardianImage() {
        確定後に PDF(base64) と取引データを GAS Web App へ送信。
        失敗時は localStorage キューに退避し、online復帰・起動時に再送。
    ========================================================= */
-const CFG = window.KAITORI_CONFIG || {};
 const QUEUE_KEY = 'rb_ledger_queue';
+const CFG_KEY = 'rb_ledger_config';  // 接続設定を「この端末」に保存（トークンを公開ソースに置かないため）
+
+/* 設定は localStorage（端末保存）を最優先し、無ければ config.js の既定を使う */
+function loadConfig() {
+  const f = window.KAITORI_CONFIG || {};
+  let ls = {};
+  try { ls = JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); } catch (e) {}
+  return {
+    gasUrl: (ls.gasUrl || f.gasUrl || '').trim(),
+    token: (ls.token || f.token || '').trim(),
+  };
+}
+let CFG = loadConfig();
 
 function ledgerConfigured() { return !!(CFG.gasUrl && CFG.token); }
+
+/* 「⚙ 台帳連携の設定」：この端末にURL・トークンを保存/消去 */
+function showCfgStatus() {
+  const ok = ledgerConfigured();
+  els.cfgStatus.textContent = ok
+    ? '✅ この端末で台帳連携が有効です。'
+    : '未設定：GAS URL とトークンを入れて保存すると、この端末で台帳連携が有効になります。';
+  els.cfgStatus.style.color = ok ? 'var(--ok)' : 'var(--muted)';
+}
+function saveLedgerConfig() {
+  const cfg = { gasUrl: els.cfgUrl.value.trim(), token: els.cfgToken.value.trim() };
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  CFG = loadConfig();
+  showCfgStatus();
+  if (ledgerConfigured() && readQueue().length) flushQueue(); // 設定できたら未送信分を送る
+}
+function clearLedgerConfig() {
+  localStorage.removeItem(CFG_KEY);
+  CFG = loadConfig();
+  els.cfgUrl.value = CFG.gasUrl;
+  els.cfgToken.value = CFG.token;
+  showCfgStatus();
+}
 
 /* 防犯登録名義人の平文（台帳セル用） */
 function registOwnerPlain() {
@@ -784,7 +820,7 @@ function setSyncStatus(kind, html) {
 async function enqueueAndSync() {
   if (!ledgerConfigured()) {
     setSyncStatus('pending',
-      '⚠ 台帳送信は未設定です（config.js 未設定）。この端末ではPDF・画像の保存のみ行えます。');
+      '⚠ 台帳送信はこの端末で未設定です。ページ下部の「⚙ 台帳連携の設定」でGAS URL・トークンを保存してください（PDF・画像の保存は可能）。');
     els.btnSyncRetry.style.display = 'none';
     return;
   }
@@ -911,6 +947,13 @@ function init() {
   els.btnImgCert.addEventListener('click', generateCertImage);
   els.btnImgGuardian.addEventListener('click', generateGuardianImage);
   els.btnSyncRetry.addEventListener('click', flushQueue);
+
+  // 台帳連携の設定（この端末に保存）
+  els.cfgUrl.value = CFG.gasUrl;
+  els.cfgToken.value = CFG.token;
+  showCfgStatus();
+  els.btnSaveCfg.addEventListener('click', saveLedgerConfig);
+  els.btnClearCfg.addEventListener('click', clearLedgerConfig);
 
   // 未送信キューがあれば起動時・通信復帰時に再送（現場でオフライン→復帰を想定）
   if (readQueue().length) { els.outputPanel.classList.add('show'); flushQueue(); }

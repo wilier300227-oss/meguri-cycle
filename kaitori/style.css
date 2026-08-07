@@ -265,6 +265,25 @@ main { max-width: 820px; margin: 0 auto; padding: 16px 14px 120px; }
 .sync-status.pending { background: #f8fafc; border: 1px solid var(--line); color: var(--muted); }
 .sync-status a { color: inherit; font-weight: 700; text-decoration: underline; }
 
+/* 台帳連携の設定（端末保存） */
+.settings-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin: 0 0 16px;
+}
+.settings-card > summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--muted);
+  list-style: none;
+}
+.settings-card > summary::-webkit-details-marker { display: none; }
+.settings-card[open] > summary { margin-bottom: 10px; color: var(--ink); }
+.settings-card .output-btns { grid-template-columns: 1fr auto; }
+
 /* ロック状態 */
 .form-locked input, .form-locked select, .form-locked textarea, .form-locked button.sig-clear {
   pointer-events: none;

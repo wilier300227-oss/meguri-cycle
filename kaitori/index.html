@@ -18,7 +18,7 @@
 <script src="vendor/signature_pad.umd.min.js"></script>
 <script src="vendor/jspdf.umd.min.js"></script>
 <script src="vendor/html2canvas.min.js"></script>
-<!-- フェーズ②: 接続設定（config.sample.js を複製した config.js。未作成なら台帳送信はスキップされPDF/画像のみ動く） -->
+<!-- 接続設定の既定値（公開安全＝空）。トークンは各端末の「⚙ 台帳連携の設定」からlocalStorageに保存する。未設定なら台帳送信はスキップされPDF/画像のみ動く -->
 <script src="config.js"></script>
 </head>
 <body>
@@ -442,6 +442,25 @@
       </div>
     </section>
   </form>
+
+  <!-- 台帳連携の設定（この端末に一度だけ保存。トークンを公開ソースに載せないための仕組み） -->
+  <details class="settings-card" id="ledgerSettings">
+    <summary>⚙ 台帳連携の設定（この端末に保存）</summary>
+    <p class="hint">この端末でだけ有効な設定です。ここで入れた値は端末内にのみ保存され、公開ページのソースには含まれません。</p>
+    <div class="field">
+      <label>GAS ウェブアプリURL</label>
+      <input type="url" id="cfgUrl" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec">
+    </div>
+    <div class="field">
+      <label>トークン</label>
+      <input type="text" id="cfgToken" placeholder="GASの KAITORI_TOKEN と同じ値">
+    </div>
+    <div class="output-btns">
+      <button type="button" class="btn btn-sm btn-primary" id="btnSaveCfg">この端末に保存</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="btnClearCfg">消去</button>
+    </div>
+    <p class="hint" id="cfgStatus"></p>
+  </details>
 </main>
 
 <!-- 確定バー -->
