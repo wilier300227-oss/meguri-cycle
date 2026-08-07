@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>出張買取 記入システム｜RAINBOW</title>
+<link rel="icon" type="image/png" href="../logo/favicon.png">
+<link rel="stylesheet" href="style.css">
+<!-- フェーズ③: PWA（オフライン対応） -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<!-- フェーズ③: ライブラリはローカル同梱（vendoring）。オフラインでも署名・PDF生成が動く -->
+<script src="vendor/signature_pad.umd.min.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/html2canvas.min.js"></script>
+<!-- 接続設定の既定値（公開安全＝空）。トークンは各端末の「⚙ 台帳連携の設定」からlocalStorageに保存する。未設定なら台帳送信はスキップされPDF/画像のみ動く -->
+<script src="config.js"></script>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>出張買取 記入システム</h1>
+  <p class="sub">屋号 RAINBOW／めぐり自転車　— タブレット完結記入</p>
+  <p class="license">古物商許可番号 第511090015059号（石川県公安委員会）</p>
+</header>
+
+<main>
+  <form id="kaitoriForm" autocomplete="off" novalidate>
+
+
+    <div class="section-divider">
+      <span class="sd-title">事業者記入欄</span>
+      <span class="sd-note">お客さまにお渡しする前に入力します</span>
+    </div>
+
+    <!-- 取引情報 -->
+    <section class="card">
+      <h2>取引情報</h2>
+      <div class="row2">
+        <div class="field">
+          <label>取引番号</label>
+          <input type="text" id="tradeNo" readonly>
+        </div>
+        <div class="field">
+          <label class="req">取引年月日</label>
+          <input type="date" id="tradeDate" data-legal="date">
+        </div>
+      </div>
+      <div class="field">
+        <label>取引区分</label>
+        <select id="tradeType">
+          <option value="買取">買取</option>
+          <option value="引取">引取</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- 対象自転車 -->
+    <section class="card">
+      <h2>対象自転車（古物）</h2>
+      <div class="row2">
+        <div class="field">
+          <label class="req">品目</label>
+          <input type="text" id="bItem" data-legal="goods" value="自転車">
+        </div>
+        <div class="field">
+          <label class="req">数量</label>
+          <input type="number" id="bQty" data-legal="goods" min="1" step="1" value="1">
+        </div>
+      </div>
+      <div class="field">
+        <label>メーカー</label>
+        <select id="bMaker">
+          <option value="">選択してください</option>
+          <option value="あさひ">あさひ</option>
+          <option value="アンカー">アンカー</option>
+          <option value="イオンバイク">イオンバイク</option>
+          <option value="キャノンデール">キャノンデール</option>
+          <option value="コルナゴ">コルナゴ</option>
+          <option value="サカモトテクノ">サカモトテクノ</option>
+          <option value="シボレー">シボレー</option>
+          <option value="ジャイアント">ジャイアント</option>
+          <option value="スペシャライズド">スペシャライズド</option>
+          <option value="ダホン">ダホン</option>
+          <option value="トレック">トレック</option>
+          <option value="ドッペルギャンガー">ドッペルギャンガー</option>
+          <option value="ナショナル">ナショナル</option>
+          <option value="ネスト">ネスト</option>
+          <option value="ハマー">ハマー</option>
+          <option value="パナソニック">パナソニック</option>
+          <option value="ビアンキ">ビアンキ</option>
+          <option value="ブリヂストン">ブリヂストン</option>
+          <option value="ブロンプトン">ブロンプトン</option>
+          <option value="ホダカ">ホダカ</option>
+          <option value="丸石サイクル">丸石サイクル</option>
+          <option value="マルキン自転車">マルキン自転車</option>
+          <option value="ミヤタ">ミヤタ</option>
+          <option value="メリダ">メリダ</option>
+          <option value="ヤマハ">ヤマハ</option>
+          <option value="ライトウェイ">ライトウェイ</option>
+          <option value="ルイガノ">ルイガノ</option>
+          <option value="不明・ノーブランド">不明・ノーブランド</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <div class="field" id="bMakerOtherField" style="display:none;">
+        <label>メーカー（その他）</label>
+        <input type="text" id="bMakerOther" placeholder="例）キャノンデール">
+      </div>
+      <div class="field">
+        <label>車種</label>
+        <select id="bModel">
+          <option value="">選択してください</option>
+          <option value="シティサイクル（ママチャリ）">シティサイクル（ママチャリ）</option>
+          <option value="電動アシスト自転車">電動アシスト自転車</option>
+          <option value="子供用自転車">子供用自転車</option>
+          <option value="クロスバイク">クロスバイク</option>
+          <option value="ロードバイク">ロードバイク</option>
+          <option value="マウンテンバイク">マウンテンバイク</option>
+          <option value="折りたたみ自転車">折りたたみ自転車</option>
+          <option value="ミニベロ（小径車）">ミニベロ（小径車）</option>
+          <option value="三輪自転車">三輪自転車</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <div class="field" id="bModelOtherField" style="display:none;">
+        <label>車種（その他）</label>
+        <input type="text" id="bModelOther" placeholder="例）リカンベント">
+      </div>
+      <div class="field">
+        <label>色</label>
+        <select id="bColor">
+          <option value="">選択してください</option>
+          <option value="白">白</option>
+          <option value="黒">黒</option>
+          <option value="シルバー">シルバー</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <div class="field" id="bColorOtherField" style="display:none;">
+        <label>色（その他）</label>
+        <input type="text" id="bColorOther" placeholder="例）ツートン（白／青）">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>フレーム番号</label>
+          <input type="text" id="bFrame">
+        </div>
+        <div class="field">
+          <label>防犯登録番号</label>
+          <input type="text" id="bRegist">
+        </div>
+      </div>
+      <div class="field">
+        <label>付属品 <span class="hint">（受け取ったものにチェック）</span></label>
+        <div class="acc-list">
+          <div class="checkbox-line">
+            <input type="checkbox" id="accKey">
+            <label for="accKey">鍵</label>
+            <span class="acc-count" id="accKeyCountWrap" style="display:none;">
+              <input type="number" id="accKeyCount" min="1" step="1" value="1"> 本
+            </span>
+          </div>
+          <div class="checkbox-line">
+            <input type="checkbox" id="accBattery"><label for="accBattery">バッテリー</label>
+          </div>
+          <div class="checkbox-line">
+            <input type="checkbox" id="accCharger"><label for="accCharger">充電器</label>
+          </div>
+          <div class="checkbox-line">
+            <input type="checkbox" id="accManual"><label for="accManual">取扱説明書</label>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label><span class="req">特徴（古物の特徴）</span> <span class="hint">（上の選択から自動で入ります。傷など気づいた点は追記してください）</span></label>
+        <textarea id="bFeature" data-legal="feature" placeholder="例）前カゴあり・傷少々・22インチ 等"></textarea>
+        <div class="sig-actions">
+          <button type="button" class="btn btn-sm btn-ghost" id="btnFeatureAuto">選択内容から自動入力し直す</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 金額 -->
+    <section class="card">
+      <h2>金額</h2>
+      <div class="row2">
+        <div class="field">
+          <label class="req">買取金額（円）</label>
+          <input type="number" id="amount" min="0" step="1" placeholder="例）8000">
+        </div>
+        <div class="field">
+          <label>支払方法</label>
+          <select id="payMethod">
+            <option value="現金">現金</option>
+            <option value="振込">振込</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- 本人確認 -->
+    <section class="card">
+      <h2>本人確認</h2>
+      <div class="field">
+        <label class="req">確認区分</label>
+        <select id="idType" data-legal="idmethod">
+          <option value="">選択してください</option>
+          <option value="運転免許証">運転免許証</option>
+          <option value="マイナンバーカード">マイナンバーカード</option>
+          <option value="健康保険証＋補完書類">健康保険証＋補完書類</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <!-- 運転免許証を選んだ時だけ表示（番号を書き写せる区分のみ） -->
+      <div id="licenseFields" style="display:none;">
+        <div class="field">
+          <label>公安委員会名</label>
+          <select id="licenseAuthority">
+            <option value="石川県公安委員会">石川県公安委員会</option>
+            <option value="富山県公安委員会">富山県公安委員会</option>
+            <option value="福井県公安委員会">福井県公安委員会</option>
+            <option value="その他">その他（他県の免許）</option>
+          </select>
+        </div>
+        <div class="field" id="licenseAuthorityOtherField" style="display:none;">
+          <label>公安委員会名（その他）</label>
+          <input type="text" id="licenseAuthorityOther" placeholder="例）東京都公安委員会">
+        </div>
+        <div class="field">
+          <label>免許証番号 <span class="hint">（数字12桁のみ。「第」「号」は不要）</span></label>
+          <input type="text" id="licenseNumber" inputmode="numeric" maxlength="12" placeholder="例）123456789012">
+        </div>
+      </div>
+      <p class="hint" id="idNote" style="display:none;"></p>
+    </section>
+
+    <div class="section-divider">
+      <span class="sd-title">お客さま記入欄</span>
+      <span class="sd-note">ここから下をお客さまにご記入いただきます</span>
+    </div>
+
+    <!-- 相手方情報（法定） -->
+    <section class="card">
+      <h2>相手方情報（法定）</h2>
+      <div class="field">
+        <label class="req">氏名</label>
+        <input type="text" id="pName" data-legal="party" placeholder="例）山田 太郎">
+      </div>
+      <div class="field">
+        <label>郵便番号 <span class="hint">（7桁を入れると住所が自動で入ります）</span></label>
+        <div class="zip-row">
+          <input type="text" id="pZip" inputmode="numeric" maxlength="8" placeholder="例）9200962">
+          <button type="button" class="btn btn-sm btn-ghost" id="btnZip">住所検索</button>
+        </div>
+        <p class="hint" id="zipNote" style="display:none;"></p>
+      </div>
+      <div class="field">
+        <label><span class="req">住所</span> <span class="hint">（番地・建物名は手入力）</span></label>
+        <input type="text" id="pAddress" data-legal="party" placeholder="例）石川県金沢市広坂1-2-3">
+      </div>
+      <div class="field">
+        <label class="req">電話番号</label>
+        <input type="tel" id="pTel" inputmode="tel" placeholder="例）090-0000-0000">
+      </div>
+      <div class="field">
+        <label class="req">職業</label>
+        <select id="pJob" data-legal="party">
+          <option value="">選択してください</option>
+          <option value="会社員（正社員）">会社員（正社員）</option>
+          <option value="契約社員・派遣社員">契約社員・派遣社員</option>
+          <option value="パート・アルバイト">パート・アルバイト</option>
+          <option value="自営業">自営業</option>
+          <option value="会社役員">会社役員</option>
+          <option value="公務員">公務員</option>
+          <option value="学生">学生</option>
+          <option value="主婦・主夫">主婦・主夫</option>
+          <option value="年金受給者">年金受給者</option>
+          <option value="無職">無職</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <div class="field" id="pJobOtherField" style="display:none;">
+        <label class="req">職業（その他の内容）</label>
+        <input type="text" id="pJobOther" placeholder="例）農業">
+      </div>
+      <div class="field">
+        <label><span class="req">生年月日</span> <span class="hint">（年 → 月 → 日 の順に選択）</span></label>
+        <div class="birth-row">
+          <select id="pBirthY" class="birth-y"></select><span class="unit">年</span>
+          <select id="pBirthM" class="birth-md"></select><span class="unit">月</span>
+          <select id="pBirthD" class="birth-md"></select><span class="unit">日</span>
+        </div>
+        <!-- 既存ロジック互換のため YYYY-MM-DD をここに保持 -->
+        <input type="hidden" id="pBirth" data-legal="party">
+      </div>
+      <div class="field">
+        <label>年齢（自動算出）</label>
+        <div><span class="computed" id="pAgeView">—</span></div>
+      </div>
+    </section>
+
+    <!-- 誓約事項 -->
+    <section class="card">
+      <h2>誓約事項</h2>
+      <div class="checkbox-line">
+        <input type="checkbox" id="pledge">
+        <label for="pledge">本物品は盗品・遺失物・不法投棄品ではなく、正当な権原に基づき譲渡するものであることを確認しました。</label>
+      </div>
+      <div class="checkbox-line">
+        <input type="checkbox" id="pledgeCorp">
+        <label for="pledgeCorp">会社・法人名義の自転車ではありません。</label>
+      </div>
+
+      <div class="field">
+        <label class="req">防犯登録の名義人</label>
+        <select id="registOwner">
+          <option value="">選択してください</option>
+          <option value="本人">本人（譲渡人と同じ）</option>
+          <option value="本人以外">本人以外</option>
+          <option value="登録なし・不明">防犯登録なし・不明</option>
+        </select>
+      </div>
+      <div id="registOwnerFields" style="display:none;">
+        <div class="minor-banner">⚠ 名義人がご本人でない場合は、名義人の情報と同意の確認が必要です。</div>
+        <div class="row2">
+          <div class="field">
+            <label class="req">名義人氏名</label>
+            <input type="text" id="registOwnerName" placeholder="例）山田 花子">
+          </div>
+          <div class="field">
+            <label class="req">続柄</label>
+            <input type="text" id="registOwnerRelation" placeholder="例）妻・子">
+          </div>
+        </div>
+        <div class="checkbox-line">
+          <input type="checkbox" id="registOwnerConsent">
+          <label for="registOwnerConsent">名義人本人の同意を得ています。</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 未成年時のみ表示 -->
+    <section class="card" id="guardianCard" style="display:none;">
+      <h2>保護者情報（未成年）</h2>
+      <div class="minor-banner" id="minorBanner">⚠ 相手方は未成年です。保護者の情報・同意署名が必要です。</div>
+      <div class="row2">
+        <div class="field">
+          <label class="req">保護者氏名</label>
+          <input type="text" id="gName">
+        </div>
+        <div class="field">
+          <label class="req">続柄</label>
+          <select id="gRelation">
+            <option value="">選択してください</option>
+            <option value="父">父</option>
+            <option value="母">母</option>
+            <option value="祖父">祖父</option>
+            <option value="祖母">祖母</option>
+            <option value="兄弟">兄弟</option>
+            <option value="その他">その他</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="gRelationOtherField" style="display:none;">
+        <label class="req">続柄（その他）</label>
+        <input type="text" id="gRelationOther" placeholder="例）未成年後見人">
+      </div>
+      <div class="field">
+        <label class="req">連絡先</label>
+        <input type="tel" id="gContact" inputmode="tel" placeholder="例）090-0000-0000">
+      </div>
+      <div class="field">
+        <label class="req">保護者の住所</label>
+        <input type="text" id="gAddress" placeholder="例）石川県小松市○○町4-5-6">
+        <div class="sig-actions">
+          <button type="button" class="btn btn-sm btn-ghost" id="btnGuardianSameAddr">未成年者と同じ住所を入れる</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="req">保護者の本人確認</label>
+        <select id="gIdMethod">
+          <option value="">選択してください</option>
+          <option value="本人確認書類の写しを事前に提出済み">本人確認書類の写しを事前に提出済み</option>
+          <option value="現地で保護者ご本人に同行いただき原本を確認">現地で保護者ご本人に同行いただき原本を確認</option>
+        </select>
+      </div>
+
+      <div class="field sig-wrap">
+        <label class="req">保護者同意署名</label>
+        <div class="sig-canvas-box">
+          <canvas id="sigGuardian"></canvas>
+          <div class="sig-placeholder" id="sigGuardianPh">ここに署名してください</div>
+        </div>
+        <div class="sig-actions">
+          <button type="button" class="btn btn-sm btn-ghost sig-clear" data-target="guardian">署名をクリア</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 譲渡人署名 -->
+    <section class="card">
+      <h2>譲渡人署名</h2>
+      <div class="field sig-wrap">
+        <label class="req">譲渡人（相手方）署名</label>
+        <div class="sig-canvas-box">
+          <canvas id="sigSeller"></canvas>
+          <div class="sig-placeholder" id="sigSellerPh">ここに署名してください</div>
+        </div>
+        <div class="sig-actions">
+          <button type="button" class="btn btn-sm btn-ghost sig-clear" data-target="seller">署名をクリア</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 検証結果 -->
+    <div id="validation" class="validation ng" style="display:none;"></div>
+
+    <!-- PDF出力（確定後に表示） -->
+    <section class="card output-panel" id="outputPanel">
+      <h2>PDF出力</h2>
+      <div class="stamp" id="confirmStamp"></div>
+      <div class="output-btns">
+        <button type="button" class="btn btn-ok btn-block" id="btnPdfCert">譲渡証明書 兼 代金受領書・委任状（PDF）</button>
+        <button type="button" class="btn btn-ok btn-block" id="btnPdfGuardian" style="display:none;">保護者同意書（PDF）</button>
+      </div>
+      <p class="hint out-hint">お客さまへLINEで送る場合は、下の画像で保存すると公式アカウントのチャットからそのまま送れます。</p>
+      <div class="output-btns">
+        <button type="button" class="btn btn-sm btn-ghost btn-block" id="btnImgCert">譲渡証明書を画像（PNG）で保存</button>
+        <button type="button" class="btn btn-sm btn-ghost btn-block" id="btnImgGuardian" style="display:none;">保護者同意書を画像（PNG）で保存</button>
+      </div>
+
+      <!-- フェーズ②: 台帳・Drive保存の状態 -->
+      <div class="sync-box" id="syncBox" style="display:none;">
+        <div class="sync-status" id="syncStatus"></div>
+        <button type="button" class="btn btn-sm btn-ghost" id="btnSyncRetry" style="display:none;">台帳へ再送する</button>
+      </div>
+    </section>
+  </form>
+
+  <!-- 台帳連携の設定（この端末に一度だけ保存。トークンを公開ソースに載せないための仕組み） -->
+  <details class="settings-card" id="ledgerSettings">
+    <summary>⚙ 台帳連携の設定（この端末に保存）</summary>
+    <p class="hint">この端末でだけ有効な設定です。ここで入れた値は端末内にのみ保存され、公開ページのソースには含まれません。</p>
+    <div class="field">
+      <label>GAS ウェブアプリURL</label>
+      <input type="url" id="cfgUrl" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec">
+    </div>
+    <div class="field">
+      <label>トークン</label>
+      <input type="text" id="cfgToken" placeholder="GASの KAITORI_TOKEN と同じ値">
+    </div>
+    <div class="output-btns">
+      <button type="button" class="btn btn-sm btn-primary" id="btnSaveCfg">この端末に保存</button>
+      <button type="button" class="btn btn-sm btn-ghost" id="btnClearCfg">消去</button>
+    </div>
+    <p class="hint" id="cfgStatus"></p>
+  </details>
+</main>
+
+<!-- 確定バー -->
+<div class="confirm-bar">
+  <div class="inner">
+    <button type="button" class="btn btn-primary" id="btnConfirm">署名を確定する</button>
+  </div>
+</div>
+
+<!-- 画面外A4テンプレート（html2canvasで画像化） -->
+<div class="a4-stage" aria-hidden="true">
+  <div class="a4-sheet" id="sheetCert"></div>
+  <div class="a4-sheet" id="sheetGuardian"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
