@@ -210,11 +210,24 @@ function licenseNumberText() {
 
 /* =========================================================
    5. 郵便番号 → 住所 自動入力
-      ※ 外部API（zipcloud）を使うためオンライン時のみ。
-        失敗しても手入力を妨げない（住所欄は常に編集可）。
-        フェーズ③のオフライン化では住所データのローカル同梱に置き換える。
+      北陸3県（石川・富山・福井）は端末同梱データで【オフラインでも】即時。
+      県外は zipcloud API（全国対応・オンライン時のみ）にフォールバック。
+      いずれも失敗しても手入力を妨げない（住所欄は常に編集可）。
    ========================================================= */
 const ZIP_API = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode=';
+
+let ZIP_LOCAL = null;          // 北陸3県のローカル辞書（初回検索時に遅延ロード）
+let zipLocalLoading = null;
+function loadLocalZip() {
+  if (ZIP_LOCAL) return Promise.resolve(ZIP_LOCAL);
+  if (!zipLocalLoading) {
+    zipLocalLoading = fetch('data/zip_hokuriku.json')
+      .then(r => r.ok ? r.json() : {})
+      .then(j => (ZIP_LOCAL = j))
+      .catch(() => (ZIP_LOCAL = {}));
+  }
+  return zipLocalLoading;
+}
 
 function zipDigits() { return els.pZip.value.replace(/\D/g, ''); }
 
@@ -222,6 +235,18 @@ function showZipNote(msg, isError) {
   els.zipNote.style.display = msg ? '' : 'none';
   els.zipNote.textContent = msg || '';
   els.zipNote.style.color = isError ? 'var(--danger)' : 'var(--muted)';
+}
+
+/* 取得した住所を欄へ反映（入力済みなら上書きせず候補提示） */
+function applyZipResult(base) {
+  if (els.pAddress.value.trim() && !els.pAddress.value.startsWith(base)) {
+    showZipNote(`候補：${base}（住所欄に入力済みのため自動反映していません）`, true);
+    return;
+  }
+  if (!els.pAddress.value.trim()) els.pAddress.value = base;
+  showZipNote('住所を入力しました。続けて番地・建物名を入力してください。', false);
+  els.pAddress.focus();
+  runValidation();
 }
 
 async function lookupZip(auto) {
@@ -232,27 +257,27 @@ async function lookupZip(auto) {
     return;
   }
   showZipNote('住所を検索中…', false);
-  try {
-    const res = await fetch(ZIP_API + zip);
-    const json = await res.json();
-    const hit = json.results && json.results[0];
-    if (!hit) {
+
+  // 1) 北陸3県のローカル辞書（オフラインでも即時）
+  const local = await loadLocalZip();
+  if (local && local[zip]) { applyZipResult(local[zip]); return; }
+
+  // 2) 県外は全国対応の zipcloud（オンライン時のみ）
+  if (navigator.onLine) {
+    try {
+      const res = await fetch(ZIP_API + zip);
+      const json = await res.json();
+      const hit = json.results && json.results[0];
+      if (hit) { applyZipResult(`${hit.address1}${hit.address2}${hit.address3}`); return; }
       showZipNote('該当する住所が見つかりませんでした。住所は手入力してください。', true);
       return;
+    } catch (e) {
+      // ネットワーク不通 → 下の手入力案内へ
     }
-    const base = `${hit.address1}${hit.address2}${hit.address3}`;
-    // すでに入力済みなら上書きせず確認を促す（番地を消さないため）
-    if (els.pAddress.value.trim() && !els.pAddress.value.startsWith(base)) {
-      showZipNote(`候補：${base}（住所欄に入力済みのため自動反映していません）`, true);
-      return;
-    }
-    if (!els.pAddress.value.trim()) els.pAddress.value = base;
-    showZipNote('住所を入力しました。続けて番地・建物名を入力してください。', false);
-    els.pAddress.focus();
-    runValidation();
-  } catch (e) {
-    showZipNote('住所検索に失敗しました（オフラインの可能性）。住所は手入力してください。', true);
   }
+
+  // 3) オフライン かつ 北陸3県外
+  showZipNote('オフラインのため県外の住所は自動入力できません。住所は手入力してください。', true);
 }
 
 /* ---- 付属品（電動アシストのバッテリー・充電器の有無は後日トラブルになりやすい） ---- */
@@ -895,3 +920,11 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+/* Service Worker 登録（フェーズ③ オフライン対応）。
+   file:// では動かないため（http/https のときだけ）登録する。 */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch((e) => console.warn('SW登録失敗:', e));
+  });
+}

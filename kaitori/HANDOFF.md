@@ -153,8 +153,19 @@ GASを新規プロジェクトとしてデプロイ済み、実機で 署名→�
 **別PCでの落とし穴（今回発生）**：ローカルが古いまま作業すると、GitHub上の最新（プルダウン等）を取りこぼす。**作業前に必ず `git fetch && git status` で origin と同期を確認すること。**
 
 ### フェーズ③：PWAオフライン対応・印刷仕上げ
-- `manifest.json`＋Service Worker で PWA化・オフライン完結、復帰時に自動同期（ローカルキュー）。CDNライブラリはこの段階でローカルへ取り込み（vendoring）してオフライン化。
-- Wi-Fi Direct 経由で EW-052A へ印刷する導線（端末標準印刷 or EPSON Smart Panel 連携）。端末単独に残さない設計を最終確認。
+
+**③-A：PWA化＋オフライン化 —— ✅ 実装・動作確認済み（2026-08-07）**
+- `manifest.json`＋`sw.js`（Service Worker）で PWA化。アプリシェル（HTML/JS/CSS/ライブラリ/アイコン/北陸住所データ）をキャッシュし、**オフラインで 入力→署名→PDF/画像生成 まで完結**。
+- CDNライブラリを `kaitori/vendor/` にローカル同梱（vendoring）：signature_pad 4.1.7 / jsPDF 2.5.1 / html2canvas 1.4.1。index.html はvendor参照に変更。
+- 台帳・Drive送信（GAS）はオンライン時のみ。オフライン中は localStorage キューに退避し、**`online` 復帰時に自動再送**（フェーズ②の flushQueue を活用）。SWは別オリジン（GAS/zipcloud）を素通しさせオフライン時は自然に失敗→フォールバック。
+- **郵便番号→住所のオフライン対応**：日本郵便データから**北陸3県（石川・富山・福井）**を抽出し `kaitori/data/zip_hokuriku.json`（7,595件・約316KB／gzip約61KB）として同梱。lookupは「ローカル辞書優先（オフラインでも即時）→ 県外はオンライン時 zipcloud → オフライン＋県外は手入力」。全国同梱は数MBになるため北陸3県に限定（出張範囲をカバー）。
+- アイコン：`kaitori/icons/`（192/512/512-maskable）を `logo/profile-1080.png` から生成。
+- 実機確認：シークレットウィンドウ（http://localhost 配信）で、オフライン時にページ表示・北陸の住所検索が動作することを確認。
+- ⚠ **SW更新の注意**：`sw.js` を変更したら `CACHE` の版数を上げる（現在 `kaitori-v2`）。開発中にコード変更が反映されない時は、DevTools→Application→Service Workers→Unregister＋Clear site data、またはシークレットで確認。
+- ⚠ **未確定（デプロイ設計）**：`config.js` は非コミットのため、GitHub Pages公開版には載らない。タブレットで台帳送信を使うには「config.jsを載せる（=トークン公開）／端末ローカル配信／限定URL」等の配信方針を決める必要（セキュリティ注記参照）。
+
+**③-B：印刷仕上げ —— ⏸ 保留（プリンター選定中）**
+- Wi-Fi Direct 経由で EW-052A へ印刷する導線（端末標準印刷 or EPSON Smart Panel 連携）。**使用プリンター未確定のため保留**。決まり次第着手。
 
 ### 最後（フェーズ③後）
 - セットアップ手順書（GASデプロイ / 端末インストール / 印刷設定 / 台帳初期ヘッダー）。
