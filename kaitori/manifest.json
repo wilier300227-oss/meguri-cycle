@@ -1,6 +1,6 @@
 {
-  "name": "出張買取 記入システム｜RAINBOW",
-  "short_name": "買取記入",
+  "name": "めぐり自転車フォーム",
+  "short_name": "めぐり自転車フォーム",
   "description": "めぐり自転車 出張買取の現場記入・署名・PDF生成（オフライン対応）",
   "start_url": "./",
   "scope": "./",
