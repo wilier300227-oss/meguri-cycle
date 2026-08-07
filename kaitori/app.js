@@ -42,7 +42,8 @@ const els = {};
   'validation','outputPanel','confirmStamp','btnConfirm',
   'btnPdfCert','btnPdfGuardian','btnImgCert','btnImgGuardian','sheetCert','sheetGuardian',
   'syncBox','syncStatus','btnSyncRetry',
-  'cfgUrl','cfgToken','btnSaveCfg','btnClearCfg','cfgStatus'
+  'cfgUrl','cfgToken','btnSaveCfg','btnClearCfg','cfgStatus',
+  'confirmModal','btnConfirmYes','btnConfirmCancel'
 ].forEach(k => els[k] = $(k));
 
 /* =========================================================
@@ -471,8 +472,15 @@ function lockForm() {
   if (sigGuardian) sigGuardian.off();
 }
 
+/* 確定ボタン押下：まず検証し、OKなら確認ダイアログを出す（お客さまの誤タップで
+   即ロック＆台帳登録されるのを防ぐ）。実際の確定処理は doConfirm()。 */
 function onConfirm() {
   if (!runValidation()) return;
+  els.confirmModal.hidden = false;
+}
+
+function doConfirm() {
+  els.confirmModal.hidden = true;
   confirmedAt = new Date().toISOString();
   commitTradeNo();
   lockForm();
@@ -649,7 +657,23 @@ function docFileName(kind, ext) {
 }
 
 async function renderSheet(sheetEl) {
-  return html2canvas(sheetEl, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+  // 端末（タブレット）でズレ・拡大が起きないよう、取り込み範囲とウィンドウ寸法をシート実寸で固定する。
+  // scrollX/Y=0・x/y=0 でスクロールや画面外配置(left:-9999px)の影響を受けないようにする。
+  const w = sheetEl.offsetWidth;   // 794（A4幅@96dpi）
+  const h = sheetEl.offsetHeight;  // 1123（A4高@96dpi）
+  return html2canvas(sheetEl, {
+    scale: 2,
+    backgroundColor: '#ffffff',
+    useCORS: true,
+    width: w,
+    height: h,
+    windowWidth: w,
+    windowHeight: h,
+    scrollX: 0,
+    scrollY: 0,
+    x: 0,
+    y: 0,
+  });
 }
 
 /* 画像（PNG）保存。LINE公式アカウントのチャットは画像送信が確実なため、
@@ -942,6 +966,10 @@ function init() {
     .forEach(el => { el.addEventListener('input', runValidation); el.addEventListener('change', runValidation); });
 
   els.btnConfirm.addEventListener('click', onConfirm);
+  // 確定の確認ダイアログ
+  els.btnConfirmYes.addEventListener('click', doConfirm);
+  els.btnConfirmCancel.addEventListener('click', () => { els.confirmModal.hidden = true; });
+  els.confirmModal.addEventListener('click', (e) => { if (e.target === els.confirmModal) els.confirmModal.hidden = true; });
   els.btnPdfCert.addEventListener('click', generateCertPdf);
   els.btnPdfGuardian.addEventListener('click', generateGuardianPdf);
   els.btnImgCert.addEventListener('click', generateCertImage);

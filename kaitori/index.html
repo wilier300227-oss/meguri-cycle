@@ -476,6 +476,18 @@
   <div class="a4-sheet" id="sheetGuardian"></div>
 </div>
 
+<!-- 確定の確認ダイアログ（お客さまの誤タップ防止） -->
+<div class="modal-overlay" id="confirmModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <h3 id="confirmModalTitle">この内容で確定します</h3>
+    <p><b>事業者の方がご確認ください。</b><br>確定するとフォームがロックされ、内容が台帳に登録されます。この操作は元に戻せません。</p>
+    <div class="modal-btns">
+      <button type="button" class="btn btn-ghost" id="btnConfirmCancel">キャンセル</button>
+      <button type="button" class="btn btn-ok" id="btnConfirmYes">確定する</button>
+    </div>
+  </div>
+</div>
+
 <script src="app.js"></script>
 </body>
 </html>
