@@ -11,6 +11,8 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<!-- フェーズ②: 接続設定（config.sample.js を複製した config.js。未作成なら台帳送信はスキップされPDF/画像のみ動く） -->
+<script src="config.js"></script>
 </head>
 <body>
 
@@ -256,7 +258,7 @@
         <input type="text" id="pAddress" data-legal="party" placeholder="例）石川県金沢市広坂1-2-3">
       </div>
       <div class="field">
-        <label><span class="req">電話番号</span> <span class="hint">（記入内容の確認でご連絡する場合があります）</span></label>
+        <label class="req">電話番号</label>
         <input type="tel" id="pTel" inputmode="tel" placeholder="例）090-0000-0000">
       </div>
       <div class="field">
@@ -424,6 +426,12 @@
       <div class="output-btns">
         <button type="button" class="btn btn-sm btn-ghost btn-block" id="btnImgCert">譲渡証明書を画像（PNG）で保存</button>
         <button type="button" class="btn btn-sm btn-ghost btn-block" id="btnImgGuardian" style="display:none;">保護者同意書を画像（PNG）で保存</button>
+      </div>
+
+      <!-- フェーズ②: 台帳・Drive保存の状態 -->
+      <div class="sync-box" id="syncBox" style="display:none;">
+        <div class="sync-status" id="syncStatus"></div>
+        <button type="button" class="btn btn-sm btn-ghost" id="btnSyncRetry" style="display:none;">台帳へ再送する</button>
       </div>
     </section>
   </form>

@@ -40,7 +40,8 @@ const els = {};
   'gContact','gAddress','btnGuardianSameAddr','gIdMethod',
   'sigSeller','sigGuardian','sigSellerPh','sigGuardianPh',
   'validation','outputPanel','confirmStamp','btnConfirm',
-  'btnPdfCert','btnPdfGuardian','btnImgCert','btnImgGuardian','sheetCert','sheetGuardian'
+  'btnPdfCert','btnPdfGuardian','btnImgCert','btnImgGuardian','sheetCert','sheetGuardian',
+  'syncBox','syncStatus','btnSyncRetry'
 ].forEach(k => els[k] = $(k));
 
 /* =========================================================
@@ -464,6 +465,9 @@ function onConfirm() {
   els.outputPanel.classList.add('show');
   els.validation.style.display = 'none';
   els.outputPanel.scrollIntoView({ behavior: 'smooth' });
+
+  // 台帳・Drive へ非同期送信（PDF/画像ボタンとは独立して自動実行）
+  enqueueAndSync();
 }
 
 /* =========================================================
@@ -517,7 +521,7 @@ function buildCertSheet() {
       <tr><th>住所</th><td>${esc(els.pAddress.value)}</td></tr>
       <tr><th>電話番号</th><td>${esc(els.pTel.value)}</td></tr>
       <tr><th>職業</th><td>${esc(pick('pJob'))}</td></tr>
-      <tr><th>生年月日 / 年齢</th><td>${esc(els.pBirth.value)}${age!==null?`　（${age}歳）`:''}</td></tr>
+      <tr><th>生年月日 / 年齢</th><td>${esc(els.pBirth.value)}${age!==null?`<span class="age-badge">（${age}歳）</span>`:''}</td></tr>
       <tr><th>本人確認方法</th><td>${idMethodText()}</td></tr>
     </table>
 
@@ -566,7 +570,7 @@ function buildGuardianSheet() {
     <div class="sec-title">未成年者</div>
     <table class="kv">
       <tr><th>氏名</th><td>${esc(els.pName.value)}</td></tr>
-      <tr><th>生年月日 / 年齢</th><td>${esc(els.pBirth.value)}${age!==null?`　（${age}歳）`:''}</td></tr>
+      <tr><th>生年月日 / 年齢</th><td>${esc(els.pBirth.value)}${age!==null?`<span class="age-badge">（${age}歳）</span>`:''}</td></tr>
       <tr><th>住所</th><td>${esc(els.pAddress.value)}</td></tr>
     </table>
 
@@ -650,6 +654,18 @@ async function sheetToPdf(sheetEl, filename) {
   pdf.save(filename);
 }
 
+/* Drive送信用: シート → PDFのbase64（データURIの先頭を除去）。sheetToPdf と同じ体裁で1枚に収める */
+async function sheetToPdfBase64(sheetEl) {
+  const canvas = await renderSheet(sheetEl);
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+  const pageW = 210, pageH = 297;
+  let w = pageW, h = canvas.height * pageW / canvas.width;
+  if (h > pageH) { h = pageH; w = canvas.width * pageH / canvas.height; }
+  pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', (pageW - w) / 2, 0, w, h);
+  return pdf.output('datauristring').split(',')[1];
+}
+
 async function generateCertPdf() {
   if (!isLocked) return;
   buildCertSheet();
@@ -669,6 +685,148 @@ async function generateGuardianImage() {
   if (!isLocked || !isMinor()) return;
   buildGuardianSheet();
   downloadCanvasPng(await renderSheet(els.sheetGuardian), docFileName('保護者同意書', 'png'));
+}
+
+/* =========================================================
+   8.5 台帳・Drive連携（フェーズ②）
+       確定後に PDF(base64) と取引データを GAS Web App へ送信。
+       失敗時は localStorage キューに退避し、online復帰・起動時に再送。
+   ========================================================= */
+const CFG = window.KAITORI_CONFIG || {};
+const QUEUE_KEY = 'rb_ledger_queue';
+
+function ledgerConfigured() { return !!(CFG.gasUrl && CFG.token); }
+
+/* 防犯登録名義人の平文（台帳セル用） */
+function registOwnerPlain() {
+  const v = els.registOwner.value;
+  if (v !== '本人以外') return v;
+  return `本人以外（${els.registOwnerName.value}・続柄 ${els.registOwnerRelation.value}／名義人同意あり）`;
+}
+
+/* 台帳に送る1件分のレコード（「その他」は pick() で実値、免許証番号は整形済み）。
+   免許証以外は確認番号を送らない（フロント・GAS双方で防御）。 */
+function collectRecord() {
+  const isLic = els.idType.value === '運転免許証';
+  return {
+    tradeNo: els.tradeNo.value,
+    tradeDate: els.tradeDate.value,
+    tradeType: els.tradeType.value,
+    pName: els.pName.value,
+    pAddress: els.pAddress.value,
+    pTel: els.pTel.value,
+    pJob: pick('pJob'),
+    pBirth: els.pBirth.value,
+    age: currentAge(),
+    idType: els.idType.value,
+    idNumber: isLic ? `${pick('licenseAuthority')} ${licenseNumberText()}`.trim() : '',
+    bMaker: pick('bMaker'),
+    bModel: pick('bModel'),
+    bColor: pick('bColor'),
+    bFrame: els.bFrame.value,
+    bRegist: els.bRegist.value,
+    registOwner: registOwnerPlain(),
+    accessories: accessoryText(),
+    bItem: els.bItem.value,
+    bQty: els.bQty.value,
+    bFeature: els.bFeature.value,
+    amount: els.amount.value,
+    payMethod: els.payMethod.value,
+    isMinor: isMinor(),
+    gName: isMinor() ? els.gName.value : '',
+    gRelation: isMinor() ? pick('gRelation') : '',
+    gAddress: isMinor() ? els.gAddress.value : '',
+    gContact: isMinor() ? els.gContact.value : '',
+    gIdMethod: isMinor() ? els.gIdMethod.value : '',
+    confirmedAt: confirmedAt,
+  };
+}
+
+function readQueue() {
+  try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function writeQueue(q) { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); }
+
+function setSyncStatus(kind, html) {
+  els.syncBox.style.display = '';
+  els.syncStatus.className = 'sync-status ' + kind; // ok | ng | pending
+  els.syncStatus.innerHTML = html;
+}
+
+/* 確定直後に呼ぶ：PDFをbase64化してキュー投入 → 送信を試みる。
+   Driveのファイル名は取引番号を先頭に付ける（帳簿の検索性要件のため）。 */
+async function enqueueAndSync() {
+  if (!ledgerConfigured()) {
+    setSyncStatus('pending',
+      '⚠ 台帳送信は未設定です（config.js 未設定）。この端末ではPDF・画像の保存のみ行えます。');
+    els.btnSyncRetry.style.display = 'none';
+    return;
+  }
+  setSyncStatus('pending', '⏳ 台帳・Driveへ保存する書類を準備しています…');
+  try {
+    buildCertSheet();
+    const pdfs = [{
+      kind: 'cert',
+      name: `${els.tradeNo.value}_譲渡証明書.pdf`,
+      b64: await sheetToPdfBase64(els.sheetCert),
+    }];
+    if (isMinor()) {
+      buildGuardianSheet();
+      pdfs.push({
+        kind: 'guardian',
+        name: `${els.tradeNo.value}_保護者同意書.pdf`,
+        b64: await sheetToPdfBase64(els.sheetGuardian),
+      });
+    }
+    const item = { id: els.tradeNo.value, action: 'append', record: collectRecord(), pdfs };
+    const q = readQueue();
+    if (!q.some(x => x.id === item.id)) { q.push(item); writeQueue(q); }
+  } catch (e) {
+    setSyncStatus('ng', '⚠ 送信データの準備に失敗しました：' + esc(e.message || e));
+    els.btnSyncRetry.style.display = '';
+    return;
+  }
+  await flushQueue();
+}
+
+/* キューを順に送信。Content-Typeを付けない＝text/plain扱いでプリフライトを避ける（GAS Web App対応） */
+async function flushQueue() {
+  if (!ledgerConfigured()) return;
+  const q = readQueue();
+  if (!q.length) return;
+
+  setSyncStatus('pending', `⏳ 台帳・Driveへ送信中…（未送信 ${q.length} 件）`);
+  const remaining = [];
+  let lastLinks = null;
+  for (const item of q) {
+    try {
+      const res = await fetch(CFG.gasUrl, {
+        method: 'POST',
+        body: JSON.stringify(Object.assign({ token: CFG.token }, item)),
+      });
+      const data = await res.json();
+      if (data.status === 'ok') { lastLinks = data.links || null; }
+      else { remaining.push(item); }
+    } catch (e) {
+      remaining.push(item); // ネットワーク不通など → キュー保持
+    }
+  }
+  writeQueue(remaining);
+
+  if (remaining.length === 0) {
+    let linkHtml = '';
+    if (lastLinks) {
+      if (lastLinks.cert) linkHtml += ` <a href="${lastLinks.cert}" target="_blank" rel="noopener">証明書PDF</a>`;
+      if (lastLinks.guardian) linkHtml += ` ／ <a href="${lastLinks.guardian}" target="_blank" rel="noopener">保護者同意書PDF</a>`;
+    }
+    setSyncStatus('ok', '✅ 台帳に記録し、PDFをDriveへ保存しました。' + linkHtml);
+    els.btnSyncRetry.style.display = 'none';
+  } else {
+    setSyncStatus('ng',
+      `⚠ 送信できませんでした（未送信 ${remaining.length} 件）。オフラインの可能性があります。電波の良い場所で「再送」してください。`);
+    els.btnSyncRetry.style.display = '';
+  }
 }
 
 /* =========================================================
@@ -727,6 +885,11 @@ function init() {
   els.btnPdfGuardian.addEventListener('click', generateGuardianPdf);
   els.btnImgCert.addEventListener('click', generateCertImage);
   els.btnImgGuardian.addEventListener('click', generateGuardianImage);
+  els.btnSyncRetry.addEventListener('click', flushQueue);
+
+  // 未送信キューがあれば起動時・通信復帰時に再送（現場でオフライン→復帰を想定）
+  if (readQueue().length) { els.outputPanel.classList.add('show'); flushQueue(); }
+  window.addEventListener('online', flushQueue);
 
   runValidation();
 }
