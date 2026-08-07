@@ -43,7 +43,8 @@ const els = {};
   'btnPdfCert','btnPdfGuardian','btnImgCert','btnImgGuardian','sheetCert','sheetGuardian',
   'syncBox','syncStatus','btnSyncRetry',
   'cfgUrl','cfgToken','btnSaveCfg','btnClearCfg','cfgStatus',
-  'confirmModal','btnConfirmYes','btnConfirmCancel'
+  'confirmModal','btnConfirmYes','btnConfirmCancel',
+  'appTitle','ledgerSettings','btnFinish','finishModal','btnFinishYes','btnFinishCancel'
 ].forEach(k => els[k] = $(k));
 
 /* =========================================================
@@ -914,6 +915,32 @@ async function flushQueue() {
   }
 }
 
+/* タイトルを約1.5秒長押しで「台帳連携の設定」を表示する（事業者専用の隠し操作）。
+   タッチ/マウス両対応。移動・指離しでキャンセル。 */
+function setupTitleLongPress() {
+  const el = els.appTitle;
+  if (!el) return;
+  let timer = null;
+  const LONG_MS = 1500;
+  const start = () => {
+    clearTimer();
+    timer = setTimeout(revealSettings, LONG_MS);
+  };
+  const clearTimer = () => { if (timer) { clearTimeout(timer); timer = null; } };
+  function revealSettings() {
+    els.ledgerSettings.hidden = false;
+    els.ledgerSettings.open = true;
+    els.ledgerSettings.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  el.addEventListener('pointerdown', start);
+  el.addEventListener('pointerup', clearTimer);
+  el.addEventListener('pointerleave', clearTimer);
+  el.addEventListener('pointercancel', clearTimer);
+  el.addEventListener('pointermove', clearTimer);
+  // 長押し中の選択・コンテキストメニューを抑制
+  el.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+
 /* =========================================================
    9. 初期化・イベント
    ========================================================= */
@@ -970,6 +997,17 @@ function init() {
   els.btnConfirmYes.addEventListener('click', doConfirm);
   els.btnConfirmCancel.addEventListener('click', () => { els.confirmModal.hidden = true; });
   els.confirmModal.addEventListener('click', (e) => { if (e.target === els.confirmModal) els.confirmModal.hidden = true; });
+
+  // タイトル長押し（約1.5秒）で「台帳連携の設定」を表示（事業者専用・お客さまの誤操作防止）
+  setupTitleLongPress();
+
+  // 完了（次のお客さまへ初期化）
+  els.btnFinish.addEventListener('click', () => { els.finishModal.hidden = false; });
+  els.btnFinishCancel.addEventListener('click', () => { els.finishModal.hidden = true; });
+  els.finishModal.addEventListener('click', (e) => { if (e.target === els.finishModal) els.finishModal.hidden = true; });
+  // リロードで初期化（PWA＝アプリシェルはキャッシュ済みのためオフラインでも動く。
+  // 台帳設定・未送信キューは localStorage 保持のため消えない）
+  els.btnFinishYes.addEventListener('click', () => { location.reload(); });
   els.btnPdfCert.addEventListener('click', generateCertPdf);
   els.btnPdfGuardian.addEventListener('click', generateGuardianPdf);
   els.btnImgCert.addEventListener('click', generateCertImage);

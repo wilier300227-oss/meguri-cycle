@@ -24,7 +24,7 @@
 <body>
 
 <header class="app-header">
-  <h1>出張買取 記入システム</h1>
+  <h1 id="appTitle" title="（事業者用）長押しで台帳連携の設定">出張買取 記入システム</h1>
   <p class="sub">屋号 RAINBOW／めぐり自転車　— タブレット完結記入</p>
   <p class="license">古物商許可番号 第511090015059号（石川県公安委員会）</p>
 </header>
@@ -440,11 +440,17 @@
         <div class="sync-status" id="syncStatus"></div>
         <button type="button" class="btn btn-sm btn-ghost" id="btnSyncRetry" style="display:none;">台帳へ再送する</button>
       </div>
+
+      <!-- すべて終了したら次のお客さまへ初期化 -->
+      <hr class="out-sep">
+      <button type="button" class="btn btn-primary btn-block" id="btnFinish">完了（次のお客さまへ）</button>
+      <p class="hint">PDF・画像の保存と台帳登録がすべて終わってから押してください。入力内容を消して最初の画面に戻ります。</p>
     </section>
   </form>
 
-  <!-- 台帳連携の設定（この端末に一度だけ保存。トークンを公開ソースに載せないための仕組み） -->
-  <details class="settings-card" id="ledgerSettings">
+  <!-- 台帳連携の設定（この端末に一度だけ保存。トークンを公開ソースに載せないための仕組み）
+       通常は非表示。事業者がタイトルを長押しすると表示される（お客さまの誤操作防止）。 -->
+  <details class="settings-card" id="ledgerSettings" hidden>
     <summary>⚙ 台帳連携の設定（この端末に保存）</summary>
     <p class="hint">この端末でだけ有効な設定です。ここで入れた値は端末内にのみ保存され、公開ページのソースには含まれません。</p>
     <div class="field">
@@ -484,6 +490,18 @@
     <div class="modal-btns">
       <button type="button" class="btn btn-ghost" id="btnConfirmCancel">キャンセル</button>
       <button type="button" class="btn btn-ok" id="btnConfirmYes">確定する</button>
+    </div>
+  </div>
+</div>
+
+<!-- 完了（次のお客さまへ初期化）の確認ダイアログ -->
+<div class="modal-overlay" id="finishModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="finishModalTitle">
+    <h3 id="finishModalTitle">この取引を終了します</h3>
+    <p>入力内容を消して、次のお客さまの入力を始めます。<br>PDF・画像の保存と台帳登録がすべて終わっていることをご確認ください。<br><span style="font-size:.85rem;color:#888;">※ 端末に保存した台帳設定や、未送信の台帳データは消えません。</span></p>
+    <div class="modal-btns">
+      <button type="button" class="btn btn-ghost" id="btnFinishCancel">キャンセル</button>
+      <button type="button" class="btn btn-ok" id="btnFinishYes">終了して次へ</button>
     </div>
   </div>
 </div>
