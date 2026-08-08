@@ -657,7 +657,29 @@ function docFileName(kind, ext) {
   return `${sanitizeFileName(`${md} ${name}様 ${kind}`)}.${ext}`;
 }
 
+/* シート内の全画像がデコード＆レイアウトされるまで待つ。data URL でも
+   挿入直後は未デコードのことがあり、待たずに html2canvas を走らせると
+   画像が原寸で取り込まれて崩れる。decode() 後に次フレームまで待って
+   max-height 等のレイアウト適用を確実にする。 */
+async function waitForImages(sheetEl) {
+  const imgs = [...sheetEl.querySelectorAll('img')];
+  await Promise.all(imgs.map((img) => {
+    if (img.complete && img.naturalWidth) {
+      return img.decode ? img.decode().catch(() => {}) : Promise.resolve();
+    }
+    return new Promise((res) => { img.onload = img.onerror = res; });
+  }));
+  // レイアウト（max-height の反映）が済んだ次フレームまで待つ
+  await new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(res)));
+}
+
 async function renderSheet(sheetEl) {
+  // 署名画像などは innerHTML 挿入直後だと未デコードで、html2canvas が
+  // CSS の max-height 適用前に「原寸(高解像度)」で取り込み、署名だけ巨大化して
+  // 枠からはみ出す（オフラインは生成が速く未デコードで走りやすいため再現しやすい）。
+  // → html2canvas 実行前に全画像のデコード完了を待ち、レイアウトを確定させる。
+  await waitForImages(sheetEl);
+
   // 端末（タブレット）でズレ・拡大が起きないよう、取り込み範囲とウィンドウ寸法をシート実寸で固定する。
   // scrollX/Y=0・x/y=0 でスクロールや画面外配置(left:-9999px)の影響を受けないようにする。
   const w = sheetEl.offsetWidth;   // 794（A4幅@96dpi）
@@ -944,6 +966,22 @@ function setupTitleLongPress() {
 /* =========================================================
    9. 初期化・イベント
    ========================================================= */
+/* 共有タブレット対策：氏名・住所・電話などの入力欄で、ブラウザの自動入力や
+   キーボードの予測変換に前のお客さまの個人情報が出ないよう属性を付与する。
+   ※ 属性で抑止できるのはブラウザの自動入力とiOS/Androidの一部の予測表示まで。
+     キーボードの「学習辞書」そのものは端末側の設定に依存するため、
+     端末の「予測変換オフ／学習のリセット」も併せて設定すること。 */
+function hardenInputsForPrivacy() {
+  const sel = '#kaitoriForm input[type="text"], #kaitoriForm input[type="tel"], ' +
+              '#kaitoriForm input[type="number"], #kaitoriForm textarea';
+  document.querySelectorAll(sel).forEach(el => {
+    el.setAttribute('autocomplete', 'off');
+    el.setAttribute('autocorrect', 'off');
+    el.setAttribute('autocapitalize', 'off');
+    el.setAttribute('spellcheck', 'false');
+  });
+}
+
 function init() {
   // 取引年月日 既定＝当日
   const today = new Date();
@@ -957,6 +995,7 @@ function init() {
   updateAccessoryFields();
   updateRegistOwnerFields();
   updateAgeAndMinor();
+  hardenInputsForPrivacy();
 
   els.tradeDate.addEventListener('change', () => { refreshTradeNo(); updateAgeAndMinor(); runValidation(); });
   els.idType.addEventListener('change', () => { updateIdFields(); runValidation(); });
