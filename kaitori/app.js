@@ -77,6 +77,10 @@ function commitTradeNo() {
       年を先に選べる3段プルダウンにして #pBirth(hidden) へ同期する。
    ========================================================= */
 const BIRTH_YEAR_SPAN = 100;
+// 「年」プルダウンの既定位置。お客さまの多くが成人のため、開いた時に成人あたりの年が
+// 表示されるよう、当年から BIRTH_DEFAULT_AGE 年前を既定選択にする（実入力はそこから選び直す）。
+// 年だけ既定選択でも月・日が未選択の間は #pBirth は空＝年齢計算・確定は無効のまま。
+const BIRTH_DEFAULT_AGE = 40;
 
 function fillSelect(sel, values, placeholder) {
   const keep = sel.value;
@@ -110,6 +114,8 @@ function initBirthSelects() {
   const thisYear = new Date().getFullYear();
   const years = Array.from({ length: BIRTH_YEAR_SPAN + 1 }, (_, i) => thisYear - i);
   fillSelect(els.pBirthY, years, '年');
+  // 既定位置を成人あたりに（プルダウンは選択中の項目の位置で開くため）。
+  els.pBirthY.value = String(thisYear - BIRTH_DEFAULT_AGE);
   fillSelect(els.pBirthM, Array.from({ length: 12 }, (_, i) => i + 1), '月');
   refreshBirthDays();
 
