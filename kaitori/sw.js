@@ -8,7 +8,7 @@
    ========================================================= */
 'use strict';
 
-const CACHE = 'kaitori-v8';
+const CACHE = 'kaitori-v9';
 
 /* オフラインで動くために最低限必要なアプリシェル */
 const CORE = [

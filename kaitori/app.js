@@ -669,7 +669,15 @@ async function waitForImages(sheetEl) {
     }
     return new Promise((res) => { img.onload = img.onerror = res; });
   }));
-  // レイアウト（max-height の反映）が済んだ次フレームまで待つ
+  // フォントの metrics 確定を待つ（Webフォント未使用でも即解決）。未確定だと文字幅が
+  // 変わりレイアウトがズレる。
+  if (document.fonts && document.fonts.ready) {
+    try { await document.fonts.ready; } catch (e) {}
+  }
+  // レイアウトを強制的に確定させてから待つ。オフラインは生成が速く、max-height 等の
+  // 反映前に html2canvas が走って「拡大・枠切れ」になりやすいため、リフローを読んで
+  // 確定 → さらに2フレーム待つ（competition に負けないよう二重の保険）。
+  void sheetEl.getBoundingClientRect();
   await new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(res)));
 }
 
@@ -696,6 +704,19 @@ async function renderSheet(sheetEl) {
     scrollY: 0,
     x: 0,
     y: 0,
+    // シートは画面外(.a4-stage { left:-9999px })に置いてある。モバイルの html2canvas は
+    // この画面外オフセット＋実ビューポート幅(<794px)とのズレで、取り込み原点が狂って
+    // 「シート全体が拡大され枠が切れる」ことがある（オフラインで顕在化しやすい）。
+    // onclone はキャプチャ用の複製ドキュメントだけに効くので、複製側のステージを原点(0,0)へ
+    // 戻して取り込む。実DOMは触らないためチラつきやオンライン動作への影響は無い。
+    onclone: (doc) => {
+      const stage = doc.querySelector('.a4-stage');
+      if (stage) {
+        stage.style.position = 'absolute';
+        stage.style.left = '0';
+        stage.style.top = '0';
+      }
+    },
   });
 }
 
