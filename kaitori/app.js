@@ -1060,8 +1060,11 @@ function init() {
   els.btnSaveCfg.addEventListener('click', saveLedgerConfig);
   els.btnClearCfg.addEventListener('click', clearLedgerConfig);
 
-  // 未送信キューがあれば起動時・通信復帰時に再送（現場でオフライン→復帰を想定）
-  if (readQueue().length) { els.outputPanel.classList.add('show'); flushQueue(); }
+  // 未送信キューがあれば起動時・通信復帰時に再送（現場でオフライン→復帰を想定）。
+  // ※ 出力パネル（PDF/PNG保存）は署名確定→確認ダイアログOK後（doConfirm）だけに表示する。
+  //   起動時に見せると、まだ署名していないお客さまが誤ってタップし得るため、
+  //   ここではパネルを開かず、裏で再送だけ行う（失敗分は online 復帰時・次回確定時に再送・表示）。
+  if (readQueue().length) flushQueue();
   window.addEventListener('online', flushQueue);
 
   runValidation();
