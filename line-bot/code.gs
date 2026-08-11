@@ -86,44 +86,69 @@ const AREA_FEE_TEXT = [
 ].join('\n');
 
 /**
- * 市区町村 → 出張費の目安
- * ⚠️ 金額は仮の目安です。デプロイ前に必ず実際の距離で確認・修正してください。
- * 追加したい地名はこの表に行を足すだけでOKです。
+ * 出張費の単一源（handoff §5-4）。実データは Sheets の fee_master シート
+ * （列：市町名 / 出張費 / 対応可否 / 備考）。未設定時は下の DEFAULT_FEES にフォールバック。
+ * 金額は単一額のみ（レンジ表記は禁止＝§10-3）。遠方・エリア外は '要相談'。
+ * ⚠ 金額は暫定。GASエディタで initFeeMaster_() を1回実行して fee_master を作り、
+ *   実測（かほく市役所起点の走行距離）で各額を確定すること（§改修3）。
  */
-const CITY_FEES = {
-  // 石川県
-  'かほく市': '1,000円',
-  '津幡町': '1,000円',
-  '内灘町': '1,500円',
-  '宝達志水町': '1,500円',
-  '金沢市': '1,500円〜2,000円（市内の場所によります）',
-  '羽咋市': '2,000円',
-  '野々市市': '2,000円〜2,500円',
-  '野々市': '2,000円〜2,500円',
-  '白山市': '2,500円〜（市内の場所によります）',
-  '能美市': '2,500円',
-  '川北町': '2,500円',
-  '志賀町': '2,500円',
-  '中能登町': '2,500円',
-  '七尾市': '3,000円',
-  '小松市': '3,000円',
-  '加賀市': '応相談（少し遠方のため、まずはご相談ください）',
-  '輪島市': '応相談（少し遠方のため、まずはご相談ください）',
-  '珠洲市': '応相談（少し遠方のため、まずはご相談ください）',
-  '穴水町': '応相談（少し遠方のため、まずはご相談ください）',
-  '能登町': '応相談（少し遠方のため、まずはご相談ください）',
-  // 富山県
-  '氷見市': '2,500円',
-  '高岡市': '2,500円',
-  '小矢部市': '2,500円',
-  '射水市': '3,000円',
-  '砺波市': '3,000円',
-  '富山市': '応相談（少し遠方のため、まずはご相談ください）',
-  '南砺市': '応相談（少し遠方のため、まずはご相談ください）',
-  // 県名だけの場合（市町名のマッチを優先するため最後に置く）
-  '富山県': '応相談（市町村を教えていただければ目安をご案内します）',
-  '福井県': '応相談（まずはお気軽にご相談ください）',
+const DEFAULT_FEES = {
+  'かほく市': '1,000円', '津幡町': '1,000円', '内灘町': '1,500円', '宝達志水町': '1,500円',
+  '金沢市': '2,000円', '羽咋市': '2,000円', '野々市市': '2,500円', '野々市': '2,500円',
+  '白山市': '2,500円', '能美市': '2,500円', '川北町': '2,500円', '志賀町': '2,500円',
+  '中能登町': '2,500円', '七尾市': '3,000円', '小松市': '3,000円',
+  '加賀市': '要相談', '輪島市': '要相談', '珠洲市': '要相談', '穴水町': '要相談', '能登町': '要相談',
+  // 富山・福井はエリア外＝要相談（§5-4／サイトの「富山・福井は応相談」と統一）
+  '氷見市': '要相談', '高岡市': '要相談', '小矢部市': '要相談', '射水市': '要相談', '砺波市': '要相談',
+  '富山市': '要相談', '南砺市': '要相談',
 };
+function defaultFeeMap_() {
+  const m = {};
+  Object.keys(DEFAULT_FEES).forEach(function (c) {
+    m[c] = { fee: DEFAULT_FEES[c], ok: DEFAULT_FEES[c] === '要相談' ? '要相談' : '可' };
+  });
+  return m;
+}
+/** fee_master を読み（5分キャッシュ）、{city:{fee, ok}} を返す。未設定/空なら DEFAULT_FEES */
+function getFeeMasterMap_() {
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get('fee_master_map');
+  if (cached) { try { return JSON.parse(cached); } catch (e) {} }
+  let map = {};
+  try {
+    const ssId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+    if (ssId) {
+      const sh = SpreadsheetApp.openById(ssId).getSheetByName('fee_master');
+      if (sh) {
+        const data = sh.getDataRange().getValues();
+        for (let r = 1; r < data.length; r++) {
+          const city = String(data[r][0]).trim();
+          if (city) map[city] = { fee: String(data[r][1]).trim(), ok: String(data[r][2] || '可').trim() };
+        }
+      }
+    }
+  } catch (e) {}
+  if (!Object.keys(map).length) map = defaultFeeMap_();
+  cache.put('fee_master_map', JSON.stringify(map), 300);
+  return map;
+}
+function getFee_(city) { const m = getFeeMasterMap_(); return m[city] || null; }
+/** 初回セットアップ：fee_master シートを DEFAULT_FEES で作成（GASエディタで1回実行→額を確定） */
+function initFeeMaster_() {
+  const ssId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+  if (!ssId) throw new Error('INQUIRY_SHEET_ID 未設定。問い合わせ記録を1件作るか、プロパティに設定してから実行してください。');
+  const ss = SpreadsheetApp.openById(ssId);
+  let sh = ss.getSheetByName('fee_master');
+  if (!sh) sh = ss.insertSheet('fee_master');
+  sh.clear();
+  sh.appendRow(['市町名', '出張費', '対応可否', '備考']);
+  sh.setFrozenRows(1);
+  Object.keys(DEFAULT_FEES).forEach(function (c) {
+    const talk = DEFAULT_FEES[c] === '要相談';
+    sh.appendRow([c, talk ? '' : DEFAULT_FEES[c], talk ? '要相談' : '可', '要確認（実測で確定）']);
+  });
+  CacheService.getScriptCache().remove('fee_master_map');
+}
 
 /** LINEからのWebhookを受け取る入口 */
 function doPost(e) {
@@ -478,9 +503,15 @@ function replyVisitPolicy(event) {
 
 /** メッセージ内に既知の市町名があれば出張費情報を返す */
 function detectCityFee(text) {
-  for (const city in CITY_FEES) {
-    if (text.indexOf(city) !== -1) return { city: city, fee: CITY_FEES[city] };
+  const m = getFeeMasterMap_();
+  for (const city in m) {
+    if (text.indexOf(city) !== -1) {
+      const e = m[city];
+      return { city: city, fee: (e.ok === '要相談' || !e.fee) ? '要相談' : e.fee };
+    }
   }
+  // 府県名だけ（エリア外は要相談）。市町名の一致を優先するためここは最後。
+  if (text.indexOf('富山') !== -1 || text.indexOf('福井') !== -1) return { city: '', fee: '要相談' };
   return null;
 }
 
@@ -496,12 +527,20 @@ function replyCityFee(replyToken, hit, event, intent) {
       '💰 買取は、オンライン査定もお引き取りの出張費も すべて無料です。',
       '正確な金額は、お写真を拝見して確定してお伝えします🚲',
     ];
+  } else if (hit.fee === '要相談' || !hit.city) {
+    // 遠方・エリア外：金額は出さず個別相談へ（§5-4）
+    lines = [
+      (hit.city ? '📍 ' + hit.city + 'ですね。' : '📍 ') + 'ご相談を承ります。',
+      '',
+      'そのエリアは距離により変わるため、出張費は個別にご案内します（買取が成立すれば出張費は無料です）。',
+      'まずはお写真をお送りください。金額を確定してお伝えします🚲',
+    ];
   } else {
-    // 処分／対応エリア：引取の出張費の目安を出す。
+    // 処分／対応エリア：引取の出張費（fee_master の単一額）を出す。
     lines = [
       '📍 ' + hit.city + 'ですね、対応エリアです！',
       '',
-      '♻️ 引取（処分）の場合：出張費の目安は ' + hit.fee + ' です。',
+      '♻️ 引取（処分）の場合：出張費は ' + hit.fee + ' です。',
       '💰 買取の場合：オンライン査定も、お引き取りの出張費も無料です。',
       '',
       '正確な金額は、写真を拝見したうえで確定してお伝えします。',
