@@ -418,6 +418,7 @@ function detectOptOut_(text) { return !!text && OPT_OUT_KEYWORDS.some(function (
 function isOptedOut_(st) { return st && String(st.opt_out) === '1'; }
 function setOptOut_(userId, reason) {
   setUserFields_(userId, { opt_out: '1', opt_out_at: new Date(), opt_out_reason: String(reason || '').slice(0, 100) });
+  switchToMenuA_(userId); // 停止時はメニューを通常(A)に戻す（§6-3）
 }
 /** 停止解除は「顧客の明示的な再依頼」のみ（時間では解除しない） */
 function isExplicitReRequest_(text) {
@@ -619,6 +620,7 @@ function replyKaitoriApply(replyToken, userId) {
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
+  switchToMenuB_(userId); // §6-3：申込(S1)でメニューBへ
   logLineInquiry_(userId, '買取査定を申し込み', '(リッチメニューから申し込み)', 'line_' + replyToken);
 }
 
@@ -640,6 +642,7 @@ function replyHikitoriApply(replyToken, userId) {
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
+  switchToMenuB_(userId); // §6-3：申込(S1)でメニューBへ
   logLineInquiry_(userId, '出張引取を申し込み', '(リッチメニューから申し込み)', 'line_' + replyToken);
 }
 
@@ -1118,3 +1121,24 @@ function pushMessage_(userId, messages) {
     muteHttpExceptions: true,
   });
 }
+
+/* =========================================================
+   §6-3 リッチメニュー A↔B のユーザー単位切替（Messaging API）
+   スクリプトプロパティ RICHMENU_A_ID / RICHMENU_B_ID を設定すると有効。
+   未設定なら no-op（＝メニューを1つ（既定A）で運用しても問題なし）。
+   ・申込(S1)で B（写真追加/進捗/キャンセル 等）へ、停止/キャンセルで A へ戻す。
+   ========================================================= */
+function linkRichMenu_(userId, which) {
+  if (!userId) return;
+  const id = PropertiesService.getScriptProperties().getProperty(which === 'B' ? 'RICHMENU_B_ID' : 'RICHMENU_A_ID');
+  if (!id) return; // 未設定なら何もしない
+  try {
+    UrlFetchApp.fetch('https://api.line.me/v2/bot/user/' + userId + '/richmenu/' + id, {
+      method: 'post',
+      headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+      muteHttpExceptions: true,
+    });
+  } catch (e) {}
+}
+function switchToMenuB_(userId) { linkRichMenu_(userId, 'B'); } // 査定・訪問フェーズ
+function switchToMenuA_(userId) { linkRichMenu_(userId, 'A'); } // 通常/停止時に戻す
