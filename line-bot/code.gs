@@ -702,11 +702,27 @@ function replyEbikeGuide(replyToken) {
  *  （同一ユーザーの連投は10分に1回だけ通知＝重複通知を防ぐ） */
 function thankForPhoto(event) {
   const userId = event.source && event.source.userId;
-  if (userId) {
-    const cache = CacheService.getScriptCache();
-    const key = 'thanked_' + userId;
-    if (cache.get(key)) return; // 10分以内は通知済み（連投の重複通知を防ぐ）
-    cache.put(key, '1', 600);
+  const cache = userId ? CacheService.getScriptCache() : null;
+
+  // §4-2：セッション最初の1枚にだけ短い受領確認（30分デデュープ）。
+  // 撮影ボタンは写真送信で消えるため、ここで出し直し＋「📷マークから続けて」を案内。
+  if (cache && !cache.get('photorcv_' + userId)) {
+    cache.put('photorcv_' + userId, '1', 1800);
+    reply(event.replyToken, [{
+      type: 'text',
+      text: [
+        '📸 お写真ありがとうございます、受け取りました！',
+        '続けて送るときは、入力欄の 📷 マークからどうぞ（送れる分だけでOK）。',
+        'すべて送り終えたら「査定をお願いします」を押してください🚲',
+      ].join('\n'),
+      quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('✅ 査定をお願いします', '査定をお願いします')] },
+    }]);
+  }
+
+  // 記録＋オーナー通知（連投の重複通知は10分デデュープ）
+  if (cache) {
+    if (cache.get('thanked_' + userId)) return;
+    cache.put('thanked_' + userId, '1', 600);
   }
   if (userId && REVIEW_AUTO_ENABLED) queueReviewRequest_(userId);
   logLineInquiry_(userId, '写真を送信', '(画像メッセージ)', 'line_' + event.message.id);
