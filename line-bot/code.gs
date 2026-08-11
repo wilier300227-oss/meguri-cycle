@@ -234,6 +234,14 @@ function handleEvent(event) {
       replyInquiry(event); rule = '問い合わせ';
     } else if (text === 'よくある質問' || text === 'FAQ') {
       replyFaq_(event.replyToken); rule = 'FAQ';
+    } else if (text === '写真を追加する' || text === '写真を追加') {
+      replyPhotoGuide(event.replyToken); rule = '写真追加';
+    } else if (text === '台数を追加する' || text === '台数を追加') {
+      replyAddVehicle_(event.replyToken); rule = '台数追加';
+    } else if (text === '進捗を確認' || text === '進捗確認') {
+      replyStaffFollowup_(event, userId, '進捗のご確認'); rule = '進捗確認';
+    } else if (text === '日程を変更したい' || text === '日程変更') {
+      replyStaffFollowup_(event, userId, '日程のご変更'); rule = '日程変更';
     } else if (detectVisitRequest(text)) {
       replyVisitPolicy(event); rule = '訪問希望案内';
     } else {
@@ -598,15 +606,16 @@ function replyKaitoriApply(replyToken, userId) {
   const ack = [
     '💰 買取査定のお申し込みありがとうございます！',
     '',
-    '査定は写真で行い、金額が決まってからお引き取りに伺います。',
-    '買取の場合、査定・お引き取りの出張費・防犯登録の抹消代行まで、費用は一切かかりません。',
+    '査定は写真で行い、金額が決まってからお引き取りに伺います。買取なら査定・出張費・防犯登録の抹消代行まで費用は一切かかりません。',
     '',
-    'お手数ですが、次の2つをメッセージでお送りください：',
-    '1️⃣ お住まいの市区町村',
-    '2️⃣ メーカー名・車種（わかる範囲でOK）',
+    'スムーズにご案内するため、次を1通にまとめて教えてください（分かる範囲でOK。同じことを何度もお尋ねしないためのお願いです）：',
+    '① 台数（何台ですか？）',
+    '② お住まいの市町名（町名まで）',
+    '③ メーカー・車種',
+    '④ 電動アシストの有無',
+    '⑤ 防犯登録の名義（本人／家族／不明）',
     '',
-    'あわせて自転車の写真をお願いします（次のメッセージをご覧ください）。',
-    '写真と情報が揃いましたら「✅ 入力完了・査定をお願いします」を押してください（または「査定をお願いします」とご送信ください）🚲',
+    'あわせて下の写真ガイドの通りにお写真をお送りください。すべて揃ったら「査定をお願いします」を押してください🚲',
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
@@ -618,13 +627,16 @@ function replyHikitoriApply(replyToken, userId) {
   const ack = [
     '♻️ 出張引取のお申し込みありがとうございます！',
     '',
-    '処分費は0円。出張費のみで引取に伺います。',
+    '処分費は0円。出張費のみで引取に伺います。出張費はこちらで計算し、金額をご確認いただいてから訪問日を決めます。',
     '',
-    'お手数ですが「お住まいの市区町村」をメッセージでお送りください。',
-    '出張費はこちらで計算して、金額をご確認いただいてから訪問日を決めます。',
+    'スムーズにご案内するため、次を1通にまとめて教えてください（分かる範囲でOK）：',
+    '① 台数（何台ですか？）',
+    '② お住まいの市町名（町名まで）',
+    '③ メーカー・車種',
+    '④ 電動アシストの有無',
+    '⑤ 防犯登録の名義（本人／家族／不明）',
     '',
-    'あわせて自転車の写真をお願いします（次のメッセージをご覧ください）。',
-    '状態によっては買取（費用なし＋お支払い）に切り替えられる場合もあります🚲',
+    'あわせて下の写真ガイドの通りにお写真をお送りください。状態によっては買取（費用なし＋お支払い）に切り替えられる場合もあります🚲',
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
@@ -879,10 +891,39 @@ function handlePostback_(event, userId) {
     case 'estimate_request': replyEstimateRequest(event); break;
     case 'faq': replyFaq_(event.replyToken); break;
     case 'inquiry': replyInquiry(event); break;
-    case 'photo': replyPhotoGuide(event.replyToken); break;
+    case 'photo': case 'add_photo': replyPhotoGuide(event.replyToken); break;
+    // §6-3 メニューB
+    case 'add_vehicle': replyAddVehicle_(event.replyToken); break;
+    case 'check_status': replyStaffFollowup_(event, userId, '進捗のご確認'); break;
+    case 'reschedule': replyStaffFollowup_(event, userId, '日程のご変更'); break;
+    case 'cancel': handleCancelButton_(event, userId); break;
     default: rule = 'postback:unknown';
   }
   logEvent_(event, rule, '返信:' + rule);
+}
+
+/** §6-3 メニューB：台数を追加する */
+function replyAddVehicle_(replyToken) {
+  reply(replyToken, [{
+    type: 'text',
+    text: '🚲 追加の1台ですね！\n\n次の台のお写真を7枚を目安にお送りください（「〇台目」と一言そえていただけると助かります）。\nメーカー・車種・電動アシストの有無・防犯登録の名義もあわせて教えてください🚲',
+    quickReply: { items: [qrCameraRoll(), qrCamera()] },
+  }]);
+}
+/** §6-3 メニューB：進捗確認／日程変更 → 担当者へつなぐ（通知＋手動対応モード） */
+function replyStaffFollowup_(event, userId, what) {
+  reply(event.replyToken, [{ type: 'text', text: '承知しました。' + what + 'について、担当者が確認してご連絡します🚲' }]);
+  if (!userId) return;
+  const msg = event.message || { type: 'postback', id: event.webhookEventId };
+  notifyManualIncoming_(event, userId, msg, '【' + what + '】', '🔔 ' + what + '（要対応）');
+  setManualMode_(userId);
+}
+/** §6-3 メニューB：キャンセル・やめる → 停止フラグ（§5-2） */
+function handleCancelButton_(event, userId) {
+  setOptOut_(userId, 'メニューB キャンセル');
+  reply(event.replyToken, [{ type: 'text', text: '承知しました。ご案内を停止します。またご利用の際は、メニューからお声がけください🚲' }]);
+  const msg = event.message || { type: 'postback', id: event.webhookEventId };
+  notifyManualIncoming_(event, userId, msg, '【キャンセル・やめる】', '⛔ キャンセル');
 }
 
 /** §6-2 よくある質問（実際に出た質問を反映）。手動対応フラグは立てない。 */

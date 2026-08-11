@@ -1,0 +1,15 @@
+{
+  "_note": "リッチメニューB（handoff §6-3・査定中〜訪問確定後）。画像=line-richmenu-b-final.png（2500x1686）。3列×2段。管理画面なら『大・6分割』テンプレに画像を入れ、各エリアに『テキスト送信』で text を設定（GAS側は text/postback 両対応）。A↔Bの切替は Messaging API のユーザー単位リッチメニュー紐付け（richMenuId のリンク/アンリンク）で行う＝運用側の手作業。申込前のメニューAにキャンセルは置かない（§6-3）。",
+  "size": { "width": 2500, "height": 1686 },
+  "selected": false,
+  "name": "menuB",
+  "chatBarText": "メニュー",
+  "areas": [
+    { "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 }, "action": { "type": "message", "text": "写真を追加する", "data": "action=add_photo", "label": "写真を追加する" } },
+    { "bounds": { "x": 833, "y": 0, "width": 833, "height": 843 }, "action": { "type": "message", "text": "台数を追加する", "data": "action=add_vehicle", "label": "台数を追加する" } },
+    { "bounds": { "x": 1666, "y": 0, "width": 834, "height": 843 }, "action": { "type": "message", "text": "進捗を確認", "data": "action=check_status", "label": "進捗を確認" } },
+    { "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 }, "action": { "type": "message", "text": "日程を変更したい", "data": "action=reschedule", "label": "日程を変更したい" } },
+    { "bounds": { "x": 833, "y": 843, "width": 833, "height": 843 }, "action": { "type": "message", "text": "担当者に相談", "data": "action=inquiry", "label": "担当者に相談" } },
+    { "bounds": { "x": 1666, "y": 843, "width": 834, "height": 843 }, "action": { "type": "message", "text": "キャンセル・やめる", "data": "action=cancel", "label": "キャンセル・やめる" } }
+  ]
+}
