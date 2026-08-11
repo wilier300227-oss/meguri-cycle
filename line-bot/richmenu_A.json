@@ -1,0 +1,15 @@
+{
+  "_note": "リッチメニューA（handoff §6-2）。画像=line-richmenu-final.png（2500x1686）。3列×2段。 LINE公式アカウント管理画面で登録する場合は『大サイズ・6分割』テンプレを選び、下の各エリアに『テキスト送信』アクションで text の値を設定する（GAS側は text/postback 両対応）。API登録する場合はこの areas をそのまま使える。",
+  "size": { "width": 2500, "height": 1686 },
+  "selected": true,
+  "name": "menuA",
+  "chatBarText": "メニュー",
+  "areas": [
+    { "bounds": { "x": 0, "y": 0, "width": 833, "height": 843 }, "action": { "type": "message", "text": "買取査定を申し込みます", "data": "action=apply_kaitori", "label": "買取を申し込む" } },
+    { "bounds": { "x": 833, "y": 0, "width": 833, "height": 843 }, "action": { "type": "message", "text": "出張引取を申し込みます", "data": "action=apply_shobun", "label": "処分・引取" } },
+    { "bounds": { "x": 1666, "y": 0, "width": 834, "height": 843 }, "action": { "type": "message", "text": "対応エリア・出張費", "data": "action=area_fee", "label": "対応エリア・出張費" } },
+    { "bounds": { "x": 0, "y": 843, "width": 833, "height": 843 }, "action": { "type": "message", "text": "査定をお願いします", "data": "action=estimate_request", "label": "査定をお願いします" } },
+    { "bounds": { "x": 833, "y": 843, "width": 833, "height": 843 }, "action": { "type": "message", "text": "よくある質問", "data": "action=faq", "label": "よくある質問" } },
+    { "bounds": { "x": 1666, "y": 843, "width": 834, "height": 843 }, "action": { "type": "message", "text": "担当者に相談", "data": "action=inquiry", "label": "担当者に相談" } }
+  ]
+}

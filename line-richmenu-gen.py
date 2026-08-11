@@ -37,13 +37,14 @@ def darken(rgb, amt):
 cell_w = ((W - 2 * PAD) - 2 * GAP) / 3
 cell_h = ((H - 2 * PAD) - GAP) / 2
 
+# handoff §6-2 リッチメニューA（3列×2段）。順序＝左上→右、次段。
 CELLS = [
-    {"label": "買取査定", "sub": "写真を送るだけ・査定無料", "icon": "bicycle"},
-    {"label": "出張引取", "sub": "処分費0円・出張費のみ", "icon": "truck"},
-    {"label": "写真を送る", "sub": "ここに送るだけでOK", "dark": True, "icon": "camera"},
-    {"label": "対応エリア", "sub": "石川県中心・北陸対応", "icon": "pin"},
-    {"label": "よくある質問", "sub": "FAQ・お問い合わせ", "icon": "chat"},
-    {"label": "公式サイト", "sub": "サービスの詳細はこちら", "icon": "house"},
+    {"label": "買取を申し込む", "sub": "写真を送るだけ・査定無料", "icon": "bicycle"},
+    {"label": "処分・引取", "sub": "処分費0円・出張費のみ", "icon": "truck"},
+    {"label": "対応エリア・出張費", "sub": "石川県中心・北陸対応", "icon": "pin"},
+    {"label": "査定をお願いします", "sub": "写真を送り終えたら", "dark": True, "icon": "camera"},
+    {"label": "よくある質問", "sub": "キャンセル料・防犯登録など", "icon": "chat"},
+    {"label": "担当者に相談", "sub": "質問・その他はこちら", "icon": "house"},
 ]
 
 # ── アイコン描画（正円・線画） ──────────────────────────
@@ -218,12 +219,18 @@ for i, cell in enumerate(CELLS):
     sub_top = sub_bbox[1]
     label_bottom = sub_top - 14
 
+    # ラベルが長い場合は枠幅に収まるよう自動でフォントを縮める
+    max_label_w = cell_w - 56
+    label_font = F_LABEL
+    while label_font.size > 60 and tld.textlength(cell["label"], font=label_font) > max_label_w:
+        label_font = font(label_font.size - 4)
+
     if not dark:
         sd.text((cx, bottom_edge + 3), cell["sub"], font=F_SUB, fill=(0, 0, 0, 60), anchor="mb")
-        sd.text((cx, label_bottom + 4), cell["label"], font=F_LABEL, fill=(0, 0, 0, 90), anchor="mb")
+        sd.text((cx, label_bottom + 4), cell["label"], font=label_font, fill=(0, 0, 0, 90), anchor="mb")
 
     tld.text((cx, bottom_edge), cell["sub"], font=F_SUB, fill=sub_color, anchor="mb")
-    tld.text((cx, label_bottom), cell["label"], font=F_LABEL, fill=label_color, anchor="mb")
+    tld.text((cx, label_bottom), cell["label"], font=label_font, fill=label_color, anchor="mb")
 
     if "badge" in cell:
         bt = cell["badge"]

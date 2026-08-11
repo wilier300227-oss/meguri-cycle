@@ -166,6 +166,9 @@ function handleEvent(event) {
   // 5-6: LINEの再送などによる二重処理を防ぐ（webhookEventId で冪等化）
   if (isDuplicateEvent_(event)) return;
 
+  // リッチメニューの postback アクション（§6-2）。メッセージ送信アクションでも動くよう両対応。
+  if (event.type === 'postback') { handlePostback_(event, event.source && event.source.userId); return; }
+
   if (event.type !== 'message') { logEvent_(event, '(' + event.type + ')', 'NONE'); return; }
   const msg = event.message;
   const userId = event.source && event.source.userId;
@@ -226,9 +229,11 @@ function handleEvent(event) {
     } else if (text === '査定をお願いします' || text === '入力完了' ||
                text.indexOf('査定をお願い') !== -1 || text.indexOf('査定お願い') !== -1) {
       replyEstimateRequest(event); rule = '査定依頼';
-    } else if (text === 'お問い合わせ' || text === '問い合わせ' ||
+    } else if (text === 'お問い合わせ' || text === '問い合わせ' || text === '担当者に相談' ||
                text.indexOf('問い合わせ') !== -1 || text.indexOf('問合せ') !== -1) {
       replyInquiry(event); rule = '問い合わせ';
+    } else if (text === 'よくある質問' || text === 'FAQ') {
+      replyFaq_(event.replyToken); rule = 'FAQ';
     } else if (detectVisitRequest(text)) {
       replyVisitPolicy(event); rule = '訪問希望案内';
     } else {
@@ -829,6 +834,83 @@ function replyInquiry(event) {
   const userId = event.source && event.source.userId;
   if (userId) setManualMode_(userId); // §4-5/§5-1：問い合わせは手動対応モードON（人が対応）
   logLineInquiry_(userId, 'お問い合わせ', (event.message && event.message.text) || '', 'line_' + (event.message && event.message.id));
+}
+
+/* =========================================================
+   §6-2 リッチメニューA の postback アクション
+   （メニューを「メッセージ送信」で登録した場合は、上の text 分岐が拾うので両対応）
+   action= の割り当て：
+     apply_kaitori   … 買取を申し込む（受付＋写真ガイド）
+     apply_shobun    … 処分・引取を申し込む（受付＋写真ガイド＋町名待ち）
+     area_fee        … 対応エリア・出張費（市町名の入力を促す）
+     estimate_request… 査定をお願いします（住所町名＋条件付き確定額＋48時間）
+     faq             … よくある質問
+     inquiry         … 担当者に相談（手動対応モードON）
+   ========================================================= */
+function parseAction_(data) {
+  const m = String(data || '').match(/action=([a-zA-Z_]+)/);
+  return m ? m[1] : String(data || '');
+}
+function handlePostback_(event, userId) {
+  const action = parseAction_(event.postback && event.postback.data);
+  const pmsg = { type: 'postback', id: event.webhookEventId };
+  const st = getUserState_(userId);
+
+  // 優先順1: 停止フラグ（apply/estimate は明示的な再依頼として解除）
+  if (isOptedOut_(st)) {
+    if (action === 'apply_kaitori' || action === 'apply_shobun' || action === 'estimate_request') {
+      setUserFields_(userId, { opt_out: '', opt_out_reason: '（メニュー再依頼で解除）' });
+    } else {
+      handleOptedOut_(event, userId, pmsg, '[postback ' + action + ']');
+      logEvent_(event, 'OPT_OUT', 'NONE'); return;
+    }
+  }
+  // 優先順2: 手動対応モード
+  if (isManualMode_(st)) {
+    notifyManualIncoming_(event, userId, pmsg, '[postback ' + action + ']', '💬 手動対応中の新着');
+    logEvent_(event, 'MANUAL_MODE', 'NONE'); return;
+  }
+
+  let rule = 'postback:' + action;
+  switch (action) {
+    case 'apply_kaitori': replyKaitoriApply(event.replyToken, userId); break;
+    case 'apply_shobun': replyHikitoriApply(event.replyToken, userId); setExpectCity_(userId, 'shobun'); break;
+    case 'area_fee': replyArea(event.replyToken); setExpectCity_(userId, 'area'); break;
+    case 'estimate_request': replyEstimateRequest(event); break;
+    case 'faq': replyFaq_(event.replyToken); break;
+    case 'inquiry': replyInquiry(event); break;
+    case 'photo': replyPhotoGuide(event.replyToken); break;
+    default: rule = 'postback:unknown';
+  }
+  logEvent_(event, rule, '返信:' + rule);
+}
+
+/** §6-2 よくある質問（実際に出た質問を反映）。手動対応フラグは立てない。 */
+function replyFaq_(replyToken) {
+  const text = [
+    '❓ よくある質問',
+    '',
+    'Q. 査定に来てもらって、断っても無料ですか？',
+    'A. 買取の場合は査定・出張とも無料です。断っても費用はかかりません。',
+    '',
+    'Q. 防犯登録カードとは何ですか？',
+    'A. 購入時にもらう白い紙（登録の控え）です。抹消手続きは当方で代行します。',
+    '',
+    'Q. 何台まで一度に依頼できますか？',
+    'A. 複数台まとめて大丈夫です。',
+    '',
+    'Q. 買取金額はいつ確定しますか？',
+    'A. 訪問前に確定してお伝えします。玄関先での交渉はありません。',
+    '',
+    'Q. 支払い方法は？',
+    'A. 現金は3万円まで、超える分は振込です。',
+    '',
+    'Q. 対応エリア外ですが可能ですか？',
+    'A. 富山・福井など少し遠方は要相談です。まずはお声がけください。',
+    '',
+    '他のご質問は「担当者に相談」からどうぞ🚲',
+  ].join('\n');
+  reply(replyToken, [{ type: 'text', text: text }]);
 }
 
 /** その他のテキストへの受付確認（ユーザーごとに初回の1回だけ） */
