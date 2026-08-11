@@ -8,14 +8,17 @@
  * 3. 「電動」→ 電動アシスト用の追加ガイドを返信
  * 4. 画像を受信 → お客さまへの自動応答はせず、記録＋オーナー通知のみ（返信は手動）
  * 5. 「買取希望」「処分希望」「対応エリア・出張費」→ それぞれの案内を返信
- * 5-2.「査定をお願いします」（入力完了ボタン）→ 住所のお願い＋現地減額の可能性＋48時間以内 を返信
- * 5-3.「お問い合わせ」（問い合わせボタン）→ 質問内容の記入を促す（以降は手動対応）
+ * 5-2.「査定をお願いします」（入力完了ボタン）→ 住所（町名まで）＋条件付き確定額＋48時間以内 を返信
+ * 5-3.「お問い合わせ」（問い合わせボタン）→ 質問記入を促す＋手動対応モードON（人が対応）
  * 6. 「対応エリア・出張費」ボタン／「買取希望」「処分希望」の案内を出した直後だけ、
  *    市区町村を送ると その地域の出張費目安を返信。有効なのは案内タップ直後の
  *    「最大2メッセージ」まで（EXPECT_CITY_MSG_BUDGET）。それを過ぎたら、別の話題の
  *    やりとりで市町名が出ても反応しない。時間の失効（EXPECT_CITY_TTL_MS）は保険。
  *    ※ 住所などに市町名が含まれても誤って料金を出さないよう、常時検出する運用は廃止。
- * 7. その他のテキスト → 初回の1回だけ受付確認（以降は沈黙し手動チャットに任せる）
+ * 7. その他（分類不能）→ 顧客へは営業応答せず、オーナー通知＋短い受付1文＋手動対応モードON（§5-3）
+ *    ※ 評価順の最上位に 停止フラグ(opt_out §5-2) → 手動対応モード(manual_mode §5-1) を判定。
+ *      いずれもONの間は自動応答を止め、ログ・オーナー通知のみ継続。状態は Sheets(users) に永続化。
+ *      全受信は log シートに記録、webhookEventId で二重処理を防止（§5-6/§5-7）。
  * 8. Googleロコミ依頼：現在は【手動運用】（REVIEW_AUTO_ENABLED=false）。送る相手・
  *    タイミングはケースバイケースのため、オーナーが LINE公式アカウントアプリの1:1チャットから
  *    手動で送る。文面は定数 REVIEW_MESSAGE_TEXT（アプリの「定型文」に登録推奨）。
@@ -141,22 +144,47 @@ function handleEvent(event) {
   if (event.type !== 'message') { logEvent_(event, '(' + event.type + ')', 'NONE'); return; }
   const msg = event.message;
   const userId = event.source && event.source.userId;
+  const text = (msg && msg.type === 'text') ? String(msg.text || '').trim() : '';
 
-  if (msg.type === 'text') {
-    const text = msg.text.trim();
+  // 開発用：MYID は最優先で常に通す
+  if (text === 'MYID') {
+    reply(event.replyToken, [{ type: 'text', text: 'あなたのuserId:\n' + userId }]);
+    logEvent_(event, 'MYID', 'userId返信');
+    return;
+  }
 
-    if (text === 'MYID') {
-      // オーナー自身のuserId確認用（取得したら OWNER_LINE_USER_ID に貼り付ける）
-      reply(event.replyToken, [{ type: 'text', text: 'あなたのuserId:\n' + userId }]);
-      logEvent_(event, 'MYID', 'userId返信');
+  // 評価順の最上位（handoff §5-3）：停止フラグ → 手動対応モード
+  const st = getUserState_(userId);
+  // 1. 停止フラグ（§5-2）：明示的な再依頼だけ解除。それ以外は営業応答しない。
+  if (isOptedOut_(st)) {
+    if (isExplicitReRequest_(text)) {
+      setUserFields_(userId, { opt_out: '', opt_out_reason: '（顧客の再依頼で解除）' });
+    } else {
+      handleOptedOut_(event, userId, msg, text);
+      logEvent_(event, 'OPT_OUT', 'NONE（通知/1文）');
       return;
     }
+  }
+  // 2. 手動対応モード（§5-1）：全自動応答を停止し、通知のみ。
+  if (isManualMode_(st)) {
+    notifyManualIncoming_(event, userId, msg, text, '💬 手動対応中の新着');
+    logEvent_(event, 'MANUAL_MODE', 'NONE（通知のみ）');
+    return;
+  }
+
+  if (msg.type === 'text') {
     if (REVIEW_AUTO_ENABLED && userId && REVIEW_CANCEL_KEYWORDS.some(function (kw) { return text.indexOf(kw) !== -1; })) {
       skipReviewRequest_(userId);
     }
 
     let rule = 'UNMATCHED';
-    if (text === '写真をおくります。' || text === '写真をおくります' || text === '写真を送ります') {
+    if (detectOptOut_(text)) {
+      // §5-2：停止希望を検知 → 以後は営業しない（再勧誘禁止）
+      setOptOut_(userId, text);
+      reply(event.replyToken, [{ type: 'text', text: '承知しました。ご案内を停止します。またご利用の際は、下のメニューからお声がけください🚲' }]);
+      notifyManualIncoming_(event, userId, msg, '【停止希望】' + text, '⛔ 停止希望');
+      rule = 'OPT_OUT_SET';
+    } else if (text === '写真をおくります。' || text === '写真をおくります' || text === '写真を送ります') {
       replyPhotoGuide(event.replyToken); rule = '写真ガイド';
     } else if (text === '電動') {
       replyEbikeGuide(event.replyToken); rule = '電動ガイド';
@@ -261,6 +289,7 @@ function logEvent_(event, matchedRule, replySummary) {
 function handleUnmatchedText_(event, userId, text) {
   notifyUnmatched_(event, userId, text);
   ackUnmatchedOnce_(event, userId);
+  if (userId) setManualMode_(userId); // §5-3：分類不能は手動対応モードON（人が対応）
 }
 /** オーナー通知（10分のバースト抑制のみ。用件を取りこぼさないため6h等の長いデデュープはかけない） */
 function notifyUnmatched_(event, userId, text) {
@@ -286,6 +315,109 @@ function ackUnmatchedOnce_(event, userId) {
   cache.put(key, '1', 21600);
   reply(event.replyToken, [{ type: 'text', text:
     'メッセージありがとうございます🚲\n担当者が内容を確認し、順次ご返信します。\n\n📷 買取・引取のご相談は、下のメニューからどうぞ。' }]);
+}
+
+/* =========================================================
+   ユーザー状態（handoff §7 users）と 手動対応モード §5-1 / 停止フラグ §5-2
+   ・状態は Sheets に永続化（CacheServiceは揮発するため不可）。
+   ・INQUIRY_SHEET_ID 未設定の間は全て no-op（＝設定するまで従来動作のまま）。
+   ========================================================= */
+const USER_COLS = ['userId', 'displayName', 'state', 'intent', 'city', 'town',
+  'manual_mode', 'manual_until', 'opt_out', 'opt_out_at', 'opt_out_reason', 'created_at', 'updated_at'];
+
+function getUsersSheet_() {
+  const ssId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+  if (!ssId) return null;
+  const ss = SpreadsheetApp.openById(ssId);
+  let sheet = ss.getSheetByName('users');
+  if (!sheet) { sheet = ss.insertSheet('users'); sheet.appendRow(USER_COLS); sheet.setFrozenRows(1); }
+  return sheet;
+}
+/** userId の状態を1行読む（無ければ {}） */
+function getUserState_(userId) {
+  if (!userId) return {};
+  try {
+    const sheet = getUsersSheet_();
+    if (!sheet) return {};
+    const data = sheet.getDataRange().getValues();
+    for (let r = 1; r < data.length; r++) {
+      if (String(data[r][0]) === userId) {
+        const o = {}; USER_COLS.forEach((c, i) => o[c] = data[r][i]); return o;
+      }
+    }
+  } catch (e) {}
+  return {};
+}
+/** userId の指定フィールドだけ更新（無ければ新規行）。LockServiceで競合防止 */
+function setUserFields_(userId, fields) {
+  if (!userId) return;
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(5000);
+    const sheet = getUsersSheet_();
+    if (!sheet) return;
+    const data = sheet.getDataRange().getValues();
+    const now = new Date();
+    let row = -1;
+    for (let r = 1; r < data.length; r++) { if (String(data[r][0]) === userId) { row = r + 1; break; } }
+    if (row === -1) {
+      const rec = {}; USER_COLS.forEach(c => rec[c] = '');
+      rec.userId = userId; rec.created_at = now;
+      Object.assign(rec, fields); rec.updated_at = now;
+      sheet.appendRow(USER_COLS.map(c => rec[c]));
+    } else {
+      USER_COLS.forEach((c, i) => { if (c in fields) sheet.getRange(row, i + 1).setValue(fields[c]); });
+      sheet.getRange(row, USER_COLS.indexOf('updated_at') + 1).setValue(now);
+    }
+  } catch (e) {} finally { try { lock.releaseLock(); } catch (e) {} }
+}
+
+/* ── 停止フラグ（§5-2 再勧誘禁止・特商法58条の6第3項）── */
+const OPT_OUT_KEYWORDS = ['キャンセル', 'やめます', 'やめたい', 'やめておき', 'やめる', '不要', 'いりません', 'いらない', '結構です', 'お断り', '取り消', '取消'];
+function detectOptOut_(text) { return !!text && OPT_OUT_KEYWORDS.some(function (kw) { return text.indexOf(kw) !== -1; }); }
+function isOptedOut_(st) { return st && String(st.opt_out) === '1'; }
+function setOptOut_(userId, reason) {
+  setUserFields_(userId, { opt_out: '1', opt_out_at: new Date(), opt_out_reason: String(reason || '').slice(0, 100) });
+}
+/** 停止解除は「顧客の明示的な再依頼」のみ（時間では解除しない） */
+function isExplicitReRequest_(text) {
+  if (!text) return false;
+  return text === '買取査定を申し込みます' || text === '出張引取を申し込みます' || text === '買取希望' ||
+    text.indexOf('査定をお願い') !== -1 || text.indexOf('申し込み') !== -1 || text.indexOf('お願いします') !== -1;
+}
+/** 停止中の新規メッセージ：営業応答はせず、オーナー通知＋短い1文のみ（1セッション1回） */
+function handleOptedOut_(event, userId, msg, text) {
+  notifyManualIncoming_(event, userId, msg, text, '⛔ 停止中ユーザーからの新着');
+  const cache = CacheService.getScriptCache();
+  const key = 'optack_' + userId;
+  if (event.replyToken && !cache.get(key)) {
+    cache.put(key, '1', 21600);
+    reply(event.replyToken, [{ type: 'text', text: '承知しました。担当者が確認いたします。またご利用の際は下のメニューからお声がけください🚲' }]);
+  }
+}
+
+/* ── 手動対応モード（§5-1）── */
+function isManualMode_(st) {
+  if (!st || String(st.manual_mode) !== '1') return false;
+  const until = st.manual_until ? new Date(st.manual_until) : null;
+  if (until && Date.now() > until.getTime()) { setUserFields_(st.userId, { manual_mode: '', manual_until: '' }); return false; }
+  return true;
+}
+function setManualMode_(userId) {
+  setUserFields_(userId, { manual_mode: '1', manual_until: new Date(Date.now() + 48 * 3600 * 1000) });
+}
+/** 手動対応中/停止中の新着をオーナーへ通知（10分バースト抑制。ログは別途） */
+function notifyManualIncoming_(event, userId, msg, text, subject) {
+  if (!userId) return;
+  const cache = CacheService.getScriptCache();
+  const key = 'mnotify_' + userId;
+  if (cache.get(key)) return;
+  cache.put(key, '1', 600);
+  const name = getDisplayName_(userId);
+  const body = text || ('(' + (msg && msg.type) + ')');
+  const id = 'line_' + (msg && msg.id);
+  try { appendInquiryRow_(new Date(), 'LINE', name, subject || '💬 手動対応中の新着', body, id); }
+  catch (e) { notifyOwner_('LINE', name, subject || '💬 手動対応中の新着', body); }
 }
 
 /**
@@ -336,6 +468,10 @@ function replyVisitPolicy(event) {
     text: text,
     quickReply: { items: [qrCameraRoll(), qrCamera()] },
   }]);
+
+  // T6/事象F：訪問希望は人が follow-up すべき用件。オーナー通知＋手動対応モードON。
+  const userId = event.source && event.source.userId;
+  if (userId) { notifyManualIncoming_(event, userId, event.message, event.message && event.message.text, '🙋 訪問希望（要follow-up）'); setManualMode_(userId); }
 }
 
 /** メッセージ内に既知の市町名があれば出張費情報を返す */
@@ -639,6 +775,7 @@ function replyInquiry(event) {
   ].join('\n');
   reply(event.replyToken, [{ type: 'text', text: text }]);
   const userId = event.source && event.source.userId;
+  if (userId) setManualMode_(userId); // §4-5/§5-1：問い合わせは手動対応モードON（人が対応）
   logLineInquiry_(userId, 'お問い合わせ', (event.message && event.message.text) || '', 'line_' + (event.message && event.message.id));
 }
 
