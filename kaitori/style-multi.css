@@ -1,0 +1,119 @@
+/* =========================================================
+   複数台版 追加スタイル（土台は style.css を併読）
+   ・画面：明細行カード・名義人ブロック
+   ・A4：明細表・名義人・複数ページのフッター
+   ========================================================= */
+
+/* ---- 画面：明細行 ---- */
+.bike-row {
+  border: 1px solid #d8dee7;
+  border-radius: 10px;
+  padding: 10px 12px 12px;
+  margin: 0 0 12px;
+  background: #fbfcfe;
+}
+.bike-row .bike-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 6px;
+}
+.bike-row .bike-no {
+  font-weight: 800;
+  color: var(--accent-dark, #1d4ed8);
+  font-size: .95rem;
+}
+
+/* ---- 画面：名義人ブロック ---- */
+.owner-block {
+  border: 1px solid #d8dee7;
+  border-radius: 10px;
+  padding: 10px 12px 12px;
+  margin: 0 0 12px;
+  background: #fbfcfe;
+}
+.owner-block .owner-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 6px;
+}
+.owner-block .owner-no {
+  font-weight: 800;
+  color: var(--accent-dark, #1d4ed8);
+  font-size: .95rem;
+}
+
+/* 小さめのボタン（削除など） */
+.btn-xs {
+  padding: 4px 10px;
+  font-size: .8rem;
+  border-radius: 6px;
+}
+
+/* ---- A4：複数ページ用シート ---- */
+.a4-sheet.multi {
+  position: relative;          /* フッターを絶対配置で最下部に固定 */
+}
+.a4-sheet.multi .sheet-body {
+  /* 本文。padding は .a4-sheet 側(34px 44px)が持つ */
+}
+.a4-sheet.multi .page-foot {
+  position: absolute;
+  left: 44px;
+  right: 44px;
+  bottom: 16px;
+  font-size: 11px;
+  color: #444;
+  border-top: 1px solid #999;
+  padding-top: 6px;
+}
+.a4-sheet.multi .page-foot .pageno {
+  float: right;
+}
+
+/* ---- A4：明細表 ---- */
+.a4-sheet .bike-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 8px;
+  font-size: 12px;
+}
+.a4-sheet .bike-table th,
+.a4-sheet .bike-table td {
+  border: 1px solid #333;
+  padding: 4px 6px;
+  vertical-align: top;
+}
+.a4-sheet .bike-table thead th {
+  background: #f2f4f7;
+  font-weight: 700;
+  text-align: center;
+}
+.a4-sheet .bike-table tfoot td {
+  background: #f7f9fc;
+  font-weight: 700;
+}
+.a4-sheet .bike-table td.c { text-align: center; }
+.a4-sheet .bike-table td.r,
+.a4-sheet .bike-table td[colspan] { text-align: right; }
+
+/* ---- A4：名義人・同意 ---- */
+.a4-sheet .owner-cert {
+  border: 1px solid #333;
+  padding: 6px 10px;
+  margin: 0 0 8px;
+}
+.a4-sheet .owner-cert .owner-line {
+  font-size: 12.5px;
+  margin: 0 0 4px;
+}
+.a4-sheet .owner-cert .sign-box .sign-label { font-size: 11.5px; }
+.a4-sheet .owner-cert .sign-box .sign-img { height: 56px; }
+.a4-sheet .owner-cert .sign-box .sign-img img { max-height: 54px; }
+
+.a4-sheet .pledge.small {
+  font-size: 12px;
+  padding: 6px 10px;
+  margin: 6px 0 10px;
+}

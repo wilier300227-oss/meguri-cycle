@@ -8,7 +8,7 @@
    ========================================================= */
 'use strict';
 
-const CACHE = 'kaitori-v10';
+const CACHE = 'kaitori-v11';
 
 /* オフラインで動くために最低限必要なアプリシェル */
 const CORE = [
@@ -17,6 +17,11 @@ const CORE = [
   'style.css',
   'app.js',
   'manifest.json',
+  // 複数台フォーム（別ページ）もオフラインで動くよう同梱
+  'multi.html',
+  'app-multi.js',
+  'style-multi.css',
+  'manifest-multi.json',
   'vendor/signature_pad.umd.min.js',
   'vendor/jspdf.umd.min.js',
   'vendor/html2canvas.min.js',
