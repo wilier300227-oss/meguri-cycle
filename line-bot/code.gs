@@ -1158,3 +1158,20 @@ function linkRichMenu_(userId, which) {
 }
 function switchToMenuB_(userId) { linkRichMenu_(userId, 'B'); } // 査定・訪問フェーズ
 function switchToMenuA_(userId) { linkRichMenu_(userId, 'A'); } // 通常/停止時に戻す
+
+/** 公開関数：登録済みリッチメニューの richMenuId と名前を実行ログに出す。
+ *  ここで得た A/B の richMenuId を スクリプトプロパティ RICHMENU_A_ID / RICHMENU_B_ID に設定する。 */
+function listRichMenus() {
+  const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/richmenu/list', {
+    headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+    muteHttpExceptions: true,
+  });
+  let data = {};
+  try { data = JSON.parse(res.getContentText()); } catch (e) {}
+  const list = data.richmenus || [];
+  if (!list.length) { Logger.log('リッチメニューが見つかりません（先に管理画面で作成してください）'); return list; }
+  list.forEach(function (m) {
+    Logger.log('richMenuId = ' + m.richMenuId + '   ←   名前:「' + (m.name || '') + '」 / チャットバー:「' + (m.chatBarText || '') + '」');
+  });
+  return list;
+}
