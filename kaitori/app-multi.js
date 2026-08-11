@@ -578,25 +578,32 @@ async function doConfirm() {
     `署名確定時刻：<b>${human}</b><br>` +
     `<span style="font-size:.75rem;color:#888;">ISO8601: ${confirmedAt}</span>`;
 
-  document.querySelector('.confirm-bar .inner').innerHTML =
-    '<div class="locked-note btn-block">🔒 署名を確定しました。フォームはロックされています。下のボタンからPDF/画像を保存してください。</div>';
-
-  els.outputPanel.classList.add('show');
   els.validation.style.display = 'none';
-  els.outputPanel.scrollIntoView({ behavior: 'smooth' });
+  document.querySelector('.confirm-bar .inner').innerHTML =
+    '<div class="locked-note btn-block">🔒 署名を確定しました。書類（PDF・画像）を作成しています…</div>';
 
   // 出力物（PDF/PNG）を1回だけ生成して端末（IndexedDB）に保存する。
   // Androidは「保存（ダウンロード）」でPWAをリロードすることがあり、そのままだと
   // 次の取引の新規フォームが開いてしまう。保存しておけば、リロード後も同じ取引の
   // 保存パネルに戻って再ダウンロードできる（復元は init() で行う）。
+  //
+  // ★オフライン崩れ対策（③-A-9と同型）：スムーズスクロールやパネル表示など
+  //   ビューポートが動いている最中に html2canvas を走らせると、取り込み位置が
+  //   狂って拡大・枠切れになる（オフラインは描画が速く顕在化）。そのため
+  //   パネル表示・スクロールより【前】に、レイアウトが静止した状態で先に生成する。
   setOutputButtonsEnabled(false);
-  setSyncStatus('pending', '⏳ 書類（PDF・画像）を作成して端末に保存しています…');
   try {
     await prepareAndStoreOutputs();
   } catch (e) {
     setSyncStatus('ng', '⚠ 書類の作成に失敗しました：' + esc(e.message || e));
   }
   setOutputButtonsEnabled(true);
+
+  // 生成し終えてからパネルを表示・スクロールする
+  document.querySelector('.confirm-bar .inner').innerHTML =
+    '<div class="locked-note btn-block">🔒 署名を確定しました。下のボタンからPDF/画像を保存してください。</div>';
+  els.outputPanel.classList.add('show');
+  els.outputPanel.scrollIntoView({ behavior: 'smooth' });
 
   // 台帳・Drive へ非同期送信（車両ごとに1行。保存済みPDFを流用）
   enqueueAndSync();
