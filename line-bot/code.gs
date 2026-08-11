@@ -12,8 +12,8 @@
  * 5-3.「お問い合わせ」（問い合わせボタン）→ 質問記入を促す＋手動対応モードON（人が対応）
  * 6. 「対応エリア・出張費」ボタン／「買取希望」「処分希望」の案内を出した直後だけ、
  *    市区町村を送ると その地域の出張費目安を返信。有効なのは案内タップ直後の
- *    「最大2メッセージ」まで（EXPECT_CITY_MSG_BUDGET）。それを過ぎたら、別の話題の
- *    やりとりで市町名が出ても反応しない。時間の失効（EXPECT_CITY_TTL_MS）は保険。
+ *    「最大2メッセージ」まで（EXPECT_CITY_MSG_BUDGET／CacheServiceで60分TTL）。
+ *    さらに §4-1：買取意向なら出張費を出さない（無料のみ）・疑問文には料金を返さず人へ回す。
  *    ※ 住所などに市町名が含まれても誤って料金を出さないよう、常時検出する運用は廃止。
  * 7. その他（分類不能）→ 顧客へは営業応答せず、オーナー通知＋短い受付1文＋手動対応モードON（§5-3）
  *    ※ 評価順の最上位に 停止フラグ(opt_out §5-2) → 手動対応モード(manual_mode §5-1) を判定。
@@ -193,11 +193,11 @@ function handleEvent(event) {
     } else if (text === '出張引取を申し込みます') {
       replyHikitoriApply(event.replyToken, userId); rule = '出張引取申込';
     } else if (text === '買取希望') {
-      replyKaitori(event.replyToken); setExpectCity_(userId); rule = '買取希望案内';
+      replyKaitori(event.replyToken); setExpectCity_(userId, 'buy'); rule = '買取希望案内';
     } else if (text === '処分希望') {
-      replyShobun(event.replyToken); setExpectCity_(userId); rule = '処分希望案内';
+      replyShobun(event.replyToken); setExpectCity_(userId, 'shobun'); rule = '処分希望案内';
     } else if (text === '対応エリア・出張費' || text === '対応エリア' || text === 'エリア') {
-      replyArea(event.replyToken); setExpectCity_(userId); rule = 'エリア案内';
+      replyArea(event.replyToken); setExpectCity_(userId, 'area'); rule = 'エリア案内';
     } else if (text === '査定をお願いします' || text === '入力完了' ||
                text.indexOf('査定をお願い') !== -1 || text.indexOf('査定お願い') !== -1) {
       replyEstimateRequest(event); rule = '査定依頼';
@@ -209,13 +209,15 @@ function handleEvent(event) {
     } else {
       // 市町名の出張費案内は「対応エリア／買取・処分の案内を出した直後」だけに限定。
       const hit = detectCityFee(text);
-      if (hit && expectsCity_(userId)) {
+      if (hit && expectsCity_(userId) && !looksLikeQuestion_(text)) {
+        // §4-1：意向で出し分け（買取なら出張費を出さない）。疑問文は下の分類不能へ回す。
+        const intent = expectCityIntent_(userId);
         clearExpectCity_(userId);
-        replyCityFee(event.replyToken, hit, event);
-        rule = '市町名→出張費';
+        replyCityFee(event.replyToken, hit, event, intent);
+        rule = '市町名→' + (intent === 'buy' ? '買取無料' : '出張費');
       } else {
         if (expectsCity_(userId)) consumeExpectCity_(userId);
-        // 5-3: 分類不能。既定は「顧客へ営業応答しない・オーナーへ通知」。
+        // 5-3: 分類不能（疑問文・意向外の市町名含む）。顧客へ営業応答せず、オーナーへ通知。
         handleUnmatchedText_(event, userId, text);
         rule = 'UNMATCHED';
       }
@@ -482,20 +484,31 @@ function detectCityFee(text) {
   return null;
 }
 
-/** 市町名を検出したときの出張費案内 */
-function replyCityFee(replyToken, hit, event) {
+/** 市町名を検出したときの案内。§4-1：意向で出し分け（買取なら出張費を出さない＝事象A対策）。 */
+function replyCityFee(replyToken, hit, event, intent) {
   markAcked(event); // 受付確認の代わりになるので初回フラグも立てる
-  const text = [
-    '📍 ' + hit.city + 'ですね、対応エリアです！',
-    '',
-    '♻️ 引取（処分）の場合：出張費の目安は ' + hit.fee + ' です。',
-    '💰 買取の場合：オンライン査定も、お引き取りの出張費も無料です。',
-    '',
-    '正確な金額は、写真を拝見したうえで確定してお伝えします。',
-    'お伺いするのは、金額にご納得いただいたあとのお引き取りのときです🚲',
-  ].join('\n');
-
-  reply(replyToken, [{ type: 'text', text: text }]);
+  let lines;
+  if (intent === 'buy') {
+    // 買取意向：出張費は無料。金額（出張費目安）は出さない。
+    lines = [
+      '📍 ' + hit.city + 'ですね、対応エリアです！',
+      '',
+      '💰 買取は、オンライン査定もお引き取りの出張費も すべて無料です。',
+      '正確な金額は、お写真を拝見して確定してお伝えします🚲',
+    ];
+  } else {
+    // 処分／対応エリア：引取の出張費の目安を出す。
+    lines = [
+      '📍 ' + hit.city + 'ですね、対応エリアです！',
+      '',
+      '♻️ 引取（処分）の場合：出張費の目安は ' + hit.fee + ' です。',
+      '💰 買取の場合：オンライン査定も、お引き取りの出張費も無料です。',
+      '',
+      '正確な金額は、写真を拝見したうえで確定してお伝えします。',
+      'お伺いするのは、金額にご納得いただいたあとのお引き取りのときです🚲',
+    ];
+  }
+  reply(replyToken, [{ type: 'text', text: lines.join('\n') }]);
 }
 
 /** 写真ガイドのメッセージ本体（単体でも申し込みフローの2通目でも使う） */
@@ -807,43 +820,47 @@ function markAcked(event) {
 }
 
 /* ── 市区町村の出張費案内を「案内直後の数メッセージだけ」に限定するためのフラグ ──
- * 対応エリア／買取・処分の案内を出したときに、そのユーザーについて
- * 「このあと数メッセージは市区町村に反応してよい」印を、残り回数（n）と時刻（t）で持つ。
- * ・n（EXPECT_CITY_MSG_BUDGET）＝案内タップ直後に反応してよいメッセージ数。市町名以外の
- *   メッセージが来るたび 1 消費し、0 になったら失効（別の話題のやりとりに市町名が混ざっても
- *   反応しない）。市町名で1回料金を返したらそこで解除。
- * ・t＝暴発防止の時間バックストップ。EXPECT_CITY_TTL_MS を過ぎたら回数が残っていても無効。 */
+ * 対応エリア／買取・処分の案内を出したときに、残り回数(n)と意向(intent)を持つ。
+ * ・n＝案内タップ直後に反応してよいメッセージ数。市町名以外が来るたび1消費し0で失効。
+ * ・intent＝'buy'（買取）/'shobun'（処分）/'area'（対応エリア）。買取なら出張費を出さない（§4-1・事象A）。
+ * ・保存は CacheService（TTLで60分失効。Propertiesは競合・上限のため使わない＝§4-1）。 */
 const EXPECT_CITY_MSG_BUDGET = 2;              // 案内タップ直後、市町名に反応してよいメッセージ数
-const EXPECT_CITY_TTL_MS = 60 * 60 * 1000;     // 保険の時間失効（60分）
+const EXPECT_CITY_TTL_SEC = 60 * 60;           // 60分でTTL失効（保険）
 function expectCityKey_(userId) { return 'expectcity_' + userId; }
-function setExpectCity_(userId) {
+function setExpectCity_(userId, intent) {
   if (!userId) return;
-  const v = JSON.stringify({ t: Date.now(), n: EXPECT_CITY_MSG_BUDGET });
-  PropertiesService.getScriptProperties().setProperty(expectCityKey_(userId), v);
+  const v = JSON.stringify({ n: EXPECT_CITY_MSG_BUDGET, intent: intent || 'area' });
+  CacheService.getScriptCache().put(expectCityKey_(userId), v, EXPECT_CITY_TTL_SEC);
 }
-/** 有効なら {t, n} を返し、無効（未設定・期限切れ・残0）なら null */
+/** 有効なら {n, intent} を返し、無効（未設定・TTL失効・残0）なら null */
 function readExpectCity_(userId) {
   if (!userId) return null;
-  const raw = PropertiesService.getScriptProperties().getProperty(expectCityKey_(userId));
+  const raw = CacheService.getScriptCache().get(expectCityKey_(userId));
   if (!raw) return null;
   let o;
   try { o = JSON.parse(raw); } catch (e) { return null; }
   if (!o || !o.n || o.n <= 0) return null;
-  if (Date.now() - Number(o.t) > EXPECT_CITY_TTL_MS) return null;
   return o;
 }
 function expectsCity_(userId) { return !!readExpectCity_(userId); }
+function expectCityIntent_(userId) { const o = readExpectCity_(userId); return o ? o.intent : null; }
 /** 市町名以外のメッセージで残り回数を1消費（0で解除） */
 function consumeExpectCity_(userId) {
   const o = readExpectCity_(userId);
-  if (!o) { clearExpectCity_(userId); return; }
+  if (!o) return;
   o.n -= 1;
   if (o.n <= 0) { clearExpectCity_(userId); return; }
-  PropertiesService.getScriptProperties().setProperty(expectCityKey_(userId), JSON.stringify(o));
+  CacheService.getScriptCache().put(expectCityKey_(userId), JSON.stringify(o), EXPECT_CITY_TTL_SEC);
 }
 function clearExpectCity_(userId) {
   if (!userId) return;
-  PropertiesService.getScriptProperties().deleteProperty(expectCityKey_(userId));
+  CacheService.getScriptCache().remove(expectCityKey_(userId));
+}
+/** §4-1：料金は返さず人へ回すべき疑問文の検知（事象B の再発防止） */
+function looksLikeQuestion_(text) {
+  if (!text) return false;
+  if (/[?？]/.test(text)) return true;
+  return ['でしょうか', 'ますか', '可能', 'いつ', 'いくら'].some(function (k) { return text.indexOf(k) !== -1; });
 }
 
 /** クイックリプライ：カメラロールを開くボタン（スマホのみ表示） */
