@@ -1,9 +1,10 @@
 {
+  "id": "/kaitori/multi",
   "name": "めぐり自転車フォーム（複数台）",
   "short_name": "複数台フォーム",
   "description": "めぐり自転車 出張買取の現場記入・署名・PDF生成（複数台・オフライン対応）",
   "start_url": "multi.html",
-  "scope": "./",
+  "scope": "multi.html",
   "display": "standalone",
   "orientation": "portrait",
   "lang": "ja",
