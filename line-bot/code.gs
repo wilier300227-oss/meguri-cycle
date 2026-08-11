@@ -6,13 +6,21 @@
  * 1. リッチメニュー「買取査定」「出張引取」→ 受付＋必要事項＋写真ガイドを2通で返信
  * 2. リッチメニュー「写真を送る」→ 撮影ガイド7枚＋カメラボタンを返信
  * 3. 「電動」→ 電動アシスト用の追加ガイドを返信
- * 4. 画像を受信 → お礼＋必要情報3点の質問＋選択ボタンを返信
+ * 4. 画像を受信 → お客さまへの自動応答はせず、記録＋オーナー通知のみ（返信は手動）
  * 5. 「買取希望」「処分希望」「対応エリア・出張費」→ それぞれの案内を返信
- * 6. メッセージに市町名が含まれる → その地域の出張費目安を自動返信
+ * 5-2.「査定をお願いします」（入力完了ボタン）→ 住所のお願い＋現地減額の可能性＋48時間以内 を返信
+ * 5-3.「お問い合わせ」（問い合わせボタン）→ 質問内容の記入を促す（以降は手動対応）
+ * 6. 「対応エリア・出張費」ボタン／「買取希望」「処分希望」の案内を出した直後だけ、
+ *    市区町村を送ると その地域の出張費目安を返信。有効なのは案内タップ直後の
+ *    「最大2メッセージ」まで（EXPECT_CITY_MSG_BUDGET）。それを過ぎたら、別の話題の
+ *    やりとりで市町名が出ても反応しない。時間の失効（EXPECT_CITY_TTL_MS）は保険。
+ *    ※ 住所などに市町名が含まれても誤って料金を出さないよう、常時検出する運用は廃止。
  * 7. その他のテキスト → 初回の1回だけ受付確認（以降は沈黙し手動チャットに任せる）
- * 8. 写真を送ってくれたユーザーを記録し、REVIEW_REQUEST_DELAY_DAYS 日後に
- *    Googleロコミ依頼を自動プッシュ送信（sendReviewRequests、要トリガー設定）
- *    ※ 会話中にキャンセル系キーワードが出たら、そのユーザーへの依頼は自動的に取り消す
+ * 8. Googleロコミ依頼：現在は【手動運用】（REVIEW_AUTO_ENABLED=false）。送る相手・
+ *    タイミングはケースバイケースのため、オーナーが LINE公式アカウントアプリの1:1チャットから
+ *    手動で送る。文面は定数 REVIEW_MESSAGE_TEXT（アプリの「定型文」に登録推奨）。
+ *    ※ REVIEW_AUTO_ENABLED=true にすると従来の自動運用（写真受信から REVIEW_REQUEST_DELAY_DAYS
+ *      日後に自動プッシュ、キャンセル系キーワードで自動取消）に戻る（installReviewTrigger 再実行）。
  * 9. 「写真送信」「買取査定/出張引取の申し込み」「初回メッセージ」を中央スプレッドシート
  *    （inquiry-sync.gs が使っているものと同じ）に記録し、オーナー個人のLINEに通知
  *
@@ -23,7 +31,9 @@
  * OWNER_LINE_USER_ID に、あなた個人のLINEのuserIdを貼り付けてください。
  *   取得方法：あなた個人のLINEで「めぐり自転車」を友だち追加し、"MYID" と送信すると
  *   あなたのuserIdが返信されます。それをコピーして貼り付けてください。
- * 初回のみ GAS エディタで installReviewTrigger() を実行し、日次トリガーを作成してください。
+ * レビュー依頼は現在【手動運用】（REVIEW_AUTO_ENABLED=false）のため、日次トリガーは不要。
+ *   既に自動運用のトリガーを作成済みなら、GAS エディタで uninstallReviewTrigger() を1回実行して削除する。
+ *   将来また自動運用に戻す場合のみ REVIEW_AUTO_ENABLED=true にして installReviewTrigger() を実行する。
  */
 
 const CHANNEL_ACCESS_TOKEN = 'ここにチャネルアクセストークンを貼り付け';
@@ -34,7 +44,28 @@ const OWNER_LINE_USER_ID = 'ここに自分のuserIdを貼り付け';
 /** Googleビジネスプロフィールの「口コミを書く」リンク（承認後、共有リンクに差し替え） */
 const GOOGLE_REVIEW_URL = 'ここにGoogleビジネスプロフィールの口コミ投稿リンクを貼り付け';
 
-/** 写真受信から何日後にレビュー依頼を送るか（査定回答48h＋日程調整＋訪問を見込んだ日数） */
+/**
+ * レビュー依頼の自動送信を行うか。
+ * false＝手動運用（送る相手・タイミングはケースバイケースのため、オーナーが
+ *   LINE公式アカウントアプリの1:1チャットから手動で送る。文面は REVIEW_MESSAGE_TEXT を
+ *   コピーして使う／アプリの「定型文」に登録しておくと便利）。写真受信時のキュー登録も
+ *   自動送信もスキップされる。
+ * true＝従来の自動運用（写真受信から REVIEW_REQUEST_DELAY_DAYS 日後に自動プッシュ）。
+ *   true に戻す場合は GAS エディタで installReviewTrigger() を再実行すること。
+ */
+const REVIEW_AUTO_ENABLED = false;
+
+/** レビュー依頼の文面（自動送信でも、手動コピー用でも使う共通テキスト） */
+const REVIEW_MESSAGE_TEXT = [
+  'この度はめぐり自転車をご利用いただきありがとうございました🚲',
+  '',
+  'もしご満足いただけましたら、今後のサービス向上のためGoogleロコミにひとこといただけると励みになります。',
+  GOOGLE_REVIEW_URL,
+  '',
+  '（まだお取引が完了していない場合はこのメッセージは読み流してください）',
+].join('\n');
+
+/** 写真受信から何日後にレビュー依頼を送るか（自動運用時のみ有効。査定回答48h＋日程調整＋訪問を見込んだ日数） */
 const REVIEW_REQUEST_DELAY_DAYS = 10;
 
 /** これらの語を含むメッセージが来たら、そのユーザーへのレビュー依頼を取り消す（不成立の低評価対策） */
@@ -104,48 +135,157 @@ function doPost(e) {
 }
 
 function handleEvent(event) {
-  if (event.type !== 'message') return;
+  // 5-6: LINEの再送などによる二重処理を防ぐ（webhookEventId で冪等化）
+  if (isDuplicateEvent_(event)) return;
+
+  if (event.type !== 'message') { logEvent_(event, '(' + event.type + ')', 'NONE'); return; }
   const msg = event.message;
+  const userId = event.source && event.source.userId;
 
   if (msg.type === 'text') {
     const text = msg.text.trim();
-    const userId = event.source && event.source.userId;
+
     if (text === 'MYID') {
-      // オーナー自身のuserId確認用（一度取得したらOWNER_LINE_USER_IDに貼り付ければ以降は不要）
+      // オーナー自身のuserId確認用（取得したら OWNER_LINE_USER_ID に貼り付ける）
       reply(event.replyToken, [{ type: 'text', text: 'あなたのuserId:\n' + userId }]);
+      logEvent_(event, 'MYID', 'userId返信');
       return;
     }
-    if (userId && REVIEW_CANCEL_KEYWORDS.some(function (kw) { return text.indexOf(kw) !== -1; })) {
+    if (REVIEW_AUTO_ENABLED && userId && REVIEW_CANCEL_KEYWORDS.some(function (kw) { return text.indexOf(kw) !== -1; })) {
       skipReviewRequest_(userId);
     }
+
+    let rule = 'UNMATCHED';
     if (text === '写真をおくります。' || text === '写真をおくります' || text === '写真を送ります') {
-      replyPhotoGuide(event.replyToken);
+      replyPhotoGuide(event.replyToken); rule = '写真ガイド';
     } else if (text === '電動') {
-      replyEbikeGuide(event.replyToken);
+      replyEbikeGuide(event.replyToken); rule = '電動ガイド';
     } else if (text === '買取査定を申し込みます') {
-      replyKaitoriApply(event.replyToken, userId);
+      replyKaitoriApply(event.replyToken, userId); rule = '買取査定申込';
     } else if (text === '出張引取を申し込みます') {
-      replyHikitoriApply(event.replyToken, userId);
+      replyHikitoriApply(event.replyToken, userId); rule = '出張引取申込';
     } else if (text === '買取希望') {
-      replyKaitori(event.replyToken);
+      replyKaitori(event.replyToken); setExpectCity_(userId); rule = '買取希望案内';
     } else if (text === '処分希望') {
-      replyShobun(event.replyToken);
+      replyShobun(event.replyToken); setExpectCity_(userId); rule = '処分希望案内';
     } else if (text === '対応エリア・出張費' || text === '対応エリア' || text === 'エリア') {
-      replyArea(event.replyToken);
+      replyArea(event.replyToken); setExpectCity_(userId); rule = 'エリア案内';
+    } else if (text === '査定をお願いします' || text === '入力完了' ||
+               text.indexOf('査定をお願い') !== -1 || text.indexOf('査定お願い') !== -1) {
+      replyEstimateRequest(event); rule = '査定依頼';
+    } else if (text === 'お問い合わせ' || text === '問い合わせ' ||
+               text.indexOf('問い合わせ') !== -1 || text.indexOf('問合せ') !== -1) {
+      replyInquiry(event); rule = '問い合わせ';
     } else if (detectVisitRequest(text)) {
-      replyVisitPolicy(event);
+      replyVisitPolicy(event); rule = '訪問希望案内';
     } else {
+      // 市町名の出張費案内は「対応エリア／買取・処分の案内を出した直後」だけに限定。
       const hit = detectCityFee(text);
-      if (hit) {
+      if (hit && expectsCity_(userId)) {
+        clearExpectCity_(userId);
         replyCityFee(event.replyToken, hit, event);
+        rule = '市町名→出張費';
       } else {
-        firstContactAck(event); // 初回のみ受付確認。以降は手動チャットに任せて沈黙
+        if (expectsCity_(userId)) consumeExpectCity_(userId);
+        // 5-3: 分類不能。既定は「顧客へ営業応答しない・オーナーへ通知」。
+        handleUnmatchedText_(event, userId, text);
+        rule = 'UNMATCHED';
       }
     }
+    logEvent_(event, rule, rule === 'UNMATCHED' ? 'NONE（オーナー通知）' : ('返信:' + rule));
 
   } else if (msg.type === 'image') {
     thankForPhoto(event);
+    logEvent_(event, 'image', '受領・オーナー通知');
+  } else {
+    logEvent_(event, '(' + msg.type + ')', 'NONE');
   }
+}
+
+/* =========================================================
+   基盤（ハンドオフ §5-6 / §5-7 / §5-3）
+   ========================================================= */
+
+/** 5-6: 同一 webhookEventId の二重処理を防ぐ（CacheService＋LockService） */
+function isDuplicateEvent_(event) {
+  const id = event.webhookEventId;
+  if (!id) return false;
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(3000);
+    const cache = CacheService.getScriptCache();
+    if (cache.get('evt_' + id)) return true;
+    cache.put('evt_' + id, '1', 600); // 10分
+    return false;
+  } catch (e) {
+    return false; // ロック不能時は取りこぼしを避けて処理を通す
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
+  }
+}
+
+/** 5-7: 全受信イベントと発火分岐を log シートへ記録（失敗してもwebhookは壊さない） */
+function getLogSheet_() {
+  const ssId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+  if (!ssId) return null; // 中央シート未設定ならログはスキップ（本処理は通常どおり動く）
+  const ss = SpreadsheetApp.openById(ssId);
+  let sheet = ss.getSheetByName('log');
+  if (!sheet) {
+    sheet = ss.insertSheet('log');
+    sheet.appendRow(['timestamp', 'userId', 'displayName', 'eventType', 'messageType', 'body', 'state', 'matchedRule', 'replySummary', 'flags']);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+function logEvent_(event, matchedRule, replySummary) {
+  try {
+    const sheet = getLogSheet_();
+    if (!sheet) return;
+    const src = event.source || {};
+    const userId = src.userId || '';
+    const msg = event.message || {};
+    const body = msg.type === 'text'
+      ? String(msg.text || '').slice(0, 500)
+      : '(' + (msg.type || event.type) + (msg.id ? ' ' + msg.id : '') + ')';
+    const flags = 'expect_city=' + (userId && expectsCity_(userId) ? '1' : '0');
+    sheet.appendRow([
+      new Date(), userId, userId ? getDisplayName_(userId) : '',
+      event.type || '', msg.type || '', body, '', matchedRule || '', replySummary || '', flags,
+    ]);
+  } catch (e) {
+    // ログ失敗は無視（webhookの本処理を止めない）
+  }
+}
+
+/** 5-3: 分類不能テキスト。顧客へは営業応答せず、オーナーへ通知＋短い受付一文を1回だけ。 */
+function handleUnmatchedText_(event, userId, text) {
+  notifyUnmatched_(event, userId, text);
+  ackUnmatchedOnce_(event, userId);
+}
+/** オーナー通知（10分のバースト抑制のみ。用件を取りこぼさないため6h等の長いデデュープはかけない） */
+function notifyUnmatched_(event, userId, text) {
+  if (!userId) return;
+  const cache = CacheService.getScriptCache();
+  const key = 'unmatched_' + userId;
+  if (cache.get(key)) return;
+  cache.put(key, '1', 600);
+  const name = getDisplayName_(userId);
+  const id = 'line_' + (event.message && event.message.id);
+  try {
+    appendInquiryRow_(new Date(), 'LINE', name, '⚠要返信（自動分類不可）', text, id);
+  } catch (e) {
+    notifyOwner_('LINE', name, '⚠要返信（自動分類不可）', text); // 中央シート未設定でも通知は試みる
+  }
+}
+/** 顧客へは短い受付一文を1セッション（6時間）に1回だけ。無応答でも可だが到達不安をなくすため。 */
+function ackUnmatchedOnce_(event, userId) {
+  if (!userId) return;
+  const cache = CacheService.getScriptCache();
+  const key = 'ackmsg_' + userId;
+  if (cache.get(key)) return;
+  cache.put(key, '1', 21600);
+  reply(event.replyToken, [{ type: 'text', text:
+    'メッセージありがとうございます🚲\n担当者が内容を確認し、順次ご返信します。\n\n📷 買取・引取のご相談は、下のメニューからどうぞ。' }]);
 }
 
 /**
@@ -188,8 +328,7 @@ function replyVisitPolicy(event) {
     '②タイヤ・チェーンまわり',
     '③メーカー名やロゴの部分',
     '',
-    'ピントが甘くても、暗くても、型番が分からなくても大丈夫です。',
-    '原則48時間以内に確定額をご連絡します！',
+    'ピントが甘くても、暗くても、型番が分からなくても大丈夫です。お写真をお待ちしています🚲',
   ].join('\n');
 
   reply(event.replyToken, [{
@@ -250,6 +389,8 @@ function photoGuideMessage() {
       qrCameraRoll(),
       qrCamera(),
       qrMessage('⚡電動アシストの方はこちら', '電動'),
+      qrMessage('✅ 入力完了・査定をお願いします', '査定をお願いします'),
+      qrMessage('💬 問い合わせ', 'お問い合わせ'),
     ]},
   };
 }
@@ -272,7 +413,7 @@ function replyKaitoriApply(replyToken, userId) {
     '2️⃣ メーカー名・車種（わかる範囲でOK）',
     '',
     'あわせて自転車の写真をお願いします（次のメッセージをご覧ください）。',
-    '確認のうえ、48時間以内に確定の査定額をご連絡します🚲',
+    '写真と情報が揃いましたら「✅ 入力完了・査定をお願いします」を押してください（または「査定をお願いします」とご送信ください）🚲',
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
@@ -319,37 +460,18 @@ function replyEbikeGuide(replyToken) {
   }]);
 }
 
-/** 画像を受信したときのお礼＋必要情報の質問（同一ユーザーには10分に1回だけ） */
+/** 画像を受信：自動応答はしない（連投の続きに割り込む・重複するため）。
+ *  記録とオーナー通知だけ行い、お客さまへの返信は手動チャットに任せる。
+ *  （同一ユーザーの連投は10分に1回だけ通知＝重複通知を防ぐ） */
 function thankForPhoto(event) {
   const userId = event.source && event.source.userId;
   if (userId) {
     const cache = CacheService.getScriptCache();
     const key = 'thanked_' + userId;
-    if (cache.get(key)) return; // 10分以内にお礼済み
+    if (cache.get(key)) return; // 10分以内は通知済み（連投の重複通知を防ぐ）
     cache.put(key, '1', 600);
   }
-  const text = [
-    '📩 お写真ありがとうございます！',
-    '',
-    'あわせて、次の3点を教えてください：',
-    '1️⃣ お住まいの市区町村',
-    '2️⃣ メーカー名・車種（わかる範囲でOK）',
-    '3️⃣ ご希望（下のボタンからどうぞ）',
-    '',
-    '確認のうえ、48時間以内に査定額をご連絡します🚲',
-  ].join('\n');
-
-  reply(event.replyToken, [{
-    type: 'text',
-    text: text,
-    quickReply: { items: [
-      qrMessage('💰 買取希望', '買取希望'),
-      qrMessage('♻️ 処分希望', '処分希望'),
-      qrMessage('📍 対応エリア・出張費', '対応エリア・出張費'),
-    ]},
-  }]);
-
-  if (userId) queueReviewRequest_(userId);
+  if (userId && REVIEW_AUTO_ENABLED) queueReviewRequest_(userId);
   logLineInquiry_(userId, '写真を送信', '(画像メッセージ)', 'line_' + event.message.id);
 }
 
@@ -399,8 +521,10 @@ function getReviewSheet_() {
   return sheet;
 }
 
-/** 時間主導トリガー（毎日1回）で呼び出す：期限が来たユーザーにレビュー依頼をプッシュ送信 */
+/** 時間主導トリガー（毎日1回）で呼び出す：期限が来たユーザーにレビュー依頼をプッシュ送信。
+ *  REVIEW_AUTO_ENABLED=false（手動運用）の間は何もしない。 */
 function sendReviewRequests() {
+  if (!REVIEW_AUTO_ENABLED) return; // 手動運用中：自動送信しない
   const sheet = getReviewSheet_();
   const rows = sheet.getDataRange().getValues();
   const now = new Date();
@@ -409,27 +533,26 @@ function sendReviewRequests() {
     if (status !== 'pending') continue;
     const daysPassed = (now - new Date(receivedAt)) / (1000 * 60 * 60 * 24);
     if (daysPassed < REVIEW_REQUEST_DELAY_DAYS) continue;
-    pushMessage_(userId, [{
-      type: 'text',
-      text: [
-        'この度はめぐり自転車をご利用いただきありがとうございました🚲',
-        '',
-        'もしご満足いただけましたら、今後のサービス向上のためGoogleロコミにひとこといただけると励みになります。',
-        GOOGLE_REVIEW_URL,
-        '',
-        '（まだお取引が完了していない場合はこのメッセージは読み流してください）',
-      ].join('\n'),
-    }]);
+    pushMessage_(userId, [{ type: 'text', text: REVIEW_MESSAGE_TEXT }]);
     sheet.getRange(i + 1, 3).setValue('sent');
   }
 }
 
-/** 初回のみ：sendReviewRequests を毎日実行する時間主導トリガーを作成する */
+/** 初回のみ：sendReviewRequests を毎日実行する時間主導トリガーを作成する（自動運用に戻すとき用） */
 function installReviewTrigger() {
   ScriptApp.getProjectTriggers().forEach(function (t) {
     if (t.getHandlerFunction() === 'sendReviewRequests') ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('sendReviewRequests').timeBased().everyDays(1).atHour(10).create();
+}
+
+/** 手動運用に切り替えるとき用：sendReviewRequests の日次トリガーを削除する。
+ *  GAS エディタでこの関数を1回実行すること（トリガーが残っていても sendReviewRequests は
+ *  REVIEW_AUTO_ENABLED=false で何もしないが、無駄な起動をなくすため削除を推奨）。 */
+function uninstallReviewTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'sendReviewRequests') ScriptApp.deleteTrigger(t);
+  });
 }
 
 /** 「買取希望」への案内 */
@@ -440,7 +563,7 @@ function replyKaitori(replyToken) {
     '買取の場合、査定・お引き取りの出張費・防犯登録の抹消代行まで、費用は一切かかりません。',
     '',
     'まだでしたら「お住まいの市区町村」と「メーカー名・車種」を教えてください。',
-    '写真とあわせて確認のうえ、48時間以内に確定の査定額をご連絡します🚲',
+    '写真とあわせて確認のうえ、確定の査定額をご連絡します🚲',
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: text }]);
@@ -482,6 +605,43 @@ function replyArea(replyToken) {
   reply(replyToken, [{ type: 'text', text: text }]);
 }
 
+/** 「入力が終わったので査定お願いします」ボタン用の自動応答。
+ *  住所のお願い＋現地での減額の可能性＋48時間以内 をまとめて返す（48時間はここに集約）。 */
+function replyEstimateRequest(event) {
+  markAcked(event);
+  const text = [
+    '📋 査定のご依頼ありがとうございます！お送りいただいた写真・情報を確認します。',
+    '',
+    'お引き取りの段取りのため、差し支えなければ お住まいの市町名（町名まで）を教えてください。番地は金額が決まってからで大丈夫です。',
+    '',
+    '査定額は写真をもとに確定してお伝えします。写真のとおりであれば、その金額で確定します。',
+    '写真では判別できない次の点が現地で見つかった場合のみ、その場では決めず、一度お持ち帰りのうえ再提示します：',
+    '・フレームの曲がり／割れ',
+    '・変速またはブレーキが機能しない',
+    '・（電動アシスト）バッテリー残量ランプが2点灯以下',
+    '',
+    '原則48時間以内に、確定の査定額をLINEでご連絡します🚲',
+  ].join('\n');
+  reply(event.replyToken, [{ type: 'text', text: text }]);
+  const userId = event.source && event.source.userId;
+  logLineInquiry_(userId, '査定を依頼（入力完了）', (event.message && event.message.text) || '', 'line_' + (event.message && event.message.id));
+}
+
+/** 「問い合わせ」ボタン用の自動応答。質問内容の記入を促し、以降は手動チャットで対応する。 */
+function replyInquiry(event) {
+  markAcked(event);
+  const text = [
+    '💬 お問い合わせありがとうございます！',
+    '',
+    'ご質問・ご相談の内容を、このままメッセージでお送りください。担当が確認し、順次ご返信します🚲',
+    '',
+    '※ 買取・引取のご相談は、下のメニューから「写真を送る」をタップすると案内が始まります。',
+  ].join('\n');
+  reply(event.replyToken, [{ type: 'text', text: text }]);
+  const userId = event.source && event.source.userId;
+  logLineInquiry_(userId, 'お問い合わせ', (event.message && event.message.text) || '', 'line_' + (event.message && event.message.id));
+}
+
 /** その他のテキストへの受付確認（ユーザーごとに初回の1回だけ） */
 function firstContactAck(event) {
   const userId = event.source && event.source.userId;
@@ -493,7 +653,7 @@ function firstContactAck(event) {
 
   const text = [
     'メッセージありがとうございます🚲',
-    '内容を確認し、原則48時間以内にご返信します。',
+    '内容を確認し、順次ご返信します。',
     '',
     '📷 買取・引取のご相談は、下のメニューから「写真を送る」をタップすると案内が始まります。',
   ].join('\n');
@@ -507,6 +667,46 @@ function markAcked(event) {
   const userId = event.source && event.source.userId;
   if (!userId) return;
   PropertiesService.getScriptProperties().setProperty('acked_' + userId, '1');
+}
+
+/* ── 市区町村の出張費案内を「案内直後の数メッセージだけ」に限定するためのフラグ ──
+ * 対応エリア／買取・処分の案内を出したときに、そのユーザーについて
+ * 「このあと数メッセージは市区町村に反応してよい」印を、残り回数（n）と時刻（t）で持つ。
+ * ・n（EXPECT_CITY_MSG_BUDGET）＝案内タップ直後に反応してよいメッセージ数。市町名以外の
+ *   メッセージが来るたび 1 消費し、0 になったら失効（別の話題のやりとりに市町名が混ざっても
+ *   反応しない）。市町名で1回料金を返したらそこで解除。
+ * ・t＝暴発防止の時間バックストップ。EXPECT_CITY_TTL_MS を過ぎたら回数が残っていても無効。 */
+const EXPECT_CITY_MSG_BUDGET = 2;              // 案内タップ直後、市町名に反応してよいメッセージ数
+const EXPECT_CITY_TTL_MS = 60 * 60 * 1000;     // 保険の時間失効（60分）
+function expectCityKey_(userId) { return 'expectcity_' + userId; }
+function setExpectCity_(userId) {
+  if (!userId) return;
+  const v = JSON.stringify({ t: Date.now(), n: EXPECT_CITY_MSG_BUDGET });
+  PropertiesService.getScriptProperties().setProperty(expectCityKey_(userId), v);
+}
+/** 有効なら {t, n} を返し、無効（未設定・期限切れ・残0）なら null */
+function readExpectCity_(userId) {
+  if (!userId) return null;
+  const raw = PropertiesService.getScriptProperties().getProperty(expectCityKey_(userId));
+  if (!raw) return null;
+  let o;
+  try { o = JSON.parse(raw); } catch (e) { return null; }
+  if (!o || !o.n || o.n <= 0) return null;
+  if (Date.now() - Number(o.t) > EXPECT_CITY_TTL_MS) return null;
+  return o;
+}
+function expectsCity_(userId) { return !!readExpectCity_(userId); }
+/** 市町名以外のメッセージで残り回数を1消費（0で解除） */
+function consumeExpectCity_(userId) {
+  const o = readExpectCity_(userId);
+  if (!o) { clearExpectCity_(userId); return; }
+  o.n -= 1;
+  if (o.n <= 0) { clearExpectCity_(userId); return; }
+  PropertiesService.getScriptProperties().setProperty(expectCityKey_(userId), JSON.stringify(o));
+}
+function clearExpectCity_(userId) {
+  if (!userId) return;
+  PropertiesService.getScriptProperties().deleteProperty(expectCityKey_(userId));
 }
 
 /** クイックリプライ：カメラロールを開くボタン（スマホのみ表示） */
