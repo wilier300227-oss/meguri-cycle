@@ -613,6 +613,19 @@ function photoGuideMessage() {
   };
 }
 
+/** 引取（処分）向けの軽い写真依頼。価値判定が目的ではないので枚数は少なくてよい。 */
+function photoGuideLightMessage() {
+  return {
+    type: 'text',
+    text: [
+      '📷 お写真は 自転車全体が分かる1〜2枚 で大丈夫です（メーカー名・型番などは不要）。',
+      '傷・サビや、電動アシストのバッテリーがあれば写していただけると助かります。',
+      '下のボタンから送れます👇',
+    ].join('\n'),
+    quickReply: { items: [qrCameraRoll(), qrCamera()] },
+  };
+}
+
 /** リッチメニュー「写真を送る」 */
 function replyPhotoGuide(replyToken) {
   reply(replyToken, [photoGuideMessage()]);
@@ -636,6 +649,7 @@ function replyKaitoriApply(replyToken, userId) {
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
+  setExpectCity_(userId, 'buy');   // §4-1：以後の市町名は「買取＝出張費無料」で扱い、引取料金を出さない
   switchToMenuB_(userId); // §6-3：申込(S1)でメニューBへ
   logLineInquiry_(userId, '買取査定を申し込み', '(リッチメニューから申し込み)', 'line_' + replyToken);
 }
@@ -647,17 +661,16 @@ function replyHikitoriApply(replyToken, userId) {
     '',
     '処分費は0円。出張費のみで引取に伺います。出張費はこちらで計算し、金額をご確認いただいてから訪問日を決めます。',
     '',
-    'スムーズにご案内するため、次を1通にまとめて教えてください（分かる範囲でOK）：',
+    '次を1通にまとめて教えてください（分かる範囲でOK）：',
     '① 台数（何台ですか？）',
     '② お住まいの市町名（町名まで）',
-    '③ メーカー・車種',
-    '④ 電動アシストの有無',
-    '⑤ 防犯登録の名義（本人／家族／不明）',
+    '③ 防犯登録の名義（本人／家族／不明）',
     '',
-    'あわせて下の写真ガイドの通りにお写真をお送りください。状態によっては買取（費用なし＋お支払い）に切り替えられる場合もあります🚲',
+    'お写真は下のガイドのとおり、簡単で大丈夫です。状態によっては買取（費用なし＋お支払い）に切り替えられる場合もあります🚲',
   ].join('\n');
 
-  reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
+  reply(replyToken, [{ type: 'text', text: ack }, photoGuideLightMessage()]);
+  setExpectCity_(userId, 'shobun'); // §4-1：引取なので以後の市町名は出張費の目安を返す
   switchToMenuB_(userId); // §6-3：申込(S1)でメニューBへ
   logLineInquiry_(userId, '出張引取を申し込み', '(リッチメニューから申し込み)', 'line_' + replyToken);
 }
@@ -815,8 +828,8 @@ function replyArea(replyToken) {
     '📍 対応エリア・出張費のご案内',
     '',
     '【対応エリア】',
-    '石川県中心（かほく市・金沢市・白山市・七尾市など）',
-    '富山県・福井県も応相談です。',
+    '石川県かほく市（かほく市役所）を拠点に対応しています。',
+    'かほく市・金沢市・白山市・七尾市 など。富山県・福井県も応相談です。',
     '',
     AREA_FEE_TEXT,
     '※ 出張費がかかるのは引取（処分）の場合のみ',
@@ -967,6 +980,9 @@ function replyFaq_(replyToken) {
     '',
     'Q. 対応エリア外ですが可能ですか？',
     'A. 富山・福井など少し遠方は要相談です。まずはお声がけください。',
+    '',
+    '▼ もっと詳しいFAQはこちら',
+    'https://meguri-cycle.com/#faq',
     '',
     '他のご質問は「担当者に相談」からどうぞ🚲',
   ].join('\n');
