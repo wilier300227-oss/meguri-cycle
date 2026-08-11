@@ -150,7 +150,20 @@ function initFeeMaster_() {
   CacheService.getScriptCache().remove('fee_master_map');
 }
 
-/** LINEからのWebhookを受け取る入口 */
+/**
+ * 初回セットアップ（公開関数：GASエディタの実行プルダウンから選んで▶実行）。
+ * ※ 末尾が「_」の関数はプルダウンに出ないため、この公開関数から呼ぶ。
+ * 中央スプレッドシートを用意し、log / users / fee_master タブを作成する。
+ */
+function setupLineSheets() {
+  getInquirySheet_();  // 中央シート＋問い合わせタブ（INQUIRY_SHEET_ID を設定）
+  getLogSheet_();      // log タブ
+  getUsersSheet_();    // users タブ
+  initFeeMaster_();    // fee_master タブ（暫定額。あとで実測で確定）
+  const id = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+  Logger.log('セットアップ完了。INQUIRY_SHEET_ID=' + id);
+  return 'OK INQUIRY_SHEET_ID=' + id;
+}
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
