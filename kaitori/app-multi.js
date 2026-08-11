@@ -22,6 +22,7 @@ const MAX_OWNERS = 4;
 /* ---- 状態 ---- */
 let confirmedAt = null;
 let isLocked = false;
+let savedArtifacts = null;   // 確定時に生成したPDF/PNG（Blob）。リロード後の再ダウンロード用
 let sigSeller = null;
 let sigGuardian = null;
 const sigOwners = [];        // 名義人①〜④の署名パッド（追加順）
@@ -564,7 +565,7 @@ function onConfirm() {
   if (!runValidation()) return;
   els.confirmModal.hidden = false;
 }
-function doConfirm() {
+async function doConfirm() {
   els.confirmModal.hidden = true;
   confirmedAt = new Date().toISOString();
   commitTradeNo();
@@ -578,13 +579,26 @@ function doConfirm() {
     `<span style="font-size:.75rem;color:#888;">ISO8601: ${confirmedAt}</span>`;
 
   document.querySelector('.confirm-bar .inner').innerHTML =
-    '<div class="locked-note btn-block">🔒 署名を確定しました。フォームはロックされています。下のボタンからPDFを生成してください。</div>';
+    '<div class="locked-note btn-block">🔒 署名を確定しました。フォームはロックされています。下のボタンからPDF/画像を保存してください。</div>';
 
   els.outputPanel.classList.add('show');
   els.validation.style.display = 'none';
   els.outputPanel.scrollIntoView({ behavior: 'smooth' });
 
-  // 台帳・Drive へ非同期送信（車両ごとに1行。PDF/画像ボタンとは独立して自動実行）
+  // 出力物（PDF/PNG）を1回だけ生成して端末（IndexedDB）に保存する。
+  // Androidは「保存（ダウンロード）」でPWAをリロードすることがあり、そのままだと
+  // 次の取引の新規フォームが開いてしまう。保存しておけば、リロード後も同じ取引の
+  // 保存パネルに戻って再ダウンロードできる（復元は init() で行う）。
+  setOutputButtonsEnabled(false);
+  setSyncStatus('pending', '⏳ 書類（PDF・画像）を作成して端末に保存しています…');
+  try {
+    await prepareAndStoreOutputs();
+  } catch (e) {
+    setSyncStatus('ng', '⚠ 書類の作成に失敗しました：' + esc(e.message || e));
+  }
+  setOutputButtonsEnabled(true);
+
+  // 台帳・Drive へ非同期送信（車両ごとに1行。保存済みPDFを流用）
   enqueueAndSync();
 }
 
@@ -1031,16 +1045,21 @@ async function enqueueAndSync() {
   }
   setSyncStatus('pending', '⏳ 台帳・Driveへ保存する書類を準備しています…');
   try {
+    // 確定時に生成済みのPDF（savedArtifacts）を流用して二重描画を避ける。無ければ都度生成。
+    const certB64 = savedArtifacts && savedArtifacts.certPdf
+      ? await blobToBase64(savedArtifacts.certPdf) : await certPdfBase64();
     const pdfs = [{
       kind: 'cert',
       name: `${els.tradeNo.value}_譲渡証明書.pdf`,
-      b64: await certPdfBase64(),
+      b64: certB64,
     }];
     if (isMinor()) {
+      const gB64 = savedArtifacts && savedArtifacts.guardianPdf
+        ? await blobToBase64(savedArtifacts.guardianPdf) : await guardianPdfBase64();
       pdfs.push({
         kind: 'guardian',
         name: `${els.tradeNo.value}_保護者同意書.pdf`,
-        b64: await guardianPdfBase64(),
+        b64: gB64,
       });
     }
     const records = collectRecords();
@@ -1120,6 +1139,206 @@ function setupTitleLongPress() {
 }
 
 /* =========================================================
+   11.6 出力物（PDF/PNG）の端末保存と、リロード後の復元
+        Androidは「保存（ダウンロード）」でPWAをリロードすることがある。
+        確定時に PDF/PNG を IndexedDB に保存しておき、リロード後は同じ取引の
+        保存パネルに戻して再ダウンロードできるようにする（次の取引へ進むのは
+        「完了」ボタンのときだけ）。
+   ========================================================= */
+const ACTIVE_KEY = 'rb_multi_active';   // 復元対象の取引番号（localStorage・小さい印）
+const IDB_NAME = 'rbMultiOutputs', IDB_STORE = 'artifacts';
+
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    const r = indexedDB.open(IDB_NAME, 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore(IDB_STORE); };
+    r.onsuccess = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+  });
+}
+async function idbPut(key, val) {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const t = db.transaction(IDB_STORE, 'readwrite');
+    t.objectStore(IDB_STORE).put(val, key);
+    t.oncomplete = () => resolve();
+    t.onerror = () => reject(t.error);
+  });
+}
+async function idbGet(key) {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const t = db.transaction(IDB_STORE, 'readonly');
+    const rq = t.objectStore(IDB_STORE).get(key);
+    rq.onsuccess = () => resolve(rq.result);
+    rq.onerror = () => reject(rq.error);
+  });
+}
+async function idbDel(key) {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const t = db.transaction(IDB_STORE, 'readwrite');
+    t.objectStore(IDB_STORE).delete(key);
+    t.oncomplete = () => resolve();
+    t.onerror = () => reject(t.error);
+  });
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1]);
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+function canvasToPngBlob(canvas) {
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+}
+function canvasesToPdfBlob(canvases) {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+  canvases.forEach((c, i) => { if (i > 0) pdf.addPage(); addCanvasToPdf(pdf, c); });
+  return pdf.output('blob');
+}
+function dlBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* 確定時に呼ぶ：譲渡証明書（複数ページ）と保護者同意書を1回だけ描画し、
+   PDF/PNG（Blob）＋ファイル名を savedArtifacts に保持し IndexedDB に保存する。 */
+async function prepareAndStoreOutputs() {
+  const kind = els.tradeType.value;
+  const pages = paginateCertSheets();
+  const certCanvases = [];
+  for (const p of pages) certCanvases.push(await renderSheet(p));
+
+  const art = {
+    tradeNo: els.tradeNo.value,
+    confirmedAt: confirmedAt,
+    minor: isMinor(),
+    certPdf: canvasesToPdfBlob(certCanvases),
+    certPng: await Promise.all(certCanvases.map(canvasToPngBlob)),
+    guardianPdf: null,
+    guardianPng: null,
+    names: {
+      certPdf: docFileName(kind, 'pdf'),
+      certPng: pages.length > 1
+        ? pages.map((_, i) => docFileName(`${kind}（${i + 1}）`, 'png'))
+        : [docFileName(kind, 'png')],
+      guardianPdf: docFileName('保護者同意書', 'pdf'),
+      guardianPng: [docFileName('保護者同意書', 'png')],
+    },
+  };
+  if (art.minor) {
+    buildGuardianSheet();
+    const gc = await renderSheet(els.sheetGuardian);
+    art.guardianPdf = canvasesToPdfBlob([gc]);
+    art.guardianPng = [await canvasToPngBlob(gc)];
+  }
+
+  savedArtifacts = art;
+  try {
+    await idbPut(art.tradeNo, art);
+    localStorage.setItem(ACTIVE_KEY, art.tradeNo);
+  } catch (e) {
+    // 保存に失敗しても、この画面が生きている間は savedArtifacts から再保存できる
+    console.warn('出力物の端末保存に失敗:', e);
+  }
+}
+
+/* 保存ボタンの実処理（保存済みBlobを再ダウンロード。無ければその場で生成にフォールバック） */
+async function onSaveCertPdf() {
+  if (!isLocked) return;
+  if (savedArtifacts && savedArtifacts.certPdf) dlBlob(savedArtifacts.certPdf, savedArtifacts.names.certPdf);
+  else await generateCertPdf();
+}
+async function onSaveCertPng() {
+  if (!isLocked) return;
+  if (savedArtifacts && savedArtifacts.certPng) savedArtifacts.certPng.forEach((b, i) => dlBlob(b, savedArtifacts.names.certPng[i]));
+  else await generateCertImage();
+}
+async function onSaveGuardianPdf() {
+  if (!isLocked) return;
+  if (savedArtifacts && savedArtifacts.guardianPdf) dlBlob(savedArtifacts.guardianPdf, savedArtifacts.names.guardianPdf);
+  else await generateGuardianPdf();
+}
+async function onSaveGuardianPng() {
+  if (!isLocked) return;
+  if (savedArtifacts && savedArtifacts.guardianPng) savedArtifacts.guardianPng.forEach((b, i) => dlBlob(b, savedArtifacts.names.guardianPng[i]));
+  else await generateGuardianImage();
+}
+
+function setOutputButtonsEnabled(on) {
+  [els.btnPdfCert, els.btnPdfGuardian, els.btnImgCert, els.btnImgGuardian].forEach(b => { b.disabled = !on; });
+}
+
+/* この取引を終了して次のお客さまへ（保存物を削除してリロード＝新規フォーム） */
+async function finishTransaction() {
+  try {
+    const no = localStorage.getItem(ACTIVE_KEY) || els.tradeNo.value;
+    if (no) await idbDel(no);
+  } catch (e) {}
+  localStorage.removeItem(ACTIVE_KEY);
+  location.reload();
+}
+
+/* リロード後、確定済み取引を保存パネルとして復元する。true=復元した */
+async function restoreCompleted(tradeNo) {
+  let art = null;
+  try { art = await idbGet(tradeNo); } catch (e) {}
+  if (!art) return false;
+
+  savedArtifacts = art;
+  confirmedAt = art.confirmedAt;
+  isLocked = true;
+  els.tradeNo.value = art.tradeNo;
+  document.body.classList.add('restored-mode');
+
+  const human = new Date(art.confirmedAt).toLocaleString('ja-JP',
+    { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  els.confirmStamp.innerHTML =
+    `<b>保存済みの取引です。</b>PDF・画像を再保存できます。<br>` +
+    `取引番号：<b>${esc(art.tradeNo)}</b><br>署名確定時刻：<b>${human}</b>`;
+
+  els.btnPdfGuardian.style.display = art.minor ? '' : 'none';
+  els.btnImgGuardian.style.display = art.minor ? '' : 'none';
+  els.outputPanel.classList.add('show');
+
+  wireOutputButtons();
+  wireFinishAndSettings();
+  els.cfgUrl.value = CFG.gasUrl;
+  els.cfgToken.value = CFG.token;
+  showCfgStatus();
+  setupTitleLongPress();
+  if (readQueue().length) flushQueue();     // 未送信の台帳分があれば再送
+  window.addEventListener('online', flushQueue);
+  return true;
+}
+
+/* 保存ボタン・再送ボタンの配線（新規／復元の両方で使う） */
+function wireOutputButtons() {
+  els.btnPdfCert.addEventListener('click', onSaveCertPdf);
+  els.btnPdfGuardian.addEventListener('click', onSaveGuardianPdf);
+  els.btnImgCert.addEventListener('click', onSaveCertPng);
+  els.btnImgGuardian.addEventListener('click', onSaveGuardianPng);
+  els.btnSyncRetry.addEventListener('click', flushQueue);
+}
+/* 「完了」ダイアログと台帳設定カードの配線（新規／復元の両方で使う） */
+function wireFinishAndSettings() {
+  els.btnFinish.addEventListener('click', () => { els.finishModal.hidden = false; });
+  els.btnFinishCancel.addEventListener('click', () => { els.finishModal.hidden = true; });
+  els.finishModal.addEventListener('click', (e) => { if (e.target === els.finishModal) els.finishModal.hidden = true; });
+  els.btnFinishYes.addEventListener('click', finishTransaction);
+  els.btnSaveCfg.addEventListener('click', saveLedgerConfig);
+  els.btnClearCfg.addEventListener('click', clearLedgerConfig);
+}
+
+/* =========================================================
    12. 初期化・イベント
    ========================================================= */
 function hardenInputsForPrivacy() {
@@ -1133,7 +1352,16 @@ function hardenInputsForPrivacy() {
   });
 }
 
-function init() {
+async function init() {
+  // リロード直後に「確定済みだが完了していない取引」があれば、保存パネルとして復元する
+  // （Androidが保存操作でPWAをリロードしても、次の取引に進まず再ダウンロードできる）
+  const activeNo = localStorage.getItem(ACTIVE_KEY);
+  if (activeNo) {
+    const restored = await restoreCompleted(activeNo);
+    if (restored) return;               // 復元したら通常の新規セットアップはしない
+    localStorage.removeItem(ACTIVE_KEY); // 保存物が見つからない古い印は消して新規へ
+  }
+
   const today = new Date();
   els.tradeDate.value = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
   refreshTradeNo();
@@ -1201,23 +1429,14 @@ function init() {
   els.btnConfirmCancel.addEventListener('click', () => { els.confirmModal.hidden = true; });
   els.confirmModal.addEventListener('click', (e) => { if (e.target === els.confirmModal) els.confirmModal.hidden = true; });
 
-  els.btnFinish.addEventListener('click', () => { els.finishModal.hidden = false; });
-  els.btnFinishCancel.addEventListener('click', () => { els.finishModal.hidden = true; });
-  els.finishModal.addEventListener('click', (e) => { if (e.target === els.finishModal) els.finishModal.hidden = true; });
-  els.btnFinishYes.addEventListener('click', () => { location.reload(); });
-
-  els.btnPdfCert.addEventListener('click', generateCertPdf);
-  els.btnPdfGuardian.addEventListener('click', generateGuardianPdf);
-  els.btnImgCert.addEventListener('click', generateCertImage);
-  els.btnImgGuardian.addEventListener('click', generateGuardianImage);
-  els.btnSyncRetry.addEventListener('click', flushQueue);
+  // 保存ボタン（確定時に生成したPDF/PNGを保存）・完了・台帳設定の配線（復元時と共通）
+  wireOutputButtons();
+  wireFinishAndSettings();
 
   // 台帳連携の設定（この端末に保存。単台フォームと共通）
   els.cfgUrl.value = CFG.gasUrl;
   els.cfgToken.value = CFG.token;
   showCfgStatus();
-  els.btnSaveCfg.addEventListener('click', saveLedgerConfig);
-  els.btnClearCfg.addEventListener('click', clearLedgerConfig);
   setupTitleLongPress();
 
   // 未送信キューがあれば起動時・通信復帰時に再送（出力パネルは開かず裏で送信のみ）

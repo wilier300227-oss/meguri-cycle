@@ -117,3 +117,8 @@
   padding: 6px 10px;
   margin: 6px 0 10px;
 }
+
+/* ---- 復元モード：リロード後、確定済み取引の保存パネルだけを見せる ---- */
+body.restored-mode .section-divider,
+body.restored-mode #kaitoriForm > .card:not(.output-panel),
+body.restored-mode .confirm-bar { display: none !important; }

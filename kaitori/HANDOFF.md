@@ -230,6 +230,14 @@ GASを新規プロジェクトとしてデプロイ済み、実機で 署名→�
 - **オフライン（PWA）**：`sw.js` に複数台3ファイル＋`manifest-multi.json` を同梱、`CACHE` を **v10→v11**。`app-multi.js` でSW登録。
 - **台帳連携（1車両=1行）**：確定時に**車両ごとに1行**を送信（取引番号は枝番付き `RB-YYYYMMDD-NNN-01`…、共通の相手方情報を各行に複製）。**既存GAS(kaitori-ledger.gs)は無改修**で `append` を車両数ぶん呼ぶ。PDFは枝番01の行にだけ添付（Drive重複回避）。設定・キューは単台と同じ localStorage を共有。名義人列は名義人の「対象車体No.」一致でベストエフォート判定。
 - ⚠ **未検証（要実機）**：**複数ページPDFの実機オフライン描画（崩れ）は未確認**。過去③-A-3/7/9 と同型リスクがあるため、機内モードでPDF生成して崩れが無いか実機確認すること。SW版上げのためタブレットは一度オンラインで開き直す（PWA再起動）と v11 に切替。台帳は4台入力で枝番-01〜-04の4行が入り再送で重複しないことを確認すること。
+- **実機確認済み（2026-08-11）**：オフラインでのPDF/PNG生成OK。PWAアイコンは単台/複数台を**別アイコン**に分離（manifest `id`＋`scope`を非重複化：単台 scope=`index.html` / 複数台 scope=`multi.html`）。同一scopeだと Android WebAPK が「同じアプリ」として上書きするため。SW v10→v13。
+
+### ④-2：保存でPWAがリロードされても取引を失わない（確定時PDF/PNGを端末保存→復元）（2026-08-11）
+実機で「複数台フォームでPDF保存したら次の取引に行ってしまった」。原因は **Androidが「保存（ダウンロード）」でPWAをリロード**し、`init()` が新規フォーム（採番済みなので次の番号）を開くため（保存処理自体にreloadは無い）。
+- **対応（`app-multi.js`）**：`doConfirm()` で **PDF/PNGを1回だけ生成して IndexedDB(`rbMultiOutputs`) に保存**（`prepareAndStoreOutputs()`）、`localStorage['rb_multi_active']` に取引番号の印を立てる。保存ボタンは**保存済みBlobを再ダウンロード**（`onSaveCertPdf` 等）。`init()` は起動時に印があれば `restoreCompleted()` で**保存パネルとして復元**（`body.restored-mode` で入力欄・確定バーを隠し、同じ取引番号のまま再保存可能）。**次の取引へ進むのは「完了」だけ**（`finishTransaction()` が IndexedDB とprintを消して reload）。
+- 台帳送信は `savedArtifacts` のPDFを流用（二重描画回避）。復元時はキューを `flushQueue()` で再送。
+- `sw.js`：v13→**v14**（app-multi.js/style-multi.css 変更のため）。
+- ⚠ **未検証（要実機）**：保存→リロード→同じ取引の保存パネルに戻ること／「完了」で次番号の新規になること。
 
 **③-A-2：台帳連携の設定を「端末保存」に変更 —— ✅ 実装済み（2026-08-07。ブラウザ実機の最終確認は未了）**
 ③-A末尾の「⚠未確定（デプロイ設計）：config.js にトークンを載せるとGitHub Pages公開ソースから読める」問題への対応。
