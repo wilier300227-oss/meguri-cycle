@@ -42,7 +42,7 @@ CELLS = [
     {"label": "買取を申し込む", "sub": "写真を送るだけ・査定無料", "icon": "bicycle"},
     {"label": "処分・引取", "sub": "処分費0円・出張費のみ", "icon": "truck"},
     {"label": "対応エリア・出張費", "sub": "石川県中心・北陸対応", "icon": "pin"},
-    {"label": "査定をお願いします", "sub": "写真を送り終えたら", "dark": True, "icon": "camera"},
+    {"label": "査定を申し込む", "sub": "写真を送り終えたら", "dark": True, "icon": "camera"},
     {"label": "よくある質問", "sub": "キャンセル料・防犯登録など", "icon": "chat"},
     {"label": "担当者に相談", "sub": "質問・その他はこちら", "icon": "house"},
 ]

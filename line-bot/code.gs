@@ -8,14 +8,14 @@
  * 3. 「電動」→ 電動アシスト用の追加ガイドを返信
  * 4. 画像を受信 → お客さまへの自動応答はせず、記録＋オーナー通知のみ（返信は手動）
  * 5. 「買取希望」「処分希望」「対応エリア・出張費」→ それぞれの案内を返信
- * 5-2.「査定をお願いします」（入力完了ボタン）→ 住所（町名まで）＋条件付き確定額＋48時間以内 を返信
+ * 5-2.「査定を申し込む」（入力完了ボタン）→ 必要事項の確認リスト（漏れは追記）＋条件付き確定額＋48時間以内 を返信
  * 5-3.「お問い合わせ」（問い合わせボタン）→ 質問記入を促す＋手動対応モードON（人が対応）
  * 6. 「対応エリア・出張費」ボタン／「買取希望」「処分希望」の案内を出した直後だけ、
  *    市区町村を送ると その地域の出張費目安を返信。有効なのは案内タップ直後の
  *    「最大2メッセージ」まで（EXPECT_CITY_MSG_BUDGET／CacheServiceで60分TTL）。
  *    さらに §4-1：買取意向なら出張費を出さない（無料のみ）・疑問文には料金を返さず人へ回す。
  *    ※ 住所などに市町名が含まれても誤って料金を出さないよう、常時検出する運用は廃止。
- * 7. その他（分類不能）→ 顧客へは営業応答せず、オーナー通知＋短い受付1文＋手動対応モードON（§5-3）
+ * 7. その他（分類不能）→ 顧客へは自動応答せず（受付文は問い合わせボタン時のみ）、オーナー通知＋手動対応モードON（§5-3）
  *    ※ 評価順の最上位に 停止フラグ(opt_out §5-2) → 手動対応モード(manual_mode §5-1) を判定。
  *      いずれもONの間は自動応答を止め、ログ・オーナー通知のみ継続。状態は Sheets(users) に永続化。
  *      全受信は log シートに記録、webhookEventId で二重処理を防止（§5-6/§5-7）。
@@ -209,10 +209,16 @@ function handleEvent(event) {
     }
   }
   // 2. 手動対応モード（§5-1）：全自動応答を停止し、通知のみ。
+  //    ただし自動応答系ボタンを押し直したら解除して通常応答に戻す（§5-1 リセット）。
   if (isManualMode_(st)) {
-    notifyManualIncoming_(event, userId, msg, text, '💬 手動対応中の新着');
-    logEvent_(event, 'MANUAL_MODE', 'NONE（通知のみ）');
-    return;
+    if (isManualResetText_(text)) {
+      clearManualMode_(userId);
+      logEvent_(event, 'MANUAL_RESET', text);
+    } else {
+      notifyManualIncoming_(event, userId, msg, text, '💬 手動対応中の新着');
+      logEvent_(event, 'MANUAL_MODE', 'NONE（通知のみ）');
+      return;
+    }
   }
 
   if (msg.type === 'text') {
@@ -241,7 +247,8 @@ function handleEvent(event) {
       replyShobun(event.replyToken); setExpectCity_(userId, 'shobun'); rule = '処分希望案内';
     } else if (text === '対応エリア・出張費' || text === '対応エリア' || text === 'エリア') {
       replyArea(event.replyToken); setExpectCity_(userId, 'area'); rule = 'エリア案内';
-    } else if (text === '査定をお願いします' || text === '入力完了' ||
+    } else if (text === '査定を申し込む' || text === '査定をお願いします' || text === '入力完了' ||
+               text.indexOf('査定を申し込む') !== -1 ||
                text.indexOf('査定をお願い') !== -1 || text.indexOf('査定お願い') !== -1) {
       replyEstimateRequest(event); rule = '査定依頼';
     } else if (text === 'お問い合わせ' || text === '問い合わせ' || text === '担当者に相談' ||
@@ -343,7 +350,9 @@ function logEvent_(event, matchedRule, replySummary) {
 /** 5-3: 分類不能テキスト。顧客へは営業応答せず、オーナーへ通知＋短い受付一文を1回だけ。 */
 function handleUnmatchedText_(event, userId, text) {
   notifyUnmatched_(event, userId, text);
-  ackUnmatchedOnce_(event, userId);
+  // 通常のやり取りでは顧客へ自動返信しない（人が対応中の会話に割り込むため）。
+  // 「担当者が確認し、順次ご返信します」の受付返信は、問い合わせボタン押下時（replyInquiry）だけに出す。
+  // ackUnmatchedOnce_(event, userId);
   if (userId) setManualMode_(userId); // §5-3：分類不能は手動対応モードON（人が対応）
 }
 /** オーナー通知（10分のバースト抑制のみ。用件を取りこぼさないため6h等の長いデデュープはかけない） */
@@ -462,6 +471,18 @@ function isManualMode_(st) {
 function setManualMode_(userId) {
   setUserFields_(userId, { manual_mode: '1', manual_until: new Date(Date.now() + 48 * 3600 * 1000) });
 }
+/** 手動対応モードを解除して自動応答に戻す（§5-1 リセット）。 */
+function clearManualMode_(userId) {
+  if (userId) setUserFields_(userId, { manual_mode: '', manual_until: '' });
+}
+/* 手動対応モードを解除する「自動応答系ボタン」（§5-1 リセット）。
+   お客さまが問い合わせ後に別のメニューを押し直したら、48時間を待たずに自動応答へ戻す。
+   人対応の意図が明確な inquiry（担当者に相談）／check_status（進捗確認）／
+   reschedule（日程変更）／cancel（キャンセル）は除外し、手動のまま維持する。 */
+var MANUAL_RESET_ACTIONS = ['apply_kaitori', 'apply_shobun', 'area_fee', 'estimate_request', 'faq', 'photo', 'add_photo', 'add_vehicle'];
+var MANUAL_RESET_TEXTS = ['買取査定を申し込みます', '出張引取を申し込みます', '対応エリア・出張費', '査定を申し込む', '査定をお願いします', 'よくある質問', '写真を追加する', '写真を追加', '台数を追加する', '台数を追加'];
+function isManualResetAction_(action) { return MANUAL_RESET_ACTIONS.indexOf(action) !== -1; }
+function isManualResetText_(text) { return MANUAL_RESET_TEXTS.indexOf(text) !== -1; }
 /** 手動対応中/停止中の新着をオーナーへ通知（10分バースト抑制。ログは別途） */
 function notifyManualIncoming_(event, userId, msg, text, subject) {
   if (!userId) return;
@@ -607,7 +628,7 @@ function photoGuideMessage() {
       qrCameraRoll(),
       qrCamera(),
       qrMessage('⚡電動アシストの方はこちら', '電動'),
-      qrMessage('✅ 入力完了・査定をお願いします', '査定をお願いします'),
+      qrMessage('✅ 査定を申し込む', '査定を申し込む'),
       qrMessage('💬 問い合わせ', 'お問い合わせ'),
     ]},
   };
@@ -638,14 +659,14 @@ function replyKaitoriApply(replyToken, userId) {
     '',
     '査定は写真で行い、金額が決まってからお引き取りに伺います。買取なら査定・出張費・防犯登録の抹消代行まで費用は一切かかりません。',
     '',
-    'スムーズにご案内するため、次を1通にまとめて教えてください（分かる範囲でOK。同じことを何度もお尋ねしないためのお願いです）：',
+    'スムーズにご案内するため、次を1通にまとめて教えてください（分かる範囲でOK）：',
     '① 台数（何台ですか？）',
     '② お住まいの市町名（町名まで）',
     '③ メーカー・車種',
     '④ 電動アシストの有無',
     '⑤ 防犯登録の名義（本人／家族／不明）',
     '',
-    'あわせて下の写真ガイドの通りにお写真をお送りください。すべて揃ったら「査定をお願いします」を押してください🚲',
+    'あわせて下の写真ガイドの通りにお写真をお送りください。すべて揃ったら「査定を申し込む」を押してください🚲',
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
@@ -713,9 +734,9 @@ function thankForPhoto(event) {
       text: [
         '📸 お写真ありがとうございます、受け取りました！',
         '続けて送るときは、入力欄の 📷 マークからどうぞ（送れる分だけでOK）。',
-        'すべて送り終えたら「査定をお願いします」を押してください🚲',
+        'すべて送り終えたら「査定を申し込む」を押してください🚲',
       ].join('\n'),
-      quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('✅ 査定をお願いします', '査定をお願いします')] },
+      quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('✅ 査定を申し込む', '査定を申し込む')] },
     }]);
   }
 
@@ -863,15 +884,17 @@ function replyArea(replyToken) {
 function replyEstimateRequest(event) {
   markAcked(event);
   const text = [
-    '📋 査定のご依頼ありがとうございます！お送りいただいた写真・情報を確認します。',
+    '📋 査定のお申し込みありがとうございます！お送りいただいた写真・情報を確認して査定します。',
     '',
-    'お引き取りの段取りのため、差し支えなければ お住まいの市町名（町名まで）を教えてください。番地は金額が決まってからで大丈夫です。',
+    '念のため、次がそろっているかご確認ください（不足や、まだお伝えでない項目があれば、このメッセージのあとに追記してください）：',
+    '① 台数',
+    '② お住まいの市町名（町名まで／番地は金額が決まってからでOK）',
+    '③ メーカー・車種',
+    '④ 電動アシストの有無',
+    '⑤ 防犯登録の名義（本人／家族／不明）',
     '',
     '査定額は写真をもとに確定してお伝えします。写真のとおりであれば、その金額で確定します。',
-    '写真では判別できない次の点が現地で見つかった場合のみ、その場では決めず、一度お持ち帰りのうえ再提示します：',
-    '・フレームの曲がり／割れ',
-    '・変速またはブレーキが機能しない',
-    '・（電動アシスト）バッテリー残量ランプが2点灯以下',
+    '写真では判別できない不具合（フレームの曲がり・割れ、変速・ブレーキの不調、電動アシストのバッテリー劣化 など）が現地で見つかった場合のみ、再査定のうえ、減額となる可能性がある旨あらかじめご了承ください。',
     '',
     '原則48時間以内に、確定の査定額をLINEでご連絡します🚲',
   ].join('\n');
@@ -925,10 +948,15 @@ function handlePostback_(event, userId) {
       logEvent_(event, 'OPT_OUT', 'NONE'); return;
     }
   }
-  // 優先順2: 手動対応モード
+  // 優先順2: 手動対応モード（自動応答系ボタンを押し直したら解除して通常応答に戻す＝§5-1 リセット）
   if (isManualMode_(st)) {
-    notifyManualIncoming_(event, userId, pmsg, '[postback ' + action + ']', '💬 手動対応中の新着');
-    logEvent_(event, 'MANUAL_MODE', 'NONE'); return;
+    if (isManualResetAction_(action)) {
+      clearManualMode_(userId);
+      logEvent_(event, 'MANUAL_RESET', 'postback ' + action);
+    } else {
+      notifyManualIncoming_(event, userId, pmsg, '[postback ' + action + ']', '💬 手動対応中の新着');
+      logEvent_(event, 'MANUAL_MODE', 'NONE'); return;
+    }
   }
 
   let rule = 'postback:' + action;
