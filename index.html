@@ -40,14 +40,7 @@
     ]
   }
   </script>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@400;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Barlow+Semi+Condensed:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/js/tailwind-config.js"></script>
-  <link rel="stylesheet" href="css/style.css">
+  {% include "head-common.njk" %}
 </head>
 <body class="bg-paper text-ink font-gothic">
 
@@ -570,44 +563,9 @@
     </div>
   </section>
 
-  <!-- スマホ用固定CTAバー -->
-  <div class="fixed bottom-0 left-0 right-0 z-50 sm:hidden px-3 py-2.5 bg-paper/95 backdrop-blur border-t border-ink/10">
-    <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer" class="block text-center font-bold text-white text-sm py-3 rounded-full shadow-lg" style="background:#06C755;">LINEで無料査定を申し込む（写真を送るだけ）</a>
-  </div>
+  {% include "cta-bar.njk" %}
 
-  <!-- フッター -->
-  <footer class="py-8 pb-24 sm:pb-8 px-4 border-t border-ink/10">
-    <div class="max-w-3xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-ink/35">
-      <div>
-        <span class="font-mincho">めぐり自転車</span>（屋号：RAINBOW）
-      </div>
-      <div class="flex items-center gap-4">
-        <a href="privacy.html" class="hover:text-ink/60 transition-colors underline underline-offset-2">プライバシーポリシー</a>
-        <a href="https://www.instagram.com/meguri_cycle_/" target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity" aria-label="Instagram">
-          <svg class="w-9 h-9" viewBox="0 0 24 24">
-            <defs>
-              <linearGradient id="igGrad" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#FEC053"/>
-                <stop offset="0.35" stop-color="#F2711C"/>
-                <stop offset="0.65" stop-color="#CB2E82"/>
-                <stop offset="1" stop-color="#7B3FBF"/>
-              </linearGradient>
-            </defs>
-            <rect x="1.5" y="1.5" width="21" height="21" rx="6" fill="url(#igGrad)"/>
-            <circle cx="12" cy="12" r="5.2" fill="none" stroke="#fff" stroke-width="1.8"/>
-            <circle cx="18" cy="6" r="1.3" fill="#fff"/>
-          </svg>
-        </a>
-        <a href="https://www.youtube.com/@meguri_cycle" target="_blank" rel="noopener noreferrer" class="hover:opacity-80 transition-opacity" aria-label="YouTube">
-          <svg class="w-9 h-9" viewBox="0 0 24 24">
-            <rect x="1.5" y="4.5" width="21" height="15" rx="4.5" fill="#FF0000"/>
-            <polygon points="10,8.7 16.5,12 10,15.3" fill="#fff"/>
-          </svg>
-        </a>
-      </div>
-      <div>© 2026 RAINBOW</div>
-    </div>
-  </footer>
+  {% include "footer.njk" %}
 
   <script src="js/main.js"></script>
   <!-- Cloudflare Web Analytics -->

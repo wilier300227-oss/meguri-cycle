@@ -1,0 +1,13 @@
+{
+  "name": "meguri-cycle",
+  "version": "1.0.0",
+  "private": true,
+  "description": "めぐり自転車 公開サイト（Eleventy 静的ビルド）",
+  "scripts": {
+    "build": "eleventy",
+    "serve": "eleventy --serve"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}
