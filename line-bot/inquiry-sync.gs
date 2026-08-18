@@ -5,8 +5,9 @@
  * ── 仕組み ──
  * 1. Gmailで「査定問い合わせ」ラベルが付いたメール（フィルタで自動付与）を検索
  * 2. まだ転記していないメール（「転記済み」ラベルが付いていないもの）のうち、
- *    件名・本文にINQUIRY_KEYWORDSのいずれかを含むものだけを中央スプレッドシートに書き出す
- *    （Gmail側のフィルタが多少ゆるくても、ここで最終的に絞り込まれる）
+ *    宛先（To/Cc）が info@meguri-cycle.com で、かつ件名・本文にINQUIRY_KEYWORDSの
+ *    いずれかを含むものだけを中央スプレッドシートに書き出す
+ *    （旧Gmail直宛の雑多なメールでは通知しない。Gmail側のフィルタが多少ゆるくても、ここで最終的に絞り込まれる）
  * 3. チェックしたメールには（転記の有無に関わらず）「転記済み」ラベルを付けて、二重チェックを防ぐ
  *
  * ── 初回セットアップ（1回だけ）──
@@ -36,6 +37,14 @@ const INQUIRY_KEYWORDS = ['自転車', '買取', '引取', '査定', 'めぐり�
  */
 const EXCLUDED_SENDERS = ['accounts.google.com', 'linecorp.com', 'jmty.jp', 'amazon.co.jp', 'forms-receipts-noreply@google.com'];
 
+/**
+ * この宛先（To または Cc）を含むメールだけを通知・転記の対象にする。
+ * info@meguri-cycle.com 宛のお客様問い合わせのみを拾い、
+ * オーナー個人アドレス（旧Gmail）宛の雑多なメールでは通知しない。
+ * ※ 変更したら Apps Script エディタに貼り直して保存すること（サイトのpushでは反映されない）。
+ */
+const INQUIRY_TO_ADDRESS = 'info@meguri-cycle.com';
+
 /** Gmailの「査定問い合わせ」ラベルのメールを中央スプレッドシートに転記する（時間主導トリガーで自動実行） */
 function syncGmailToSheet() {
   const processedLabel = getOrCreateLabel_(GMAIL_PROCESSED_LABEL);
@@ -53,6 +62,7 @@ function syncGmailToSheet() {
     messages.forEach(function (message) {
       const from = message.getFrom();
       if (isExcludedSender_(from)) return; // Google/LINE/ジモティー等の自動通知は対象外
+      if (!isToInquiryAddress_(message)) return; // info@meguri-cycle.com 宛のみ（旧Gmail宛の雑多メールは通知しない）
       const subject = message.getSubject();
       const body = message.getPlainBody().slice(0, 300); // 本文は先頭300文字だけ（シートが長くなりすぎないように）
       if (!looksLikeInquiry_(subject, body)) return; // キーワードに合致しないものは転記しない
@@ -90,6 +100,12 @@ function looksLikeInquiry_(subject, body) {
 /** Google/LINE/ジモティーなど、自動通知の送信元かどうかを判定する */
 function isExcludedSender_(from) {
   return EXCLUDED_SENDERS.some(function (domain) { return from.indexOf(domain) !== -1; });
+}
+
+/** メールが info@meguri-cycle.com 宛（To または Cc）かどうかを判定する。旧Gmail直宛の雑多メールを除外するため。 */
+function isToInquiryAddress_(message) {
+  var to = ((message.getTo() || '') + ' ' + (message.getCc() || '')).toLowerCase();
+  return to.indexOf(INQUIRY_TO_ADDRESS) !== -1;
 }
 
 /** 改行や連続する空白を「 / 」に置き換え、スプレッドシートで1行に収まるようにする。Gmail・フォーム等で共通利用 */
