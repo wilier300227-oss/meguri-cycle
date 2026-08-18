@@ -1,0 +1,65 @@
+  <!-- 新デザイン 共通フッター -->
+  <footer class="foot">
+    <div class="wrap foot__top">
+      <div class="foot__brand">
+        <div class="serif foot__logo">めぐり自転車 <span>（屋号：RAINBOW）</span></div>
+        <p>石川県かほく市発。整備士が査定する、自転車の出張買取・引き取り。</p>
+        <div class="foot__social">
+          <a href="https://www.instagram.com/meguri_cycle_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="igG" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FEC053"/><stop offset="0.35" stop-color="#F2711C"/><stop offset="0.65" stop-color="#CB2E82"/><stop offset="1" stop-color="#7B3FBF"/></linearGradient></defs><rect x="1.5" y="1.5" width="21" height="21" rx="6" fill="url(#igG)"/><circle cx="12" cy="12" r="5.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="18" cy="6" r="1.3" fill="#fff"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@meguri_cycle" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="4.5" width="21" height="15" rx="4.5" fill="#FF0000"/><polygon points="10,8.7 16.5,12 10,15.3" fill="#fff"/></svg>
+          </a>
+          <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer" aria-label="LINE">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="6" fill="#06C755"/><path d="M6 10.4c0-2.3 2.5-4.1 5.6-4.1s5.6 1.8 5.6 4.1-2.5 4.1-5.6 4.1c-.5 0-1-.05-1.5-.13L7.7 16l.5-1.95C7 13.3 6 11.95 6 10.4z" fill="#fff"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="foot__col">
+        <h4>サイト</h4>
+        <a href="/">ホーム（買取）</a>
+        <a href="/brands/">買取ブランド</a>
+        <a href="/hikitori/">出張引き取り</a>
+        <a href="/price/">料金・出張費</a>
+        <a href="/faq/">よくある質問</a>
+        <a href="/area/">対応エリア</a>
+        <a href="/about/">めぐり自転車について</a>
+        <a href="/terms/">ご利用条件</a>
+        <a href="/privacy.html">プライバシーポリシー</a>
+      </div>
+      <div class="foot__col">
+        <h4>お問い合わせ</h4>
+        <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで相談</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform" target="_blank" rel="noopener noreferrer">お問い合わせフォーム</a>
+        <a href="mailto:info@meguri-cycle.com">info@meguri-cycle.com</a>
+        <p style="font-size:0.78rem; color:var(--ink-40); margin:10px 0 0;">石川県かほく市</p>
+      </div>
+    </div>
+    <div class="wrap foot__legal">
+      <span>古物商許可 石川県公安委員会 第511090015059号</span>
+      <span>© 2026 RAINBOW</span>
+    </div>
+  </footer>
+
+  <!-- スマホ固定CTA -->
+  <div class="dock">
+    <a class="btn btn--primary" href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで無料査定を申し込む</a>
+  </div>
+
+  <script>
+    addEventListener('DOMContentLoaded', function () {
+      var tg = document.querySelector('.nav__toggle');
+      var lk = document.getElementById('navLinks');
+      if (tg && lk) {
+        tg.addEventListener('click', function () { var o = lk.classList.toggle('open'); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); });
+        lk.addEventListener('click', function (e) { if (e.target.tagName === 'A') { lk.classList.remove('open'); tg.setAttribute('aria-expanded', 'false'); } });
+      }
+      var els = [].slice.call(document.querySelectorAll('.reveal'));
+      if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+      var io = new IntersectionObserver(function (entries) { entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }); }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+      els.forEach(function (el) { io.observe(el); });
+    });
+  </script>
+  <!-- Cloudflare Web Analytics -->
+  <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15b37c037ea94303a8d315c693380a78"}'></script>

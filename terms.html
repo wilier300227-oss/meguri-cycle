@@ -11,85 +11,95 @@ permalink: /terms/
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://meguri-cycle.com/terms/">
   <link rel="icon" type="image/png" href="/logo/favicon.png">
-  {% include "head-common.njk" %}
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://meguri-cycle.com/" },
+      { "@type": "ListItem", "position": 2, "name": "ご利用条件" }
+    ]
+  }
+  </script>
+
+  {% include "head-new.njk" %}
 </head>
-<body class="bg-paper text-ink font-gothic">
+<body>
 
-  <!-- ナビゲーション（サブページ用・トップへ戻る） -->
-  <nav class="border-b border-ink/10">
-    <div class="max-w-3xl mx-auto px-4 h-14 flex items-center">
-      <a href="/" class="font-mincho text-lg font-semibold tracking-wider hover:text-accent transition-colors">← めぐり自転車</a>
+  {% include "nav-new.njk" %}
+
+  <!-- ヒーロー -->
+  <section class="section" style="padding-bottom: clamp(28px,4vw,40px);">
+    <div class="wrap" style="max-width:720px;">
+      <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(1.9rem,5vw,2.7rem); line-height:1.24; margin-bottom:12px;">ご利用条件</h1>
+      <p style="color:var(--ink-40); font-size:0.9rem;">出張買取・引き取りをご利用いただく際の条件をまとめています。</p>
     </div>
-  </nav>
+  </section>
 
-  <main class="max-w-3xl mx-auto px-4 py-16">
-    <h1 class="font-mincho text-3xl font-bold mb-2">ご利用条件</h1>
-    <p class="text-ink/40 text-sm mb-12">出張買取・引き取りをご利用いただく際の条件をまとめています。</p>
+  <section class="section" style="padding-top:0;">
+    <div class="wrap" style="max-width:720px;">
+      <div style="display:grid; gap:clamp(28px,4vw,40px); color:var(--ink-70); line-height:1.85; font-size:0.94rem;">
 
-    <div class="space-y-10 text-sm leading-relaxed text-ink/75">
+        <section class="reveal">
+          <h2 style="font-family:'Zen Old Mincho',serif; font-size:1.3rem; color:var(--ink); margin-bottom:12px;">お引き取り・買取について</h2>
+          <p style="margin-bottom:12px;">車体の状態や種類を問わず、部品として活かせるものは無償でお引き取りします。買取価格がつかない車体でも、お引き取り自体は無料です（出張費のみいただきます）。</p>
+          <p style="margin-bottom:10px;">次の場合は、お引き取りをお断りすることがあります。</p>
+          <ul class="list-plain">
+            <li>フレーム・ホイール・駆動系のすべてが再利用できず、部品が一点も取り出せない車体</li>
+            <li>ご本人の確認、または所有・防犯登録の確認ができない車体</li>
+          </ul>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">お引き取り・買取について</h2>
-        <p class="mb-3">車体の状態や種類を問わず、部品として活かせるものは無償でお引き取りします。買取価格がつかない車体でも、お引き取り自体は無料です（出張費のみいただきます）。</p>
-        <p class="mb-3">次の場合は、お引き取りをお断りすることがあります。</p>
-        <ul class="list-disc pl-5 space-y-1">
-          <li>フレーム・ホイール・駆動系のすべてが再利用できず、部品が一点も取り出せない車体</li>
-          <li>ご本人の確認、または所有・防犯登録の確認ができない車体</li>
-        </ul>
-      </section>
+        <section class="reveal">
+          <h2 style="font-family:'Zen Old Mincho',serif; font-size:1.3rem; color:var(--ink); margin-bottom:12px;">出張費について</h2>
+          <p style="margin-bottom:10px;">お引き取りに伺う際の出張費は、<strong>かほく市役所を起点とした、Googleマップの走行距離（片道）</strong>で決まります。訪問というお仕事に対する費用で、引き取る車体の有無・台数・種類とは連動しません。</p>
+          <ul class="list-plain">
+            <li>〜10km：¥1,000</li>
+            <li>10〜20km：¥1,500</li>
+            <li>20〜30km：¥2,000</li>
+            <li>30〜40km：¥2,500</li>
+            <li>40〜50km：¥3,000</li>
+            <li>50kmを超える地域：応相談</li>
+          </ul>
+          <p style="margin-top:10px;">買取のご依頼の場合は、オンライン査定・お引き取りともに費用はかかりません。お伺いしたうえでお断りいただいた場合も、出張費はいただきません。出張費がかかるのは引取（処分）の場合のみです。お住まいの市区町村をお知らせいただければ、事前に金額をご案内します。</p>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">出張費について</h2>
-        <p class="mb-3">お引き取りに伺う際の出張費は、<strong>かほく市役所を起点とした、Googleマップの走行距離（片道）</strong>で決まります。訪問というお仕事に対する費用で、引き取る車体の有無・台数・種類とは連動しません。</p>
-        <ul class="list-disc pl-5 space-y-1">
-          <li>〜10km：¥1,000</li>
-          <li>10〜20km：¥1,500</li>
-          <li>20〜30km：¥2,000</li>
-          <li>30〜40km：¥2,500</li>
-          <li>40〜50km：¥3,000</li>
-          <li>50kmを超える地域：応相談</li>
-        </ul>
-        <p class="mt-3">買取のご依頼の場合は、オンライン査定・お引き取りともに費用はかかりません。お伺いしたうえでお断りいただいた場合も、出張費はいただきません。出張費がかかるのは引取（処分）の場合のみです。お住まいの市区町村をお知らせいただければ、事前に金額をご案内します。</p>
-      </section>
+        <section class="reveal">
+          <h2 style="font-family:'Zen Old Mincho',serif; font-size:1.3rem; color:var(--ink); margin-bottom:12px;">買取価格について</h2>
+          <p style="margin-bottom:12px;">LINEで写真をお送りいただき、金額を確定してからお引き取りに伺います。玄関先での価格交渉はありません。</p>
+          <p style="margin-bottom:12px;">お伝えした買取価格の有効期限は、提示日から14日間です。</p>
+          <p>お支払いは現金でお渡しします。金額が¥30,000を超える場合は、銀行振込とさせていただきます。</p>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">買取価格について</h2>
-        <p class="mb-3">LINEで写真をお送りいただき、金額を確定してからお引き取りに伺います。玄関先での価格交渉はありません。</p>
-        <p class="mb-3">お伝えした買取価格の有効期限は、提示日から14日間です。</p>
-        <p>お支払いは現金でお渡しします。金額が¥30,000を超える場合は、銀行振込とさせていただきます。</p>
-      </section>
+        <section class="reveal">
+          <h2 style="font-family:'Zen Old Mincho',serif; font-size:1.3rem; color:var(--ink); margin-bottom:12px;">防犯登録について</h2>
+          <p>お引き取りする自転車の防犯登録の抹消は、当方で代行します。ご自身での手続きは不要です。</p>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">防犯登録について</h2>
-        <p>お引き取りする自転車の防犯登録の抹消は、当方で代行します。ご自身での手続きは不要です。</p>
-      </section>
+        <section class="reveal">
+          <h2 style="font-family:'Zen Old Mincho',serif; font-size:1.3rem; color:var(--ink); margin-bottom:12px;">再勧誘の禁止について</h2>
+          <p>一度お断りいただいたお客様に、同じ品物の買取・引き取りを重ねてお願いすることはありません（特定商取引法 第58条の6第3項）。</p>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">再勧誘の禁止について</h2>
-        <p>一度お断りいただいたお客様に、同じ品物の買取・引き取りを重ねてお願いすることはありません（特定商取引法 第58条の6第3項）。</p>
-      </section>
+        <section class="reveal">
+          <h2 style="font-family:'Zen Old Mincho',serif; font-size:1.3rem; color:var(--ink); margin-bottom:12px;">事業者情報</h2>
+          <p style="margin-bottom:2px;">めぐり自転車（屋号：RAINBOW／個人事業主）</p>
+          <p style="margin-bottom:2px;">所在地：石川県かほく市</p>
+          <p style="margin-bottom:2px;">古物商許可：石川県公安委員会　第511090015059号</p>
+          <p>お問い合わせ：LINE（下記）または　info@meguri-cycle.com</p>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">事業者情報</h2>
-        <p class="mb-1">めぐり自転車（屋号：RAINBOW／個人事業主）</p>
-        <p class="mb-1">所在地：石川県かほく市</p>
-        <p class="mb-1">古物商許可：石川県公安委員会　第511090015059号</p>
-        <p>お問い合わせ：LINE（下記）または　info@meguri-cycle.com</p>
-      </section>
+        <section class="reveal">
+          <h2 style="font-family:'Zen Old Mincho',serif; font-size:1.3rem; color:var(--ink); margin-bottom:12px;">お問い合わせ</h2>
+          <p style="margin-bottom:16px;">ご不明な点は、LINEでお気軽にお問い合わせください。写真をお送りいただければ、そのまま査定もできます。</p>
+          <a class="btn btn--primary" href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで問い合わせる</a>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">お問い合わせ</h2>
-        <p class="mb-4">ご不明な点は、LINEでお気軽にお問い合わせください。写真をお送りいただければ、そのまま査定もできます。</p>
-        <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer" class="inline-block font-bold text-white text-sm px-6 py-3 rounded-full" style="background:#06C755;">LINEで問い合わせる</a>
-      </section>
-
+      </div>
     </div>
-  </main>
+  </section>
 
-  {% include "footer.njk" %}
-
-  <!-- Cloudflare Web Analytics -->
-  <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15b37c037ea94303a8d315c693380a78"}'></script>
-  <!-- End Cloudflare Web Analytics -->
+  {% include "footer-new.njk" %}
 </body>
 </html>

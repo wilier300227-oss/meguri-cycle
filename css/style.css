@@ -131,10 +131,10 @@ html {
    ----------------------------------- */
 .card {
   background: #fff;
-  border: 1px solid rgba(32, 48, 46, 0.08);
+  border: 1px solid rgba(32, 48, 46, 0.10);
   border-radius: 10px;
   padding: 1.5rem;
-  box-shadow: 0 1px 6px rgba(32, 48, 46, 0.04);
+  box-shadow: 0 2px 14px rgba(32, 48, 46, 0.07);
 }
 
 /* -----------------------------------
@@ -494,6 +494,21 @@ html {
 
 /* ナビ上端の虹ライン */
 #site-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--rainbow);
+}
+
+/* サブページ共通ナビ（site-nav.njk）にも上端の虹ラインを揃える */
+.site-nav {
+  position: relative;
+}
+
+.site-nav::before {
   content: '';
   position: absolute;
   top: 0;

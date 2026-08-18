@@ -6,7 +6,7 @@
   <meta name="google-site-verification" content="DKS8UHByV2rumdGtLog09qtOglFjzJYBd3yQBH3SBVU" />
   <!-- SEO タイトル・説明 — 変更しやすいようここにまとめています -->
   <title>めぐり自転車｜石川の自転車出張買取・引取（かほく・金沢）</title>
-  <meta name="description" content="石川県かほく市発。整備士が査定する自転車の出張買取・引取。査定は写真でオンライン完結し、金額が決まってからお引き取りに伺います（買取は出張費0円）。引取は処分費0円（出張費のみ）。防犯登録抹消も代行。E-bike・ロードバイク・シティ車に対応。">
+  <meta name="description" content="石川県かほく市発。整備士が査定する自転車の出張買取・引取。査定は写真でオンライン完結し、金額が決まってからお引き取りに伺います（買取は出張費0円）。引取は処分費0円（出張費のみ）。防犯登録抹消も代行。E-bike・ロードバイク・マウンテンバイク（MTB）・シティ車に対応。">
   <!-- OGP（SNSシェア用） -->
   <meta property="og:title" content="めぐり自転車｜石川の自転車出張買取・引取">
   <meta property="og:description" content="整備士が査定。写真でオンライン査定→確定額をご確認→お引き取りに伺います。買取は出張費0円、引取は処分費0円（出張費のみ）。防犯登録抹消も代行します。">
@@ -15,7 +15,7 @@
   <meta property="og:image" content="https://meguri-cycle.com/images/ogp.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <!-- favicon（ロゴマーク） -->
-  <link rel="icon" type="image/png" href="logo/favicon.png">
+  <link rel="icon" type="image/png" href="/logo/favicon.png">
   <!-- 構造化データ（Googleのローカル検索向け） -->
   <script type="application/ld+json">
   {
@@ -40,531 +40,408 @@
     ]
   }
   </script>
-  {% include "head-common.njk" %}
-</head>
-<body class="bg-paper text-ink font-gothic">
 
-  <!-- ナビゲーション -->
-  <nav id="site-nav" class="fixed top-0 left-0 right-0 z-50 bg-paper/95 backdrop-blur border-b border-ink/10 transition-shadow">
-    <div class="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-      <a href="#hero" class="flex items-center gap-2 font-mincho text-lg font-semibold tracking-wider">
-        <img src="logo/favicon.png" alt="" class="w-7 h-7 rounded-md" aria-hidden="true">
+  <!-- 新デザイン用フォント -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;600;700;900&family=Murecho:wght@400;500;700&family=Barlow+Semi+Condensed:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/lp.css">
+  <script>document.documentElement.classList.add('js-motion');</script>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="nav">
+    <div class="wrap nav__in">
+      <a class="nav__brand" href="/">
+        <img src="/logo/favicon.png" alt="" aria-hidden="true">
         めぐり自転車
       </a>
-      <div class="hidden sm:flex gap-5 text-sm">
-        <a href="#choice" class="hover:text-accent transition-colors">サービス</a>
-        <a href="#price" class="hover:text-accent transition-colors">料金</a>
-        <a href="#flow" class="hover:text-accent transition-colors">流れ</a>
-        <a href="#faq" class="hover:text-accent transition-colors">FAQ</a>
-        <a href="#contact" class="text-accent font-medium hover:underline transition-colors">お問い合わせ</a>
-      </div>
-      <!-- SP用のみ表示するCTAリンク -->
-      <a href="#contact" class="sm:hidden text-sm text-accent font-semibold">お問い合わせ</a>
+      <nav class="nav__links" id="navLinks">
+        <a href="#choice">サービス</a>
+        <a href="#price">料金</a>
+        <a href="#flow">流れ</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">お問い合わせ</a>
+      </nav>
+      <button class="nav__toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="navLinks">☰</button>
     </div>
-  </nav>
+  </header>
 
-  <!-- ========================
-       #hero
-       ======================== -->
-  <section id="hero" class="relative pt-28 pb-20 px-4 overflow-hidden">
-    <!-- やわらかい色の背景ブロブ -->
-    <div class="hero-blob hero-blob-1" aria-hidden="true"></div>
-    <div class="hero-blob hero-blob-2" aria-hidden="true"></div>
-    <div class="max-w-3xl mx-auto text-center relative">
-      <p class="text-xs tracking-widest text-ink/40 mb-4 uppercase font-gothic">石川県かほく市発 ・ 出張対応</p>
-      <h1 class="font-mincho text-2xl sm:text-4xl md:text-5xl font-bold leading-snug mb-4">
-        整備士がいる、<br>自転車の出張買取・出張引取
-      </h1>
-      <!-- 虹のグラデーション下線（ヒーローのみ） -->
-      <div class="rainbow-line mx-auto mt-4 mb-8" aria-hidden="true"></div>
-      <p class="text-ink/65 text-base md:text-lg leading-relaxed mb-8 max-w-xl mx-auto">
-        お持ち込み不要。<strong class="text-ink/80">査定は写真だけでオンライン完結</strong>します。<br class="hidden md:block">金額にご納得いただいてから、お引き取りにご自宅へ伺います。
-      </p>
-      <p class="text-ink/55 text-sm md:text-base leading-relaxed mb-8 max-w-xl mx-auto">
-        買取できるか処分になるか、迷わなくて大丈夫。<br class="hidden md:block">写真を拝見して、<strong class="text-ink/75">どちらになるかはこちらからご提案</strong>します。
-      </p>
-
-      <!-- 訪問のタイミングを明示（「見に来てほしい」というご依頼が多いため） -->
-      <div class="notice-visit max-w-xl mx-auto mb-12">
-        <p class="notice-visit-title">お伺いするのは、金額が決まったあとです</p>
-        <p class="notice-visit-body">
-          <strong>査定のためだけの訪問（出張査定）は行っていません。</strong>
-          先に写真で確定額をお出しし、「その金額でお願いします」とご返信いただいてから日程を調整します。
-          玄関先で金額を交渉することはありません。
+  <!-- ヒーロー（全面動画・ダーク・白文字） -->
+  <section class="hero" id="hero">
+    <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="/video/hero-poster.jpg" aria-hidden="true">
+      <source src="/video/hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="wrap hero__inner">
+      <div class="stack reveal hero__copy">
+        <span class="eyebrow">石川県かほく市発 ・ 出張対応</span>
+        <h1>整備士がいる、<br><em>自転車の出張買取・出張引取</em></h1>
+        <p class="lead">
+          お持ち込み不要。<strong>査定は写真だけでオンライン完結</strong>します。
+          金額にご納得いただいてから、お引き取りにご自宅へ伺います。
+          買取できるか処分になるか、迷わなくて大丈夫。写真を拝見して、どちらになるかはこちらからご提案します。
         </p>
-      </div>
-
-      <!-- 信頼バッジ -->
-      <div class="flex flex-wrap justify-center gap-2 mb-12">
-        <span class="badge">古物商許可 取得済み</span>
-        <span class="badge">自転車安全整備士</span>
-        <span class="badge">訪問前に金額を確定</span>
-        <span class="badge">防犯登録抹消を代行</span>
-      </div>
-      <!-- CTA -->
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer" class="cta-primary">LINEで無料査定（写真を送るだけ）</a>
-        <a href="#contact" class="cta-secondary">フォーム・メールで相談</a>
-      </div>
-      <img src="images/hero.jpg" alt="住宅街の塀に立てかけられた自転車、朝の柔らかな光" class="hero-img">
-    </div>
-  </section>
-
-  <!-- 虹区切り線 -->
-  <div class="rainbow-divider" aria-hidden="true"></div>
-
-  <!-- ========================
-       #choice — 2つのサービス
-       ======================== -->
-  <section id="choice" class="py-20 px-4">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-12">2つのサービス</h2>
-      <div class="grid md:grid-cols-2 gap-6">
-
-        <!-- 出張買取 -->
-        <div class="card service-card service-kaitori">
-          <img src="images/service-kaitori.jpg" alt="整備士が自転車のギア・ブレーキまわりを点検している様子" class="service-img">
-          <div class="font-barlow text-xs tracking-widest mb-3 uppercase" style="color:#D50000;">Service 01</div>
-          <h3 class="font-mincho text-2xl font-semibold mb-3">出張買取</h3>
-          <p class="text-ink/65 text-sm leading-relaxed mb-4">写真で確定額をお出しし、ご納得いただけたら現金または振込でお買い取りします。</p>
-          <p class="text-lg font-bold" style="color:#D50000;">オンライン査定 無料／出張費 0円</p>
-          <p class="text-xs text-ink/45 mt-1">成立・不成立を問わず、費用は一切かかりません</p>
-          <p class="text-xs text-ink/45 mt-1">※ 訪問は金額確定後のお引き取りのみ。査定だけの訪問は承っていません</p>
+        <div class="badges" aria-label="安心のポイント">
+          <span class="badge"><b style="background:#E53935"></b>古物商許可 取得済み</span>
+          <span class="badge"><b style="background:#FB8C00"></b>自転車安全整備士</span>
+          <span class="badge"><b style="background:#43A047"></b>訪問前に金額を確定</span>
+          <span class="badge"><b style="background:#1E88E5"></b>防犯登録抹消を代行</span>
         </div>
-
-        <!-- 出張引取 -->
-        <div class="card service-card service-hikitori">
-          <img src="images/service-hikitori.jpg" alt="住宅街で自転車を積み込む出張引取用の車両" class="service-img">
-          <div class="font-barlow text-xs tracking-widest mb-3 uppercase" style="color:#E65100;">Service 02</div>
-          <h3 class="font-mincho text-2xl font-semibold mb-3">出張引取</h3>
-          <p class="text-ink/65 text-sm leading-relaxed mb-4">値がつかない車体もご自宅まで引き取りに伺います。</p>
-          <p class="text-lg font-bold" style="color:#E65100;">処分費 0円・出張費のみ</p>
-          <p class="text-xs text-ink/45 mt-1">防犯登録の抹消手続きも代行します</p>
-          <p class="text-xs text-ink/45 mt-1">※ こちらも出張費を事前にご案内してからお伺いします</p>
+        <div class="hero__cta">
+          <span class="cta-underline">
+            <a class="btn btn--primary" href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで無料査定（写真を送るだけ）</a>
+            <span class="rainbow-line" aria-hidden="true"></span>
+          </span>
+          <a class="btn btn--light-ghost" href="#contact">フォーム・メールで相談</a>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- ========================
-       #why — 選ばれる理由
-       ======================== -->
-  <section id="why" class="py-20 px-4 bg-ink/[0.025]">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-12">めぐり自転車が選ばれる理由</h2>
-      <ol class="space-y-7">
-        <li class="why-item">
-          <span class="why-num" aria-hidden="true">01</span>
-          <div>
-            <h3 class="font-semibold text-base mb-1">整備士が一台ずつ点検・査定</h3>
-            <p class="text-ink/55 text-sm leading-relaxed">自転車安全整備士の資格を持つ担当者が直接査定。スタッフへの丸投げはありません。</p>
-          </div>
-        </li>
-        <li class="why-item">
-          <span class="why-num" aria-hidden="true">02</span>
-          <div>
-            <h3 class="font-semibold text-base mb-1">金額は訪問前に確定。玄関先で交渉することはありません</h3>
-            <p class="text-ink/55 text-sm leading-relaxed">写真・情報と現物が一致していれば、お伝えした確定額は変わりません。現地での一方的な値下げもしません。だからこそ、査定のためだけの訪問は行わず、先に金額を確定させています。</p>
-          </div>
-        </li>
-        <li class="why-item">
-          <span class="why-num" aria-hidden="true">03</span>
-          <div>
-            <h3 class="font-semibold text-base mb-1">古物商許可 取得済み</h3>
-            <p class="text-ink/55 text-sm leading-relaxed">石川県公安委員会 古物商許可 第511090015059号。適法に買取・引取を行います。</p>
-          </div>
-        </li>
-        <li class="why-item">
-          <span class="why-num" aria-hidden="true">04</span>
-          <div>
-            <h3 class="font-semibold text-base mb-1">防犯登録の抹消も代行</h3>
-            <p class="text-ink/55 text-sm leading-relaxed">手続きが面倒な防犯登録の抹消をまとめて代行します。お客様が窓口に出向く必要はありません。</p>
-          </div>
-        </li>
-        <li class="why-item">
-          <span class="why-num" aria-hidden="true">05</span>
-          <div>
-            <h3 class="font-semibold text-base mb-1">E-bike（電動アシスト）の専門査定</h3>
-            <p class="text-ink/55 text-sm leading-relaxed">バッテリーの状態・充電回数・リコール情報まで確認した上で査定します。</p>
-          </div>
-        </li>
-      </ol>
+  <!-- 訪問タイミングの注意（重要な信頼メッセージ） -->
+  <section class="section" style="padding-top: clamp(48px,7vw,72px); padding-bottom:0;">
+    <div class="wrap reveal" style="max-width:760px;">
+      <div class="notice">
+        <h3>お伺いするのは、金額が決まったあとです</h3>
+        <p><strong>査定のためだけの訪問（出張査定）は行っていません。</strong>先に写真で確定額をお出しし、「その金額でお願いします」とご返信いただいてから日程を調整します。玄関先で金額を交渉することはありません。</p>
+      </div>
     </div>
   </section>
 
-  <!-- ========================
-       #target — 買取・引取対象
-       ======================== -->
-  <section id="target" class="py-20 px-4">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-12">買取・引取の対象</h2>
-      <img src="images/ebike.jpg" alt="買取対象となる電動アシスト自転車の例" class="section-img">
+  <!-- ブランドウォール（流れるカルーセル） -->
+  <section class="section" style="padding: 40px 0 10px;">
+    <div class="brandwall reveal" aria-label="買取強化ブランド">
+      <div class="marquee">
+        <div class="marquee__track" style="--speed:42s">
+          <span class="brand">Wilier</span><span class="brand">Pinarello</span><span class="brand">Colnago</span><span class="brand">Bianchi</span><span class="brand">Cannondale</span><span class="brand">Trek</span><span class="brand">Specialized</span><span class="brand">Giant</span><span class="brand">Merida</span><span class="brand">Scott</span><span class="brand">Canyon</span><span class="brand">Cervélo</span><span class="brand">Brompton</span><span class="brand">DAHON</span><span class="brand">Santa Cruz</span><span class="brand">YETI</span>
+          <span class="brand" aria-hidden="true">Wilier</span><span class="brand" aria-hidden="true">Pinarello</span><span class="brand" aria-hidden="true">Colnago</span><span class="brand" aria-hidden="true">Bianchi</span><span class="brand" aria-hidden="true">Cannondale</span><span class="brand" aria-hidden="true">Trek</span><span class="brand" aria-hidden="true">Specialized</span><span class="brand" aria-hidden="true">Giant</span><span class="brand" aria-hidden="true">Merida</span><span class="brand" aria-hidden="true">Scott</span><span class="brand" aria-hidden="true">Canyon</span><span class="brand" aria-hidden="true">Cervélo</span><span class="brand" aria-hidden="true">Brompton</span><span class="brand" aria-hidden="true">DAHON</span><span class="brand" aria-hidden="true">Santa Cruz</span><span class="brand" aria-hidden="true">YETI</span>
+        </div>
+      </div>
+    </div>
+    <p class="wrap reveal" style="text-align:center; color:var(--ink-55); font-size:0.86rem; margin-top:16px;">有名ブランドはもちろん、<strong style="color:var(--ink)">電動アシスト・ママチャリ</strong>も査定・お引き取りします。</p>
+  </section>
 
-      <div class="space-y-10">
-        <!-- 強化買取 -->
-        <div>
-          <h3 class="font-mincho text-xl font-semibold mb-4 text-accent">強化買取対象</h3>
-          <div class="flex flex-wrap gap-2">
-            <span class="tag tag-accent">E-bike（電動アシスト）</span>
-            <span class="tag tag-accent">ロードバイク</span>
-            <span class="tag tag-accent">クロスバイク</span>
-            <span class="tag tag-accent">マウンテンバイク</span>
-            <span class="tag tag-accent">ミニベロ</span>
-            <span class="tag tag-accent">折りたたみ自転車</span>
-            <span class="tag tag-accent">ビンテージ車</span>
-            <span class="tag tag-accent">人気ブランド車</span>
-            <span class="tag tag-accent">パーツ類</span>
+  <!-- 2つのサービス（脱ボックス：大きな番号＋罫線のエディトリアル） -->
+  <section class="section section--alt" id="choice">
+    <div class="wrap" style="max-width:840px;">
+      <h2 class="reveal" style="font-size:clamp(1.9rem,5.5vw,2.9rem); margin-bottom:8px;">2つのサービス</h2>
+      <div class="svc reveal">
+        <div class="svc__row">
+          <div class="svc__n num">01</div>
+          <div>
+            <h3>出張買取</h3>
+            <p>写真で確定額をお出しし、ご納得いただけたら現金または振込でお買い取りします。</p>
+            <p class="svc__price">オンライン査定 無料／出張費 0円</p>
+            <p class="svc__note">成立・不成立を問わず、費用は一切かかりません。※訪問は金額確定後のお引き取りのみ。査定だけの訪問は承っていません。</p>
           </div>
         </div>
-
-        <!-- 引取対象 -->
-        <div>
-          <h3 class="font-mincho text-xl font-semibold mb-3">出張引取対象</h3>
-          <p class="text-ink/65 text-sm leading-relaxed">上記以外のシティ車・ママチャリを含む、一般的な自転車全般。</p>
+        <div class="svc__row">
+          <div class="svc__n num">02</div>
+          <div>
+            <h3>出張引取</h3>
+            <p>値がつかない車体もご自宅まで引き取りに伺います。</p>
+            <p class="svc__price">処分費 0円・出張費のみ</p>
+            <p class="svc__note">防犯登録の抹消手続きも代行します。※こちらも出張費を事前にご案内してからお伺いします。</p>
+          </div>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <!-- 引取不可 -->
+  <!-- 選ばれる理由 -->
+  <section class="section" id="why">
+    <div class="wrap split">
+      <div class="stack reveal split__head">
+        <h2 style="font-size:clamp(1.8rem,5vw,2.6rem)">めぐり自転車が<br>選ばれる理由</h2>
+      </div>
+      <div class="why__list grid2 reveal">
+        <div class="why__item"><div class="why__n num">01</div><div><div class="why__h">整備士が一台ずつ点検・査定</div><p class="why__p">自転車安全整備士の資格を持つ担当者が直接査定。スタッフへの丸投げはありません。</p></div></div>
+        <div class="why__item"><div class="why__n num">02</div><div><div class="why__h">金額は訪問前に確定。玄関先で交渉することはありません</div><p class="why__p">写真・情報と現物が一致していれば、お伝えした確定額は変わりません。現地での一方的な値下げもしません。だからこそ、査定のためだけの訪問は行わず、先に金額を確定させています。</p></div></div>
+        <div class="why__item"><div class="why__n num">03</div><div><div class="why__h">古物商許可 取得済み</div><p class="why__p">石川県公安委員会 古物商許可 第511090015059号。適法に買取・引取を行います。</p></div></div>
+        <div class="why__item"><div class="why__n num">04</div><div><div class="why__h">防犯登録の抹消も代行</div><p class="why__p">手続きが面倒な防犯登録の抹消をまとめて代行します。お客様が窓口に出向く必要はありません。</p></div></div>
+        <div class="why__item"><div class="why__n num">05</div><div><div class="why__h">E-bike（電動アシスト）の専門査定</div><p class="why__p">バッテリーの状態・充電回数・リコール情報まで確認した上で査定します。第二種電気工事士（国家資格）の整備士が対応します。</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 買取・引取の対象 -->
+  <section class="section section--alt" id="target">
+    <div class="wrap" style="max-width:980px;">
+      <h2 class="reveal" style="font-size:clamp(1.8rem,5vw,2.6rem); margin-bottom:32px;">買取・引取の対象</h2>
+      <div class="cols2">
+        <div class="reveal">
+          <h3 style="color:var(--accent-d); margin-bottom:14px;">強化買取対象</h3>
+          <div class="chips">
+            <span class="chip">E-bike（電動アシスト）</span>
+            <span class="chip">ロードバイク</span>
+            <span class="chip">クロスバイク</span>
+            <span class="chip">マウンテンバイク（MTB）</span>
+            <span class="chip">ミニベロ</span>
+            <span class="chip">折りたたみ自転車</span>
+            <span class="chip">ビンテージ車</span>
+            <span class="chip">人気ブランド車</span>
+            <span class="chip">パーツ類</span>
+          </div>
+          <p style="margin-top:14px;"><a href="/brands/" style="color:var(--accent-d); font-weight:600; text-decoration:none;">買取強化ブランド一覧を見る →</a></p>
+        </div>
+        <div class="reveal">
+          <div style="margin-bottom:24px;">
+            <h3 style="margin-bottom:8px;">出張引取対象</h3>
+            <p style="color:var(--ink-70); font-size:0.92rem;">上記以外のシティ車・ママチャリを含む、一般的な自転車全般。</p>
+          </div>
+          <div>
+            <h3 style="font-size:1rem; color:var(--ink-40); margin-bottom:8px;">引取できないもの</h3>
+            <ul class="list-plain">
+              <li>防犯登録できない玩具（一輪車・子供用三輪車など）</li>
+              <li>会社名義の自転車</li>
+              <li>不法投棄品・出所が不明な自転車</li>
+              <li>値段のつかないパーツのみの引取（※価値のあるパーツ単体は買取対象になる場合があります。まずは写真をお送りください）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 実績（買い取った車体：カルーセル） -->
+  <section class="section" id="works">
+    <div class="wrap">
+      <div class="stack reveal" style="max-width:560px; margin-bottom:34px;">
+        <span class="eyebrow">Works</span>
+        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">買い取った車体</h2>
+        <p class="lead">これまでにお引き取りした車体の一部です。</p>
+      </div>
+    </div>
+    <div class="marquee reveal" aria-label="買い取った車体の写真">
+      <div class="marquee__track" style="--speed:56s">
+        <div class="work"><img src="/images/works/bike-road-caad3.webp" width="594" height="378" loading="lazy" alt="買い取ったキャノンデールのクロモリロードバイク"></div>
+        <div class="work"><img src="/images/works/bike-gravel-topstone.webp" width="594" height="414" loading="lazy" alt="買い取ったキャノンデールのグラベルロード"></div>
+        <div class="work"><img src="/images/works/bike-gravel-araya.webp" width="594" height="390" loading="lazy" alt="買い取ったアラヤのグラベルロード"></div>
+        <div class="work"><img src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" alt="買い取ったビアンキのロードバイク"></div>
+        <div class="work"><img src="/images/works/bike-mini-brompton.webp" width="594" height="599" loading="lazy" alt="買い取ったブロンプトンの折りたたみ自転車"></div>
+        <div class="work"><img src="/images/works/bike-bmx.webp" width="594" height="599" loading="lazy" alt="買い取ったBMX"></div>
+        <div class="work" aria-hidden="true"><img src="/images/works/bike-road-caad3.webp" width="594" height="378" loading="lazy" alt=""></div>
+        <div class="work" aria-hidden="true"><img src="/images/works/bike-gravel-topstone.webp" width="594" height="414" loading="lazy" alt=""></div>
+        <div class="work" aria-hidden="true"><img src="/images/works/bike-gravel-araya.webp" width="594" height="390" loading="lazy" alt=""></div>
+        <div class="work" aria-hidden="true"><img src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" alt=""></div>
+        <div class="work" aria-hidden="true"><img src="/images/works/bike-mini-brompton.webp" width="594" height="599" loading="lazy" alt=""></div>
+        <div class="work" aria-hidden="true"><img src="/images/works/bike-bmx.webp" width="594" height="599" loading="lazy" alt=""></div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="stack reveal" style="max-width:640px; margin:56px 0 28px;">
+        <h2 style="font-size:clamp(1.5rem,4vw,2.1rem)">値段がつかない車体も、部品は次へ</h2>
+        <p class="lead">車体としては走れなくなっていても、駆動系やホイールはまだ使えることが多くあります。使えるものは取り外して、次に活かしています。</p>
+      </div>
+      <div class="imgrid cols4 reveal">
+        <img src="/images/works/part-crank.webp" width="594" height="450" loading="lazy" alt="取り外したシマノのクランクセット">
+        <img src="/images/works/part-shifter.webp" width="594" height="384" loading="lazy" alt="車体から取り外したシマノのシフトレバー">
+        <img src="/images/works/part-cassette.webp" width="594" height="577" loading="lazy" alt="取り外したシマノのカセットスプロケット">
+        <img src="/images/works/part-wheel-ultegra.webp" width="594" height="444" loading="lazy" alt="取り外したシマノのホイールセット">
+      </div>
+      <p style="font-size:0.8rem; color:var(--ink-40); margin-top:16px;">※ 部品取りの価値もない車体は、お引き取りをお断りする場合があります → <a href="/terms/" style="color:var(--accent-d);">ご利用条件</a></p>
+    </div>
+  </section>
+
+  <!-- 料金・エリア -->
+  <section class="section section--alt" id="price">
+    <div class="wrap" style="max-width:980px;">
+      <h2 class="reveal" style="font-size:clamp(1.8rem,5vw,2.6rem); margin-bottom:20px;">料金・出張費</h2>
+      <div class="cols2 reveal" style="align-items:center;">
         <div>
-          <h3 class="font-mincho text-base font-semibold mb-3 text-ink/40">引取できないもの</h3>
-          <ul class="space-y-1 text-ink/55 text-sm">
-            <li class="before:content-['–'] before:mr-2">防犯登録できない玩具（一輪車・子供用三輪車など）</li>
-            <li class="before:content-['–'] before:mr-2">会社名義の自転車</li>
-            <li class="before:content-['–'] before:mr-2">不法投棄品・出所が不明な自転車</li>
-            <li class="before:content-['–'] before:mr-2">値段のつかないパーツのみの引取（※価値のあるパーツ単体は買取対象になる場合があります。まずは写真をお送りください）</li>
+          <p class="lead" style="margin-bottom:12px;"><strong>買取は査定もお引き取りも無料。</strong>出張費がかかるのは、値段がつかない車体の引取のみです（かほく市役所からの走行距離で ¥1,000〜¥3,000）。</p>
+          <p style="color:var(--ink-55); font-size:0.9rem;">査定は幅ではなく確定額でご提示。有効期限は14日間です。</p>
+          <p style="margin-top:18px;"><a class="btn btn--ghost" href="/price/">料金・出張費・対応エリアの詳細 →</a></p>
+        </div>
+        <div class="card">
+          <table class="rate">
+            <thead><tr><th>片道距離</th><th>出張費（引取のみ）</th></tr></thead>
+            <tbody>
+              <tr><td>〜10km</td><td class="num">1,000円</td></tr>
+              <tr><td>20〜30km</td><td class="num">2,000円</td></tr>
+              <tr><td>40〜50km</td><td class="num">3,000円</td></tr>
+              <tr><td>50km超</td><td class="num" style="color:var(--ink-40)">応相談</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:0.76rem; color:var(--ink-40); margin-top:8px;">※ 買取のご依頼なら出張費は無料です。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ご利用の流れ -->
+  <section class="section" id="flow">
+    <div class="wrap" style="max-width:760px;">
+      <div class="stack reveal" style="margin-bottom:32px;">
+        <span class="eyebrow">Flow</span>
+        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">ご利用の流れ</h2>
+      </div>
+      <div class="steps steps--grid">
+        <div class="step reveal"><div class="step__n num">1</div><div>
+          <h3 style="font-size:1.1rem; margin-bottom:6px;">写真を送る（まずは数枚から）</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">LINEでの送付が最も簡単です（フォームも利用可）。むずかしく考えず、まずは次のような写真からで大丈夫です。足りない分はLINEでご案内します。</p>
+          <ul class="list-plain" style="margin-top:10px;">
+            <li>自転車ぜんぶが写るように、横から1枚</li>
+            <li>タイヤ・チェーンまわりが分かる1枚</li>
+            <li>メーカー名やロゴが写っている部分を1枚</li>
           </ul>
-        </div>
+          <p style="color:var(--ink-70); font-size:0.94rem; margin-top:10px;">追加で見たい部分があれば、こちらから「ここを撮ってください」とご案内します。前後ブレーキなどの写真もいただけると、より正確な金額をお出しできます。E-bikeの場合はバッテリー残量・充電回数の表示も撮影をお願いします。</p>
+        </div></div>
+        <div class="step reveal"><div class="step__n num">2</div><div>
+          <h3 style="font-size:1.1rem; margin-bottom:6px;">確定額をお伝えします</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">原則48時間以内に、LINE（またはメール）で査定額（確定額）をご案内します。有効期限は14日間。範囲ではなく一本の金額でお伝えします。</p>
+        </div></div>
+        <div class="step reveal"><div class="step__n num">3</div><div>
+          <h3 style="font-size:1.1rem; margin-bottom:6px;">「その金額でお願いします」とご返信</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">ご納得いただけたら、その旨をご返信ください。この返信をもって、訪問日時の調整に進みます。もちろん断っていただいても構いません（費用はかかりません）。</p>
+        </div></div>
+        <div class="step reveal"><div class="step__n num">4</div><div>
+          <h3 style="font-size:1.1rem; margin-bottom:6px;">訪問（お引き取り）・書類・お支払い</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">ここで初めてご自宅へ伺います。お約束した金額のまま、現物確認・書類記入・お支払いをその場で完了します。古物営業法に基づき、運転免許証などの本人確認書類のご提示をお願いしています（安心・安全なお取引のためにご協力ください）。</p>
+        </div></div>
       </div>
     </div>
   </section>
 
-  <!-- 虹区切り線 -->
-  <div class="rainbow-divider" aria-hidden="true"></div>
+  <!-- 防犯登録の詳細は /terms/ へ移設（トップはヒーローバッジ＋選ばれる理由でカバー） -->
 
-  <!-- ========================
-       #works — 買い取った車体と、次に活かした部品
-       ======================== -->
-  <section id="works" class="py-20 px-4">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-4">買い取った車体</h2>
-      <p class="text-ink/50 text-sm text-center mb-12">これまでにお引き取りした車体の一部です。</p>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-16">
-        <img src="/images/works/bike-road-caad3.webp" width="594" height="378" loading="lazy" decoding="async" alt="買い取ったキャノンデールのクロモリロードバイク" class="w-full h-40 object-cover rounded-lg">
-        <img src="/images/works/bike-gravel-topstone.webp" width="594" height="414" loading="lazy" decoding="async" alt="買い取ったキャノンデールのグラベルロード" class="w-full h-40 object-cover rounded-lg">
-        <img src="/images/works/bike-gravel-araya.webp" width="594" height="390" loading="lazy" decoding="async" alt="買い取ったアラヤのグラベルロード" class="w-full h-40 object-cover rounded-lg">
-        <img src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" decoding="async" alt="買い取ったビアンキのロードバイク" class="w-full h-40 object-cover rounded-lg">
-        <img src="/images/works/bike-mini-brompton.webp" width="594" height="599" loading="lazy" decoding="async" alt="買い取ったブロンプトンの折りたたみ自転車" class="w-full h-40 object-cover rounded-lg">
-        <img src="/images/works/bike-bmx.webp" width="594" height="599" loading="lazy" decoding="async" alt="買い取ったBMX" class="w-full h-40 object-cover rounded-lg">
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="wrap" style="max-width:760px;">
+      <div class="stack reveal" style="margin-bottom:32px;">
+        <span class="eyebrow">FAQ</span>
+        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">よくある質問</h2>
       </div>
-
-      <h2 class="section-heading text-center mb-4">値段がつかない車体も、部品は次へ</h2>
-      <p class="text-ink/50 text-sm text-center mb-12">
-        車体としては走れなくなっていても、駆動系やホイールはまだ使えることが多くあります。<br class="hidden sm:inline">
-        使えるものは取り外して、次に活かしています。
-      </p>
-
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <img src="/images/works/part-crank.webp" width="594" height="450" loading="lazy" decoding="async" alt="取り外したシマノのクランクセット" class="w-full h-32 object-cover rounded-lg">
-        <img src="/images/works/part-shifter.webp" width="594" height="384" loading="lazy" decoding="async" alt="車体から取り外したシマノのシフトレバー" class="w-full h-32 object-cover rounded-lg">
-        <img src="/images/works/part-cassette.webp" width="594" height="577" loading="lazy" decoding="async" alt="取り外したシマノのカセットスプロケット" class="w-full h-32 object-cover rounded-lg">
-        <img src="/images/works/part-wheel-ultegra.webp" width="594" height="444" loading="lazy" decoding="async" alt="取り外したシマノのホイールセット" class="w-full h-32 object-cover rounded-lg">
+      <div class="qa qa--2 reveal">
+        <div><p class="qa__q">写真を送らずに、直接見に来てもらえませんか？</p><p class="qa__a">査定のためだけの訪問は承っていません。先に写真で確定額をお出しし、ご納得いただいたあとのお引き取りのときだけ伺います。</p></div>
+        <div><p class="qa__q">「出張無料」は査定に来てもらえる意味ですか？</p><p class="qa__a">いいえ。無料なのは買取でお引き取りに伺うときの出張費です。査定は写真によるオンライン査定で無料。出張費は引取のみかかります。</p></div>
+        <div><p class="qa__q">写真だけで正確な査定ができますか？</p><p class="qa__a">はい。整備士が同型車の相場と写真から確定額を算出します。写真・情報と現物が一致していれば金額は変わりません。</p></div>
+        <div><p class="qa__q">防犯登録の書類が手元になくても大丈夫ですか？</p><p class="qa__a">問題ありません。抹消手続きは当方で代行します。書類がなくても対応可能なケースが多いです。</p></div>
       </div>
-
-      <p class="text-xs text-ink/35 mt-6 text-center">
-        ※ 部品取りの価値もない車体は、お引き取りをお断りする場合があります →
-        <a href="/terms/" class="underline underline-offset-2 hover:text-ink/70 transition-colors">ご利用条件</a>
-      </p>
+      <p class="reveal" style="margin-top:22px;"><a class="btn btn--ghost" href="/faq/">すべての質問を見る（全10問）→</a></p>
     </div>
   </section>
 
-  <!-- 虹区切り線 -->
-  <div class="rainbow-divider" aria-hidden="true"></div>
-
-  <!-- ========================
-       #price — 料金・エリア
-       ======================== -->
-  <section id="price" class="py-20 px-4 bg-ink/[0.025]">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-12">査定・出張費・対応エリア</h2>
-
-      <!-- 査定の考え方 -->
-      <div class="card mb-12">
-        <h3 class="font-mincho text-xl font-semibold mb-4">査定の考え方</h3>
-        <p class="text-ink/65 text-sm leading-relaxed">
-          同型車の直近の相場をもとに、整備・送料などを差し引いた<strong>確定額</strong>でご提示します（幅ではなく1つの金額）。写真・情報と現物が一致していれば変わりません。有効期限は<strong>14日間</strong>です。
-        </p>
-        <p class="text-xs text-ink/40 mt-3">
-          ※ 購入レシート・保証書・鍵2本・充電器がそろっていると、査定アップの対象になる場合があります。
-        </p>
+  <!-- お問い合わせ -->
+  <section class="section section--alt" id="contact">
+    <div class="wrap" style="max-width:820px;">
+      <div class="stack reveal" style="margin-bottom:24px; max-width:620px;">
+        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">お問い合わせ・査定のお申し込み</h2>
+        <p class="lead">写真はLINEでの送付が最も簡単です。フォームやメールでも受け付けています。返信は原則48時間以内です。</p>
       </div>
+      <div class="contact-list reveal" style="max-width:640px;">
+        <a class="contact-row" href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">
+          <span class="contact-row__ico" style="background:#06C755;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M6 10.4c0-2.3 2.5-4.1 5.6-4.1s5.6 1.8 5.6 4.1-2.5 4.1-5.6 4.1c-.5 0-1-.05-1.5-.13L7.7 16l.5-1.95C7 13.3 6 11.95 6 10.4z"/></svg></span>
+          <span class="contact-row__t"><h3>LINE <span style="font-size:0.68rem; color:var(--accent-d); border:1px solid color-mix(in srgb,var(--accent) 40%,transparent); padding:1px 7px; border-radius:99px; margin-left:6px; vertical-align:middle; font-weight:600;">推奨</span></h3><p>写真の送付が最も簡単です。お気軽にどうぞ。</p></span>
+          <span class="contact-row__go" aria-hidden="true">→</span>
+        </a>
+        <a class="contact-row" href="https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform" target="_blank" rel="noopener noreferrer">
+          <span class="contact-row__ico" style="background:#1E88E5;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>
+          <span class="contact-row__t"><h3>査定フォーム</h3><p>Googleフォームで受け付けています。写真添付にはGoogleログインが必要です。</p></span>
+          <span class="contact-row__go" aria-hidden="true">→</span>
+        </a>
+        <a class="contact-row" href="mailto:info@meguri-cycle.com">
+          <span class="contact-row__ico" style="background:#8E24AA;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></span>
+          <span class="contact-row__t"><h3>メール</h3><p>お問い合わせや写真添付でのご連絡も承ります（info@meguri-cycle.com）。</p></span>
+          <span class="contact-row__go" aria-hidden="true">→</span>
+        </a>
+        <a class="contact-row" href="https://www.instagram.com/meguri_cycle_/" target="_blank" rel="noopener noreferrer">
+          <span class="contact-row__ico" style="background:linear-gradient(135deg,#FEC053,#F2711C,#CB2E82,#7B3FBF);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1.1" fill="#fff" stroke="none"/></svg></span>
+          <span class="contact-row__t"><h3>Instagram</h3><p>買取実績や自転車の情報を発信しています。@meguri_cycle_</p></span>
+          <span class="contact-row__go" aria-hidden="true">→</span>
+        </a>
+      </div>
+      <p style="font-size:0.8rem; color:var(--ink-40); margin-top:16px;">※ 電話でのお問い合わせは現在受け付けておりません。</p>
+    </div>
+  </section>
 
-      <!-- 出張費表 — 料金はここを変更してください -->
-      <h3 class="font-mincho text-xl font-semibold mb-2">出張費の目安（出張引取のみ）</h3>
-      <p class="text-ink/50 text-sm mb-8">
-        値段がつかない車体を引き取る場合のみかかります。買取のご依頼なら、査定も出張費も無料です。かほく市役所を起点とした、Googleマップの走行距離で決まります。
-      </p>
-      <table class="price-table w-full mb-2">
-        <thead>
-          <tr>
-            <th scope="col">片道距離</th>
-            <th scope="col">出張費の目安</th>
-          </tr>
-        </thead>
+  <!-- 事業者情報 -->
+  <section class="section" id="company">
+    <div class="wrap" style="max-width:760px;">
+      <div class="stack reveal" style="margin-bottom:28px;">
+        <span class="eyebrow">Company</span>
+        <h2 style="font-size:clamp(1.5rem,4vw,2.1rem)">事業者情報</h2>
+      </div>
+      <table class="company reveal">
         <tbody>
-          <tr><td>〜10km</td><td>1,000円</td></tr>
-          <tr><td>10〜20km</td><td>1,500円</td></tr>
-          <tr><td>20〜30km</td><td>2,000円</td></tr>
-          <tr><td>30〜40km</td><td>2,500円</td></tr>
-          <tr><td>40〜50km</td><td>3,000円</td></tr>
-          <tr class="border-t-2 border-ink/10"><td>50km超</td><td class="text-ink/40">応相談</td></tr>
+          <tr><th>サービス名</th><td>めぐり自転車</td></tr>
+          <tr><th>屋号（法的表示）</th><td><a href="https://wilier300227-oss.github.io/rainbow-company-hp/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">RAINBOW</a>（「めぐり自転車」はRAINBOWが運営するサービス名です）</td></tr>
+          <tr><th>代表者</th><td>高多 優典</td></tr>
+          <tr><th>拠点</th><td>石川県かほく市</td></tr>
+          <tr><th>古物商許可</th><td>石川県公安委員会　第511090015059号（自転車類区分）</td></tr>
         </tbody>
       </table>
-      <p class="text-xs text-ink/35 mb-12">
-        ※ かほく市役所を起点とした、Googleマップの走行距離（片道）で判定します。市区町村をお知らせいただければ、出張費はこちらで計算して事前にご案内します。ガソリン代により改定する場合があります。
-      </p>
+      <p style="margin-top:16px;"><a href="/about/" style="color:var(--accent-d); font-weight:600; text-decoration:none;">代表の経歴と資格について →</a></p>
+    </div>
+  </section>
 
-      <!-- 対応エリア -->
-      <div class="card">
-        <h3 class="font-mincho text-xl font-semibold mb-3">対応エリア</h3>
-        <p class="text-ink/65 text-sm leading-relaxed">
-          <strong>石川県中心</strong>（かほく市・金沢市・白山市・七尾市など）。
-          富山県・福井県も応相談。遠方のご相談もまずはLINEまたはフォームよりお気軽にご連絡ください。
-        </p>
-        <p class="text-sm mt-4">
-          <a href="/kanazawa/" class="underline underline-offset-2 hover:text-accent transition-colors">金沢市の自転車買取について詳しく →</a>
-        </p>
+  <!-- フッター -->
+  <footer class="foot">
+    <div class="wrap foot__top">
+      <div class="foot__brand">
+        <div class="serif foot__logo">めぐり自転車 <span>（屋号：RAINBOW）</span></div>
+        <p>石川県かほく市発。整備士が査定する、自転車の出張買取・引き取り。</p>
+        <div class="foot__social">
+          <a href="https://www.instagram.com/meguri_cycle_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="igG" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FEC053"/><stop offset="0.35" stop-color="#F2711C"/><stop offset="0.65" stop-color="#CB2E82"/><stop offset="1" stop-color="#7B3FBF"/></linearGradient></defs><rect x="1.5" y="1.5" width="21" height="21" rx="6" fill="url(#igG)"/><circle cx="12" cy="12" r="5.2" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="18" cy="6" r="1.3" fill="#fff"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@meguri_cycle" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="4.5" width="21" height="15" rx="4.5" fill="#FF0000"/><polygon points="10,8.7 16.5,12 10,15.3" fill="#fff"/></svg>
+          </a>
+          <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer" aria-label="LINE">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="6" fill="#06C755"/><path d="M6 10.4c0-2.3 2.5-4.1 5.6-4.1s5.6 1.8 5.6 4.1-2.5 4.1-5.6 4.1c-.5 0-1-.05-1.5-.13L7.7 16l.5-1.95C7 13.3 6 11.95 6 10.4z" fill="#fff"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="foot__col">
+        <h4>サイト</h4>
+        <a href="/brands/">買取ブランド</a>
+        <a href="/hikitori/">出張引き取り</a>
+        <a href="/price/">料金・出張費</a>
+        <a href="/faq/">よくある質問</a>
+        <a href="/area/">対応エリア</a>
+        <a href="/about/">めぐり自転車について</a>
+        <a href="/terms/">ご利用条件</a>
+        <a href="/privacy.html">プライバシーポリシー</a>
+      </div>
+      <div class="foot__col">
+        <h4>お問い合わせ</h4>
+        <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで相談</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform" target="_blank" rel="noopener noreferrer">お問い合わせフォーム</a>
+        <a href="mailto:info@meguri-cycle.com">info@meguri-cycle.com</a>
+        <p style="font-size:0.78rem; color:var(--ink-40); margin:10px 0 0;">石川県かほく市</p>
       </div>
     </div>
-  </section>
-
-  <!-- ========================
-       #flow — ご利用の流れ
-       ======================== -->
-  <section id="flow" class="py-20 px-4">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-12">ご利用の流れ</h2>
-      <img src="images/flow-photo.jpg" alt="スマホで自転車の写真を撮っている様子" class="section-img">
-      <ol class="space-y-10">
-        <li class="flow-item">
-          <div class="flow-num" aria-hidden="true">1</div>
-          <div class="flex-1">
-            <h3 class="font-semibold text-lg mb-2">写真を送る（まずは数枚から）</h3>
-            <p class="text-ink/60 text-sm leading-relaxed">
-              LINEでの送付が最も簡単です（フォームも利用可）。
-              むずかしく考えず、まずは次のような写真からで大丈夫です。足りない分はLINEでご案内します。
-            </p>
-            <ul class="photo-guide">
-              <li>① 自転車ぜんぶが写るように、横から1枚</li>
-              <li>② タイヤ・チェーンまわりが分かる1枚</li>
-              <li>③ メーカー名やロゴが写っている部分を1枚</li>
-            </ul>
-            <p class="text-ink/60 text-sm leading-relaxed mt-3">
-              追加で見たい部分があれば、こちらから「ここを撮ってください」とご案内します。
-              前後ブレーキなどの写真もいただけると、より正確な金額をお出しできます。
-              E-bikeの場合はバッテリー残量・充電回数の表示も撮影をお願いします。
-            </p>
-          </div>
-        </li>
-        <li class="flow-item">
-          <div class="flow-num" aria-hidden="true">2</div>
-          <div class="flex-1">
-            <h3 class="font-semibold text-lg mb-2">確定額をお伝えします</h3>
-            <p class="text-ink/60 text-sm leading-relaxed">
-              原則48時間以内に、LINE（またはメール）で査定額（確定額）をご案内します。有効期限は14日間。
-              範囲ではなく一本の金額でお伝えします。
-            </p>
-          </div>
-        </li>
-        <li class="flow-item">
-          <div class="flow-num" aria-hidden="true">3</div>
-          <div class="flex-1">
-            <h3 class="font-semibold text-lg mb-2">「その金額でお願いします」とご返信</h3>
-            <p class="text-ink/60 text-sm leading-relaxed">
-              ご納得いただけたら、その旨をご返信ください。この返信をもって、訪問日時の調整に進みます。
-              もちろん断っていただいても構いません（費用はかかりません）。
-            </p>
-          </div>
-        </li>
-        <li class="flow-item">
-          <div class="flow-num" aria-hidden="true">4</div>
-          <div class="flex-1">
-            <h3 class="font-semibold text-lg mb-2">訪問（お引き取り）・書類・お支払い</h3>
-            <p class="text-ink/60 text-sm leading-relaxed">
-              ここで初めてご自宅へ伺います。お約束した金額のまま、現物確認・書類記入・お支払いをその場で完了します。
-              古物営業法に基づき、運転免許証などの本人確認書類のご提示をお願いしています（安心・安全なお取引のためにご協力ください）。
-            </p>
-          </div>
-        </li>
-      </ol>
+    <div class="wrap foot__legal">
+      <span>古物商許可 石川県公安委員会 第511090015059号</span>
+      <span>© 2026 RAINBOW</span>
     </div>
-  </section>
+  </footer>
 
-  <!-- 虹区切り線 -->
-  <div class="rainbow-divider" aria-hidden="true"></div>
+  <!-- スマホ固定CTA -->
+  <div class="dock">
+    <a class="btn btn--primary" href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで無料査定を申し込む</a>
+  </div>
 
-  <!-- ========================
-       #bohan — 防犯登録抹消
-       ======================== -->
-  <section id="bohan" class="py-20 px-4 bg-ink/[0.025]">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-8">防犯登録の抹消も、<br class="sm:hidden">まとめてお任せください</h2>
-      <div class="card">
-        <p class="text-ink/65 text-sm leading-relaxed mb-4">
-          自転車を手放す際に必要な<strong>防犯登録の抹消手続き</strong>は、警察署や自転車販売店に持ち込む必要があり、手間がかかります。
-        </p>
-        <p class="text-ink/65 text-sm leading-relaxed mb-4">
-          めぐり自転車では、買取・引取のいずれの場合も、防犯登録の抹消手続きをまとめて代行します。お客様が窓口に出向く必要はありません。
-        </p>
-        <p class="text-xs text-ink/40">
-          ※ 防犯登録カードや購入証明がなくても対応可能なケースが多いです。詳しくはお問い合わせください。
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================
-       #faq — よくある質問
-       ======================== -->
-  <section id="faq" class="py-20 px-4">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="section-heading text-center mb-12">よくある質問</h2>
-      <div class="space-y-3">
-
-        <details class="faq-item">
-          <summary class="faq-q">写真を送らずに、直接見に来てもらえませんか？</summary>
-          <p class="faq-a">
-            申し訳ありませんが、査定のためだけの訪問は承っておりません。お伺いするのは、金額にご納得いただいたあとのお引き取りのときだけです。<br>
-            先に金額を確定させているのには理由があります。<br>
-            ・玄関先で価格を交渉することにならず、その場で決断を迫られません<br>
-            ・断りたいときも、LINEやメールで気兼ねなくお断りいただけます<br>
-            ・同型車の相場を調べたうえでお出しするため、その場の目分量より根拠のある金額になります<br>
-            まずはお手元のスマホで数枚撮ってお送りください。原則48時間以内に金額をご連絡します。
-          </p>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-q">「出張無料」とありますが、査定に来てもらえるという意味ですか？</summary>
-          <p class="faq-a">
-            いいえ。無料なのは<strong>買取のご依頼でお引き取りに伺うときの出張費</strong>です。査定はすべて写真によるオンライン査定で、無料で行っています。お伺いしたうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体の引取のみです。紛らわしい表記となっており申し訳ありません。
-          </p>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-q">写真をうまく撮れません。スマホの操作も苦手です。</summary>
-          <p class="faq-a">
-            ピントが甘くても、暗くても、型番が分からなくても大丈夫です。まずは「自転車全体・タイヤとチェーンまわり・メーカー名の部分」あたりからお送りください。足りない部分はこちらから「ここを撮ってください」とご案内します。ご家族の方に撮っていただいても構いません。
-          </p>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-q">写真だけで正確な査定ができるのですか？</summary>
-          <p class="faq-a">
-            はい。同型車の直近の市場相場を基準に、写真から状態を確認して確定額を算出しています。整備士が判断していますので、写真・情報と現物が一致していれば、お伝えした金額から変わることはありません。
-          </p>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-q">写真と現物の状態が違ったらどうなりますか？</summary>
-          <p class="faq-a">写真のとおりであれば、お伝えした確定額でお引き取りします。玄関先での値引き交渉はいたしません。ただし、<strong>写真では判別できない不具合</strong>（フレームの曲がり・割れ／変速・ブレーキの不良／電動アシストのバッテリー残量ランプが2点灯以下など）が現地で見つかった場合のみ、その場では決めず、一度お持ち帰りのうえ改めて金額をご提示します。ご納得いただけなければお断りいただいて構いません（費用は一切かかりません）。</p>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-q">出張費はいつ・どうやって払いますか？</summary>
-          <p class="faq-a">出張引取の場合、現地でのお引き取り時に現金でお支払いいただきます。事前に金額をご確認いただいた上でお伺いしますので、ご安心ください。</p>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-q">防犯登録の書類が手元にない場合でも大丈夫ですか？</summary>
-          <p class="faq-a">はい、問題ありません。登録番号や書類がなくても対応可能なケースが多いです。詳しい状況をお知らせください。</p>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-q">会社名義の自転車は引き取れますか？</summary>
-          <p class="faq-a">恐れ入りますが、会社名義の自転車はお引き取りできません。譲渡には名義人（法人）の手続きが必要となるためです。</p>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-q">未成年でも申し込めますか？</summary>
-          <p class="faq-a">はい、お申し込みいただけます。ただし18歳未満の方の場合は、保護者の方の同意書が必要です。お申し込みの際にご確認します。</p>
-        </details>
-
-        <details class="faq-item">
-          <summary class="faq-q">一度申し込んだ後にキャンセルできますか？</summary>
-          <p class="faq-a">はい、可能です。査定額をお伝えした後でも、ご納得いただけなければキャンセルいただけます。訪問前のキャンセルには費用はかかりません。お気軽にご連絡ください。</p>
-        </details>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- 虹区切り線 -->
-  <div class="rainbow-divider" aria-hidden="true"></div>
-
-  <!-- ========================
-       #contact — お問い合わせ
-       ======================== -->
-  <section id="contact" class="py-20 px-4 bg-ink/[0.025]">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="section-heading mb-3">お問い合わせ・査定のお申し込み</h2>
-      <p class="text-ink/55 text-sm mb-8">
-        写真はLINEでの送付が最も簡単です。フォームやメールでも受け付けています。<br>
-        返信は原則48時間以内です。
-      </p>
-
-      <div class="grid sm:grid-cols-2 gap-4 mb-8 text-left">
-
-        <!-- LINE（推奨） -->
-        <div class="card contact-card contact-card-line flex flex-col">
-          <div class="text-xs font-barlow tracking-widest uppercase mb-2" style="color:#06C755;">推奨</div>
-          <h3 class="font-semibold mb-2">LINE</h3>
-          <p class="text-sm text-ink/55 mb-4 flex-1">写真の送付が最も簡単です。お気軽にどうぞ。</p>
-          <!-- TODO: LINEの公式アカウントURLを確認の上、差し替えてください -->
-          <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer" class="contact-link">LINEで友だち追加 →</a>
-        </div>
-
-        <!-- 査定フォーム -->
-        <div class="card contact-card contact-card-form flex flex-col">
-          <div class="text-xs font-barlow tracking-widest uppercase mb-2" style="color:#1E88E5;">フォーム</div>
-          <h3 class="font-semibold mb-2">査定フォーム</h3>
-          <p class="text-sm text-ink/55 mb-4 flex-1">Googleフォームで受け付けています。<br>写真添付にはGoogleログインが必要です。</p>
-          <a href="https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform" target="_blank" rel="noopener noreferrer" class="contact-link">フォームを開く →</a>
-        </div>
-
-        <!-- メール -->
-        <div class="card contact-card contact-card-mail flex flex-col">
-          <div class="text-xs font-barlow tracking-widest uppercase mb-2" style="color:#8E24AA;">メール</div>
-          <h3 class="font-semibold mb-2">メール</h3>
-          <p class="text-sm text-ink/55 mb-4 flex-1">お問い合わせや写真添付でのご連絡も承ります。</p>
-          <a href="mailto:info@meguri-cycle.com" class="contact-link">メールを送る →</a>
-        </div>
-
-        <!-- Instagram -->
-        <div class="card contact-card contact-card-insta flex flex-col">
-          <div class="text-xs font-barlow tracking-widest uppercase mb-2" style="color:#E4405F;">Instagram</div>
-          <h3 class="font-semibold mb-2">Instagram</h3>
-          <p class="text-sm text-ink/55 mb-4 flex-1">買取実績や自転車の情報を発信しています。</p>
-          <a href="https://www.instagram.com/meguri_cycle_/" target="_blank" rel="noopener noreferrer" class="contact-link">@meguri_cycle_ をフォロー →</a>
-        </div>
-
-      </div>
-
-      <p class="text-xs text-ink/35">※ 電話でのお問い合わせは現在受け付けておりません。</p>
-    </div>
-  </section>
-
-  <!-- ========================
-       #company — 事業者情報
-       ======================== -->
-{% include "company-info.njk" %}
-
-  {% include "cta-bar.njk" %}
-
-  {% include "footer.njk" %}
-
-  <script src="js/main.js"></script>
+  <script>
+    addEventListener('DOMContentLoaded', function () {
+      var tg = document.querySelector('.nav__toggle');
+      var lk = document.getElementById('navLinks');
+      if (tg && lk) {
+        tg.addEventListener('click', function () { var o = lk.classList.toggle('open'); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); });
+        lk.addEventListener('click', function (e) { if (e.target.tagName === 'A') { lk.classList.remove('open'); tg.setAttribute('aria-expanded', 'false'); } });
+      }
+      var els = [].slice.call(document.querySelectorAll('.reveal'));
+      if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+      els.forEach(function (el) { io.observe(el); });
+    });
+  </script>
   <!-- Cloudflare Web Analytics -->
   <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15b37c037ea94303a8d315c693380a78"}'></script>
-  <!-- End Cloudflare Web Analytics -->
 </body>
 </html>

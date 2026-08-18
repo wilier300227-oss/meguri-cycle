@@ -64,78 +64,85 @@ permalink: /about/
   }
   </script>
 
-  {% include "head-common.njk" %}
+  {% include "head-new.njk" %}
 </head>
-<body class="bg-paper text-ink font-gothic">
+<body>
 
-  <!-- ナビゲーション（サブページ用・トップへ戻る） -->
-  <nav class="border-b border-ink/10">
-    <div class="max-w-3xl mx-auto px-4 h-14 flex items-center">
-      <a href="/" class="font-mincho text-lg font-semibold tracking-wider hover:text-accent transition-colors">← めぐり自転車</a>
+  {% include "nav-new.njk" %}
+
+  <!-- ヒーロー -->
+  <section class="section" style="padding-bottom: clamp(32px,5vw,48px);">
+    <div class="wrap" style="max-width:720px;">
+      <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">About</p>
+      <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(2rem,5.5vw,3rem); line-height:1.24; margin-bottom:18px;">めぐり自転車について</h1>
+      <p class="lead">自転車の買取と引き取りをしています。かほく市を拠点に、石川県内を回っています。</p>
     </div>
-  </nav>
+  </section>
 
-  <main class="max-w-3xl mx-auto px-4 py-16">
-    <h1 class="font-mincho text-3xl font-bold mb-6">めぐり自転車について</h1>
-    <p class="text-ink/70 leading-relaxed mb-14">
-      自転車の買取と引き取りをしています。かほく市を拠点に、石川県内を回っています。
-    </p>
+  <section class="section" style="padding-top:0;">
+    <div class="wrap" style="max-width:720px;">
+      <div style="display:grid; gap:clamp(32px,5vw,48px);">
 
-    <div class="space-y-12 leading-relaxed text-ink/75">
+        <section class="reveal">
+          <h2 style="font-size:1.4rem; margin-bottom:14px;">自転車を7年みてきました</h2>
+          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
+            <p>自転車量販店とアウトドアショップで、整備士として7年ほど働いていました。</p>
+            <p>最初の4年は、ママチャリと電動アシストが中心でした。毎日の足として使われている自転車を、ひたすら直す日々です。そのあとの3年は、スポーツ用品店とアウトドアショップで、クロスバイクやロードバイク、ツーリング用の自転車を扱っていました。</p>
+            <p>街乗りの一台からスポーツ車まで、ひと通り触ってきたことになります。</p>
+            <p>買取のときにフレームや駆動系を見て値段をつけられるのは、この7年があるからです。</p>
+          </div>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">自転車を7年みてきました</h2>
-        <p class="mb-4">自転車量販店とアウトドアショップで、整備士として7年ほど働いていました。</p>
-        <p class="mb-4">最初の4年は、ママチャリと電動アシストが中心でした。毎日の足として使われている自転車を、ひたすら直す日々です。そのあとの3年は、スポーツ用品店とアウトドアショップで、クロスバイクやロードバイク、ツーリング用の自転車を扱っていました。</p>
-        <p class="mb-4">街乗りの一台からスポーツ車まで、ひと通り触ってきたことになります。</p>
-        <p>買取のときにフレームや駆動系を見て値段をつけられるのは、この7年があるからです。</p>
-      </section>
+        <section class="reveal">
+          <h2 style="font-size:1.4rem; margin-bottom:14px;">電動アシスト自転車について</h2>
+          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
+            <p>第二種電気工事士の免状を取り、電気工事の現場にも入りました。</p>
+            <p>電動アシスト自転車は、自転車であると同時に電気製品です。バッテリーの劣化なのか、モーター側なのか、制御なのか。切り分けができると、査定の精度が変わります。</p>
+            <p>自転車の整備と電気の両方をやってきたので、そこは自信があります。</p>
+          </div>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">電動アシスト自転車について</h2>
-        <p class="mb-4">第二種電気工事士の免状を取り、電気工事の現場にも入りました。</p>
-        <p class="mb-4">電動アシスト自転車は、自転車であると同時に電気製品です。バッテリーの劣化なのか、モーター側なのか、制御なのか。切り分けができると、査定の精度が変わります。</p>
-        <p>自転車の整備と電気の両方をやってきたので、そこは自信があります。</p>
-      </section>
+        <section class="reveal">
+          <h2 style="font-size:1.4rem; margin-bottom:14px;">捨てる前に、開けてみる</h2>
+          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
+            <p>ドラム式の洗濯機が、乾燥だけ効かなくなったことがあります。</p>
+            <p>修理を呼ぶか買い替えるかで迷ったのですが、その前に一度分解してみました。乾燥のダクトを開けたら、繊維くずがぎっしり詰まっていました。掃除して組み直したら、元通り乾くようになりました。</p>
+            <p>壊れていたわけではなかったんです。</p>
+            <p>釣りのリールも同じで、回りが渋くなったら分解して洗って、グリスを入れ直します。それだけで新品みたいに戻ることがあります。</p>
+            <p>自転車のハブやボトムブラケットも、構造としては同じです。回してみれば、あとどれくらい使えるかは、だいたい分かります。</p>
+          </div>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">捨てる前に、開けてみる</h2>
-        <p class="mb-4">ドラム式の洗濯機が、乾燥だけ効かなくなったことがあります。</p>
-        <p class="mb-4">修理を呼ぶか買い替えるかで迷ったのですが、その前に一度分解してみました。乾燥のダクトを開けたら、繊維くずがぎっしり詰まっていました。掃除して組み直したら、元通り乾くようになりました。</p>
-        <p class="mb-4">壊れていたわけではなかったんです。</p>
-        <p class="mb-4">釣りのリールも同じで、回りが渋くなったら分解して洗って、グリスを入れ直します。それだけで新品みたいに戻ることがあります。</p>
-        <p>自転車のハブやボトムブラケットも、構造としては同じです。回してみれば、あとどれくらい使えるかは、だいたい分かります。</p>
-      </section>
+        <section class="reveal">
+          <h2 style="font-size:1.4rem; margin-bottom:14px;">3ヶ月かけて作ったもの</h2>
+          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
+            <p>日産のキャラバンを、キャンピングカーに改造したことがあります。</p>
+            <p>天井と壁を板張りにして、棚と引き出しを作って、ベッドの架台を組みました。専門の知識があったわけではないので、調べては手を止め、失敗しては直しての繰り返しです。会社勤めの合間に進めて、仕上がるまで3ヶ月かかりました。</p>
+            <p>作ってみて分かったのは、ものには手間がかかっているということでした。</p>
+            <p>だから、まだ使える自転車を捨てるのが惜しい。走れなくなった車体でも、ハブやクランクやホイールは、次に活かせることが多いんです。買い取れない車体をお引き取りしているのは、そういう理由です。</p>
+          </div>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">3ヶ月かけて作ったもの</h2>
-        <p class="mb-4">日産のキャラバンを、キャンピングカーに改造したことがあります。</p>
-        <p class="mb-4">天井と壁を板張りにして、棚と引き出しを作って、ベッドの架台を組みました。専門の知識があったわけではないので、調べては手を止め、失敗しては直しての繰り返しです。会社勤めの合間に進めて、仕上がるまで3ヶ月かかりました。</p>
-        <p class="mb-4">作ってみて分かったのは、ものには手間がかかっているということでした。</p>
-        <p>だから、まだ使える自転車を捨てるのが惜しい。走れなくなった車体でも、ハブやクランクやホイールは、次に活かせることが多いんです。買い取れない車体をお引き取りしているのは、そういう理由です。</p>
-      </section>
+        <section class="reveal">
+          <h2 style="font-size:1.4rem; margin-bottom:14px;">資格・許可</h2>
+          <div class="card">
+            <ul class="list-plain" style="margin-bottom:14px;">
+              <li>第二種電気工事士（国家資格）</li>
+              <li>自転車安全整備士</li>
+              <li>古物商許可 石川県公安委員会 第511090015059号</li>
+            </ul>
+            <p style="color:var(--ink-70); font-size:0.94rem;">顔を出すのは恥ずかしいので、写真は載せていません。その代わり、名前も資格も許可番号も隠さず出しています。気になることがあれば、LINEでいくらでも聞いてください。</p>
+          </div>
+        </section>
 
-      <section>
-        <h2 class="font-mincho text-xl font-semibold text-ink mb-4">資格・許可</h2>
-        <ul class="list-disc pl-5 space-y-1 mb-4">
-          <li>第二種電気工事士（国家資格）</li>
-          <li>自転車安全整備士</li>
-          <li>古物商許可 石川県公安委員会 第511090015059号</li>
-        </ul>
-        <p>顔を出すのは恥ずかしいので、写真は載せていません。その代わり、名前も資格も許可番号も隠さず出しています。気になることがあれば、LINEでいくらでも聞いてください。</p>
-      </section>
+        <div class="reveal">
+          <a class="btn btn--primary" href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで相談する</a>
+        </div>
 
-      <section>
-        <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer" class="inline-block font-bold text-white text-sm px-6 py-3 rounded-full" style="background:#06C755;">LINEで相談する</a>
-      </section>
-
+      </div>
     </div>
-  </main>
+  </section>
 
-  {% include "footer.njk" %}
-
-  <!-- Cloudflare Web Analytics -->
-  <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15b37c037ea94303a8d315c693380a78"}'></script>
-  <!-- End Cloudflare Web Analytics -->
+  {% include "footer-new.njk" %}
 </body>
 </html>
