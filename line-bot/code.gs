@@ -3,12 +3,12 @@
  * Google Apps Script (GAS) 用
  *
  * ── 機能 ──
- * 1. リッチメニュー「買取査定」「出張引取」→ 受付＋必要事項＋写真ガイドを2通で返信
- * 2. リッチメニュー「写真を送る」→ 撮影ガイド7枚＋カメラボタンを返信
+ * 1. リッチメニュー「買取査定」「出張引取」→ 受付（写真＋市町名だけ）＋写真ガイドを2通で返信
+ * 2. リッチメニュー「写真を送る」→ 撮影ガイド（まずは3枚方式）＋カメラボタンを返信
  * 3. 「電動」→ 電動アシスト用の追加ガイドを返信
  * 4. 画像を受信 → お客さまへの自動応答はせず、記録＋オーナー通知のみ（返信は手動）
  * 5. 「買取希望」「処分希望」「対応エリア・出張費」→ それぞれの案内を返信
- * 5-2.「査定を申し込む」（入力完了ボタン）→ 必要事項の確認リスト（漏れは追記）＋条件付き確定額＋48時間以内 を返信
+ * 5-2.「査定を申し込む」（入力完了ボタン）→ 市町名の確認＋条件付き確定額＋48時間以内 を返信
  * 5-3.「お問い合わせ」（問い合わせボタン）→ 質問記入を促す＋手動対応モードON（人が対応）
  * 6. 「対応エリア・出張費」ボタン／「買取希望」「処分希望」の案内を出した直後だけ、
  *    市区町村を送ると その地域の出張費目安を返信。有効なのは案内タップ直後の
@@ -97,8 +97,8 @@ const DEFAULT_FEES = {
   'かほく市': '1,000円', '津幡町': '1,000円', '宝達志水町': '1,000円', '内灘町': '1,500円',
   '羽咋市': '2,000円', '野々市市': '2,000円', '野々市': '2,000円',
   '能美市': '2,500円', '川北町': '2,500円', '志賀町': '2,500円', '中能登町': '2,500円',
-  // 大きい市＝場所で距離が変わるため 要相談（町名を伺って個別に確定）
-  '金沢市': '要相談', '白山市': '要相談', '七尾市': '要相談', '小松市': '要相談', '加賀市': '要相談',
+  // 大きい市＝目安額で即答し、町名で正確な額を確定（2026-08-19 即答化。加賀は50km超のため要相談のまま）
+  '金沢市': '2,000円前後', '白山市': '2,500円前後', '七尾市': '3,000円前後', '小松市': '3,000円前後', '加賀市': '要相談',
   '輪島市': '要相談', '珠洲市': '要相談', '穴水町': '要相談', '能登町': '要相談',
   // 富山・福井はエリア外＝要相談（§5-4／サイトの「富山・福井は応相談」と統一）
   '氷見市': '要相談', '高岡市': '要相談', '小矢部市': '要相談', '射水市': '要相談', '砺波市': '要相談',
@@ -150,6 +150,27 @@ function initFeeMaster_() {
     sh.appendRow([c, talk ? '' : DEFAULT_FEES[c], talk ? '要相談' : '可', '要確認（実測で確定）']);
   });
   CacheService.getScriptCache().remove('fee_master_map');
+}
+/** 2026-08-19：金沢等の大きい市を目安額で即答化。fee_masterシートの該当行だけ更新（GASエディタで1回実行） */
+function updateFeeMasterBigCities2026() {
+  const ssId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+  if (!ssId) throw new Error('INQUIRY_SHEET_ID 未設定');
+  const sh = SpreadsheetApp.openById(ssId).getSheetByName('fee_master');
+  if (!sh) throw new Error('fee_master シートが見つかりません');
+  const upd = { '金沢市': '2,000円前後', '白山市': '2,500円前後', '七尾市': '3,000円前後', '小松市': '3,000円前後' };
+  const data = sh.getDataRange().getValues();
+  let n = 0;
+  for (let r = 1; r < data.length; r++) {
+    const c = String(data[r][0]).trim();
+    if (upd[c]) {
+      sh.getRange(r + 1, 2).setValue(upd[c]);
+      sh.getRange(r + 1, 3).setValue('可');
+      sh.getRange(r + 1, 4).setValue('目安額・町名で確定（2026-08-19 即答化）');
+      n++;
+    }
+  }
+  CacheService.getScriptCache().remove('fee_master_map');
+  Logger.log('fee_master 更新: ' + n + '行');
 }
 
 /**
@@ -275,9 +296,13 @@ function handleEvent(event) {
         clearExpectCity_(userId);
         replyCityFee(event.replyToken, hit, event, intent);
         rule = '市町名→' + (intent === 'buy' ? '買取無料' : '出張費');
+      } else if (expectsCity_(userId) && cityRetryEligible_(text) && !wasCityReprompted_(userId)) {
+        // 誤字らしき非マッチは予算を消費せず1回だけ聞き返す（2026-08-19 誤字対策）。
+        replyCityReprompt_(event.replyToken, userId);
+        rule = '市町名再入力依頼';
       } else {
         if (expectsCity_(userId)) consumeExpectCity_(userId);
-        // 5-3: 分類不能（疑問文・意向外の市町名含む）。顧客へ営業応答せず、オーナーへ通知。
+        // 5-3: 分類不能（疑問文・意向外の市町名含む・聞き返し2回目）。顧客へ営業応答せず、オーナーへ通知。
         handleUnmatchedText_(event, userId, text);
         rule = 'UNMATCHED';
       }
@@ -601,23 +626,19 @@ function replyCityFee(replyToken, hit, event, intent) {
   reply(replyToken, [{ type: 'text', text: lines.join('\n') }]);
 }
 
-/** 写真ガイドのメッセージ本体（単体でも申し込みフローの2通目でも使う） */
+/** 写真ガイドのメッセージ本体（単体でも申し込みフローの2通目でも使う）
+ *  サイトの流れStep1と同じ「まずは3枚」方式。詳細7枚は任意の追記に格下げ（2026-08-19）。 */
 function photoGuideMessage() {
   const text = [
-    '📷 写真をお送りください！',
+    '📷 まずは写真を3枚ほどお送りください！',
     '',
-    '査定に必要な7枚：',
-    '①自転車全体（右側面）',
-    '②自転車全体（左側面）',
-    '③ハンドル・ブレーキまわり',
-    '④ギア・チェーンまわり',
-    '⑤メーカー名・型番のシール部分',
-    '⑥タイヤ・ホイール',
-    '⑦傷やサビが気になる部分',
+    '・自転車ぜんぶ（横から）',
+    '・タイヤ・チェーンまわり',
+    '・メーカー名やロゴの部分',
     '',
-    '鍵・カゴ・ライトなどの付属品があれば、その写真もお願いします。',
+    'これだけで査定を始められます。追加で見たい部分は、こちらからご案内します🚲',
     '',
-    'すべて揃わなくても大丈夫です。まずは送れる分だけどうぞ！',
+    '（余裕があれば：反対側の側面・ハンドル・ギアまわり・型番シール・気になる傷 も送っていただけると査定アップにつながります）',
     '下のボタンから写真を送れます👇',
   ].join('\n');
 
@@ -657,17 +678,11 @@ function replyKaitoriApply(replyToken, userId) {
   const ack = [
     '💰 買取査定のお申し込みありがとうございます！',
     '',
-    '査定は写真で行い、金額が決まってからお引き取りに伺います。買取なら査定・出張費・防犯登録の抹消代行まで費用は一切かかりません。',
+    '査定は写真だけでOK。金額が決まってからお引き取りに伺います（買取なら費用は一切かかりません）。',
     '',
-    'スムーズにご案内するため、次を1通にまとめて教えてください（分かる範囲でOK）：',
-    '① 台数（何台ですか？）',
-    '② お住まいの市町名（町名まで）',
-    '③ メーカー・車種',
-    '④ 年式、または購入日（分かる範囲で）',
-    '⑤ 電動アシストの有無',
-    '⑥ 防犯登録の名義（本人／家族／不明）',
+    'お写真とあわせて「お住まいの市町名」だけ教えてください（例：金沢市片町）。',
     '',
-    'あわせて下の写真ガイドの通りにお写真をお送りください。すべて揃ったら「査定を申し込む」を押してください🚲',
+    '送り終わったら「査定を申し込む」を押してください🚲',
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideMessage()]);
@@ -681,14 +696,11 @@ function replyHikitoriApply(replyToken, userId) {
   const ack = [
     '♻️ 出張引取のお申し込みありがとうございます！',
     '',
-    '処分費は0円。出張費のみで引取に伺います。出張費はこちらで計算し、金額をご確認いただいてから訪問日を決めます。',
+    '処分費は0円。出張費のみで引取に伺います（金額をご確認いただいてから訪問日を決めます）。',
     '',
-    '次を1通にまとめて教えてください（分かる範囲でOK）：',
-    '① 台数（何台ですか？）',
-    '② お住まいの市町名（町名まで）',
-    '③ 防犯登録の名義（本人／家族／不明）',
+    'お写真とあわせて「お住まいの市町名」だけ教えてください（例：金沢市片町）。',
     '',
-    'お写真は下のガイドのとおり、簡単で大丈夫です。状態によっては買取（費用なし＋お支払い）に切り替えられる場合もあります🚲',
+    '状態によっては買取（費用なし＋お支払い）に切り替えられる場合もあります🚲',
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideLightMessage()]);
@@ -701,7 +713,7 @@ function replyHikitoriApply(replyToken, userId) {
 function replyEbikeGuide(replyToken) {
   const text = [
     '⚡電動アシスト自転車ですね！',
-    '通常の7枚に加えて、こちらもお願いします：',
+    '通常の写真に加えて、こちらもお願いします：',
     '',
     '①バッテリー（型番が見える面）',
     '②バッテリーを外した本体側の端子部分',
@@ -874,10 +886,10 @@ function replyArea(replyToken) {
     '',
     '💰 買取の場合は、オンライン査定もお引き取りの出張費もすべて無料です！',
     '（査定のためだけにお伺いするサービスではありません。まずはお写真をお送りください）',
-    'お住まいの市区町村を送っていただければ、出張費の目安をすぐお答えします。',
+    'お住まいの市町名を下のボタンから選ぶか、入力して送ってください。出張費の目安をすぐお答えします。',
   ].join('\n');
 
-  reply(replyToken, [{ type: 'text', text: text }]);
+  reply(replyToken, [{ type: 'text', text: text, quickReply: { items: cityQuickReplyItems_() } }]);
 }
 
 /** 「入力が終わったので査定お願いします」ボタン用の自動応答。
@@ -885,18 +897,11 @@ function replyArea(replyToken) {
 function replyEstimateRequest(event) {
   markAcked(event);
   const text = [
-    '📋 査定のお申し込みありがとうございます！お送りいただいた写真・情報を確認して査定します。',
+    '📋 査定のお申し込みありがとうございます！お送りいただいた写真・情報で査定します。',
     '',
-    '念のため、次がそろっているかご確認ください（不足や、まだお伝えでない項目があれば、このメッセージのあとに追記してください）：',
-    '① 台数',
-    '② お住まいの市町名（町名まで／番地は金額が決まってからでOK）',
-    '③ メーカー・車種',
-    '④ 年式、または購入日（分かる範囲で）',
-    '⑤ 電動アシストの有無',
-    '⑥ 防犯登録の名義（本人／家族／不明）',
+    'お住まいの市町名がまだの方は、市町名だけ教えてください（例：金沢市片町）。',
     '',
-    '査定額は写真をもとに確定してお伝えします。写真のとおりであれば、その金額で確定します。',
-    '写真では判別できない不具合（フレームの曲がり・割れ、変速・ブレーキの不調、電動アシストのバッテリー劣化 など）が現地で見つかった場合のみ、再査定のうえ、減額となる可能性がある旨あらかじめご了承ください。',
+    '査定額は確定額です。写真では分からない不具合が現地で見つかった場合のみ、再査定となることがあります。',
     '',
     '原則48時間以内に、確定の査定額をLINEでご連絡します🚲',
   ].join('\n');
@@ -984,7 +989,7 @@ function handlePostback_(event, userId) {
 function replyAddVehicle_(replyToken) {
   reply(replyToken, [{
     type: 'text',
-    text: '🚲 追加の1台ですね！\n\n次の台のお写真を7枚を目安にお送りください（「〇台目」と一言そえていただけると助かります）。\nメーカー・車種・電動アシストの有無・防犯登録の名義もあわせて教えてください🚲',
+    text: '🚲 追加の1台ですね！\n\n次の台も、まずは写真3枚（全体・タイヤまわり・メーカー名）を目安にお送りください。「〇台目」と一言そえていただけると助かります🚲',
     quickReply: { items: [qrCameraRoll(), qrCamera()] },
   }]);
 }
@@ -1098,6 +1103,34 @@ function consumeExpectCity_(userId) {
 function clearExpectCity_(userId) {
   if (!userId) return;
   CacheService.getScriptCache().remove(expectCityKey_(userId));
+}
+/** 2026-08-19 誤字対策：市町名を打とうとした可能性が高い短文か（数字入り＝住所らしきものは除外＝事象C対策維持） */
+function cityRetryEligible_(text) {
+  if (!text) return false;
+  const t = String(text).trim();
+  return t.length > 0 && t.length <= 12 && !/[0-9０-９]/.test(t) && !looksLikeQuestion_(t);
+}
+/** 聞き返し済みフラグ（expect_cityのキャッシュに rp を持つ。1回だけ聞き返す） */
+function wasCityReprompted_(userId) { const o = readExpectCity_(userId); return !!(o && o.rp); }
+function markCityReprompted_(userId) {
+  const o = readExpectCity_(userId);
+  if (!o) return;
+  o.rp = 1;
+  CacheService.getScriptCache().put(expectCityKey_(userId), JSON.stringify(o), EXPECT_CITY_TTL_SEC);
+}
+/** 市町名選択のクイックリプライ（誤字の根絶。13個上限内） */
+function cityQuickReplyItems_() {
+  return ['かほく市', '金沢市', '津幡町', '内灘町', '白山市', '野々市市', '羽咋市', '宝達志水町', '能美市', '小松市', '七尾市', '中能登町']
+    .map(function (c) { return qrMessage(c, c); });
+}
+/** 読み取れなかったときの聞き返し（予算は消費しない・1回だけ） */
+function replyCityReprompt_(replyToken, userId) {
+  markCityReprompted_(userId);
+  reply(replyToken, [{
+    type: 'text',
+    text: '🙏 市町名を読み取れませんでした。下のボタンから選ぶか、市町名だけをもう一度お送りください（例：金沢市片町）。',
+    quickReply: { items: cityQuickReplyItems_() },
+  }]);
 }
 /** §4-1：料金は返さず人へ回すべき疑問文の検知（事象B の再発防止） */
 function looksLikeQuestion_(text) {
