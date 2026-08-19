@@ -178,6 +178,8 @@ h1, h2, h3 {
 .why__item { display: grid; grid-template-columns: auto 1fr; gap: 24px; padding: 26px 4px; border-top: 1px solid var(--line-hair); align-items: baseline; }
 .why__item:last-child { border-bottom: 1px solid var(--line-hair); }
 .why__n { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 1.55rem; line-height: 1; color: var(--accent); letter-spacing: 0.02em; }
+/* 番号なし・罫線区切りの変種（番号レイアウトの3連続を避ける） */
+.why__list--lines .why__item { display: block; border-top: 1px solid var(--line-hair); padding-top: 16px; }
 .why__h { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: 1.18rem; margin-bottom: 0.45rem; }
 .why__p { color: var(--ink-70); font-size: 0.95rem; }
 
@@ -189,6 +191,10 @@ h1, h2, h3 {
 
 .work { flex: 0 0 auto; width: clamp(240px, 34vw, 320px); aspect-ratio: 4 / 3; margin-right: 16px; border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-sm); background: var(--paper-2); }
 .work img { width: 100%; height: 100%; object-fit: cover; }
+/* キャプション付き変種（画像の下に車種名。画像への被せは禁止パターンのため下置き） */
+.work--cap { aspect-ratio: auto; overflow: visible; border-radius: 0; box-shadow: none; background: transparent; }
+.work--cap img { aspect-ratio: 4 / 3; height: auto; object-fit: cover; display: block; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
+.work__cap { display: block; margin-top: 8px; font-size: 0.78rem; color: var(--ink-55); letter-spacing: 0.03em; }
 
 .brandwall { padding: 22px 0; border-top: 1px solid var(--line-hair); border-bottom: 1px solid var(--line-hair); }
 .brand { flex: 0 0 auto; display: inline-flex; align-items: center; padding: 0 34px; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: clamp(1.05rem, 2.4vw, 1.5rem); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
@@ -200,6 +206,35 @@ h1, h2, h3 {
 .brandwall .brand:nth-child(6n+5)::after { background:#1E88E5; }
 .brandwall .brand:nth-child(6n+6)::after { background:#8E24AA; }
 
+/* ---------- ブランドウォール：ワードマーク調タイポグラフィ ----------
+   実ロゴ画像の代わりに、各ブランドの実際のワードマークの特徴
+   （太さ・斜体・セリフ・字間・大文字小文字）を既存＋システムフォントで近似。 */
+.bw-black  { font-family: "Arial Black", Arial, sans-serif; font-weight: 900; letter-spacing: 0.02em; }
+.bw-blacki { font-family: "Arial Black", Arial, sans-serif; font-weight: 900; font-style: italic; letter-spacing: 0.04em; }
+.bw-seri   { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; text-transform: none; letter-spacing: 0.02em; }
+.bw-serif  { font-family: Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: 0.14em; }
+.bw-cond   { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; letter-spacing: 0.3em; }
+.bw-wide   { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-weight: 300; letter-spacing: 0.38em; }
+.bw-low    { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-weight: 700; text-transform: none; letter-spacing: 0.01em; }
+.bw-sm { font-size: clamp(0.95rem, 2.1vw, 1.32rem); }
+.bw-lg { font-size: clamp(1.15rem, 2.6vw, 1.62rem); }
+
+/* ---------- 対象車種：タイポグラフィ・インデックス（チップ廃止） ---------- */
+.genres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 32px; }
+.genre { display: flex; flex-direction: column; gap: 3px; padding: 15px 4px 13px; border-top: 1px solid var(--line-hair); }
+.genre__en { font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-40); }
+.genre__jp { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: clamp(1.02rem, 1.8vw, 1.22rem); line-height: 1.35; }
+@media (max-width: 640px) { .genres { grid-template-columns: repeat(2, 1fr); gap: 0 20px; } }
+
+/* ---------- ブランド一覧ページ：カラム・インデックス（チップ廃止） ---------- */
+.brandcat h2 { font-size: 1.22rem; color: var(--ink); border-bottom: 1px solid var(--line-hair); padding-bottom: 10px; margin-bottom: 16px; }
+.brandix { columns: 3; column-gap: 48px; padding: 0; margin: 0; list-style: none; }
+.brandix li { break-inside: avoid; padding: 7px 0; }
+.brandix .en { display: block; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 1.04rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink); line-height: 1.3; }
+.brandix .jp { font-size: 0.74rem; color: var(--ink-55); letter-spacing: 0.04em; }
+.brandix--2 { columns: 2; max-width: 560px; }
+@media (max-width: 820px) { .brandix { columns: 2; column-gap: 28px; } }
+
 /* ---------- 料金テーブル ---------- */
 .rate { width: 100%; border-collapse: collapse; }
 .rate th, .rate td { text-align: left; padding: 0.85rem 0.4rem; border-bottom: 1px solid var(--line-hair); }
@@ -209,6 +244,10 @@ h1, h2, h3 {
 /* ---------- 流れ ---------- */
 .steps { display: grid; gap: 16px; }
 .step { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: start; }
+/* 縦一列の流れ（罫線区切り）。グリッドだと内容量の差で余白が生まれるため */
+.steps--flow { gap: 0; }
+.steps--flow .step { padding: 22px 0; border-top: 1px solid var(--line-hair); }
+.steps--flow .step:first-child { border-top: 0; padding-top: 0; }
 .step__n { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; color: #fff; background: var(--accent); width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 1.2rem; }
 
 /* ---------- FAQ ---------- */
