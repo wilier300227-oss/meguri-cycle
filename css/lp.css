@@ -260,7 +260,7 @@ h1, h2, h3 {
 .cta h2 { font-size: clamp(1.7rem, 4.5vw, 2.6rem); }
 .foot { padding: 56px 0 96px; border-top: 1px solid var(--line-hair); color: var(--ink-55); }
 .foot__top { display: grid; gap: 36px; }
-@media (min-width: 760px) { .foot__top { grid-template-columns: 1.4fr 1fr 1fr; gap: 44px; } }
+@media (min-width: 760px) { .foot__top { grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px; } }
 .foot__logo { font-size: 1.15rem; color: var(--ink); margin-bottom: 10px; }
 .foot__logo span { font-size: 0.78rem; color: var(--ink-40); }
 .foot__brand p { font-size: 0.85rem; color: var(--ink-55); margin: 0 0 18px; max-width: 320px; line-height: 1.7; }

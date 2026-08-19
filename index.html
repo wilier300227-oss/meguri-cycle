@@ -44,7 +44,7 @@
   <!-- 新デザイン用フォント -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;600;700;900&family=Murecho:wght@400;500;700&family=Barlow+Semi+Condensed:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;600;700&family=Murecho:wght@400;500;700&family=Barlow+Semi+Condensed:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/lp.css">
   <script>document.documentElement.classList.add('js-motion');</script>
 </head>
@@ -70,9 +70,7 @@
 
   <!-- ヒーロー（全面動画・ダーク・白文字） -->
   <section class="hero" id="hero">
-    <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="/video/hero-poster.jpg" aria-hidden="true">
-      <source src="/video/hero.mp4" type="video/mp4">
-    </video>
+    <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="/video/hero-poster.jpg" aria-hidden="true" data-video="/video/hero.mp4"></video>
     <div class="hero__scrim" aria-hidden="true"></div>
     <div class="wrap hero__inner">
       <div class="stack reveal hero__copy">
@@ -410,6 +408,16 @@
         <a href="/privacy.html">プライバシーポリシー</a>
       </div>
       <div class="foot__col">
+        <h4>対応エリア</h4>
+        <a href="/kanazawa/">金沢市</a>
+        <a href="/tsubata/">津幡町</a>
+        <a href="/uchinada/">内灘町</a>
+        <a href="/hakusan/">白山市</a>
+        <a href="/nonoichi/">野々市市</a>
+        <a href="/komatsu/">小松市</a>
+        <a href="/area/">すべてのエリア →</a>
+      </div>
+      <div class="foot__col">
         <h4>お問い合わせ</h4>
         <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで相談</a>
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform" target="_blank" rel="noopener noreferrer">査定フォーム</a>
@@ -435,6 +443,14 @@
       if (tg && lk) {
         tg.addEventListener('click', function () { var o = lk.classList.toggle('open'); tg.setAttribute('aria-expanded', o ? 'true' : 'false'); });
         lk.addEventListener('click', function (e) { if (e.target.tagName === 'A') { lk.classList.remove('open'); tg.setAttribute('aria-expanded', 'false'); } });
+      }
+      // ヒーロー動画：モバイル・省モーション時は読み込まずポスター静止画のみ（LCP対策）
+      var hv = document.querySelector('.hero__video[data-video]');
+      if (hv && matchMedia('(min-width: 768px)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        var sc = document.createElement('source');
+        sc.src = hv.getAttribute('data-video'); sc.type = 'video/mp4';
+        hv.appendChild(sc); hv.load();
+        var p = hv.play(); if (p && p.catch) p.catch(function () {});
       }
       var els = [].slice.call(document.querySelectorAll('.reveal'));
       if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
