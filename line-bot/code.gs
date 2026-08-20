@@ -1290,7 +1290,7 @@ const MAKER_GUIDE_ANCHORS = {
   'ヤマハ': 'yamaha', 'Yamaha': 'yamaha', 'yamaha': 'yamaha', 'YAMAHA': 'yamaha', 'PAS': 'yamaha', 'pas': 'yamaha',
   'ブリヂストン': 'bridgestone', 'ブリジストン': 'bridgestone', 'Bridgestone': 'bridgestone', 'bridgestone': 'bridgestone', 'BRIDGESTONE': 'bridgestone',
 };
-const MAKER_GUIDE_LABELS = { panasonic: 'Panasonic（パナソニック）', yamaha: 'Yamaha（ヤマハ）', bridgestone: 'Bridgestone（ブリヂストン）' };
+const MAKER_GUIDE_LABELS = { panasonic: 'パナソニック', yamaha: 'ヤマハ', bridgestone: 'ブリヂストン' };
 
 /** メーカー選択のクイックリプライ（市町名リストと同じ完全一致方式。ボタンでも手打ちでも同じ分岐に入る） */
 function makerQuickReplyItems_() {

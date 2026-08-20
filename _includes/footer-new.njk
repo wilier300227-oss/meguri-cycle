@@ -52,9 +52,10 @@
     </div>
   </footer>
 
-  <!-- スマホ固定CTA -->
+  <!-- スマホ固定CTA（ページ側の front matter で dockLabel / dockUrl を指定すると上書きできる。
+       未指定ページは従来どおり共通の友だち追加URL＋共通文言） -->
   <div class="dock">
-    <a class="btn btn--primary" href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで無料査定（写真を送るだけ）</a>
+    <a class="btn btn--primary" href="{{ dockUrl or 'https://line.me/R/ti/p/@136bpsyc' }}" target="_blank" rel="noopener noreferrer">{{ dockLabel or 'LINEで無料査定（写真を送るだけ）' }}</a>
   </div>
 
   <script>

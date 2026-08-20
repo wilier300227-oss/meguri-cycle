@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" role="img" aria-labelledby="cbTitle">
-  <title id="cbTitle">Bridgestone製バッテリーの残量ボタンとランプ表示の図解（実写に差し替え予定）</title>
+  <title id="cbTitle">ブリヂストン製バッテリーの残量ボタンとランプ表示の図解（実写に差し替え予定）</title>
   <rect width="800" height="460" fill="#FCFCFB"/>
-  <text x="60" y="60" font-family="sans-serif" font-size="20" font-weight="700" fill="#191C1A">Bridgestone の場合（図解イメージ）</text>
+  <text x="60" y="60" font-family="sans-serif" font-size="20" font-weight="700" fill="#191C1A">ブリヂストン（Bridgestone）の場合（図解イメージ）</text>
   <!-- 横長バッテリー -->
   <rect x="90" y="140" width="340" height="180" rx="20" fill="#EAEAE5" stroke="#191C1A" stroke-opacity="0.25" stroke-width="2"/>
   <!-- ランプ列（横） -->
