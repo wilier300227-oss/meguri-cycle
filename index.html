@@ -88,12 +88,13 @@
         </div>
         <div class="hero__cta">
           <span class="cta-underline">
-            <!-- TODO: 経路URL差替（LINE_URL_TOP 受領後に差し替え） -->
-            <a class="btn btn--primary" href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで無料査定（写真を送るだけ）</a>
+            <!-- LINE経路CTA（トップ）: 本文「査定・処分の相談です（トップから）」。encodeURIComponentで生成。「（〜から）」はGAS集計キーのため変更禁止 -->
+            <a class="btn btn--primary" href="https://line.me/R/oaMessage/%40136bpsyc/?%E6%9F%BB%E5%AE%9A%E3%83%BB%E5%87%A6%E5%88%86%E3%81%AE%E7%9B%B8%E8%AB%87%E3%81%A7%E3%81%99%EF%BC%88%E3%83%88%E3%83%83%E3%83%97%E3%81%8B%E3%82%89%EF%BC%89" target="_blank" rel="noopener noreferrer">LINEで無料査定（写真を送るだけ）</a>
             <span class="rainbow-line" aria-hidden="true"></span>
           </span>
           <a class="btn btn--light-ghost" href="#contact">フォーム・メールで相談</a>
         </div>
+        <p style="font-size:0.76rem; color:rgba(255,255,255,0.6); margin:0;">タップすると入力済みのメッセージが開きます。そのまま送信してください。</p>
       </div>
     </div>
   </section>
