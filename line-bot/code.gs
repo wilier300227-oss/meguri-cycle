@@ -267,6 +267,9 @@ function handleEvent(event) {
       replyPhotoGuide(event.replyToken); rule = '写真ガイド';
     } else if (text === '電動') {
       replyEbikeGuide(event.replyToken); rule = '電動ガイド';
+    } else if (detectMakerGuide_(text)) {
+      // J: メーカー名の完全一致のみで診断ガイド記事の該当節URLを返す（文章中の部分一致では発火しない）
+      replyMakerGuide_(event.replyToken, detectMakerGuide_(text)); rule = '診断ガイド:' + detectMakerGuide_(text);
     } else if (text === '買取査定を申し込みます') {
       replyKaitoriApply(event.replyToken, userId); rule = '買取査定申込';
     } else if (text === '出張引取を申し込みます') {
@@ -1204,6 +1207,39 @@ function looksLikeQuestion_(text) {
   if (!text) return false;
   if (/[?？]/.test(text)) return true;
   return ['でしょうか', 'ますか', '可能', 'いつ', 'いくら'].some(function (k) { return text.indexOf(k) !== -1; });
+}
+
+/* =========================================================
+   J: メーカー名 → バッテリー診断ガイドの該当節URLを自動返信（handoff 追加項目J）
+   ・市町名リストと同じ「完全一致リスト方式」。メーカー名だけのメッセージにのみ反応し、
+     「パナソニックの電動です」等の文章には発火しない（写真連投への割り込み防止）
+   ========================================================= */
+const MAKER_GUIDE_ANCHORS = {
+  'パナソニック': 'panasonic', 'Panasonic': 'panasonic', 'panasonic': 'panasonic', 'PANASONIC': 'panasonic',
+  'ヤマハ': 'yamaha', 'Yamaha': 'yamaha', 'yamaha': 'yamaha', 'YAMAHA': 'yamaha', 'PAS': 'yamaha', 'pas': 'yamaha',
+  'ブリヂストン': 'bridgestone', 'ブリジストン': 'bridgestone', 'Bridgestone': 'bridgestone', 'bridgestone': 'bridgestone', 'BRIDGESTONE': 'bridgestone',
+};
+const MAKER_GUIDE_LABELS = { panasonic: 'Panasonic（パナソニック）', yamaha: 'Yamaha（ヤマハ）', bridgestone: 'Bridgestone（ブリヂストン）' };
+
+/** メーカー名の完全一致だけを検出（trim後の全文一致。部分一致はしない） */
+function detectMakerGuide_(text) {
+  if (!text) return null;
+  return MAKER_GUIDE_ANCHORS[String(text).trim()] || null;
+}
+
+/** 診断ガイド記事の該当節URLを返信 */
+function replyMakerGuide_(replyToken, anchor) {
+  const label = MAKER_GUIDE_LABELS[anchor] || anchor;
+  const text = [
+    '⚡ ' + label + ' の電動アシストですね！',
+    '',
+    'バッテリー診断（残量ボタンの長押し）のやり方は、こちらでご案内しています👇',
+    'https://meguri-cycle.com/column/battery-check/#' + anchor,
+    '',
+    '診断結果の写真を送っていただければ、実容量を織り込んだ確定額をご提示します。',
+    'むずかしければ、電源が入ったパネルの写真だけでも大丈夫です🚲',
+  ].join('\n');
+  reply(replyToken, [{ type: 'text', text: text, quickReply: { items: [qrCameraRoll(), qrCamera()] } }]);
 }
 
 /** クイックリプライ：カメラロールを開くボタン（スマホのみ表示） */
