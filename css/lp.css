@@ -383,9 +383,9 @@ h1, h2, h3 {
 @media (min-width: 860px) { .routes { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
 .route { position: relative; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); padding: 1.4rem 1.5rem; box-shadow: var(--shadow-sm); overflow: hidden; }
 .route::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
-.route--min::before { background: #B8860B; }
+.route--min::before { background: color-mix(in srgb, var(--accent) 45%, var(--paper-2)); }
 .route--off::before { background: var(--ink-40); }
-.route__n { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-40); margin-bottom: 6px; }
+.route__n { font-weight: 700; font-size: 0.76rem; letter-spacing: 0.12em; color: var(--accent-d); margin-bottom: 6px; }
 .route h3 { font-size: 1.08rem; margin-bottom: 10px; }
 .route dl { margin: 0; display: grid; gap: 10px; }
 .route dt { font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-40); font-weight: 600; }
