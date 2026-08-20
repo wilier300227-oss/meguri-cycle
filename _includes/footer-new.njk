@@ -40,9 +40,9 @@
       </div>
       <div class="foot__col">
         <h4>お問い合わせ</h4>
-        <a href="https://line.me/R/ti/p/@136bpsyc" target="_blank" rel="noopener noreferrer">LINEで相談</a>
+        <a href="{{ ctaUrl or 'https://line.me/R/ti/p/@136bpsyc' }}" target="_blank" rel="noopener noreferrer">LINE無料査定</a>
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform" target="_blank" rel="noopener noreferrer">査定フォーム</a>
-        <a href="mailto:info@meguri-cycle.com">info@meguri-cycle.com</a>
+        <a href="mailto:info@meguri-cycle.com">メールでのお問い合わせ</a>
         <p style="font-size:0.78rem; color:var(--ink-40); margin:10px 0 0;">石川県かほく市</p>
       </div>
     </div>
@@ -52,10 +52,10 @@
     </div>
   </footer>
 
-  <!-- スマホ固定CTA（ページ側の front matter で dockLabel / dockUrl を指定すると上書きできる。
-       未指定ページは従来どおり共通の友だち追加URL＋共通文言） -->
+  <!-- スマホ固定CTA。ページ側 front matter の ctaUrl（そのページの経路計測URL）を使う。
+       未指定ページは共通の友だち追加URL。文言は全ページ統一。 -->
   <div class="dock">
-    <a class="btn btn--primary" href="{{ dockUrl or 'https://line.me/R/ti/p/@136bpsyc' }}" target="_blank" rel="noopener noreferrer">{{ dockLabel or 'LINEで無料査定（写真を送るだけ）' }}</a>
+    <a class="btn btn--primary" href="{{ ctaUrl or 'https://line.me/R/ti/p/@136bpsyc' }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
   </div>
 
   <script>
