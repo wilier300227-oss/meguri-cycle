@@ -841,7 +841,7 @@ function replyHikitoriApply(replyToken, userId) {
     '',
     'お写真とあわせて「お住まいの市町名」だけ教えてください（例：金沢市片町）。',
     '',
-    '状態によっては買取（費用なし＋お支払い）に切り替えられる場合もあります🚲',
+    'いただいた内容を確認しだい、担当者からご連絡いたします🚲',
   ].join('\n');
 
   reply(replyToken, [{ type: 'text', text: ack }, photoGuideLightMessage()]);

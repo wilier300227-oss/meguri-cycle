@@ -123,14 +123,19 @@ h1, h2, h3 {
   will-change: transform;
 }
 .btn--primary { background: var(--accent); color: #fff; box-shadow: 0 12px 26px -12px rgba(46,125,80,0.6); }
-.btn--primary:hover { background: var(--accent-d); transform: translateY(-2px); }
+.btn--primary:hover, .btn--primary:focus { background: var(--accent-d); }
+.btn--primary:hover { transform: translateY(-2px); }
 .btn--primary:active { transform: translateY(0); }
+/* CTAの文字色は通常・hover・訪問後（visited）で不変にする（コントラスト比 5:1 を担保） */
+.btn--primary:link, .btn--primary:visited, .btn--primary:hover, .btn--primary:active, .btn--primary:focus { color: #fff; }
 .btn--dark { background: var(--ink); color: #fff; }
+.btn--dark:link, .btn--dark:visited, .btn--dark:hover, .btn--dark:active, .btn--dark:focus { color: #fff; }
 .btn--dark:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 .btn--ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line-hair); }
 .btn--ghost:hover { border-color: var(--accent); color: var(--accent); }
 .btn--light-ghost { background: rgba(255,255,255,0.08); color: #fff; border: 1.5px solid rgba(255,255,255,0.55); }
-.btn--light-ghost:hover { background: rgba(255,255,255,0.16); border-color: #fff; }
+.btn--light-ghost:link, .btn--light-ghost:visited, .btn--light-ghost:active, .btn--light-ghost:focus { color: #fff; }
+.btn--light-ghost:hover { background: rgba(255,255,255,0.16); border-color: #fff; color: #fff; }
 .btn--sm { padding: 0.6em 1.2em; font-size: 0.8rem; }
 
 /* ---------- ヒーロー（全面動画・ダーク・白文字） ---------- */
@@ -158,6 +163,8 @@ h1, h2, h3 {
 .badges { display: flex; flex-wrap: wrap; gap: 8px; }
 .badge { display: inline-flex; align-items: center; gap: 8px; padding: 0.42em 0.9em; border-radius: 8px; font-size: 0.76rem; background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.22); color: #fff; }
 .badge b { width: 7px; height: 7px; border-radius: 50%; }
+/* 明るい背景のセクションで使うバッジ（白つぶれ防止・文字は濃色） */
+.badge--on-light { background: var(--card); border-color: var(--line-hair); color: var(--ink-70); }
 
 /* ---------- カード ---------- */
 .card { background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); padding: 1.7rem 1.8rem; box-shadow: var(--shadow-sm); }
