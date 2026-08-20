@@ -494,6 +494,15 @@
       els.forEach(function (el) { io.observe(el); });
     });
   </script>
+  <script>
+    // PCブラウザではLINEのメッセージ送信リンク（oaMessage＝スマホアプリ専用。PCだとLINEトップに
+    // フォールバックしてしまう）を、友だち追加ページ（PCでQR表示）に差し替える。スマホはそのまま。
+    (function () {
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) return;
+      var pcUrl = 'https://page.line.me/136bpsyc';
+      document.querySelectorAll('a[href*="/R/oaMessage/"]').forEach(function (a) { a.href = pcUrl; });
+    })();
+  </script>
   <!-- Cloudflare Web Analytics -->
   <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15b37c037ea94303a8d315c693380a78"}'></script>
 </body>
