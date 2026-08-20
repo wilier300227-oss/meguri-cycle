@@ -102,10 +102,20 @@ function isExcludedSender_(from) {
   return EXCLUDED_SENDERS.some(function (domain) { return from.indexOf(domain) !== -1; });
 }
 
-/** メールが info@meguri-cycle.com 宛（To または Cc）かどうかを判定する。旧Gmail直宛の雑多メールを除外するため。 */
+/** メールが info@meguri-cycle.com 宛かどうかを判定する。旧Gmail直宛の雑多メールを除外するため。
+ *  ImprovMX等の転送では To ヘッダに info@ が残らず Delivered-To 等に移るため、
+ *  To/Cc で見つからなければ生ヘッダ（Delivered-To / X-Forwarded-To / Envelope-To 等）も確認する。 */
 function isToInquiryAddress_(message) {
   var to = ((message.getTo() || '') + ' ' + (message.getCc() || '')).toLowerCase();
-  return to.indexOf(INQUIRY_TO_ADDRESS) !== -1;
+  if (to.indexOf(INQUIRY_TO_ADDRESS) !== -1) return true;
+  // 転送で To から外れた場合の保険：メールのヘッダ部（本文の前）に info@ があれば宛先とみなす。
+  try {
+    var raw = message.getRawContent();
+    var head = raw.split(/\r?\n\r?\n/)[0].toLowerCase(); // 最初の空行までがヘッダ部
+    return head.indexOf(INQUIRY_TO_ADDRESS) !== -1;
+  } catch (e) {
+    return false;
+  }
 }
 
 /** 改行や連続する空白を「 / 」に置き換え、スプレッドシートで1行に収まるようにする。Gmail・フォーム等で共通利用 */
