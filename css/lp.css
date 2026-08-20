@@ -346,6 +346,77 @@ h1, h2, h3 {
 .list-plain li { position: relative; padding-left: 1.1em; color: var(--ink-70); font-size: 0.9rem; margin: 7px 0; }
 .list-plain li::before { content: "–"; position: absolute; left: 0; color: var(--ink-40); }
 
+/* =========================================================
+   電動クラスター（Phase 3 第1弾）追加コンポーネント
+   index ヒーロー差替（h1 は文書構造上維持・視覚主役を別要素に）＋
+   /dendo/ ・ /column/ 用。既存クラスには影響しない。
+   ========================================================= */
+
+/* index ヒーロー v2：視覚主役 .hero__display、h1 は小さなタグラインとして残す */
+.hero--v2 .hero__display { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: clamp(2rem, 5.8vw, 3.4rem); line-height: 1.28; color: #fff; margin: 0; text-wrap: balance; }
+.hero--v2 .hero__sub { font-size: clamp(1rem, 2.4vw, 1.2rem); color: rgba(255,255,255,0.9); font-weight: 500; margin: 0; }
+.hero--v2 h1 { font-size: 0.98rem; font-weight: 600; line-height: 1.6; color: rgba(255,255,255,0.72); letter-spacing: 0.04em; }
+.hero--v2 h1 br { display: none; }
+.hero--v2 h1 em::after { height: 1px; bottom: -0.15em; opacity: 0.7; }
+
+/* ヒーロー直下の固定バンド（一般車の受け皿。削除不可） */
+.band { background: color-mix(in srgb, var(--accent) 7%, var(--paper)); border-top: 1px solid var(--line-hair); border-bottom: 1px solid var(--line-hair); padding: 14px 0; }
+.band p { margin: 0; text-align: center; font-size: 0.92rem; color: var(--ink-70); }
+.band strong { color: var(--ink); }
+
+/* USP：罫線区切りの4項目（カードグリッドのAI感を避けつつ簡潔に） */
+.usp { display: grid; }
+@media (min-width: 720px) { .usp { grid-template-columns: 1fr 1fr; gap: 0 clamp(28px, 4vw, 56px); } }
+.usp__item { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: baseline; padding: 18px 2px; border-top: 1px solid var(--line-hair); }
+.usp__n { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 1.35rem; line-height: 1; color: var(--accent); }
+.usp__t { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: 1.06rem; }
+.usp__p { grid-column: 2; color: var(--ink-70); font-size: 0.88rem; margin: 2px 0 0; }
+
+/* パンくず */
+.crumbs { font-size: 0.78rem; color: var(--ink-40); letter-spacing: 0.02em; margin-bottom: 14px; }
+.crumbs a { color: var(--ink-55); text-decoration: none; }
+.crumbs a:hover { color: var(--accent); }
+.crumbs span[aria-hidden] { margin: 0 6px; }
+
+/* 査定フロー（3ルート）：番号＋左罫線の分岐図 */
+.routes { display: grid; gap: 14px; }
+@media (min-width: 860px) { .routes { grid-template-columns: repeat(3, 1fr); gap: 18px; } }
+.route { position: relative; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); padding: 1.4rem 1.5rem; box-shadow: var(--shadow-sm); overflow: hidden; }
+.route::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
+.route--min::before { background: #B8860B; }
+.route--off::before { background: var(--ink-40); }
+.route__n { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-40); margin-bottom: 6px; }
+.route h3 { font-size: 1.08rem; margin-bottom: 10px; }
+.route dl { margin: 0; display: grid; gap: 10px; }
+.route dt { font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-40); font-weight: 600; }
+.route dd { margin: 2px 0 0; font-size: 0.9rem; color: var(--ink-70); }
+.route .price-tag { display: inline-block; margin-top: 4px; font-weight: 700; color: var(--accent-d); font-size: 0.95rem; }
+
+/* 図解（診断手順など）：差し替え前提のコンポーネント */
+.checkfig { margin: 0; }
+.checkfig img, .checkfig svg { width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--line-hair); background: var(--card); }
+.checkfig figcaption { font-size: 0.78rem; color: var(--ink-40); margin-top: 8px; }
+
+/* コラム本文（インラインstyleの氾濫を避ける共通プローズ） */
+.prose { color: var(--ink-70); line-height: 1.9; font-size: 0.94rem; display: grid; gap: clamp(26px, 4vw, 38px); }
+.prose section { display: block; }
+.prose h2 { font-size: 1.3rem; color: var(--ink); margin-bottom: 12px; }
+.prose h3 { font-size: 1.06rem; color: var(--ink); margin: 18px 0 8px; }
+.prose p { margin: 0 0 12px; }
+.prose p:last-child { margin-bottom: 0; }
+.prose a { color: var(--accent-d); font-weight: 600; }
+.prose ul, .prose ol { margin: 0 0 12px; padding-left: 1.3em; }
+.prose li { margin: 6px 0; }
+
+/* 著者ボックス（コラム末尾） */
+.author-box { display: grid; gap: 4px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); padding: 1.3rem 1.5rem; }
+.author-box .k { font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-40); }
+.author-box .n { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: 1.02rem; color: var(--ink); }
+.author-box p { margin: 2px 0 0; font-size: 0.86rem; color: var(--ink-70); }
+
+/* 実例の空枠（ダミー禁止。取引発生ごとに追記） */
+.empty-slot { border: 1.5px dashed var(--line-hair); border-radius: var(--radius); padding: clamp(24px, 4vw, 40px); text-align: center; color: var(--ink-40); font-size: 0.9rem; }
+
 /* ---------- モーション ---------- */
 .js-motion .reveal { opacity: 0; transform: translateY(18px); }
 .js-motion .reveal.in { opacity: 1; transform: none; transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: var(--d, 0ms); }

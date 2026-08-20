@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" role="img" aria-labelledby="dlpTitle">
+  <title id="dlpTitle">バッテリー残量ボタンの長押し診断の図解</title>
+  <rect width="800" height="420" fill="#FCFCFB"/>
+  <!-- バッテリー本体 -->
+  <rect x="90" y="90" width="300" height="240" rx="22" fill="#EAEAE5" stroke="#191C1A" stroke-opacity="0.25" stroke-width="2"/>
+  <rect x="120" y="120" width="240" height="70" rx="10" fill="#191C1A" opacity="0.85"/>
+  <!-- 残量ランプ5つ -->
+  <circle cx="150" cy="155" r="11" fill="#43A047"/>
+  <circle cx="195" cy="155" r="11" fill="#43A047"/>
+  <circle cx="240" cy="155" r="11" fill="#43A047"/>
+  <circle cx="285" cy="155" r="11" fill="#43A047" opacity="0.35"/>
+  <circle cx="330" cy="155" r="11" fill="#43A047" opacity="0.35"/>
+  <!-- 残量ボタン -->
+  <circle cx="240" cy="255" r="34" fill="#FCFCFB" stroke="#2E7D50" stroke-width="4"/>
+  <text x="240" y="262" font-family="sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#245F3E">残量</text>
+  <!-- 指 -->
+  <g opacity="0.9">
+    <path d="M300 340 q-14 -34 -32 -58 q-8 -11 2 -18 q10 -7 18 3 l14 19 l0 -8 q0 -12 12 -12 q12 0 12 12 l0 26 q0 40 -26 36 z" fill="#F4F4F1" stroke="#191C1A" stroke-opacity="0.5" stroke-width="2.5"/>
+  </g>
+  <!-- 長押しの波紋 -->
+  <circle cx="240" cy="255" r="50" fill="none" stroke="#2E7D50" stroke-width="2" opacity="0.5"/>
+  <circle cx="240" cy="255" r="64" fill="none" stroke="#2E7D50" stroke-width="2" opacity="0.25"/>
+  <!-- 説明 -->
+  <text x="470" y="150" font-family="sans-serif" font-size="26" font-weight="700" fill="#191C1A">残量ボタンを長押し</text>
+  <text x="470" y="192" font-family="sans-serif" font-size="17" fill="#191C1A" opacity="0.7">押してすぐ離すと「いまの残量」、</text>
+  <text x="470" y="222" font-family="sans-serif" font-size="17" fill="#191C1A" opacity="0.7">長押しすると「実容量（劣化度）」が</text>
+  <text x="470" y="252" font-family="sans-serif" font-size="17" fill="#191C1A" opacity="0.7">ランプの点灯・点滅で表示されます。</text>
+  <text x="470" y="300" font-family="sans-serif" font-size="14" fill="#191C1A" opacity="0.45">※ ボタンの位置・押す秒数・表示のしかたは機種により異なります。</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" role="img" aria-labelledby="drTitle">
+  <title id="drTitle">ふだんの残量表示と長押しの実容量表示のちがい</title>
+  <rect width="800" height="420" fill="#FCFCFB"/>
+  <!-- 左：ふだんの表示 -->
+  <text x="200" y="70" font-family="sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="#191C1A">ふだんの表示</text>
+  <text x="200" y="98" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#191C1A" opacity="0.6">いま何％充電されているか</text>
+  <rect x="80" y="130" width="240" height="80" rx="12" fill="#191C1A" opacity="0.85"/>
+  <circle cx="120" cy="170" r="12" fill="#43A047"/>
+  <circle cx="160" cy="170" r="12" fill="#43A047"/>
+  <circle cx="200" cy="170" r="12" fill="#43A047"/>
+  <circle cx="240" cy="170" r="12" fill="#43A047"/>
+  <circle cx="280" cy="170" r="12" fill="#43A047"/>
+  <text x="200" y="260" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#191C1A" opacity="0.7">満充電なら全部点灯。</text>
+  <text x="200" y="286" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#B00020" opacity="0.85">劣化していても満タンに見える</text>
+  <!-- 区切り -->
+  <line x1="400" y1="60" x2="400" y2="360" stroke="#191C1A" stroke-opacity="0.12" stroke-width="2"/>
+  <!-- 右：長押しの表示 -->
+  <text x="600" y="70" font-family="sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="#245F3E">長押しの表示</text>
+  <text x="600" y="98" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#191C1A" opacity="0.6">新品と比べてどれだけ使えるか（実容量）</text>
+  <rect x="480" y="130" width="240" height="80" rx="12" fill="#191C1A" opacity="0.85"/>
+  <circle cx="520" cy="170" r="12" fill="#43A047"/>
+  <circle cx="560" cy="170" r="12" fill="#43A047"/>
+  <circle cx="600" cy="170" r="12" fill="#43A047"/>
+  <circle cx="640" cy="170" r="12" fill="#43A047" opacity="0.3"/>
+  <circle cx="680" cy="170" r="12" fill="#43A047" opacity="0.3"/>
+  <text x="600" y="260" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#191C1A" opacity="0.7">点灯数が少ないほど劣化が進行。</text>
+  <text x="600" y="286" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#245F3E" font-weight="700">この結果が査定の根拠になります</text>
+  <text x="400" y="345" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#191C1A" opacity="0.45">※ 表示のしかた（点灯・点滅のパターン）は機種により異なります。</text>
+</svg>
