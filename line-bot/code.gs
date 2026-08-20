@@ -208,13 +208,22 @@ function handleEvent(event) {
   if (event.type !== 'message') { logEvent_(event, '(' + event.type + ')', 'NONE'); return; }
   const msg = event.message;
   const userId = event.source && event.source.userId;
-  const text = (msg && msg.type === 'text') ? String(msg.text || '').trim() : '';
+  let text = (msg && msg.type === 'text') ? String(msg.text || '').trim() : '';
 
   // 開発用：MYID は最優先で常に通す
   if (text === 'MYID') {
     reply(event.replyToken, [{ type: 'text', text: 'あなたのuserId:\n' + userId }]);
     logEvent_(event, 'MYID', 'userId返信');
     return;
+  }
+
+  // H: サイトCTA（oaMessage）の経路識別子。記録＋オーナー通知は停止/手動対応中でも必ず行い、
+  //    以後のキーワード分類には識別子を除いた本文を使う（「処分」「電動」等の誤発火防止＝既知バグA干渉対策）。
+  const routeId = text ? detectRouteId_(text) : null;
+  if (routeId) {
+    logRouteMessage_(userId, routeId, text);
+    notifyRouteMessage_(event, userId, routeId, text);
+    text = stripRouteId_(text, routeId);
   }
 
   // 評価順の最上位（handoff §5-3）：停止フラグ → 手動対応モード
@@ -314,6 +323,64 @@ function handleEvent(event) {
     logEvent_(event, 'image', '受領・オーナー通知');
   } else {
     logEvent_(event, '(' + msg.type + ')', 'NONE');
+  }
+}
+
+/* =========================================================
+   H: サイトoaMessage CTAの経路識別子（handoff_line_system.md 追加項目H）
+   ・本文末尾の「（〜から）」を検出し routes シートへ記録＋オーナー通知（必ず発火）
+   ・キーワード分類には識別子を除いた本文を使う（誤発火防止）
+   ・識別子はサイト側 handoff_dendo_site.md §3-5 と同一。変更・削除禁止（集計キー）
+   ========================================================= */
+const ROUTE_IDS = ['（トップから）', '（電動ページから）', '（処分コラムから）', '（診断コラムから）'];
+
+/** 本文末尾の経路識別子を返す（なければ null）。末尾の空白・改行は無視して判定 */
+function detectRouteId_(text) {
+  if (!text) return null;
+  const t = String(text).replace(/[\s　]+$/, '');
+  for (let i = 0; i < ROUTE_IDS.length; i++) {
+    const id = ROUTE_IDS[i];
+    if (t.length >= id.length && t.slice(-id.length) === id) return id;
+  }
+  return null;
+}
+
+/** 分類用に、末尾の識別子を除いた本文を返す */
+function stripRouteId_(text, routeId) {
+  const t = String(text).replace(/[\s　]+$/, '');
+  return t.slice(0, t.length - routeId.length).replace(/[\s　]+$/, '').trim();
+}
+
+/** H-1: routes シート（timestamp / userId / displayName / route / body）に1行記録 */
+function logRouteMessage_(userId, routeId, text) {
+  try {
+    const ssId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+    if (!ssId) return;
+    const ss = SpreadsheetApp.openById(ssId);
+    let sh = ss.getSheetByName('routes');
+    if (!sh) {
+      sh = ss.insertSheet('routes');
+      sh.appendRow(['timestamp', 'userId', 'displayName', 'route', 'body']);
+      sh.setFrozenRows(1);
+    }
+    sh.appendRow([new Date(), userId || '', userId ? getDisplayName_(userId) : '', routeId, String(text).slice(0, 500)]);
+  } catch (e) {
+    // 記録失敗でも本処理は止めない
+  }
+}
+
+/** H-3: 経路CTA受信のオーナー通知（必ず発火＝メッセージID単位の重複防止のみ）。
+ *  新規問い合わせとして中央シートにも記録される（appendInquiryRow_）。
+ *  直後の分類不能／手動対応の通知と二重にならないよう、10分の抑制キーを先に立てる。 */
+function notifyRouteMessage_(event, userId, routeId, text) {
+  const name = userId ? getDisplayName_(userId) : '';
+  const id = 'line_' + (event.message && event.message.id);
+  try { appendInquiryRow_(new Date(), 'LINE', name, '🆕 サイトCTA ' + routeId, text, id); }
+  catch (e) { notifyOwner_('LINE', name, '🆕 サイトCTA ' + routeId, text); }
+  if (userId) {
+    const cache = CacheService.getScriptCache();
+    cache.put('unmatched_' + userId, '1', 600);
+    cache.put('mnotify_' + userId, '1', 600);
   }
 }
 
