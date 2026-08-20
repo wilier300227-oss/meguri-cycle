@@ -217,13 +217,19 @@ function handleEvent(event) {
     return;
   }
 
-  // H: サイトCTA（oaMessage）の経路識別子。記録＋オーナー通知は停止/手動対応中でも必ず行い、
-  //    以後のキーワード分類には識別子を除いた本文を使う（「処分」「電動」等の誤発火防止＝既知バグA干渉対策）。
+  // H改: サイトCTA（oaMessage）の経路識別子。記録＋オーナー通知のうえ、経路別の受付応答を返す。
+  //    CTAタップは「明示的な問い合わせ（再依頼）」として扱い、停止・手動対応中でも解除して応答する
+  //    （旧仕様の「無応答＋手動対応モードON」はサイトからの見込み客に沈黙を返すため廃止＝2026-08-20改善）。
   const routeId = text ? detectRouteId_(text) : null;
   if (routeId) {
     logRouteMessage_(userId, routeId, text);
     notifyRouteMessage_(event, userId, routeId, text);
-    text = stripRouteId_(text, routeId);
+    const st0 = getUserState_(userId);
+    if (isOptedOut_(st0)) setUserFields_(userId, { opt_out: '', opt_out_reason: '（サイトCTAの再依頼で解除）' });
+    if (isManualMode_(st0)) clearManualMode_(userId);
+    replyRouteCta_(event, userId, routeId);
+    logEvent_(event, 'サイトCTA:' + routeId, '返信:経路別受付');
+    return;
   }
 
   // 評価順の最上位（handoff §5-3）：停止フラグ → 手動対応モード
@@ -268,8 +274,10 @@ function handleEvent(event) {
     } else if (text === '電動') {
       replyEbikeGuide(event.replyToken); rule = '電動ガイド';
     } else if (detectMakerGuide_(text)) {
-      // J: メーカー名の完全一致のみで診断ガイド記事の該当節URLを返す（文章中の部分一致では発火しない）
+      // J改: メーカー名の完全一致のみ（ボタン選択・手打ち共通）。文章中の部分一致では発火しない
       replyMakerGuide_(event.replyToken, detectMakerGuide_(text)); rule = '診断ガイド:' + detectMakerGuide_(text);
+    } else if (text === 'その他のメーカー') {
+      replyMakerOther_(event.replyToken); rule = '診断ガイド:その他';
     } else if (text === '買取査定を申し込みます') {
       replyKaitoriApply(event.replyToken, userId); rule = '買取査定申込';
     } else if (text === '出張引取を申し込みます') {
@@ -373,18 +381,81 @@ function logRouteMessage_(userId, routeId, text) {
 }
 
 /** H-3: 経路CTA受信のオーナー通知（必ず発火＝メッセージID単位の重複防止のみ）。
- *  新規問い合わせとして中央シートにも記録される（appendInquiryRow_）。
- *  直後の分類不能／手動対応の通知と二重にならないよう、10分の抑制キーを先に立てる。 */
+ *  新規問い合わせとして中央シートにも記録される（appendInquiryRow_）。 */
 function notifyRouteMessage_(event, userId, routeId, text) {
   const name = userId ? getDisplayName_(userId) : '';
   const id = 'line_' + (event.message && event.message.id);
   try { appendInquiryRow_(new Date(), 'LINE', name, '🆕 サイトCTA ' + routeId, text, id); }
   catch (e) { notifyOwner_('LINE', name, '🆕 サイトCTA ' + routeId, text); }
-  if (userId) {
-    const cache = CacheService.getScriptCache();
-    cache.put('unmatched_' + userId, '1', 600);
-    cache.put('mnotify_' + userId, '1', 600);
+}
+
+/** H改: 経路CTAへの受付応答（経路別）。サイト側の案内（/dendo/ 確認要項v2）と同じ内容に揃える。 */
+function replyRouteCta_(event, userId, routeId) {
+  if (routeId === '（電動ページから）') {
+    reply(event.replyToken, [{
+      type: 'text',
+      text: [
+        '⚡ 電動アシストのご相談ありがとうございます！',
+        '',
+        '📷 まずはこの3枚からお願いします：',
+        '①車体ぜんぶ（横から）',
+        '②電源を入れたパネル',
+        '③充電器（コンセントに挿してランプ点灯）',
+        '',
+        'あわせて「鍵の本数」と「お住まいの市町名」（例：金沢市片町）も一言ください。',
+        '',
+        '🔋 残量ボタンの長押し診断ができると、実容量を反映した確定額を出せます。やり方は下のボタンからメーカーを選んでください（できなくても、パネル写真だけで大丈夫です）🚲',
+      ].join('\n'),
+      quickReply: { items: makerQuickReplyItems_() },
+    }]);
+    setExpectCity_(userId, 'buy');
+  } else if (routeId === '（処分コラムから）') {
+    reply(event.replyToken, [{
+      type: 'text',
+      text: [
+        '🔋 バッテリー処分のご相談ありがとうございます！',
+        '',
+        '状態を確認しますので、次を教えてください：',
+        '・バッテリーの写真（型番が見える面）',
+        '・膨らみ・液漏れの有無',
+        '・お住まいの市町名（例：金沢市片町）',
+        '',
+        '容量が残っていれば買取できる場合があります。車体ごとの場合は、車体の写真もどうぞ🚲',
+      ].join('\n'),
+      quickReply: { items: [qrCameraRoll(), qrCamera()] },
+    }]);
+    setExpectCity_(userId, 'shobun');
+  } else if (routeId === '（診断コラムから）') {
+    reply(event.replyToken, [{
+      type: 'text',
+      text: [
+        '🔋 バッテリー診断のご相談ありがとうございます！',
+        '',
+        '診断のやり方は、下のボタンからメーカーを選ぶとご案内します。',
+        '',
+        '📷 診断結果（またはパネル）の写真と、車体ぜんぶの写真をお送りください。実容量を織り込んだ確定額をご提示します。',
+        'うまくできなくても、電源が入ったパネルの写真だけで大丈夫です🚲',
+      ].join('\n'),
+      quickReply: { items: makerQuickReplyItems_() },
+    }]);
+    setExpectCity_(userId, 'buy');
+  } else {
+    // （トップから）
+    reply(event.replyToken, [{
+      type: 'text',
+      text: [
+        'ご相談ありがとうございます🚲',
+        '',
+        '買取も処分も、まずは写真だけでOKです。',
+        '📷 自転車ぜんぶが写る写真と、お住まいの市町名（例：金沢市片町）をお送りください。',
+        '',
+        '担当が確認して、確定の金額・ご案内をお送りします。',
+      ].join('\n'),
+      quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('⚡ 電動アシストの方はこちら', '電動')] },
+    }]);
+    setExpectCity_(userId, 'area');
   }
+  markAcked(event);
 }
 
 /* =========================================================
@@ -779,25 +850,24 @@ function replyHikitoriApply(replyToken, userId) {
   logLineInquiry_(userId, '出張引取を申し込み', '(リッチメニューから申し込み)', 'line_' + replyToken);
 }
 
-/** 電動アシスト用の追加ガイド */
+/** 電動アシスト用の追加ガイド（2026-08-20刷新：サイト /dendo/ の確認要項v2と同一内容に統一） */
 function replyEbikeGuide(replyToken) {
   const text = [
     '⚡電動アシスト自転車ですね！',
-    '通常の写真に加えて、こちらもお願いします：',
+    '通常の写真にくわえて、こちらもお願いします：',
     '',
-    '①バッテリー（型番が見える面）',
-    '②バッテリーを外した本体側の端子部分',
-    '③充電器',
-    '④鍵（スペアキー含む）',
+    '①電源を入れたパネル',
+    '②バッテリー（型番が見える面）',
+    '③充電器（コンセントに挿してランプ点灯）',
+    '④鍵（スペアキー含む・本数も一言）',
     '',
-    'バッテリーの型番と鍵の有無は査定額に大きく影響します🔋',
-    '下のボタンから写真を送れます👇',
+    '🔋 残量ボタンの長押し診断ができると、実容量を反映した確定額を出せます。やり方は下のボタンからメーカーを選んでください（できなくても、パネル写真だけで大丈夫です）👇',
   ].join('\n');
 
   reply(replyToken, [{
     type: 'text',
     text: text,
-    quickReply: { items: [qrCameraRoll(), qrCamera()] },
+    quickReply: { items: makerQuickReplyItems_() },
   }]);
 }
 
@@ -1210,9 +1280,10 @@ function looksLikeQuestion_(text) {
 }
 
 /* =========================================================
-   J: メーカー名 → バッテリー診断ガイドの該当節URLを自動返信（handoff 追加項目J）
-   ・市町名リストと同じ「完全一致リスト方式」。メーカー名だけのメッセージにのみ反応し、
-     「パナソニックの電動です」等の文章には発火しない（写真連投への割り込み防止）
+   J改: メーカー選択 → バッテリー診断ガイドの該当節URLを自動返信（handoff 追加項目J・2026-08-20改善）
+   ・対応エリアの市町名リストと同じ方式：クイックリプライのボタンから選ぶ（手打ちの完全一致でも同じ分岐）。
+     「パナソニックの電動です」等の文章には発火しない（写真連投・手動対応への割り込み防止）
+   ・返信は記事リンクだけでなく写真依頼まで含め、会話がそのまま査定に進む形にする
    ========================================================= */
 const MAKER_GUIDE_ANCHORS = {
   'パナソニック': 'panasonic', 'Panasonic': 'panasonic', 'panasonic': 'panasonic', 'PANASONIC': 'panasonic',
@@ -1221,23 +1292,54 @@ const MAKER_GUIDE_ANCHORS = {
 };
 const MAKER_GUIDE_LABELS = { panasonic: 'Panasonic（パナソニック）', yamaha: 'Yamaha（ヤマハ）', bridgestone: 'Bridgestone（ブリヂストン）' };
 
+/** メーカー選択のクイックリプライ（市町名リストと同じ完全一致方式。ボタンでも手打ちでも同じ分岐に入る） */
+function makerQuickReplyItems_() {
+  return [
+    qrMessage('パナソニック', 'パナソニック'),
+    qrMessage('ヤマハ', 'ヤマハ'),
+    qrMessage('ブリヂストン', 'ブリヂストン'),
+    qrMessage('その他のメーカー', 'その他のメーカー'),
+    qrCameraRoll(),
+    qrCamera(),
+  ];
+}
+
 /** メーカー名の完全一致だけを検出（trim後の全文一致。部分一致はしない） */
 function detectMakerGuide_(text) {
   if (!text) return null;
   return MAKER_GUIDE_ANCHORS[String(text).trim()] || null;
 }
 
-/** 診断ガイド記事の該当節URLを返信 */
+/** 診断ガイド記事の該当節URL＋写真依頼を返信（会話がそのまま査定に進む形） */
 function replyMakerGuide_(replyToken, anchor) {
   const label = MAKER_GUIDE_LABELS[anchor] || anchor;
   const text = [
-    '⚡ ' + label + ' の電動アシストですね！',
+    '⚡ ' + label + ' ですね！',
     '',
-    'バッテリー診断（残量ボタンの長押し）のやり方は、こちらでご案内しています👇',
+    '🔋 バッテリー診断（残量ボタンの長押し）のやり方はこちら👇',
     'https://meguri-cycle.com/column/battery-check/#' + anchor,
     '',
-    '診断結果の写真を送っていただければ、実容量を織り込んだ確定額をご提示します。',
-    'むずかしければ、電源が入ったパネルの写真だけでも大丈夫です🚲',
+    '📷 あわせて、次の写真をお願いします：',
+    '①車体ぜんぶ（横から）',
+    '②電源を入れたパネル',
+    '③充電器（ランプ点灯）と鍵',
+    '',
+    '診断結果の写真があれば、実容量を反映した確定額を出せます。できなくても、パネル写真だけで大丈夫です🚲',
+  ].join('\n');
+  reply(replyToken, [{ type: 'text', text: text, quickReply: { items: [qrCameraRoll(), qrCamera()] } }]);
+}
+
+/** その他のメーカー：診断機能の有無は機種によるため、写真での査定に誘導（現車確認で対応） */
+function replyMakerOther_(replyToken) {
+  const text = [
+    '⚡ その他のメーカーも対応しています！',
+    '',
+    '長押し診断ができるかは機種によりますので、そのまま写真をお送りください：',
+    '①車体ぜんぶ（横から）',
+    '②電源を入れたパネル',
+    '③充電器（ランプ点灯）と鍵',
+    '',
+    'メーカー名や型番が分かる部分の写真もあると助かります。パネル写真だけでも査定を始められます🚲',
   ].join('\n');
   reply(replyToken, [{ type: 'text', text: text, quickReply: { items: [qrCameraRoll(), qrCamera()] } }]);
 }
