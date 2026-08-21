@@ -480,9 +480,14 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E6%9F%BB%E5%AE%9A%E3%83%BB%E5
     </div>
   </footer>
 
-  <!-- スマホ固定CTA -->
-  <div class="dock">
-    <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+  <!-- 追従CTAバー（§6）: ヒーロー通過後に出現、#contact/footer 表示中は退避。ctaUrl は既存キーを流用（新規計測キーは作らない） -->
+  <div class="dock" id="dock">
+    <div class="dock__in">
+      <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="10.8" rx="10.8" ry="8.4" fill="#fff"/><path fill="#fff" d="M6.6 17.4 5.2 22l5.4-2.8z"/></svg>
+        LINE無料査定（写真を送るだけ）
+      </a>
+    </div>
   </div>
 
   <script>
@@ -507,6 +512,25 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E6%9F%BB%E5%AE%9A%E3%83%BB%E5
         entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
       }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
       els.forEach(function (el) { io.observe(el); });
+
+      // 追従CTAバー（§6）：ヒーローを過ぎたら表示、#contact/フッター表示中は退避
+      var dock = document.getElementById('dock');
+      if (dock) {
+        dock.classList.add('dock--auto');
+        var hero = document.getElementById('hero');
+        var tail = [document.getElementById('contact'), document.querySelector('.foot')].filter(Boolean);
+        var vis = new WeakMap();
+        var refresh = function () {
+          var heroOut = !vis.get(hero);
+          var tailIn = tail.some(function (el) { return vis.get(el); });
+          dock.classList.toggle('dock--show', heroOut && !tailIn);
+        };
+        var dio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) { vis.set(en.target, en.isIntersecting); });
+          refresh();
+        }, { threshold: 0 });
+        [hero].concat(tail).forEach(function (el) { if (el) dio.observe(el); });
+      }
     });
   </script>
   <script>

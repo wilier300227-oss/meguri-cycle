@@ -292,8 +292,16 @@ h1, h2, h3 {
 
 /* スマホ固定CTA */
 .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-top: 1px solid var(--line-hair); }
-.dock .btn { width: 100%; justify-content: center; }
+.dock::before { content:""; position:absolute; left:0; right:0; top:0; height:2px; background: var(--rainbow); opacity:0.8; }
+.dock__in { max-width: 560px; margin: 0 auto; }
+.dock .btn { width: 100%; justify-content: center; min-height: 48px; }
 @media (min-width: 860px) { .dock { display: none; } }
+/* §6 追従CTAバー: JS が .dock--auto を付与した index のみ、ヒーロー通過後に出現し
+   #contact/footer 表示中は退避。全ビューポートで表示（lp.html は付与しないため従来どおり）。 */
+.dock--auto { transform: translateY(130%); opacity: 0; pointer-events: none; transition: transform .32s cubic-bezier(.2,.7,.2,1), opacity .28s; }
+.dock--auto.dock--show { transform: none; opacity: 1; pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) { .dock--auto { transition: none; } }
+@media (min-width: 860px) { .dock--auto { display: block; } }
 
 /* ---------- 段組み（シングルカラムをやめる） ---------- */
 .cols2 { display: grid; gap: clamp(22px, 4vw, 48px); }
