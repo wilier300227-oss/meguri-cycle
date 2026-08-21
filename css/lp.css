@@ -203,6 +203,17 @@ h1, h2, h3 {
 .work--cap img { aspect-ratio: 4 / 3; height: auto; object-fit: cover; display: block; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
 .work__cap { display: block; margin-top: 8px; font-size: 0.78rem; color: var(--ink-55); letter-spacing: 0.03em; }
 
+/* 金額付き実績グリッド（静止・カード）。動くカルーセルでは金額が読めないため別立て */
+.deals { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: clamp(16px, 3vw, 24px); }
+.deal { background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; }
+.deal__img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--paper-2); }
+.deal__body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px; }
+.deal__name { font-weight: 700; font-size: 1.02rem; color: var(--ink); line-height: 1.35; }
+.deal__meta { font-size: 0.8rem; color: var(--ink-55); }
+.deal__price { margin-top: 4px; font-family: "Barlow Semi Condensed", sans-serif; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1.5rem; color: var(--accent-d); }
+.deal__price--free { font-family: "Murecho", sans-serif; font-size: 1.05rem; }
+.deal__area { font-size: 0.76rem; color: var(--ink-40); }
+
 .brandwall { padding: 22px 0; border-top: 1px solid var(--line-hair); border-bottom: 1px solid var(--line-hair); }
 .brand { flex: 0 0 auto; display: inline-flex; align-items: center; padding: 0 34px; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: clamp(1.05rem, 2.4vw, 1.5rem); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
 .brand::after { content:""; width: 6px; height: 6px; border-radius:50%; margin-left: 34px; background: var(--ink-40); }
