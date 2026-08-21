@@ -419,6 +419,18 @@ h1, h2, h3 {
 .rf__why { color: var(--ink-70); font-size: 0.88rem; line-height: 1.6; }
 .routeflow .price-tag { font-weight: 700; color: var(--accent-d); }
 
+/* トップ：ご利用の流れ（横並び4ステップ＋矢印。モバイルは縦＋下向き矢印） */
+.flowline { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: stretch; gap: clamp(6px,1.4vw,12px); }
+.fstep { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius-sm); padding: clamp(16px,2.4vw,24px) clamp(12px,1.8vw,18px); box-shadow: var(--shadow-sm); }
+.fstep__n { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 1.25rem; flex: 0 0 auto; }
+.fstep__t { font-weight: 700; color: var(--ink); font-size: clamp(0.95rem,2.2vw,1.05rem); }
+.fstep__d { color: var(--ink-70); font-size: 0.84rem; line-height: 1.55; }
+.fstep__arw { display: flex; align-items: center; justify-content: center; color: var(--accent); flex: 0 0 auto; }
+@media (max-width: 760px) {
+  .flowline { grid-template-columns: 1fr; gap: 4px; }
+  .fstep__arw { transform: rotate(90deg); padding: 4px 0; }
+}
+
 /* 図解（診断手順など）：差し替え前提のコンポーネント */
 .checkfig { margin: 0; }
 .checkfig img, .checkfig svg { width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--line-hair); background: var(--card); }
