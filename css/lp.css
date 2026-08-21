@@ -501,3 +501,23 @@ h1, h2, h3 {
   .steps--flow .step { margin-bottom: 20px; }
   .work { width: clamp(200px, 62vw, 260px); }
 }
+
+/* =========================================================
+   図解（§5）共通 + 図解A 距離帯図（#price）
+   静的SVG・JS不要。地図ではなく同心円のコンセプト図。
+   ========================================================= */
+.distmap { display: grid; gap: clamp(20px, 4vw, 44px); align-items: center; }
+@media (min-width: 760px) { .distmap { grid-template-columns: minmax(260px, 360px) 1fr; } }
+.distmap__fig { margin: 0; max-width: 360px; width: 100%; justify-self: center; }
+.band-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.band-row { display: grid; grid-template-columns: 14px 4.4em auto 1fr; gap: 14px; align-items: baseline; padding: 13px 2px; border-top: 1px solid var(--line-hair); }
+.band-row:last-child { border-bottom: 1px solid var(--line-hair); }
+.band-row__dot { width: 12px; height: 12px; border-radius: 50%; align-self: center; border: 1px solid rgba(22,24,29,0.14); }
+.band-row__km { font-size: 0.86rem; color: var(--ink-55); font-weight: 500; white-space: nowrap; }
+.band-row__yen { font-weight: 600; font-size: 1.32rem; color: var(--accent); line-height: 1; white-space: nowrap; }
+.band-row__yen--sm { font-size: 0.98rem; color: var(--ink-70); }
+.band-row__area { font-size: 0.9rem; color: var(--ink); line-height: 1.5; }
+@media (max-width: 460px) {
+  .band-row { grid-template-columns: 12px 3.8em 1fr; row-gap: 3px; column-gap: 12px; }
+  .band-row__area { grid-column: 2 / -1; color: var(--ink-70); font-size: 0.86rem; }
+}

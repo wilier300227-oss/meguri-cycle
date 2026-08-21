@@ -345,13 +345,81 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E6%9F%BB%E5%AE%9A%E3%83%BB%E5
     </div>
   </section>
 
-  <!-- 8. 料金・出張費（詳細な距離別表は /price/ に集約・トップは要点＋ボタン） -->
+  <!-- 8. 料金・出張費（図解A: 距離帯図）。詳細な距離別表は /price/ に集約 -->
   <section class="section section--alt" id="price">
-    <div class="wrap" style="max-width:760px;">
+    <div class="wrap" style="max-width:960px;">
       <h2 class="reveal" style="font-size:clamp(1.8rem,5vw,2.6rem); margin-bottom:16px;">料金・出張費</h2>
-      <p class="lead reveal" style="margin-bottom:10px;"><strong>買取は査定もお引き取りも無料。</strong>出張費がかかるのは、値段がつかない車体の引取のみです（かほく市役所からの走行距離で ¥1,000〜¥3,000）。</p>
-      <p class="reveal" style="color:var(--ink-55); font-size:0.9rem; margin-bottom:18px;">査定は幅ではなく確定額でご提示。有効期限は14日間です。買取のご依頼なら出張費は無料です。</p>
-      <p class="reveal"><a class="btn btn--ghost" href="/price/">料金・出張費・対応エリアの詳細 →</a></p>
+      <p class="lead reveal" style="margin-bottom:24px; max-width:640px;"><strong>買取は査定もお引き取りも無料。</strong>出張費がかかるのは、値段がつかない車体の引取のみです。かほく市役所からの走行距離に応じて ¥1,000〜¥3,000（買取が成立すれば0円）。</p>
+
+      <div class="distmap reveal">
+        <!-- 距離帯 概念図（地図ではなく同心円のコンセプト図。市町名は下のチップが本体） -->
+        <figure class="distmap__fig" role="img" aria-labelledby="distmap-t" aria-describedby="distmap-desc band-list">
+          <svg viewBox="0 0 400 400" width="100%" height="100%">
+            <title id="distmap-t">かほく市役所を中心とした出張費の距離帯図</title>
+            <desc id="distmap-desc">かほく市役所を中心に、走行距離10kmごとに出張費が上がります。〜10km ¥1,000、〜20km ¥1,500、〜30km ¥2,000、〜40km ¥2,500、〜50km ¥3,000、50km超は要相談です。</desc>
+            <!-- 同心円（外→内に重ね塗り） -->
+            <circle cx="200" cy="200" r="190" fill="#E8EBF0"/>
+            <circle cx="200" cy="200" r="160" fill="#C9D5E6"/>
+            <circle cx="200" cy="200" r="128" fill="#9DB2CE"/>
+            <circle cx="200" cy="200" r="96"  fill="#6B87AE"/>
+            <circle cx="200" cy="200" r="64"  fill="#3A5A88"/>
+            <circle cx="200" cy="200" r="32"  fill="#1E3A5F"/>
+            <g fill="none" stroke="#FFFFFF" stroke-opacity="0.28" stroke-width="1">
+              <circle cx="200" cy="200" r="160"/><circle cx="200" cy="200" r="128"/>
+              <circle cx="200" cy="200" r="96"/><circle cx="200" cy="200" r="64"/><circle cx="200" cy="200" r="32"/>
+            </g>
+            <!-- 水平スケール＋km目盛（中心から右へ） -->
+            <line x1="200" y1="200" x2="392" y2="200" stroke="#16181D" stroke-opacity="0.55" stroke-width="1.4"/>
+            <g font-family="'Barlow Semi Condensed',sans-serif" font-size="11" fill="#16181D" fill-opacity="0.62" text-anchor="middle">
+              <g stroke="#16181D" stroke-opacity="0.45" stroke-width="1.2">
+                <line x1="232" y1="196" x2="232" y2="204"/><line x1="264" y1="196" x2="264" y2="204"/>
+                <line x1="296" y1="196" x2="296" y2="204"/><line x1="328" y1="196" x2="328" y2="204"/>
+                <line x1="360" y1="196" x2="360" y2="204"/>
+              </g>
+              <text x="232" y="216">10</text><text x="264" y="216">20</text><text x="296" y="216">30</text>
+              <text x="328" y="216">40</text><text x="360" y="216">50</text>
+              <text x="384" y="216" fill-opacity="0.5">km</text>
+            </g>
+            <!-- 金額ラベル（各帯の右上45°） -->
+            <g font-family="'Barlow Semi Condensed',sans-serif" font-weight="600" font-size="14" text-anchor="start">
+              <text x="212" y="176" fill="#FFFFFF">¥1,000</text>
+              <text x="236" y="150" fill="#FFFFFF">¥1,500</text>
+              <text x="260" y="122" fill="#FFFFFF">¥2,000</text>
+              <text x="278" y="96"  fill="#16181D">¥2,500</text>
+              <text x="300" y="70"  fill="#16181D">¥3,000</text>
+              <text x="316" y="44"  fill="#16181D" fill-opacity="0.6" font-size="12">50km超 要相談</text>
+            </g>
+            <!-- 中心マーカー（図中唯一の地名） -->
+            <circle cx="200" cy="200" r="4.5" fill="#FFFFFF"/>
+            <text x="200" y="236" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">かほく市役所</text>
+          </svg>
+        </figure>
+
+        <!-- 帯ごとの色ドット＋市町名チップ（このテキストが本体＝SEO/読み上げの中身） -->
+        <ul class="band-list" id="band-list" aria-label="距離帯ごとの出張費と対象市町">
+          <li class="band-row"><span class="band-row__dot" style="background:#1E3A5F"></span><span class="band-row__km">〜10km</span><span class="band-row__yen num">¥1,000</span><span class="band-row__area">かほく市・津幡町</span></li>
+          <li class="band-row"><span class="band-row__dot" style="background:#3A5A88"></span><span class="band-row__km">〜20km</span><span class="band-row__yen num">¥1,500</span><span class="band-row__area">内灘町</span></li>
+          <li class="band-row"><span class="band-row__dot" style="background:#6B87AE"></span><span class="band-row__km">〜30km</span><span class="band-row__yen num">¥2,000</span><span class="band-row__area">宝達志水町・金沢市・羽咋市・野々市市</span></li>
+          <li class="band-row"><span class="band-row__dot" style="background:#9DB2CE"></span><span class="band-row__km">〜40km</span><span class="band-row__yen num">¥2,500</span><span class="band-row__area">白山市・川北町・志賀町・能美市・中能登町</span></li>
+          <li class="band-row"><span class="band-row__dot" style="background:#C9D5E6"></span><span class="band-row__km">〜50km</span><span class="band-row__yen num">¥3,000</span><span class="band-row__area">七尾市・小松市</span></li>
+          <li class="band-row"><span class="band-row__dot" style="background:#E8EBF0"></span><span class="band-row__km">50km超</span><span class="band-row__yen num band-row__yen--sm">要相談</span><span class="band-row__area">上記以外の市町</span></li>
+        </ul>
+      </div>
+
+      <p class="reveal" style="color:var(--ink-70); font-size:0.9rem; line-height:1.85; max-width:720px; margin:26px 0 0;">
+        買取が成立した場合、出張費はいただきません。出張費がかかるのは、値段がつかない車体をお引き取り（処分）する場合のみです。
+        <span style="display:block; color:var(--ink-55); font-size:0.84rem; margin-top:8px;">※ かほく市役所から各市町役場までの走行距離（最短ルート）が基準です。境界付近の市町は安い側の料金を適用しています。広い市町では市内の地域により前後する場合があります。正確な金額は、お住まいの市町名を LINE でお送りいただければその場でお答えします。</span>
+      </p>
+
+      <div class="reveal" style="margin-top:22px; display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+        <span class="cta-underline">
+          <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="10.8" rx="10.8" ry="8.4" fill="#fff"/><path fill="#fff" d="M6.6 17.4 5.2 22l5.4-2.8z"/></svg>
+            市町名を送って出張費を確認
+          </a>
+        </span>
+        <a class="btn btn--ghost" href="/price/">料金・対応エリアの詳細 →</a>
+      </div>
     </div>
   </section>
 
