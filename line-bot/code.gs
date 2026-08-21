@@ -345,7 +345,10 @@ function handleEvent(event) {
    ========================================================= */
 const ROUTE_IDS = ['（トップから）', '（電動ページから）', '（処分コラムから）', '（診断コラムから）'];
 
-/** 本文末尾の経路識別子を返す（なければ null）。末尾の空白・改行は無視して判定 */
+/** 本文末尾の経路識別子を返す（なければ null）。末尾の空白・改行は無視して判定。
+ *  既知4種（トップ/電動/処分/診断）は完全一致で個別返信へ。
+ *  それ以外の「（〜から）」（市町ページ・料金/ブランド/FAQ/LP/エリア/条件 等）も検出して
+ *  generic 受付返信＋routesシート記録に載せる（2026-08-21：サイト全経路を導線に載せる修正）。 */
 function detectRouteId_(text) {
   if (!text) return null;
   const t = String(text).replace(/[\s　]+$/, '');
@@ -353,7 +356,8 @@ function detectRouteId_(text) {
     const id = ROUTE_IDS[i];
     if (t.length >= id.length && t.slice(-id.length) === id) return id;
   }
-  return null;
+  const m = t.match(/（[^（）]{1,20}から）$/);
+  return m ? m[0] : null;
 }
 
 /** 分類用に、末尾の識別子を除いた本文を返す */
