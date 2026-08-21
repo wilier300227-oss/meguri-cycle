@@ -37,7 +37,7 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E9%9B%BB%E5%8B%95%E3%82%A2%E3
       {
         "@type": "Question",
         "name": "充電が切れていても売れますか？",
-        "acceptedAnswer": { "@type": "Answer", "text": "はい。充電してから電源が入れば、電源ONのパネル写真だけで査定できます（ルート②）。充電しても電源が入らない場合も、車体のみの確定額をご提示します（ルート③）。" }
+        "acceptedAnswer": { "@type": "Answer", "text": "はい。充電してから電源が入れば、電源ONのパネル写真だけで査定できます。充電しても電源が入らない場合も、車体のみの確定額をご提示します。" }
       },
       {
         "@type": "Question",
@@ -52,7 +52,7 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E9%9B%BB%E5%8B%95%E3%82%A2%E3
       {
         "@type": "Question",
         "name": "診断のやり方が分かりません",
-        "acceptedAnswer": { "@type": "Answer", "text": "メーカー別の手順をコラム「バッテリー劣化を自分で確認する方法」でご案内しています。診断ができなくても、電源ONのパネル写真だけのルート②で査定できますのでご安心ください。" }
+        "acceptedAnswer": { "@type": "Answer", "text": "メーカー別の手順をコラム「バッテリー劣化を自分で確認する方法」でご案内しています。診断ができなくても、電源ONのパネル写真だけで査定できますのでご安心ください。" }
       },
       {
         "@type": "Question",
@@ -126,38 +126,35 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E9%9B%BB%E5%8B%95%E3%82%A2%E3
     </div>
   </section>
 
-  <!-- 3. 査定フロー（3ルート） -->
-  <section class="section">
+  <!-- 3. 査定アップポイント -->
+  <section class="section" id="uphints">
     <div class="wrap" style="max-width:980px;">
-      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2.1rem); margin-bottom:10px;">査定は3ルート。できる範囲で大丈夫です</h2>
-      <p class="reveal" style="color:var(--ink-70); margin-bottom:24px;">送れるものが多いほど、金額は正確になります。診断ができなくても大丈夫です。</p>
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2.1rem); margin-bottom:10px;">査定が上がるポイント</h2>
+      <p class="reveal" style="color:var(--ink-70); margin-bottom:24px;">写真だけで査定できます。電源が入らなくても、バッテリーが無くても、車体だけで査定します。そのうえで、こういうものがあると査定額が上がります。</p>
       <div class="routeflow reveal">
         <div class="rf">
-          <span class="rf__n">①</span>
+          <span class="rf__ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 7-7"/><path d="M17 8h4v4"/></svg></span>
           <div class="rf__body">
-            <span class="rf__send">長押し診断の写真まで送る</span>
-            <span class="rf__arw" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
-            <span class="rf__get"><span>実容量を反映した<span class="price-tag">確定額</span></span><small>いちばん正確</small></span>
+            <span class="rf__pt">長押し診断の結果を送る</span>
+            <span class="rf__why">バッテリーの<span class="price-tag">実容量</span>がわかると、状態が良いぶんしっかり反映できます。電動の査定では、ここが一番効きます。<a href="/column/battery-check/" style="color:var(--accent-d); font-weight:600;">やり方はこちら</a></span>
           </div>
         </div>
-        <div class="rf rf--min">
-          <span class="rf__n">②</span>
+        <div class="rf">
+          <span class="rf__ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 7-7"/><path d="M17 8h4v4"/></svg></span>
           <div class="rf__body">
-            <span class="rf__send">電源ONのパネル写真を送る</span>
-            <span class="rf__arw" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
-            <span class="rf__get"><span class="price-tag">下限の確定額</span><small>訪問時に上がることはあっても、下がりません</small></span>
+            <span class="rf__pt">充電器・鍵（スペアも）がそろっている</span>
+            <span class="rf__why">付属品がそろっていると、そのぶん査定に反映されます。</span>
           </div>
         </div>
-        <div class="rf rf--off">
-          <span class="rf__n">③</span>
+        <div class="rf">
+          <span class="rf__ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 7-7"/><path d="M17 8h4v4"/></svg></span>
           <div class="rf__body">
-            <span class="rf__send">「電源が入らない」と伝える</span>
-            <span class="rf__arw" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span>
-            <span class="rf__get"><span>車体のみの<span class="price-tag">確定額</span></span><small>バッテリーは0円評価</small></span>
+            <span class="rf__pt">きれいに使っている・年式が新しい</span>
+            <span class="rf__why">目立つ傷やサビが少ないほど、状態のよさが加点対象になります。</span>
           </div>
         </div>
       </div>
-      <p class="reveal" style="font-size:0.82rem; color:var(--ink-40); margin-top:16px;">※ 現物がお送りいただいた内容と異なる場合は再査定となります（キャンセルは無料です）。</p>
+      <p class="reveal" style="font-size:0.82rem; color:var(--ink-40); margin-top:16px;">※ 何もそろっていなくても、車体だけで査定できます。現物がお送りいただいた内容と異なる場合は再査定となります（キャンセルは無料です）。</p>
       <div class="reveal" style="margin-top:24px;">
         <span class="cta-underline">
           <!-- LINE経路CTA（電動）: 本文「電動アシストの査定希望です（電動ページから）」。encodeURIComponentで生成。「（〜から）」はGAS集計キーのため変更禁止 -->
@@ -173,14 +170,8 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E9%9B%BB%E5%8B%95%E3%82%A2%E3
   <section class="section section--alt">
     <div class="wrap" style="max-width:760px;">
       <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2.1rem); margin-bottom:14px;">LINEで送るもの</h2>
-      <p class="lead reveal" style="margin-bottom:14px;">まずは<strong>車体全体</strong>と、<strong>電源ONのパネル写真</strong>から。足りない分はLINEでご案内します。</p>
-      <div class="reveal">
-        <p style="color:var(--ink-70); margin-bottom:8px;">あると、より正確な査定になります（なくても大丈夫です）：</p>
-        <ul class="list-plain">
-          <li><strong>長押し診断の結果写真</strong> … 実容量を反映した確定額（ルート①）になります。<a href="/column/battery-check/" style="color:var(--accent-d); font-weight:600;">やり方はこちら</a></li>
-          <li><strong>充電器の写真／鍵の本数／使っていての体感</strong>（「すぐ減る」など）</li>
-        </ul>
-      </div>
+      <p class="lead reveal" style="margin-bottom:8px;">まずは<strong>車体全体</strong>と、<strong>電源ONのパネル写真</strong>の2枚から。足りない分はLINEでご案内します。</p>
+      <p class="reveal" style="color:var(--ink-70); font-size:0.92rem;">充電器・鍵・長押し診断の写真などは、あると査定に反映されます（<a href="#uphints" style="color:var(--accent-d); font-weight:600;">査定が上がるポイント</a>）。</p>
     </div>
   </section>
 
@@ -250,10 +241,10 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E9%9B%BB%E5%8B%95%E3%82%A2%E3
     <div class="wrap" style="max-width:840px;">
       <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2.1rem); margin-bottom:24px;">よくある質問</h2>
       <div class="qa qa--2 reveal">
-        <div><p class="qa__q">充電が切れていても売れますか？</p><p class="qa__a">はい。充電してから電源が入れば、電源ONのパネル写真だけで査定できます（ルート②）。充電しても電源が入らない場合も、車体のみの確定額をご提示します（ルート③）。</p></div>
+        <div><p class="qa__q">充電が切れていても売れますか？</p><p class="qa__a">はい。充電してから電源が入れば、電源ONのパネル写真だけで査定できます。充電しても電源が入らない場合も、車体のみの確定額をご提示します。</p></div>
         <div><p class="qa__q">電源が入らない場合は？</p><p class="qa__a">「電源が入りません」とお知らせいただくだけで大丈夫です。バッテリーを0円評価とした車体のみの確定額をご提示します。バッテリー自体は状態により処分窓口をご案内します。</p></div>
         <div><p class="qa__q">使えないバッテリーだけでも売れますか？</p><p class="qa__a">容量が残っているバッテリーは単体でも買取対象です。リコール対象の可能性があるものはメーカーの無償交換をご案内します。膨張・液漏れ・破損のあるものは安全上お受けできないため、処分窓口をご案内します。</p></div>
-        <div><p class="qa__q">診断のやり方が分かりません</p><p class="qa__a">メーカー別の手順を<a href="/column/battery-check/" style="color:var(--accent-d); font-weight:600;">コラム</a>でご案内しています。診断ができなくてもルート②（電源ONのパネル写真のみ）で査定できますのでご安心ください。</p></div>
+        <div><p class="qa__q">診断のやり方が分かりません</p><p class="qa__a">メーカー別の手順を<a href="/column/battery-check/" style="color:var(--accent-d); font-weight:600;">コラム</a>でご案内しています。診断ができなくても、電源ONのパネル写真だけで査定できますのでご安心ください。</p></div>
         <div><p class="qa__q">充電器や鍵がない・壊れた場合は？</p><p class="qa__a">そのままご相談ください。充電器や鍵がなくても査定できます。減額幅は車種や状態により異なるため、お写真を拝見したうえで、すべて織り込んだ確定金額をご提示します。お送りいただいた状態と相違ない場合、訪問時に追加の減額はありません。</p></div>
         <div><p class="qa__q">古い年式でも大丈夫ですか？</p><p class="qa__a">年式は問いません。写真で査定し、金額にご納得いただいてから石川県内を中心に出張してお引き取りします。まずは写真をお送りください。</p></div>
         <div><p class="qa__q">電動ではない普通の自転車も対応していますか？</p><p class="qa__a">はい。ママチャリ・一般の自転車の買取や処分のご相談も、これまで通りお受けしています。<a href="/hikitori/" style="color:var(--accent-d); font-weight:600;">出張引き取り</a>もご覧ください。</p></div>
