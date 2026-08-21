@@ -238,11 +238,12 @@ h1, h2, h3 {
 .bw-lg { font-size: clamp(1.15rem, 2.6vw, 1.62rem); }
 
 /* ---------- 対象車種：タイポグラフィ・インデックス（チップ廃止） ---------- */
-.genres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 32px; }
-.genre { display: flex; flex-direction: column; gap: 3px; padding: 15px 4px 13px; border-top: 1px solid var(--line-hair); }
-.genre__en { font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink-40); }
-.genre__jp { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: clamp(1.02rem, 1.8vw, 1.22rem); line-height: 1.35; }
-@media (max-width: 640px) { .genres { grid-template-columns: repeat(2, 1fr); gap: 0 20px; } }
+.genres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.genre { display: flex; flex-direction: column; gap: 3px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); background: color-mix(in srgb, var(--accent) 7%, transparent); border-radius: var(--radius-sm); transition: transform .2s ease, box-shadow .2s ease; }
+.genre:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.genre__en { font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-d); font-weight: 600; }
+.genre__jp { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: clamp(1rem, 1.8vw, 1.18rem); line-height: 1.3; color: var(--ink); }
+@media (max-width: 640px) { .genres { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
 
 /* ---------- ブランド一覧ページ：カラム・インデックス（チップ廃止） ---------- */
 .brandcat h2 { font-size: 1.22rem; color: var(--ink); border-bottom: 1px solid var(--line-hair); padding-bottom: 10px; margin-bottom: 16px; }
@@ -314,15 +315,31 @@ h1, h2, h3 {
 @media (min-width: 720px) { .steps--grid { grid-template-columns: 1fr 1fr; gap: 26px 44px; } }
 
 /* ---------- 脱・カードグリッド：サービスは大きな番号＋罫線のエディトリアル ---------- */
-.svc { display: grid; }
-.svc__row { display: grid; grid-template-columns: auto 1fr; gap: clamp(20px, 4vw, 44px); padding: clamp(28px, 4vw, 40px) 0; border-top: 1px solid var(--line-hair); align-items: start; }
-.svc__row:last-child { border-bottom: 1px solid var(--line-hair); }
-.svc__n { font-family: "Barlow Semi Condensed", sans-serif; font-size: clamp(2.6rem, 7vw, 4rem); font-weight: 600; line-height: 0.85; color: var(--ink); }
-.svc__n small { display: block; font-size: 0.7rem; letter-spacing: 0.18em; color: var(--accent); margin-top: 8px; font-weight: 600; }
-.svc__row h3 { font-size: clamp(1.3rem, 3vw, 1.7rem); margin-bottom: 8px; }
-.svc__row p { color: var(--ink-70); font-size: 0.95rem; }
-.svc__price { color: var(--accent-d); font-weight: 700; margin-top: 10px !important; font-size: 1.05rem; }
-.svc__note { font-size: 0.82rem; color: var(--ink-40); margin-top: 6px !important; }
+/* 2つのサービス：買取（緑）と引取（チャコール）を色分けした対比カード */
+.svc { display: grid; gap: 16px; }
+@media (min-width: 720px) { .svc { grid-template-columns: 1fr 1fr; } }
+.svccard { display: flex; flex-direction: column; border: 1px solid var(--line-hair); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); background: var(--card); }
+.svccard__head { padding: clamp(16px,2.5vw,20px) clamp(20px,3vw,24px); color: #fff; display: flex; flex-direction: column; gap: 4px; }
+.svccard--buy .svccard__head { background: var(--accent); }
+.svccard--take .svccard__head { background: var(--ink); }
+.svccard__k { font-size: 0.76rem; letter-spacing: 0.1em; font-weight: 600; opacity: 0.9; }
+.svccard__h { font-size: clamp(1.4rem,3.4vw,1.7rem); font-weight: 700; line-height: 1.1; }
+.svccard__body { padding: clamp(18px,2.5vw,22px) clamp(20px,3vw,24px); display: flex; flex-direction: column; gap: 8px; }
+.svccard__lead { font-weight: 700; color: var(--ink); font-size: 1.02rem; }
+.svccard__desc { color: var(--ink-70); font-size: 0.94rem; }
+.svccard__price { margin-top: 4px; font-weight: 700; font-size: 1.02rem; }
+.svccard--buy .svccard__price { color: var(--accent-d); }
+.svccard--take .svccard__price { color: var(--ink); }
+.svccard__note { font-size: 0.82rem; color: var(--ink-40); }
+
+/* 選ばれる理由：アイコンバッジ付きカードのグリッド */
+.whygrid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .whygrid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 960px) { .whygrid { grid-template-columns: repeat(3, 1fr); } }
+.whycard { background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius-sm); padding: clamp(18px,2.4vw,24px); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 8px; }
+.whycard__ic { width: 46px; height: 46px; border-radius: 13px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent-d); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; flex: 0 0 auto; }
+.whycard__h { font-weight: 700; color: var(--ink); font-size: 1.02rem; line-height: 1.45; }
+.whycard__p { color: var(--ink-70); font-size: 0.9rem; line-height: 1.6; }
 
 /* 脱・カードグリッド：連絡先は罫線＋アイコンの一覧 */
 .contact-list { display: grid; }
@@ -472,7 +489,6 @@ h1, h2, h3 {
   /* ヒーロー：中央寄せをやめて上寄せ＋上の空きを圧縮（文字の上の余白を解消） */
   .hero { min-height: 62vh; align-items: flex-start; }
   .hero__inner { padding-top: clamp(36px, 6vh, 56px); padding-bottom: clamp(36px, 6vh, 56px); }
-  .svc__row { padding: 22px 0; }
   .steps--flow .step { margin-bottom: 20px; }
   .work { width: clamp(200px, 62vw, 260px); }
 }
