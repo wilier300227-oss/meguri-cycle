@@ -521,3 +521,14 @@ h1, h2, h3 {
   .band-row { grid-template-columns: 12px 3.8em 1fr; row-gap: 3px; column-gap: 12px; }
   .band-row__area { grid-column: 2 / -1; color: var(--ink-70); font-size: 0.86rem; }
 }
+
+/* 図解C: ご利用の流れ（縦タイムライン・#flow）。番号はBarlow特大＋接続線 */
+.timeline { list-style: none; margin: 0; padding: 0; }
+.tl { position: relative; display: grid; grid-template-columns: 2.6rem 1fr; gap: clamp(14px,3vw,24px); padding: 0 0 clamp(24px,4vw,34px); }
+.tl:last-child { padding-bottom: 0; }
+.tl::before { content: ""; position: absolute; left: 1.3rem; top: 2.4rem; bottom: 0; width: 2px; background: var(--line-hair); transform: translateX(-50%); }
+.tl:last-child::before { display: none; }
+.tl__n { position: relative; z-index: 1; width: 2.6rem; text-align: center; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: clamp(1.8rem,5.5vw,2.4rem); line-height: 1.1; color: var(--accent); }
+.tl__body { padding-top: 0.2em; }
+.tl__t { font-size: 1.1rem; margin-bottom: 5px; }
+.tl__d { color: var(--ink-70); font-size: 0.93rem; line-height: 1.75; }
