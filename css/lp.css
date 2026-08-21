@@ -600,3 +600,6 @@ h1, h2, h3 {
 .wfeat__meta { font-size: 0.9rem; color: var(--ink-70); }
 .wfeat__price { font-weight: 700; font-size: 0.96rem; color: var(--accent-d); }
 .wfeat__area { font-size: 0.82rem; color: var(--ink-55); }
+
+/* 実績カード: 前向きな注記（金額の文脈補足） */
+.wfeat__note { font-size: 0.8rem; color: var(--ink-55); line-height: 1.5; }
