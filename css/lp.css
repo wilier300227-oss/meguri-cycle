@@ -340,7 +340,7 @@ h1, h2, h3 {
 @media (min-width: 960px) { .whygrid { grid-template-columns: repeat(3, 1fr); } }
 .whycard { background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius-sm); padding: clamp(20px,2.6vw,26px); box-shadow: 0 12px 32px -22px rgba(25,28,26,0.26); display: flex; flex-direction: column; gap: 8px; transition: transform .25s ease, box-shadow .25s ease; }
 .whycard:hover { transform: translateY(-3px); box-shadow: 0 20px 42px -24px rgba(25,28,26,0.32); }
-.whycard__ic { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--accent) 7%, transparent)); border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); color: var(--accent-d); display: flex; align-items: center; justify-content: center; margin-bottom: 6px; flex: 0 0 auto; }
+.whycard__mark { display: block; width: 36px; height: 3px; border-radius: 99px; background: var(--rainbow); margin-bottom: 14px; }
 .whycard__h { font-weight: 700; color: var(--ink); font-size: 1.02rem; line-height: 1.45; }
 .whycard__p { color: var(--ink-70); font-size: 0.9rem; line-height: 1.6; }
 
@@ -432,8 +432,7 @@ h1, h2, h3 {
 
 /* 電動ページ：査定アップポイント（車体だけでも査定OK、そのうえで加点される要素をカードで） */
 .routeflow { display: grid; gap: 12px; }
-.rf { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: clamp(12px,2.5vw,18px); background: var(--card); border: 1px solid var(--line-hair); border-left: 5px solid var(--accent); border-radius: var(--radius-sm); padding: clamp(14px,2.6vw,18px) clamp(16px,3vw,22px); box-shadow: var(--shadow-sm); }
-.rf__ic { color: var(--accent-d); display: flex; margin-top: 2px; flex: 0 0 auto; }
+.rf { display: flex; flex-direction: column; gap: 3px; background: var(--card); border: 1px solid var(--line-hair); border-left: 5px solid var(--accent); border-radius: var(--radius-sm); padding: clamp(16px,2.6vw,20px) clamp(18px,3vw,22px); box-shadow: 0 12px 32px -22px rgba(25,28,26,0.24); }
 .rf__body { display: flex; flex-direction: column; gap: 3px; }
 .rf__pt { font-weight: 700; color: var(--ink); font-size: clamp(0.98rem,2.4vw,1.06rem); }
 .rf__why { color: var(--ink-70); font-size: 0.88rem; line-height: 1.6; }
