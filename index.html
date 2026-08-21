@@ -324,61 +324,9 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E6%9F%BB%E5%AE%9A%E3%83%BB%E5
     </div>
   </section>
 
-  <!-- ============================================================
-       金額付き 買取・引取 実績（記入待ち・非公開）
-       オーナー作業：下のブロックの囲み（コメント記号）を外すと公開されます。
-         ・deal カードを実データで埋める：車種/ブランド名、年式、状態ひとこと、
-           買取額 または 無料引取、地域
-         ・買取額は「18,000」のように半角数字で
-         ・無料引取は free 表示用のクラスを使う（下のサンプル参照）
-         ・写真は既存の /images/works/ をそのまま流用可
-         数字が入るまでは絶対に囲みを外さないこと（空カード公開防止）
-       ============================================================ -->
-  <!--
-  <section class="section section--alt" id="deals">
-    <div class="wrap" style="max-width:1000px;">
-      <div class="stack reveal" style="max-width:560px; margin-bottom:34px;">
-        <span class="eyebrow">Prices</span>
-        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">買取・引取の金額実績</h2>
-        <p class="lead">実際にお出しした金額の一例です。状態や相場で変動しますが、目安としてご覧ください。</p>
-      </div>
-      <div class="deals reveal">
-
-        <div class="deal">
-          <img class="deal__img" src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" alt="買い取ったビアンキのロードバイク">
-          <div class="deal__body">
-            <span class="deal__name">Bianchi ロードバイク</span>
-            <span class="deal__meta">2019年式・105仕様／美品</span>
-            <!-- 買取額はオーナー提供の実額を入れるまで非表示。例: <span class="deal__price">18,000</span> -->
-            <span class="deal__area">金沢市</span>
-          </div>
-        </div>
-
-        <div class="deal">
-          <img class="deal__img" src="/images/works/bike-ebike.webp" width="1188" height="648" loading="lazy" alt="買い取った電動アシスト自転車">
-          <div class="deal__body">
-            <span class="deal__name">電動アシスト自転車</span>
-            <span class="deal__meta">2020年式／バッテリー残量 約80%</span>
-            <!-- 買取額はオーナー提供の実額を入れるまで非表示。例: <span class="deal__price">42,000</span> -->
-            <span class="deal__area">かほく市</span>
-          </div>
-        </div>
-
-        <div class="deal">
-          <img class="deal__img" src="/images/works/bike-city.webp" width="1188" height="648" loading="lazy" alt="お引き取りしたシティサイクル">
-          <div class="deal__body">
-            <span class="deal__name">シティサイクル（ママチャリ）</span>
-            <span class="deal__meta">錆あり・長期保管品</span>
-            <span class="deal__price deal__price--free">無料引取（処分費0円／出張費のみ ¥1,000〜）</span>
-            <span class="deal__area">津幡町</span>
-          </div>
-        </div>
-
-      </div>
-      <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:20px;">※ 金額は車体の状態・年式・相場により変動します。表示は過去の一例で、同額を保証するものではありません。</p>
-    </div>
-  </section>
-  -->
+  <!-- 金額実績カードは上の .works-feature に統合済み（実物写真＋メタ）。
+       追加する場合は works-feature に <figure class="wfeat"> を足す。
+       ※ 旧#dealsブロックはコメント入れ子でレンダリングされる不具合があり撤去した。 -->
 
 
   <!-- 7. 電動アシストは診断つき（→/dendo/） -->
