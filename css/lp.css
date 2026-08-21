@@ -406,9 +406,9 @@ h1, h2, h3 {
 .route__n { font-weight: 700; font-size: 0.76rem; letter-spacing: 0.12em; color: var(--accent-d); margin-bottom: 6px; }
 .route h3 { font-size: 1.08rem; margin-bottom: 10px; }
 .route dl { margin: 0; display: grid; gap: 10px; }
-.route dt { font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-40); font-weight: 600; }
-.route dd { margin: 2px 0 0; font-size: 0.9rem; color: var(--ink-70); }
-.route .price-tag { display: inline-block; margin-top: 4px; font-weight: 700; color: var(--accent-d); font-size: 0.95rem; }
+.route dt { font-size: 0.82rem; letter-spacing: 0.08em; color: var(--ink-55); font-weight: 700; }
+.route dd { margin: 2px 0 0; font-size: 0.98rem; line-height: 1.6; color: var(--ink); }
+.route .price-tag { display: inline-block; margin-top: 4px; font-weight: 700; color: var(--accent-d); font-size: 1rem; }
 
 /* 図解（診断手順など）：差し替え前提のコンポーネント */
 .checkfig { margin: 0; }
