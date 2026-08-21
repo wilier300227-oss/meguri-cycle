@@ -448,7 +448,9 @@ h1, h2, h3 {
 /* スマホ：縦の余白を圧縮してスクロール量を軽減（文章・画像は変更しない） */
 @media (max-width: 640px) {
   .section { padding-top: 44px; padding-bottom: 44px; }
-  .hero__inner { padding-top: clamp(72px, 12vh, 112px); padding-bottom: clamp(32px, 6vh, 60px); }
+  /* ヒーロー：中央寄せをやめて上寄せ＋上の空きを圧縮（文字の上の余白を解消） */
+  .hero { min-height: 62vh; align-items: flex-start; }
+  .hero__inner { padding-top: clamp(36px, 6vh, 56px); padding-bottom: clamp(36px, 6vh, 56px); }
   .svc__row { padding: 22px 0; }
   .steps--flow .step { margin-bottom: 20px; }
   .work { width: clamp(200px, 62vw, 260px); }
