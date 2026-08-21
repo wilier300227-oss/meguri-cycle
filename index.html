@@ -104,36 +104,32 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E6%9F%BB%E5%AE%9A%E3%83%BB%E5
     </div>
   </section>
 
-  <!-- 2. 2つのサービス（買取／引取） -->
+  <!-- 2. 2つのサービス（図解B: 査定の分岐図） -->
   <section class="section section--alt" id="choice">
-    <div class="wrap" style="max-width:840px;">
-      <h2 class="reveal" style="font-size:clamp(1.9rem,5.5vw,2.9rem); margin-bottom:20px;">2つのサービス</h2>
-      <div class="svc reveal">
-        <div class="svccard svccard--buy">
-          <div class="svccard__head">
-            <span class="svccard__k">値段がつくなら</span>
-            <span class="svccard__h">出張買取</span>
+    <div class="wrap" style="max-width:720px;">
+      <h2 class="reveal" style="font-size:clamp(1.9rem,5.5vw,2.9rem); margin-bottom:8px;">2つのサービス</h2>
+      <p class="lead reveal" style="margin-bottom:34px;">写真を送るだけ。査定の結果で「買取」か「引取（処分）」に分かれます。どちらも費用の心配はいりません。</p>
+      <div class="flowtree reveal" role="group" aria-label="査定の分岐（写真送付から買取または引取まで）">
+        <div class="ftnode ftnode--nav"><span class="ftnode__k">1</span>写真を LINE で送る</div>
+        <span class="ftline" aria-hidden="true"></span>
+        <div class="ftnode ftnode--nav"><span class="ftnode__k">2</span>整備士が査定し、確定額をご連絡</div>
+        <div class="ftsplit">
+          <span class="ftsplit__bar" aria-hidden="true"></span>
+          <div class="ftbranch">
+            <span class="ftbranch__line" aria-hidden="true"></span>
+            <div class="ftnode ftnode--lite">値段が<br>つきました</div>
+            <span class="ftarw" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m6 13 6 6 6-6"/></svg></span>
+            <div class="ftnode ftnode--nav ftnode--result"><strong>買取</strong><span class="ftnode__sub">出張費 0円／買取額をお支払い</span></div>
           </div>
-          <div class="svccard__body">
-            <p class="svccard__lead">乗れる・人気の一台は、その場で現金に。</p>
-            <p class="svccard__desc">写真で確定額をお出しし、ご納得いただけたら現金または振込でお買い取りします。</p>
-            <p class="svccard__price">査定・出張費 0円／買取額をお支払い</p>
-            <p class="svccard__note">成立・不成立を問わず費用はかかりません。訪問は金額確定後のお引き取りのみです。</p>
-          </div>
-        </div>
-        <div class="svccard svccard--take">
-          <div class="svccard__head">
-            <span class="svccard__k">値がつかなくても</span>
-            <span class="svccard__h">出張引取</span>
-          </div>
-          <div class="svccard__body">
-            <p class="svccard__lead">処分に困っている一台を、ご自宅から。</p>
-            <p class="svccard__desc">値がつかない車体も、防犯登録の抹消までまとめて引き取ります。</p>
-            <p class="svccard__price">処分費 0円（出張費のみ）</p>
-            <p class="svccard__note">出張費は事前にご案内してからお伺いします。</p>
+          <div class="ftbranch">
+            <span class="ftbranch__line" aria-hidden="true"></span>
+            <div class="ftnode ftnode--lite">値段が<br>つきませんでした</div>
+            <span class="ftarw" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m6 13 6 6 6-6"/></svg></span>
+            <div class="ftnode ftnode--nav ftnode--result"><strong>引取（処分）</strong><span class="ftnode__sub">処分費 0円・出張費のみ <a href="#price">¥1,000〜</a></span></div>
           </div>
         </div>
       </div>
+      <p class="ftclose reveal"><span class="ftclose__u">金額にご納得いただいてから、お伺いします。玄関先での価格交渉はありません。</span></p>
     </div>
   </section>
 
