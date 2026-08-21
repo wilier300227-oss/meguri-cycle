@@ -649,7 +649,7 @@ ctaUrl: "https://line.me/R/oaMessage/%40136bpsyc/?%E6%9F%BB%E5%AE%9A%E3%83%BB%E5
     // フォールバックしてしまう）を、友だち追加ページ（PCでQR表示）に差し替える。スマホはそのまま。
     (function () {
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) return;
-      var pcUrl = 'https://page.line.me/136bpsyc';
+      var pcUrl = 'https://line.me/R/ti/p/@136bpsyc';
       document.querySelectorAll('a[href*="/R/oaMessage/"]').forEach(function (a) { a.href = pcUrl; });
     })();
   </script>
