@@ -7,19 +7,24 @@
 
 :root {
   --paper:     #F4F4F1;   /* 明るい本文の地（クリーン・ニュートラル） */
-  --paper-2:   #EAEAE5;
+  --paper-2:   #EAEBEE;   /* 淡ネイビー寄り */
   --card:      #FCFCFB;
-  --ink:       #191C1A;   /* near-black（ほんのり緑みでグリーンと調和） */
-  --ink-70:    rgba(25, 28, 26, 0.70);
-  --ink-55:    rgba(25, 28, 26, 0.55);
-  --ink-40:    rgba(25, 28, 26, 0.40);
-  --line-hair: rgba(25, 28, 26, 0.12);
+  --ink:       #16181D;   /* near-black（ニュートラル） */
+  --ink-70:    rgba(22, 24, 29, 0.70);
+  --ink-55:    rgba(22, 24, 29, 0.55);
+  --ink-40:    rgba(22, 24, 29, 0.40);
+  --line-hair: rgba(22, 24, 29, 0.12);
 
-  --accent:    #2E7D50;   /* フォレストグリーン（モックアップのボタン色に合わせる） */
-  --accent-d:  #245F3E;   /* hover 用の暗いグリーン */
-  --dark-hero: #0D110E;   /* ヒーローのダークベース */
+  --accent:    #1E3A5F;   /* ネイビー（旧フォレストグリーン #2E7D50 を全置換） */
+  --accent-d:  #162C49;   /* hover 用の暗いネイビー */
+  --link:      #1F5FA8;   /* テキストリンク用ブルー */
+  --dark-hero: #0C1424;   /* ヒーローの紺黒ベース */
 
-  /* ブランドの虹（継続・アクセントとして少量） */
+  /* LINE導線 専用色（サイト装飾には使わない＝「緑＝押す場所」を成立させる） */
+  --line-green:  #06C755;
+  --line-green-d:#05A648;
+
+  /* ブランドの虹（継続・罫線/下線/上端3pxのみ。面塗り禁止） */
   --rainbow: linear-gradient(90deg,#E53935 0%,#FB8C00 18%,#FDD835 38%,#43A047 55%,#1E88E5 74%,#8E24AA 100%);
 
   --radius:    16px;
@@ -36,7 +41,7 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: "Murecho", "Zen Kaku Gothic New", system-ui, sans-serif;
+  font-family: "Zen Kaku Gothic New", system-ui, sans-serif;
   font-weight: 400;
   line-height: 1.8;
   letter-spacing: 0.005em;
@@ -47,25 +52,18 @@ body {
 img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; }
 
-/* 質感（微細なフィルムグレイン）— フラットな“AI感”を消す。全面固定・操作を邪魔しない */
-body::after {
-  content: "";
-  position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-  opacity: 0.03; mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-@media (prefers-reduced-motion: reduce) { body::after { opacity: 0.02; } }
+/* フラット方針（§3.3）: 旧フィルムグレイン body::after は廃止した */
 
 /* AI感の典型＝各セクションの英語アイブロウ（Service/Why us…）は撤去。見出しは日本語で自明 */
 .section .eyebrow { display: none; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
 
 /* ---------- タイポグラフィ ---------- */
-.serif { font-family: "Zen Old Mincho", serif; }
+.serif { font-family: "Zen Kaku Gothic New", sans-serif; }
 .num   { font-family: "Barlow Semi Condensed", sans-serif; font-variant-numeric: tabular-nums; }
 
 h1, h2, h3 {
-  font-family: "Zen Old Mincho", serif;
+  font-family: "Zen Kaku Gothic New", sans-serif;
   font-weight: 700; line-height: 1.3; letter-spacing: 0.005em; margin: 0; text-wrap: balance;
 }
 .eyebrow { font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.72rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--ink-40); }
@@ -87,7 +85,7 @@ h1, h2, h3 {
 }
 .nav::before { content:""; position:absolute; inset:0 0 auto 0; height:3px; background: var(--rainbow); }
 .nav__in { display: flex; align-items: center; justify-content: space-between; height: 62px; }
-.nav__brand { display: flex; align-items: center; gap: 10px; font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.08em; text-decoration: none; }
+.nav__brand { display: flex; align-items: center; gap: 10px; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.08em; text-decoration: none; }
 .nav__brand img { width: 30px; height: 30px; border-radius: 8px; }
 .nav__links { display: none; gap: 28px; font-size: 0.86rem; letter-spacing: 0.02em; }
 .nav__links a { text-decoration: none; color: var(--ink-70); transition: color .2s; }
@@ -122,8 +120,9 @@ h1, h2, h3 {
   transition: transform .18s cubic-bezier(.2,.7,.2,1), box-shadow .2s, background .2s, color .2s, border-color .2s;
   will-change: transform;
 }
-.btn--primary { background: var(--accent); color: #fff; box-shadow: 0 12px 26px -12px rgba(46,125,80,0.6); }
-.btn--primary:hover, .btn--primary:focus { background: var(--accent-d); }
+/* primary = LINE導線専用。サイト内で唯一の緑（「緑＝押す場所」を成立させる） */
+.btn--primary { background: var(--line-green); color: #fff; box-shadow: 0 12px 26px -12px rgba(6,199,85,0.55); }
+.btn--primary:hover, .btn--primary:focus { background: var(--line-green-d); }
 .btn--primary:hover { transform: translateY(-2px); }
 .btn--primary:active { transform: translateY(0); }
 /* CTAの文字色は通常・hover・訪問後（visited）で不変にする（コントラスト比 5:1 を担保） */
@@ -143,8 +142,8 @@ h1, h2, h3 {
 .hero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
 .hero__scrim { position: absolute; inset: 0; z-index: 1;
   background:
-    linear-gradient(90deg, rgba(9,13,10,0.86) 0%, rgba(9,13,10,0.55) 48%, rgba(9,13,10,0.20) 100%),
-    linear-gradient(0deg, rgba(9,13,10,0.55) 0%, rgba(9,13,10,0) 42%);
+    linear-gradient(90deg, rgba(10,18,32,0.88) 0%, rgba(10,18,32,0.58) 48%, rgba(10,18,32,0.22) 100%),
+    linear-gradient(0deg, rgba(10,18,32,0.58) 0%, rgba(10,18,32,0) 42%);
 }
 .hero__inner { position: relative; z-index: 2; padding: clamp(96px, 15vh, 160px) 0 clamp(56px, 9vh, 96px); }
 .hero__copy { max-width: 660px; }
@@ -187,7 +186,7 @@ h1, h2, h3 {
 .why__n { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 1.55rem; line-height: 1; color: var(--accent); letter-spacing: 0.02em; }
 /* 番号なし・罫線区切りの変種（番号レイアウトの3連続を避ける） */
 .why__list--lines .why__item { display: block; border-top: 1px solid var(--line-hair); padding-top: 16px; }
-.why__h { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: 1.18rem; margin-bottom: 0.45rem; }
+.why__h { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: 1.18rem; margin-bottom: 0.45rem; }
 .why__p { color: var(--ink-70); font-size: 0.95rem; }
 
 /* ---------- マーキー / カルーセル ---------- */
@@ -211,7 +210,7 @@ h1, h2, h3 {
 .deal__name { font-weight: 700; font-size: 1.02rem; color: var(--ink); line-height: 1.35; }
 .deal__meta { font-size: 0.8rem; color: var(--ink-55); }
 .deal__price { margin-top: 4px; font-family: "Barlow Semi Condensed", sans-serif; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 1.5rem; color: var(--accent-d); }
-.deal__price--free { font-family: "Murecho", sans-serif; font-size: 1.05rem; }
+.deal__price--free { font-family: "Zen Kaku Gothic New", sans-serif; font-size: 1.05rem; }
 .deal__area { font-size: 0.76rem; color: var(--ink-40); }
 
 .brandwall { padding: 22px 0; border-top: 1px solid var(--line-hair); border-bottom: 1px solid var(--line-hair); }
@@ -239,10 +238,10 @@ h1, h2, h3 {
 
 /* ---------- 対象車種：タイポグラフィ・インデックス（チップ廃止） ---------- */
 .genres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.genre { display: flex; flex-direction: column; gap: 3px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent); background: color-mix(in srgb, var(--accent) 7%, transparent); border-radius: var(--radius-sm); transition: transform .2s ease, box-shadow .2s ease; }
+.genre { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 9px; padding: 18px 12px; border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); background: color-mix(in srgb, var(--accent) 6%, transparent); border-radius: var(--radius-sm); transition: transform .2s ease, box-shadow .2s ease; }
 .genre:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
-.genre__en { font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-d); font-weight: 600; }
-.genre__jp { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: clamp(1rem, 1.8vw, 1.18rem); line-height: 1.3; color: var(--ink); }
+.genre__ic { display: grid; place-items: center; min-height: 66px; }
+.genre__jp { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: clamp(1rem, 1.8vw, 1.18rem); line-height: 1.3; color: var(--ink); }
 @media (max-width: 640px) { .genres { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
 
 /* ---------- ブランド一覧ページ：カラム・インデックス（チップ廃止） ---------- */
@@ -271,7 +270,7 @@ h1, h2, h3 {
 
 /* ---------- FAQ ---------- */
 .qa { display: grid; gap: 16px; }
-.qa__q { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: 1.02rem; margin-bottom: 0.35rem; }
+.qa__q { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: 1.02rem; margin-bottom: 0.35rem; }
 .qa__a { color: var(--ink-70); font-size: 0.94rem; }
 
 /* ---------- CTA / フッター ---------- */
@@ -293,8 +292,16 @@ h1, h2, h3 {
 
 /* スマホ固定CTA */
 .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-top: 1px solid var(--line-hair); }
-.dock .btn { width: 100%; justify-content: center; }
+.dock::before { content:""; position:absolute; left:0; right:0; top:0; height:2px; background: var(--rainbow); opacity:0.8; }
+.dock__in { max-width: 560px; margin: 0 auto; }
+.dock .btn { width: 100%; justify-content: center; min-height: 48px; }
 @media (min-width: 860px) { .dock { display: none; } }
+/* §6 追従CTAバー: JS が .dock--auto を付与した index のみ、ヒーロー通過後に出現し
+   #contact/footer 表示中は退避。全ビューポートで表示（lp.html は付与しないため従来どおり）。 */
+.dock--auto { transform: translateY(130%); opacity: 0; pointer-events: none; transition: transform .32s cubic-bezier(.2,.7,.2,1), opacity .28s; }
+.dock--auto.dock--show { transform: none; opacity: 1; pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) { .dock--auto { transition: none; } }
+@media (min-width: 860px) { .dock--auto { display: block; } }
 
 /* ---------- 段組み（シングルカラムをやめる） ---------- */
 .cols2 { display: grid; gap: clamp(22px, 4vw, 48px); }
@@ -391,7 +398,7 @@ h1, h2, h3 {
    ========================================================= */
 
 /* index ヒーロー v2：視覚主役 .hero__display、h1 は小さなタグラインとして残す */
-.hero--v2 .hero__display { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: clamp(2rem, 5.8vw, 3.4rem); line-height: 1.28; color: #fff; margin: 0; text-wrap: balance; }
+.hero--v2 .hero__display { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: clamp(2rem, 5.8vw, 3.4rem); line-height: 1.28; color: #fff; margin: 0; text-wrap: balance; }
 .hero--v2 .hero__sub { font-size: clamp(1rem, 2.4vw, 1.2rem); color: rgba(255,255,255,0.9); font-weight: 500; margin: 0; }
 .hero--v2 h1 { font-size: 0.98rem; font-weight: 600; line-height: 1.6; color: rgba(255,255,255,0.72); letter-spacing: 0.04em; }
 .hero--v2 h1 br { display: none; }
@@ -407,7 +414,7 @@ h1, h2, h3 {
 @media (min-width: 720px) { .usp { grid-template-columns: 1fr 1fr; gap: 0 clamp(28px, 4vw, 56px); } }
 .usp__item { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: baseline; padding: 18px 2px; border-top: 1px solid var(--line-hair); }
 .usp__n { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 1.35rem; line-height: 1; color: var(--accent); }
-.usp__t { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: 1.06rem; }
+.usp__t { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: 1.06rem; }
 .usp__p { grid-column: 2; color: var(--ink-70); font-size: 0.88rem; margin: 2px 0 0; }
 
 /* パンくず */
@@ -469,7 +476,7 @@ h1, h2, h3 {
 /* 著者ボックス（コラム末尾） */
 .author-box { display: grid; gap: 4px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); padding: 1.3rem 1.5rem; }
 .author-box .k { font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-40); }
-.author-box .n { font-family: "Zen Old Mincho", serif; font-weight: 700; font-size: 1.02rem; color: var(--ink); }
+.author-box .n { font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: 1.02rem; color: var(--ink); }
 .author-box p { margin: 2px 0 0; font-size: 0.86rem; color: var(--ink-70); }
 
 /* 実例の空枠（ダミー禁止。取引発生ごとに追記） */
@@ -494,3 +501,109 @@ h1, h2, h3 {
   .steps--flow .step { margin-bottom: 20px; }
   .work { width: clamp(200px, 62vw, 260px); }
 }
+
+/* =========================================================
+   図解（§5）共通 + 図解A 距離帯図（#price）
+   静的SVG・JS不要。地図ではなく同心円のコンセプト図。
+   ========================================================= */
+.distmap { display: grid; gap: clamp(20px, 4vw, 44px); align-items: center; }
+@media (min-width: 760px) { .distmap { grid-template-columns: minmax(260px, 360px) 1fr; } }
+.distmap__fig { margin: 0; max-width: 360px; width: 100%; justify-self: center; }
+.band-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.band-row { display: grid; grid-template-columns: 14px 4.4em auto 1fr; gap: 14px; align-items: baseline; padding: 13px 2px; border-top: 1px solid var(--line-hair); }
+.band-row:last-child { border-bottom: 1px solid var(--line-hair); }
+.band-row__dot { width: 12px; height: 12px; border-radius: 50%; align-self: center; border: 1px solid rgba(22,24,29,0.14); }
+.band-row__km { font-size: 0.86rem; color: var(--ink-55); font-weight: 500; white-space: nowrap; }
+.band-row__yen { font-weight: 600; font-size: 1.32rem; color: var(--accent); line-height: 1; white-space: nowrap; }
+.band-row__yen--sm { font-size: 0.98rem; color: var(--ink-70); }
+.band-row__area { font-size: 0.9rem; color: var(--ink); line-height: 1.5; }
+@media (max-width: 460px) {
+  .band-row { grid-template-columns: 12px 3.8em 1fr; row-gap: 3px; column-gap: 12px; }
+  .band-row__area { grid-column: 2 / -1; color: var(--ink-70); font-size: 0.86rem; }
+}
+
+/* 図解C: ご利用の流れ（縦タイムライン・#flow）。番号はBarlow特大＋接続線 */
+.timeline { list-style: none; margin: 0; padding: 0; }
+.tl { position: relative; display: grid; grid-template-columns: 2.6rem 1fr; gap: clamp(14px,3vw,24px); padding: 0 0 clamp(24px,4vw,34px); }
+.tl:last-child { padding-bottom: 0; }
+.tl::before { content: ""; position: absolute; left: 1.3rem; top: 2.4rem; bottom: 0; width: 2px; background: var(--line-hair); transform: translateX(-50%); }
+.tl:last-child::before { display: none; }
+.tl__n { position: relative; z-index: 1; width: 2.6rem; text-align: center; font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: clamp(1.8rem,5.5vw,2.4rem); line-height: 1.1; color: var(--accent); }
+.tl__body { padding-top: 0.2em; }
+.tl__t { font-size: 1.1rem; margin-bottom: 5px; }
+.tl__d { color: var(--ink-70); font-size: 0.93rem; line-height: 1.75; }
+
+/* 図解B: 査定の分岐図（#choice）。ノードはHTMLテキスト＋罫線/矢印で分岐 */
+.flowtree { max-width: 560px; margin: 0 auto; text-align: center; }
+.ftnode { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; border-radius: 12px; padding: 13px 20px; line-height: 1.45; font-weight: 700; }
+.ftnode--nav { background: var(--accent); color: #fff; box-shadow: 0 14px 30px -20px rgba(22,24,29,0.5); }
+.ftnode--lite { background: #E8EBF0; color: var(--ink); font-weight: 500; font-size: 0.9rem; }
+.ftnode--result { padding: 15px 22px; }
+.ftnode--result strong { font-size: 1.12rem; }
+.ftnode__k { display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: rgba(255,255,255,0.18); font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.9rem; margin-bottom: 3px; }
+.ftnode__sub { font-weight: 500; font-size: 0.82rem; opacity: 0.92; }
+.ftnode__sub a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+.ftline { display: block; width: 2px; height: 22px; margin: 8px auto; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+.ftsplit { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px,4vw,30px); margin-top: 30px; }
+.ftsplit__bar { position: absolute; top: -18px; left: 25%; right: 25%; height: 2px; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+.ftbranch { position: relative; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.ftbranch__line { position: absolute; top: -18px; left: 50%; width: 2px; height: 18px; background: color-mix(in srgb, var(--accent) 40%, transparent); transform: translateX(-50%); }
+.ftbranch .ftnode { width: 100%; }
+.ftarw { color: color-mix(in srgb, var(--accent) 55%, transparent); display: flex; }
+.ftclose { text-align: center; margin: 30px auto 0; max-width: 560px; font-weight: 700; color: var(--ink); }
+.ftclose__u { background-image: var(--rainbow); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 2px; padding-bottom: 4px; }
+
+/* §4-11 FAQ アコーディオン（<details>・JS不要） */
+.faq-acc { border-top: 1px solid var(--line-hair); }
+.faq-item { border-bottom: 1px solid var(--line-hair); }
+.faq-item > summary { list-style: none; cursor: pointer; padding: 18px 42px 18px 4px; position: relative; font-weight: 700; color: var(--ink); font-size: 1rem; line-height: 1.55; }
+.faq-item > summary::-webkit-details-marker { display: none; }
+.faq-item > summary::after { content: ""; position: absolute; right: 8px; top: 24px; width: 11px; height: 11px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(45deg); transition: transform .22s ease; }
+.faq-item[open] > summary::after { transform: rotate(225deg); top: 27px; }
+.faq-item__a { padding: 0 4px 20px; }
+.faq-item__a p { color: var(--ink-70); font-size: 0.93rem; line-height: 1.8; margin: 0; }
+
+/* 図解G 比較表（§5.5）。自社列のみ淡ネイビーで強調・他社名なし */
+.cmp-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius-sm); }
+.cmp { width: 100%; border-collapse: collapse; min-width: 540px; font-size: 0.9rem; }
+.cmp th, .cmp td { padding: 14px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line-hair); }
+.cmp thead th { font-size: 0.88rem; color: var(--ink-55); font-weight: 700; border-bottom: 2px solid var(--line-hair); }
+.cmp tbody th { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.cmp td { color: var(--ink-70); line-height: 1.6; }
+.cmp .cmp-self { background: color-mix(in srgb, var(--accent) 8%, var(--card)); }
+.cmp thead th.cmp-self { color: var(--accent-d); border-bottom: 2px solid var(--accent); }
+.cmp tbody td.cmp-self { color: var(--ink); font-weight: 600; }
+
+/* §4-4 選ばれる理由: 罫線区切りの縦積み＋線画SVGアイコン（カードグリッド廃止） */
+.whylist { border-top: 1px solid var(--line-hair); max-width: 820px; }
+.whyrow { display: grid; grid-template-columns: 44px 1fr; gap: clamp(16px,3vw,24px); align-items: start; padding: clamp(20px,3vw,26px) 0; border-bottom: 1px solid var(--line-hair); }
+.whyrow__ic { color: var(--accent); display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.whyrow__h { font-size: 1.08rem; font-weight: 700; margin-bottom: 5px; color: var(--ink); line-height: 1.45; }
+.whyrow__p { color: var(--ink-70); font-size: 0.93rem; line-height: 1.75; margin: 0; }
+
+
+/* §5.4 引取できないもの: ×アイコン付きリスト */
+.xlist { list-style: none; padding: 0; margin: 0; }
+.xlist li { position: relative; padding-left: 1.6em; color: var(--ink-70); font-size: 0.9rem; line-height: 1.7; margin: 8px 0; }
+.xlist li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 12px; height: 12px; background: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B23B3B' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E"); }
+
+/* 実績: 実物写真を大きく見せる2枚組フィーチャー（#works上部） */
+.works-feature { display: grid; gap: clamp(16px,3vw,28px); margin-bottom: clamp(30px,4vw,44px); }
+@media (min-width: 720px) { .works-feature { grid-template-columns: 1fr 1fr; } }
+.wfeat { margin: 0; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); overflow: hidden; box-shadow: 0 16px 40px -26px rgba(22,24,29,0.35); }
+.wfeat img { width: 100%; aspect-ratio: 1100 / 505; object-fit: cover; display: block; }
+.wfeat__cap { display: flex; flex-direction: column; gap: 5px; padding: 16px 18px; }
+.wfeat__row { display: flex; align-items: center; gap: 10px; }
+.wfeat__tag { font-weight: 700; font-size: 0.8rem; color: #fff; background: var(--accent); padding: 3px 13px; border-radius: 999px; flex: 0 0 auto; }
+.wfeat__tag--take { background: var(--ink); }
+.wfeat__t { font-weight: 700; font-size: 1.08rem; color: var(--ink); }
+.wfeat__meta { font-size: 0.9rem; color: var(--ink-70); }
+.wfeat__price { font-weight: 700; font-size: 0.96rem; color: var(--accent-d); }
+.wfeat__area { font-size: 0.82rem; color: var(--ink-55); }
+
+/* 実績カード: 前向きな注記（金額の文脈補足） */
+.wfeat__note { font-size: 0.8rem; color: var(--ink-55); line-height: 1.5; }
+
+/* 生成アイコン画像（#target 車種／#why 概念）。透過webp・ネイビー線画 */
+.genre__img { width: 66px; height: 66px; object-fit: contain; }
+.whyrow__img { width: 34px; height: 34px; object-fit: contain; }
