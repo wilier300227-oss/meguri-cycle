@@ -1,0 +1,50 @@
+---
+pagination:
+  data: lineRoutes
+  size: 1
+  alias: route
+permalink: "/line/{{ route.slug }}/"
+eleventyExcludeFromCollections: true
+---
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>LINEを開いています…｜めぐり自転車</title>
+  <!-- JS無効環境向けフォールバック（3秒後に遷移） -->
+  <meta http-equiv="refresh" content="3;url={{ route.oaUrl }}">
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;background:#fff;color:#1a2b45;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center}
+    .box{padding:24px}
+    p{margin:0 0 14px;font-size:1rem;line-height:1.7}
+    a{color:#0aa04a;font-weight:700}
+    .site{font-size:0.8rem;color:#8a93a3;margin-top:22px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <p>LINEを開いています…</p>
+    <p><a id="go" href="{{ route.oaUrl }}" rel="nofollow">開かない場合はこちら</a></p>
+    <p class="site">めぐり自転車</p>
+  </div>
+  <script>
+    // スマホ＝本文プリフィル付き oaMessage（実機検証済みURL）／
+    // PC＝友だち追加ページ（QR表示。oaMessage はスマホアプリ専用のため。既存 line-pc.js と同じ振り分け基準）。
+    // location.replace で履歴に中間ページを残さない（戻るで元ページに直接戻す）。
+    (function () {
+      var a = document.getElementById('go');
+      var dest = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+        ? a.href
+        : 'https://page.line.me/136bpsyc';
+      a.href = dest;
+      addEventListener('load', function () {
+        setTimeout(function () { location.replace(dest); }, 400);
+      });
+    })();
+  </script>
+  <!-- Cloudflare Web Analytics -->
+  <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "15b37c037ea94303a8d315c693380a78"}'></script>
+</body>
+</html>

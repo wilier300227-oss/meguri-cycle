@@ -17,7 +17,7 @@
 | GitHubリポジトリ | https://github.com/wilier300227-oss/meguri-cycle |
 | 公開URL | https://wilier300227-oss.github.io/meguri-cycle/ |
 | LINE公式アカウント | @136bpsyc |
-| Googleフォーム（査定） | https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform |
+| Googleフォーム（査定） | **廃止（2026-08）**。導線はLINE＋メール雛形（mailto）に集約。フォーム本体は「回答を受け付けていません」設定で残置（旧URL記録：https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform ） |
 
 ---
 
@@ -103,8 +103,8 @@ C:/Users/user/meguri-cycle/
 ピントが甘くても、暗くても、型番が分からなくても大丈夫です。
 お伺いするのは、金額にご納得いただいたあとのお引き取りのときです。
 
-お急ぎの場合はフォームもご利用いただけます：
-https://docs.google.com/forms/d/e/1FAIpQLSdx4H5kR91ydSnxwMJgoLxOm4XqpavR6Ua2FHHneaskffv7GQ/viewform
+メールでのご連絡は info@meguri-cycle.com へ。
+（※フォーム案内は廃止（2026-08）。旧文面の「お急ぎの場合はフォームも～」は使わない）
 ```
 
 ### サイト（今後の作業）
