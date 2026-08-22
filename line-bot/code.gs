@@ -888,15 +888,28 @@ function thankForPhoto(event) {
   // 撮影ボタンは写真送信で消えるため、ここで出し直し＋「📷マークから続けて」を案内。
   if (cache && !cache.get('photorcv_' + userId)) {
     cache.put('photorcv_' + userId, '1', 1800);
-    reply(event.replyToken, [{
-      type: 'text',
-      text: [
-        '📸 お写真ありがとうございます、受け取りました！',
-        '続けて送るときは、入力欄の 📷 マークからどうぞ（送れる分だけでOK）。',
-        'すべて送り終えたら「査定を申し込む」を押してください🚲',
-      ].join('\n'),
-      quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('✅ 査定を申し込む', '査定を申し込む')] },
-    }]);
+    // 引取（処分）フロー中は「査定を申し込む」へ誘導しない（査定額の話にならないよう、費用確認→担当者連絡の流れに統一。2026-08-22）
+    if (expectCityIntent_(userId) === 'shobun') {
+      reply(event.replyToken, [{
+        type: 'text',
+        text: [
+          '📸 お写真ありがとうございます、受け取りました！',
+          '続けて送るときは、入力欄の 📷 マークからどうぞ（送れる分だけでOK）。',
+          'お写真と市町名がそろいましたら、担当者が費用を確認してご連絡します🚲',
+        ].join('\n'),
+        quickReply: { items: [qrCameraRoll(), qrCamera()] },
+      }]);
+    } else {
+      reply(event.replyToken, [{
+        type: 'text',
+        text: [
+          '📸 お写真ありがとうございます、受け取りました！',
+          '続けて送るときは、入力欄の 📷 マークからどうぞ（送れる分だけでOK）。',
+          'すべて送り終えたら「査定を申し込む」を押してください🚲',
+        ].join('\n'),
+        quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('✅ 査定を申し込む', '査定を申し込む')] },
+      }]);
+    }
   }
 
   // 記録＋オーナー通知（連投の重複通知は10分デデュープ）
