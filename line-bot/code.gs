@@ -454,6 +454,8 @@ function replyRouteCta_(event, userId, routeId) {
         '📷 自転車ぜんぶが写る写真と、お住まいの市町名（例：金沢市片町）をお送りください。',
         '',
         '担当が確認して、確定の金額・ご案内をお送りします。',
+        '',
+        '（下の☰メニューからも、引き取り申込やよくある質問に進めます）',
       ].join('\n'),
       quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('⚡ 電動アシストの方はこちら', '電動')] },
     }]);
