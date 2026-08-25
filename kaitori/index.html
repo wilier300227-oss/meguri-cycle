@@ -202,6 +202,40 @@
           </select>
         </div>
       </div>
+      <!-- 振込のときだけ表示（app.js の updatePayFields で出し分け） -->
+      <div id="bankFields" style="display:none">
+        <p class="hint">振込先の口座情報を入力してください（書面に印字されます）。</p>
+        <div class="row2">
+          <div class="field">
+            <label class="req">金融機関名</label>
+            <input type="text" id="bankName" placeholder="例）北國銀行">
+          </div>
+          <div class="field">
+            <label class="req">支店名</label>
+            <input type="text" id="bankBranch" placeholder="例）金沢支店">
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>預金種別</label>
+            <select id="bankType">
+              <option value="普通">普通</option>
+              <option value="当座">当座</option>
+              <option value="貯蓄">貯蓄</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="req">口座番号</label>
+            <input type="text" id="bankNumber" inputmode="numeric" placeholder="例）1234567（数字のみ）">
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label class="req">口座名義（カナ）</label>
+            <input type="text" id="bankHolder" placeholder="例）ヤマダ タロウ">
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 本人確認 -->

@@ -35,6 +35,7 @@ const els = {};
   'bFrame','bRegist','bFeature','btnFeatureAuto',
   'accKey','accKeyCount','accKeyCountWrap','accBattery','accCharger','accManual',
   'amount','payMethod','pledge','pledgeCorp',
+  'bankFields','bankName','bankBranch','bankType','bankNumber','bankHolder',
   'registOwner','registOwnerFields','registOwnerName','registOwnerRelation','registOwnerConsent',
   'guardianCard','minorBanner','gName','gRelation','gRelationOther','gRelationOtherField',
   'gContact','gAddress','btnGuardianSameAddr','gIdMethod',
@@ -211,6 +212,36 @@ function updateIdFields() {
 function normalizeLicenseNumber() {
   const digits = els.licenseNumber.value.replace(/\D/g, '').slice(0, 12);
   if (els.licenseNumber.value !== digits) els.licenseNumber.value = digits;
+}
+
+/* =========================================================
+   4b. 支払方法による振込先口座欄の出し分け
+      「振込」のときだけ口座情報を表示・必須にする。
+      現金に戻したら表示だけでなく値も保持しない（共有端末のため）。
+   ========================================================= */
+function isTransfer() { return els.payMethod.value === '振込'; }
+
+function updatePayFields() {
+  const t = isTransfer();
+  els.bankFields.style.display = t ? '' : 'none';
+  if (!t) {
+    els.bankName.value = '';
+    els.bankBranch.value = '';
+    els.bankType.value = '普通';
+    els.bankNumber.value = '';
+    els.bankHolder.value = '';
+  }
+}
+
+/* 口座番号は数字のみ保持（銀行7桁が標準。ゆうちょ等の例外に備え8桁まで許容） */
+function normalizeBankNumber() {
+  const digits = els.bankNumber.value.replace(/\D/g, '').slice(0, 8);
+  if (els.bankNumber.value !== digits) els.bankNumber.value = digits;
+}
+
+/* PDF・台帳用の振込先表記 */
+function bankText() {
+  return `${els.bankName.value} ${els.bankBranch.value}　${els.bankType.value} ${els.bankNumber.value}　名義：${els.bankHolder.value}`.trim();
 }
 function licenseNumberText() {
   const n = els.licenseNumber.value.replace(/\D/g, '');
@@ -415,6 +446,16 @@ function collectMissing() {
   // 代金受領書を兼ねるため金額は必須（引取＝0円の場合は 0 を入力）
   if (!isFilled(els.amount)) miss.push('買取金額');
 
+  // 振込のときは振込先口座が必須（書面に印字して支払の記録を残す）
+  if (isTransfer()) {
+    const b = [];
+    if (!isFilled(els.bankName)) b.push('金融機関名');
+    if (!isFilled(els.bankBranch)) b.push('支店名');
+    if (!isFilled(els.bankNumber)) b.push('口座番号');
+    if (!isFilled(els.bankHolder)) b.push('口座名義（カナ）');
+    if (b.length) miss.push('振込先の' + b.join('・'));
+  }
+
   // 誓約
   if (!els.pledge.checked) miss.push('誓約事項（盗品でないこと）のチェック');
   if (!els.pledgeCorp.checked) miss.push('誓約事項（法人名義でないこと）のチェック');
@@ -547,7 +588,9 @@ function buildCertSheet() {
     <div class="doc-title">譲渡証明書 兼 代金受領書・委任状</div>
     <div class="doc-no">取引番号：${esc(els.tradeNo.value)}</div>
 
-    <p class="lead">下記の物品を譲受人へ譲渡し、その代金を受領したことを証明します。あわせて、防犯登録の抹消その他名義変更に必要な手続きを譲受人に委任します。</p>
+    <p class="lead">${isTransfer()
+      ? '下記の物品を譲受人へ譲渡したことを証明します。代金は下記の指定口座への振込により受領します。'
+      : '下記の物品を譲受人へ譲渡し、その代金を受領したことを証明します。'}あわせて、防犯登録の抹消その他名義変更に必要な手続きを譲受人に委任します。</p>
 
     <div class="sec-title">譲受人</div>
     <table class="kv">
@@ -578,10 +621,13 @@ function buildCertSheet() {
       <tr><th>防犯登録の名義人</th><td>${registOwnerText()}</td></tr>
       <tr><th>付属品</th><td>${esc(accessoryText())}</td></tr>
       <tr><th>特徴</th><td>${esc(els.bFeature.value)}</td></tr>
-      <tr><th>買取金額</th><td><b>${yen(els.amount.value)}</b>（${esc(els.payMethod.value)}）</td></tr>
+      <tr><th>買取金額</th><td><b>${yen(els.amount.value)}</b>（${esc(els.payMethod.value)}）</td></tr>${isTransfer() ? `
+      <tr><th>振込先口座</th><td>${esc(bankText())}</td></tr>` : ''}
     </table>
 
-    <div class="pledge">本物品は盗品・遺失物・不法投棄品ではなく、譲渡人が正当な権原に基づき譲渡するものであることを誓約します。また、会社・法人名義の自転車ではありません。上記代金を確かに受領しました。</div>
+    <div class="pledge">本物品は盗品・遺失物・不法投棄品ではなく、譲渡人が正当な権原に基づき譲渡するものであることを誓約します。また、会社・法人名義の自転車ではありません。${isTransfer()
+      ? '上記代金は、本書記載の指定口座への振込により受領します。'
+      : '上記代金を確かに受領しました。'}</div>
 
     <div class="sign-area">
       <div class="sign-box">
@@ -867,6 +913,8 @@ function collectRecord() {
     bFeature: els.bFeature.value,
     amount: els.amount.value,
     payMethod: els.payMethod.value,
+    // 振込時のみ（現行GASは未対応カラムのため無視される。将来の台帳拡張用に送っておく）
+    bankInfo: isTransfer() ? bankText() : '',
     isMinor: isMinor(),
     gName: isMinor() ? els.gName.value : '',
     gRelation: isMinor() ? pick('gRelation') : '',
@@ -1019,6 +1067,7 @@ function init() {
   initBirthSelects();
   updateIdFields();
   updateOtherFields();
+  updatePayFields();
   updateAccessoryFields();
   updateRegistOwnerFields();
   updateAgeAndMinor();
@@ -1030,12 +1079,16 @@ function init() {
     els[sel].addEventListener('change', () => { updateOtherFields(); runValidation(); });
   });
 
+  // 支払方法：振込のときだけ口座欄を表示
+  els.payMethod.addEventListener('change', () => { updatePayFields(); runValidation(); });
+
   // 郵便番号 → 住所
   els.btnZip.addEventListener('click', () => lookupZip(false));
   els.pZip.addEventListener('input', () => { if (zipDigits().length === 7) lookupZip(true); });
 
-  // 免許証番号は数字のみに正規化
+  // 免許証番号・口座番号は数字のみに正規化
   els.licenseNumber.addEventListener('input', normalizeLicenseNumber);
+  els.bankNumber.addEventListener('input', normalizeBankNumber);
 
   // 特徴の自動生成（手入力があればそれを優先）
   ['bMaker', 'bMakerOther', 'bModel', 'bModelOther', 'bColor', 'bColorOther', 'bFrame', 'bRegist']
