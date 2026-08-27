@@ -17,6 +17,7 @@ const BIZ = {
 /* ---- 状態 ---- */
 let confirmedAt = null;   // ISO8601 署名確定時刻
 let isLocked = false;
+let isCorrection = false; // ⑧ 訂正モード（元取引を残したまま訂正版を新規発行）
 let sigSeller = null;
 let sigGuardian = null;
 
@@ -46,7 +47,10 @@ const els = {};
   'syncBox','syncStatus','btnSyncRetry',
   'cfgUrl','cfgToken','btnSaveCfg','btnClearCfg','cfgStatus',
   'confirmModal','btnConfirmYes','btnConfirmCancel',
-  'appTitle','ledgerSettings','btnFinish','finishModal','btnFinishYes','btnFinishCancel'
+  'appTitle','ledgerSettings','btnFinish','finishModal','btnFinishYes','btnFinishCancel',
+  'correctionCard','corrOrigNo','corrSeq','corrReason','corrKind',
+  'corrConsentField','corrConsent','corrConsentNote','corrStaff',
+  'btnCorrectionMode','btnCorrectionExit'
 ].forEach(k => els[k] = $(k));
 
 /* =========================================================
@@ -62,6 +66,7 @@ function ymd(dateStr) {
 function seqKey(ymdStr) { return `rb_seq_${ymdStr}`; }
 
 function refreshTradeNo() {
+  if (isCorrection) { updateCorrTradeNo(); return; }  // ⑧ 訂正版は元番号+「-訂正N」
   const y = ymd(els.tradeDate.value);
   const committed = parseInt(localStorage.getItem(seqKey(y)) || '0', 10);
   const next = String(committed + 1).padStart(3, '0');
@@ -232,6 +237,42 @@ function updatePayFields() {
     els.bankNumber.value = '';
     els.bankHolder.value = '';
   }
+}
+
+/* =========================================================
+   4d. 訂正モード（⑧）
+      確定済み取引の記入間違いを「訂正版の新規発行」で扱う（事務処理規程 第5条）。
+      ・元の台帳行・PDFは消さない。取引番号は「元番号-訂正N」。連番は消費しない。
+      ・誤記の訂正＝再署名不要。金額・氏名・車体の特定に関わる訂正＝相手方の同意が必要
+        （再署名 or LINE等の同意記録）。台帳へは action:'correct' で送り、GASが
+        元行の「訂正ログ」列に履歴を追記したうえで訂正版を新規行として記録する。
+   ========================================================= */
+function enterCorrectionMode() {
+  if (isLocked) return;
+  isCorrection = true;
+  els.correctionCard.style.display = '';
+  els.ledgerSettings.open = false;
+  updateCorrKind();
+  updateCorrTradeNo();
+  runValidation();
+  els.correctionCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function updateCorrTradeNo() {
+  if (!isCorrection) return;
+  const orig = els.corrOrigNo.value.trim();
+  const n = Math.max(1, parseInt(els.corrSeq.value || '1', 10) || 1);
+  els.tradeNo.value = orig ? `${orig}-訂正${n}` : '';
+}
+function updateCorrKind() {
+  const major = els.corrKind.value === '重要変更';
+  els.corrConsentField.style.display = major ? '' : 'none';
+  if (!major) { els.corrConsent.checked = false; els.corrConsentNote.value = ''; }
+}
+/* 台帳の訂正ログ・訂正版の書面に載せる訂正情報の1行 */
+function correctionReasonText() {
+  const consent = els.corrKind.value === '重要変更'
+    ? `・同意：${els.corrConsentNote.value.trim() || '記録あり'}` : '';
+  return `${els.corrReason.value.trim()}（種別：${els.corrKind.value}${consent}／担当：${els.corrStaff.value.trim()}）`;
 }
 
 /* =========================================================
@@ -470,6 +511,17 @@ function isFilled(el) { return el && String(el.value).trim() !== ''; }
 
 function collectMissing() {
   const miss = [];
+  // ⑧ 訂正モードの必須項目
+  if (isCorrection) {
+    const orig = els.corrOrigNo.value.trim();
+    if (!orig) miss.push('元の取引番号');
+    else if (!/^RB-\d{8}-\d{3}/.test(orig)) miss.push('元の取引番号の形式（RB-YYYYMMDD-NNN）');
+    if (!isFilled(els.corrReason)) miss.push('訂正理由');
+    if (!isFilled(els.corrStaff)) miss.push('訂正担当者');
+    if (els.corrKind.value === '重要変更' && !els.corrConsent.checked) {
+      miss.push('相手方の同意の確認チェック（金額・氏名・車体の変更を含む訂正）');
+    }
+  }
   // 法定5項目
   if (!isFilled(els.tradeDate)) miss.push('取引年月日');
   if (!isFilled(els.bItem) || !isFilled(els.bQty)) miss.push('古物の品目・数量');
@@ -526,8 +578,8 @@ function collectMissing() {
     if (!els.registOwnerConsent.checked) miss.push('名義人の同意の確認');
   }
 
-  // 署名
-  if (!sigSeller || sigSeller.isEmpty()) miss.push('譲渡人の署名');
+  // 署名（⑧ 訂正モードでは不要＝誤記は再署名不要、重要変更は同意チェックで担保）
+  if (!isCorrection && (!sigSeller || sigSeller.isEmpty())) miss.push('譲渡人の署名');
 
   // 未成年時
   if (isMinor()) {
@@ -541,7 +593,7 @@ function collectMissing() {
     if (g.length) miss.push('保護者の' + g.join('・'));
     if (!els.gConsentExplain.checked) miss.push('保護者の同意事項（取引内容の了承）のチェック');
     if (!els.gConsentLegal.checked) miss.push('保護者の同意事項（法定代理人）のチェック');
-    if (!sigGuardian || sigGuardian.isEmpty()) miss.push('保護者の同意署名');
+    if (!isCorrection && (!sigGuardian || sigGuardian.isEmpty())) miss.push('保護者の同意署名');
   }
   return miss;
 }
@@ -588,7 +640,7 @@ function onConfirm() {
 function doConfirm() {
   els.confirmModal.hidden = true;
   confirmedAt = new Date().toISOString();
-  commitTradeNo();
+  if (!isCorrection) commitTradeNo();  // ⑧ 訂正版は元番号+訂正Nのため連番を消費しない
   lockForm();
 
   const d = new Date(confirmedAt);
@@ -649,8 +701,9 @@ function buildCertSheet() {
   const sig = (sigSeller && !sigSeller.isEmpty()) ? sigSeller.toDataURL('image/png') : '';
   const age = currentAge();
   const html = `
-    <div class="doc-title">譲渡証明書 兼 代金受領書・委任状</div>
-    <div class="doc-no">取引番号：${esc(els.tradeNo.value)}</div>
+    <div class="doc-title">譲渡証明書 兼 代金受領書・委任状${isCorrection ? '（訂正版）' : ''}</div>
+    <div class="doc-no">取引番号：${esc(els.tradeNo.value)}</div>${isCorrection ? `
+    <div class="doc-no">元取引番号：${esc(els.corrOrigNo.value.trim())}／訂正理由：${esc(correctionReasonText())}</div>` : ''}
 
     <p class="lead">${isTransfer()
       ? '下記の物品を譲受人へ譲渡したことを証明します。代金は下記の指定口座への振込により受領します。'
@@ -697,7 +750,9 @@ function buildCertSheet() {
       <div class="sign-box">
         <div class="sign-label">譲渡人（相手方）署名</div>
         <div class="sign-img">${sig ? `<img src="${sig}" alt="署名">` : ''}</div>
-        <div class="confirm-time">署名確定時刻：${esc(humanTime())}</div>
+        <div class="confirm-time">${isCorrection && !sig
+          ? `※ 本書は訂正版です。署名は元書面（取引番号 ${esc(els.corrOrigNo.value.trim())}）を参照。訂正確定時刻：${esc(humanTime())}`
+          : `署名確定時刻：${esc(humanTime())}`}</div>
       </div>
     </div>
 
@@ -876,10 +931,11 @@ async function sheetToPdfBase64(sheetEl) {
   return pdf.output('datauristring').split(',')[1];
 }
 
+function certDocKind() { return els.tradeType.value + (isCorrection ? '訂正' : ''); }
 async function generateCertPdf() {
   if (!isLocked) return;
   buildCertSheet();
-  await sheetToPdf(els.sheetCert, docFileName(els.tradeType.value, 'pdf'));
+  await sheetToPdf(els.sheetCert, docFileName(certDocKind(), 'pdf'));
 }
 async function generateGuardianPdf() {
   if (!isLocked || !isMinor()) return;
@@ -889,7 +945,7 @@ async function generateGuardianPdf() {
 async function generateCertImage() {
   if (!isLocked) return;
   buildCertSheet();
-  downloadCanvasPng(await renderSheet(els.sheetCert), docFileName(els.tradeType.value, 'png'));
+  downloadCanvasPng(await renderSheet(els.sheetCert), docFileName(certDocKind(), 'png'));
 }
 async function generateGuardianImage() {
   if (!isLocked || !isMinor()) return;
@@ -992,6 +1048,9 @@ function collectRecord() {
     gContact: isMinor() ? els.gContact.value : '',
     gIdMethod: isMinor() ? els.gIdMethod.value : '',
     confirmedAt: confirmedAt,
+    // ⑧ 訂正モードのみ（GASの handleCorrect_ が元行の訂正ログに追記して新規行を作る）
+    correctionOf: isCorrection ? els.corrOrigNo.value.trim() : '',
+    correctionReason: isCorrection ? correctionReasonText() : '',
   };
 }
 
@@ -1032,7 +1091,7 @@ async function enqueueAndSync() {
         b64: await sheetToPdfBase64(els.sheetGuardian),
       });
     }
-    const item = { id: els.tradeNo.value, action: 'append', record: collectRecord(), pdfs };
+    const item = { id: els.tradeNo.value, action: isCorrection ? 'correct' : 'append', record: collectRecord(), pdfs };
     const q = readQueue();
     if (!q.some(x => x.id === item.id)) { q.push(item); writeQueue(q); }
   } catch (e) {
@@ -1197,6 +1256,13 @@ function init() {
 
   // タイトル長押し（約1.5秒）で「台帳連携の設定」を表示（事業者専用・お客さまの誤操作防止）
   setupTitleLongPress();
+
+  // ⑧ 訂正モード（設定カード内のボタンから開始。解除はリロードで初期化）
+  els.btnCorrectionMode.addEventListener('click', () => { if (!isLocked) enterCorrectionMode(); });
+  els.btnCorrectionExit.addEventListener('click', () => { if (!isLocked) location.reload(); });
+  els.corrOrigNo.addEventListener('input', () => { updateCorrTradeNo(); runValidation(); });
+  els.corrSeq.addEventListener('input', () => { updateCorrTradeNo(); runValidation(); });
+  els.corrKind.addEventListener('change', () => { updateCorrKind(); runValidation(); });
 
   // 完了（次のお客さまへ初期化）
   els.btnFinish.addEventListener('click', () => { els.finishModal.hidden = false; });

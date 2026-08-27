@@ -33,6 +33,50 @@
   <form id="kaitoriForm" autocomplete="off" novalidate>
 
 
+    <!-- 訂正モード（⑧）。通常は非表示。「⚙ 台帳連携の設定」内の「訂正モードを開始」で表示（事業者専用） -->
+    <section class="card" id="correctionCard" style="display:none;">
+      <h2>訂正情報（訂正版の発行）</h2>
+      <div class="minor-banner">✏ 訂正モード：元の取引・書面はそのまま残り、この内容で<b>訂正版を新規発行</b>します。フォームには訂正後の<b>正しい内容をすべて</b>入力してください。</div>
+      <div class="row2">
+        <div class="field">
+          <label class="req">元の取引番号</label>
+          <input type="text" id="corrOrigNo" placeholder="例）RB-20260827-001">
+        </div>
+        <div class="field">
+          <label>訂正回数 <span class="hint">（同じ取引の2回目の訂正なら2）</span></label>
+          <input type="number" id="corrSeq" min="1" step="1" value="1">
+        </div>
+      </div>
+      <div class="field">
+        <label class="req">訂正理由</label>
+        <textarea id="corrReason" placeholder="例）フレーム番号の書き間違い（AB123→AB124）"></textarea>
+      </div>
+      <div class="field">
+        <label class="req">訂正の種類</label>
+        <select id="corrKind">
+          <option value="誤記">誤記の訂正（金額・氏名・車体の特定は変わらない）＝再署名不要</option>
+          <option value="重要変更">金額・氏名・車体の特定に関わる訂正＝相手方の同意が必要</option>
+        </select>
+      </div>
+      <div id="corrConsentField" style="display:none;">
+        <div class="checkbox-line">
+          <input type="checkbox" id="corrConsent">
+          <label for="corrConsent">相手方の同意を得ました（再署名、またはLINE等での同意記録あり）。</label>
+        </div>
+        <div class="field">
+          <label>同意の方法・記録</label>
+          <input type="text" id="corrConsentNote" placeholder="例）LINEで訂正内容を送り「同意します」の返信あり（8/27）">
+        </div>
+      </div>
+      <div class="field">
+        <label class="req">訂正担当者</label>
+        <input type="text" id="corrStaff" value="高多優典">
+      </div>
+      <div class="sig-actions">
+        <button type="button" class="btn btn-sm btn-ghost" id="btnCorrectionExit">訂正モードを解除（入力を消して通常に戻る）</button>
+      </div>
+    </section>
+
     <div class="section-divider">
       <span class="sd-title">事業者記入欄</span>
       <span class="sd-note">お客さまにお渡しする前に入力します</span>
@@ -562,6 +606,9 @@
       <button type="button" class="btn btn-sm btn-ghost" id="btnClearCfg">消去</button>
     </div>
     <p class="hint" id="cfgStatus"></p>
+    <hr class="out-sep">
+    <p class="hint">確定済みの取引に記入間違いが見つかったときは、訂正版を新規発行します（元の台帳行・PDFはそのまま残ります）。</p>
+    <button type="button" class="btn btn-sm btn-ghost" id="btnCorrectionMode">✏ 訂正モードを開始</button>
   </details>
 </main>
 
