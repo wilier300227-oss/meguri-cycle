@@ -278,9 +278,11 @@ function handleEvent(event) {
       replyMakerGuide_(event.replyToken, detectMakerGuide_(text)); rule = '診断ガイド:' + detectMakerGuide_(text);
     } else if (text === 'その他のメーカー') {
       replyMakerOther_(event.replyToken); rule = '診断ガイド:その他';
-    } else if (text === '買取査定を申し込みます') {
+    } else if (text === '買取査定を申し込みます' || text === '買取査定を申し込む') {
+      // 「〜申し込む」互換：管理画面製リッチメニューの送信テキスト揺れ対策（2026-08-27。
+      // 不一致だと部分一致で査定依頼(入力完了向け)に落ち、買取フローが始まらない）
       replyKaitoriApply(event.replyToken, userId); rule = '買取査定申込';
-    } else if (text === '出張引取を申し込みます') {
+    } else if (text === '出張引取を申し込みます' || text === '出張引取を申し込む') {
       replyHikitoriApply(event.replyToken, userId); rule = '出張引取申込';
     } else if (text === '買取希望') {
       replyKaitori(event.replyToken); setExpectCity_(userId, 'buy'); rule = '買取希望案内';
@@ -652,7 +654,7 @@ function clearManualMode_(userId) {
    人対応の意図が明確な inquiry（担当者に相談）／check_status（進捗確認）／
    reschedule（日程変更）／cancel（キャンセル）は除外し、手動のまま維持する。 */
 var MANUAL_RESET_ACTIONS = ['apply_kaitori', 'apply_shobun', 'area_fee', 'estimate_request', 'faq', 'photo', 'add_photo', 'add_vehicle'];
-var MANUAL_RESET_TEXTS = ['買取査定を申し込みます', '出張引取を申し込みます', '対応エリア・出張費', '査定を申し込む', '査定をお願いします', 'よくある質問', '写真を追加する', '写真を追加', '台数を追加する', '台数を追加'];
+var MANUAL_RESET_TEXTS = ['買取査定を申し込みます', '買取査定を申し込む', '出張引取を申し込みます', '出張引取を申し込む', '対応エリア・出張費', '査定を申し込む', '査定をお願いします', 'よくある質問', '写真を追加する', '写真を追加', '台数を追加する', '台数を追加'];
 function isManualResetAction_(action) { return MANUAL_RESET_ACTIONS.indexOf(action) !== -1; }
 function isManualResetText_(text) { return MANUAL_RESET_TEXTS.indexOf(text) !== -1; }
 /** 手動対応中/停止中の新着をオーナーへ通知（10分バースト抑制。ログは別途） */
