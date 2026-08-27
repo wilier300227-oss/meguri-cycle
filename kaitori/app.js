@@ -25,20 +25,21 @@ const $ = (id) => document.getElementById(id);
 const els = {};
 [
   'tradeNo','tradeDate','tradeType',
-  'pName','pZip','btnZip','zipNote','pAddress','pTel','pJob','pJobOther','pJobOtherField',
+  'handover','travelFeeField','travelFee','travelFeeReceived','travelFeeReceivedWrap',
+  'pName','pNameKana','pZip','btnZip','zipNote','pAddress','pTel','pJob','pJobOther','pJobOtherField',
   'pBirth','pBirthY','pBirthM','pBirthD','pAgeView',
   'idType','licenseFields','licenseAuthority','licenseAuthorityOther',
-  'licenseAuthorityOtherField','licenseNumber','idNote',
+  'licenseAuthorityOtherField','licenseNumber','idNote','idOriginalCheck','idVerifier',
   'bItem','bQty','bMaker','bMakerOther','bMakerOtherField',
   'bModel','bModelOther','bModelOtherField',
   'bColor','bColorOther','bColorOtherField',
-  'bFrame','bRegist','bFeature','btnFeatureAuto',
+  'bFrame','bRegist','bRegistPref','bRegistNone','bFeature','btnFeatureAuto',
   'accKey','accKeyCount','accKeyCountWrap','accBattery','accCharger','accManual',
   'amount','payMethod','pledge','pledgeCorp',
   'bankFields','bankName','bankBranch','bankType','bankNumber','bankHolder',
   'registOwner','registOwnerFields','registOwnerName','registOwnerRelation','registOwnerConsent',
   'guardianCard','minorBanner','gName','gRelation','gRelationOther','gRelationOtherField',
-  'gContact','gAddress','btnGuardianSameAddr','gIdMethod',
+  'gContact','gAddress','btnGuardianSameAddr','gIdMethod','gConsentExplain','gConsentLegal',
   'sigSeller','sigGuardian','sigSellerPh','sigGuardianPh',
   'validation','outputPanel','confirmStamp','btnConfirm',
   'btnPdfCert','btnPdfGuardian','btnImgCert','btnImgGuardian','sheetCert','sheetGuardian',
@@ -233,6 +234,45 @@ function updatePayFields() {
   }
 }
 
+/* =========================================================
+   4c. 引渡方法（⑦）：出張のときだけ出張費欄を表示。
+       出張費 > 0 のときだけ「受領しました」チェックを表示・必須にする。
+       持込に戻したら値も保持しない（共有端末のため）。
+   ========================================================= */
+function updateHandoverFields() {
+  const trip = els.handover.value === '出張';
+  els.travelFeeField.style.display = trip ? '' : 'none';
+  if (!trip) {
+    els.travelFee.value = '0';
+    els.travelFeeReceived.checked = false;
+  }
+  const fee = Number(els.travelFee.value) || 0;
+  els.travelFeeReceivedWrap.style.display = (trip && fee > 0) ? '' : 'none';
+  if (!(trip && fee > 0)) els.travelFeeReceived.checked = false;
+}
+function handoverText() {
+  if (els.handover.value !== '出張') return els.handover.value;
+  const fee = Number(els.travelFee.value) || 0;
+  if (fee <= 0) return '出張（出張費なし）';
+  return `出張（出張費 ${yen(fee)}${els.travelFeeReceived.checked ? '・受領済み' : ''}）`;
+}
+
+/* ⑦ 防犯登録「なし・不明」：チェック時は番号・都道府県を保持しない */
+function updateRegistNone() {
+  if (els.bRegistNone.checked) {
+    els.bRegist.value = '';
+    els.bRegistPref.value = '';
+  }
+}
+/* PDF・特徴・台帳に出す防犯登録の表記 */
+function bRegistText() {
+  if (els.bRegistNone.checked) return 'なし・不明';
+  const num = els.bRegist.value.trim();
+  const pref = els.bRegistPref.value;
+  if (!num) return '';
+  return pref ? `${num}（${pref}）` : num;
+}
+
 /* 口座番号は数字のみ保持（銀行7桁が標準。ゆうちょ等の例外に備え8桁まで許容） */
 function normalizeBankNumber() {
   const digits = els.bankNumber.value.replace(/\D/g, '').slice(0, 8);
@@ -364,7 +404,8 @@ function buildFeatureText() {
   if (model) parts.push(model);
   if (color) parts.push(`色：${color}`);
   if (els.bFrame.value.trim()) parts.push(`フレーム番号：${els.bFrame.value.trim()}`);
-  if (els.bRegist.value.trim()) parts.push(`防犯登録：${els.bRegist.value.trim()}`);
+  const regist = bRegistText();
+  if (regist) parts.push(`防犯登録：${regist}`);
   return parts.join('／');
 }
 
@@ -435,6 +476,7 @@ function collectMissing() {
   if (!isFilled(els.bFeature)) miss.push('古物の特徴');
   const partyMiss = [];
   if (!isFilled(els.pName)) partyMiss.push('氏名');
+  if (!isFilled(els.pNameKana)) partyMiss.push('フリガナ');
   if (!isFilled(els.pAddress)) partyMiss.push('住所');
   if (!isFilled(els.pTel)) partyMiss.push('電話番号');
   if (!isFilled(els.pJob)) partyMiss.push('職業');
@@ -442,6 +484,20 @@ function collectMissing() {
   if (!isFilled(els.pBirth)) partyMiss.push('生年月日(年齢)');
   if (partyMiss.length) miss.push('相手方の' + partyMiss.join('・'));
   if (!isFilled(els.idType)) miss.push('本人確認方法');
+  // ⑦ 原本の目視確認＋確認者名（古物営業法の確認実施の証跡）
+  if (!els.idOriginalCheck.checked) miss.push('本人確認書類の原本目視のチェック');
+  if (!isFilled(els.idVerifier)) miss.push('本人確認の確認者名');
+
+  // ⑦ 防犯登録：番号を書くなら都道府県も選ぶ。番号が無いなら「なし・不明」を明示
+  if (!els.bRegistNone.checked) {
+    if (isFilled(els.bRegist) && !isFilled(els.bRegistPref)) miss.push('防犯登録の都道府県');
+    if (!isFilled(els.bRegist)) miss.push('防犯登録番号（無い場合は「なし・不明」にチェック）');
+  }
+
+  // ⑦ 出張費がある取引は、受領の記録を残してから確定する
+  if (els.handover.value === '出張' && (Number(els.travelFee.value) || 0) > 0 && !els.travelFeeReceived.checked) {
+    miss.push('出張費受領のチェック');
+  }
 
   // 代金受領書を兼ねるため金額は必須（引取＝0円の場合は 0 を入力）
   if (!isFilled(els.amount)) miss.push('買取金額');
@@ -483,6 +539,8 @@ function collectMissing() {
     if (!isFilled(els.gAddress)) g.push('住所');
     if (!isFilled(els.gIdMethod)) g.push('本人確認');
     if (g.length) miss.push('保護者の' + g.join('・'));
+    if (!els.gConsentExplain.checked) miss.push('保護者の同意事項（取引内容の了承）のチェック');
+    if (!els.gConsentLegal.checked) miss.push('保護者の同意事項（法定代理人）のチェック');
     if (!sigGuardian || sigGuardian.isEmpty()) miss.push('保護者の同意署名');
   }
   return miss;
@@ -570,15 +628,21 @@ function humanTime() {
     { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit' });
 }
 
-/* 本人確認方法の表示（免許証のみ番号を出す） */
+/* 本人確認方法の表示（免許証のみ番号を出す）。⑦ 原本目視確認・確認者名を併記 */
 function idMethodText() {
   const t = els.idType.value;
+  let base;
   if (t === '運転免許証') {
     const auth = esc(pick('licenseAuthority') || BIZ.licenseAuthority);
     const num = esc(licenseNumberText());
-    return `${esc(t)}（${auth}${num ? '　' + num : ''}）`;
+    base = `${esc(t)}（${auth}${num ? '　' + num : ''}）`;
+  } else {
+    base = esc(t);
   }
-  return esc(t);
+  if (els.idOriginalCheck.checked) {
+    base += `　原本を目視確認（確認者：${esc(els.idVerifier.value)}）`;
+  }
+  return base;
 }
 
 function buildCertSheet() {
@@ -601,7 +665,7 @@ function buildCertSheet() {
 
     <div class="sec-title">譲渡人（相手方）</div>
     <table class="kv">
-      <tr><th>氏名</th><td>${esc(els.pName.value)}</td></tr>
+      <tr><th>氏名（フリガナ）</th><td>${esc(els.pName.value)}（${esc(els.pNameKana.value)}）</td></tr>
       <tr><th>住所</th><td>${esc(els.pAddress.value)}</td></tr>
       <tr><th>電話番号</th><td>${esc(els.pTel.value)}</td></tr>
       <tr><th>職業</th><td>${esc(pick('pJob'))}</td></tr>
@@ -612,12 +676,12 @@ function buildCertSheet() {
     <div class="sec-title">取引内容</div>
     <table class="kv">
       <tr><th>取引年月日</th><td>${esc(els.tradeDate.value)}</td></tr>
-      <tr><th>取引区分</th><td>${esc(els.tradeType.value)}</td></tr>
+      <tr><th>取引区分 / 引渡方法</th><td>${esc(els.tradeType.value)}　／　${esc(handoverText())}</td></tr>
       <tr><th>品目 / 数量</th><td>${esc(els.bItem.value)}　／　${esc(els.bQty.value)} 点</td></tr>
       <tr><th>メーカー / 車種</th><td>${esc(pick('bMaker'))||'—'}　／　${esc(pick('bModel'))||'—'}</td></tr>
       <tr><th>フレーム番号</th><td>${esc(els.bFrame.value)||'—'}</td></tr>
       <tr><th>色</th><td>${esc(pick('bColor'))||'—'}</td></tr>
-      <tr><th>防犯登録番号</th><td>${esc(els.bRegist.value)||'—'}</td></tr>
+      <tr><th>防犯登録番号</th><td>${esc(bRegistText())||'—'}</td></tr>
       <tr><th>防犯登録の名義人</th><td>${registOwnerText()}</td></tr>
       <tr><th>付属品</th><td>${esc(accessoryText())}</td></tr>
       <tr><th>特徴</th><td>${esc(els.bFeature.value)}</td></tr>
@@ -678,7 +742,7 @@ function buildGuardianSheet() {
       <tr><th>譲受人</th><td>${esc(brandText())}　${esc(BIZ.buyerName)}　古物商許可 ${esc(BIZ.license)}</td></tr>
     </table>
 
-    <div class="pledge">上記取引の内容を確認し、未成年者による当該物品の譲渡に同意します。</div>
+    <div class="pledge">上記取引の内容について説明を受け、了承しています。私は上記未成年者の法定代理人（親権者等）であり、未成年者による当該物品の譲渡に同意します。</div>
 
     <div class="sign-area">
       <div class="sign-box">
@@ -893,7 +957,11 @@ function collectRecord() {
     tradeNo: els.tradeNo.value,
     tradeDate: els.tradeDate.value,
     tradeType: els.tradeType.value,
+    handover: els.handover.value,
+    travelFee: els.handover.value === '出張' ? (Number(els.travelFee.value) || 0) : '',
+    travelFeeReceived: els.travelFeeReceived.checked ? '受領済み' : '',
     pName: els.pName.value,
+    pNameKana: els.pNameKana.value,
     pAddress: els.pAddress.value,
     pTel: els.pTel.value,
     pJob: pick('pJob'),
@@ -901,11 +969,13 @@ function collectRecord() {
     age: currentAge(),
     idType: els.idType.value,
     idNumber: isLic ? `${pick('licenseAuthority')} ${licenseNumberText()}`.trim() : '',
+    idVerify: els.idOriginalCheck.checked ? `原本目視確認済み（確認者：${els.idVerifier.value}）` : '',
     bMaker: pick('bMaker'),
     bModel: pick('bModel'),
     bColor: pick('bColor'),
     bFrame: els.bFrame.value,
-    bRegist: els.bRegist.value,
+    bRegist: els.bRegistNone.checked ? 'なし・不明' : els.bRegist.value,
+    bRegistPref: els.bRegistNone.checked ? '' : els.bRegistPref.value,
     registOwner: registOwnerPlain(),
     accessories: accessoryText(),
     bItem: els.bItem.value,
@@ -1068,6 +1138,7 @@ function init() {
   updateIdFields();
   updateOtherFields();
   updatePayFields();
+  updateHandoverFields();
   updateAccessoryFields();
   updateRegistOwnerFields();
   updateAgeAndMinor();
@@ -1082,6 +1153,13 @@ function init() {
   // 支払方法：振込のときだけ口座欄を表示
   els.payMethod.addEventListener('change', () => { updatePayFields(); runValidation(); });
 
+  // ⑦ 引渡方法：出張のときだけ出張費欄（金額>0で受領チェック）を表示
+  els.handover.addEventListener('change', () => { updateHandoverFields(); runValidation(); });
+  els.travelFee.addEventListener('input', () => { updateHandoverFields(); runValidation(); });
+
+  // ⑦ 防犯登録なし・不明：チェック時は番号・都道府県をクリア
+  els.bRegistNone.addEventListener('change', () => { updateRegistNone(); autoFillFeature(false); runValidation(); });
+
   // 郵便番号 → 住所
   els.btnZip.addEventListener('click', () => lookupZip(false));
   els.pZip.addEventListener('input', () => { if (zipDigits().length === 7) lookupZip(true); });
@@ -1091,7 +1169,7 @@ function init() {
   els.bankNumber.addEventListener('input', normalizeBankNumber);
 
   // 特徴の自動生成（手入力があればそれを優先）
-  ['bMaker', 'bMakerOther', 'bModel', 'bModelOther', 'bColor', 'bColorOther', 'bFrame', 'bRegist']
+  ['bMaker', 'bMakerOther', 'bModel', 'bModelOther', 'bColor', 'bColorOther', 'bFrame', 'bRegist', 'bRegistPref']
     .forEach(id => {
       els[id].addEventListener('change', () => autoFillFeature(false));
       els[id].addEventListener('input', () => autoFillFeature(false));

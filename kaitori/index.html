@@ -51,12 +51,34 @@
           <input type="date" id="tradeDate" data-legal="date">
         </div>
       </div>
-      <div class="field">
-        <label>取引区分</label>
-        <select id="tradeType">
-          <option value="買取">買取</option>
-          <option value="引取">引取</option>
-        </select>
+      <div class="row2">
+        <div class="field">
+          <label>取引区分</label>
+          <select id="tradeType">
+            <option value="買取">買取</option>
+            <option value="引取">引取</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="req">引渡方法</label>
+          <select id="handover">
+            <option value="出張">出張（ご自宅等へ訪問）</option>
+            <option value="持込">持込</option>
+          </select>
+        </div>
+      </div>
+      <!-- 出張のときだけ表示（app.js の updateHandoverFields で出し分け） -->
+      <div id="travelFeeField" style="display:none;">
+        <div class="row2">
+          <div class="field">
+            <label>出張費（円） <span class="hint">（買取は無料＝0のまま。引取のみ金額を入力）</span></label>
+            <input type="number" id="travelFee" min="0" step="1" value="0">
+          </div>
+        </div>
+        <div class="checkbox-line" id="travelFeeReceivedWrap" style="display:none;">
+          <input type="checkbox" id="travelFeeReceived">
+          <label for="travelFeeReceived">出張費を受領しました。</label>
+        </div>
       </div>
     </section>
 
@@ -154,6 +176,26 @@
         <div class="field">
           <label>防犯登録番号</label>
           <input type="text" id="bRegist">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>防犯登録の都道府県</label>
+          <select id="bRegistPref">
+            <option value="">選択してください</option>
+            <option value="石川県">石川県</option>
+            <option value="富山県">富山県</option>
+            <option value="福井県">福井県</option>
+            <option value="その他の都道府県">その他の都道府県</option>
+            <option value="不明">不明</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <div class="checkbox-line">
+            <input type="checkbox" id="bRegistNone">
+            <label for="bRegistNone">防犯登録なし・不明</label>
+          </div>
         </div>
       </div>
       <div class="field">
@@ -272,6 +314,14 @@
         </div>
       </div>
       <p class="hint" id="idNote" style="display:none;"></p>
+      <div class="checkbox-line">
+        <input type="checkbox" id="idOriginalCheck">
+        <label for="idOriginalCheck">本人確認書類の<b>原本を目視で確認</b>しました。</label>
+      </div>
+      <div class="field">
+        <label class="req">確認者名</label>
+        <input type="text" id="idVerifier" value="高多優典">
+      </div>
     </section>
 
     <div class="section-divider">
@@ -285,6 +335,10 @@
       <div class="field">
         <label class="req">氏名</label>
         <input type="text" id="pName" data-legal="party" placeholder="例）山田 太郎">
+      </div>
+      <div class="field">
+        <label class="req">フリガナ</label>
+        <input type="text" id="pNameKana" placeholder="例）ヤマダ タロウ">
       </div>
       <div class="field">
         <label>郵便番号 <span class="hint">（7桁を入れると住所が自動で入ります）</span></label>
@@ -423,6 +477,14 @@
           <option value="本人確認書類の写しを事前に提出済み">本人確認書類の写しを事前に提出済み</option>
           <option value="現地で保護者ご本人に同行いただき原本を確認">現地で保護者ご本人に同行いただき原本を確認</option>
         </select>
+      </div>
+      <div class="checkbox-line">
+        <input type="checkbox" id="gConsentExplain">
+        <label for="gConsentExplain">取引内容の説明を受け、了承しています。</label>
+      </div>
+      <div class="checkbox-line">
+        <input type="checkbox" id="gConsentLegal">
+        <label for="gConsentLegal">私は上記未成年者の法定代理人（親権者等）です。</label>
       </div>
 
       <div class="field sig-wrap">

@@ -33,14 +33,17 @@
  *   守られるが、公開URLで配信するなら定期ローテーション＋kaitoriページの非公開運用を推奨。
  */
 
-/* 台帳カラム定義（要件定義3.5準拠＋実機フィードバックで増えた項目。順序＝列順） */
+/* 台帳カラム定義（要件定義3.5準拠＋実機フィードバックで増えた項目。順序＝列順）
+   ⑦ 2026-08-27：フリガナ／原本確認／防犯登録都道府県／引渡方法・出張費・受領／振込先口座 を追加。
+   ★列構成を変えたら、台帳シートのヘッダー行を消して initLedgerHeader を実行し直すこと
+   （データ行がある場合は列挿入で手動移行）。 */
 const KAITORI_HEADERS = [
-  '取引番号', '取引年月日', '取引区分',
-  '相手方氏名', '住所', '電話番号', '職業', '生年月日', '年齢',
-  '本人確認区分', '確認番号',
-  'メーカー', '車種', 'フレーム番号', '色', '防犯登録番号', '防犯登録名義人', '付属品',
+  '取引番号', '取引年月日', '取引区分', '引渡方法', '出張費', '出張費受領',
+  '相手方氏名', '相手方フリガナ', '住所', '電話番号', '職業', '生年月日', '年齢',
+  '本人確認区分', '確認番号', '原本確認',
+  'メーカー', '車種', 'フレーム番号', '色', '防犯登録番号', '防犯登録都道府県', '防犯登録名義人', '付属品',
   '品目', '数量', '特徴',
-  '買取金額', '支払方法',
+  '買取金額', '支払方法', '振込先口座',
   '未成年フラグ', '保護者氏名', '保護者続柄', '保護者住所', '保護者連絡先', '保護者本人確認',
   '署名確定時刻', '証明書PDF', '保護者同意書PDF',
   '記録日時', '訂正ログ',
@@ -112,7 +115,11 @@ function handleAppend_(body) {
     tradeNo,
     rec.tradeDate || '',
     rec.tradeType || '',
+    rec.handover || '',
+    (rec.travelFee === 0 || rec.travelFee) ? Number(rec.travelFee) : '',
+    rec.travelFeeReceived || '',
     rec.pName || '',
+    rec.pNameKana || '',
     rec.pAddress || '',
     rec.pTel || '',
     rec.pJob || '',
@@ -120,11 +127,13 @@ function handleAppend_(body) {
     (rec.age === 0 || rec.age) ? rec.age : '',
     idType,
     idNumber,
+    rec.idVerify || '',
     rec.bMaker || '',
     rec.bModel || '',
     rec.bFrame || '',
     rec.bColor || '',
     rec.bRegist || '',
+    rec.bRegistPref || '',
     rec.registOwner || '',
     rec.accessories || '',
     rec.bItem || '',
@@ -132,6 +141,7 @@ function handleAppend_(body) {
     rec.bFeature || '',
     (rec.amount === 0 || rec.amount) ? Number(rec.amount) : '',  // 数値で保持（検索・集計用）
     rec.payMethod || '',
+    rec.bankInfo || '',
     rec.isMinor ? '未成年' : '',
     rec.gName || '',
     rec.gRelation || '',
