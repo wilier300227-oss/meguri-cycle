@@ -1,7 +1,8 @@
   <!-- 新デザイン用フォント＋CSS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Barlow+Semi+Condensed:wght@400;600&display=swap" rel="stylesheet">
+  <!-- display=optional: フォント読み込み後の差し替え再レイアウト（CLS）を防ぐ。初回訪問はシステムフォント表示になることがある（2回目以降はキャッシュから即時表示） -->
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Barlow+Semi+Condensed:wght@400;600&display=optional" rel="stylesheet">
   <link rel="stylesheet" href="/css/lp.css">
   <script>document.documentElement.classList.add('js-motion');</script>
   <!-- PC向けCTA振り分け（PCではoaMessage→友だち追加リンク）。全head-newページ共通 -->
