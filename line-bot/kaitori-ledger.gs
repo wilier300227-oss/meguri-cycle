@@ -80,6 +80,17 @@ function handleAppend_(body) {
 
   const sheet = getLedgerSheet_();
 
+  // 再送重複ガード（⑥ 2026-08-27）：フロントの再送キュー（flushQueue）は、送信成功でも
+  // 応答を取りこぼすと同じ取引を再送する。同一取引（取引番号＋署名確定時刻）が台帳に
+  // 既にあれば、PDF保存も追記もせず既存リンクを返して正常終了する（キューは正しく消える）。
+  // 訂正(handleCorrect_)は新番号で来るため影響しない。確定時刻も見るのは、端末別の
+  // localStorage採番で異なる取引が同番号になった場合に誤って弾かないため。
+  const confirmedAtKey = String(rec.confirmedAt || '');
+  const existing = findExistingRow_(sheet, tradeNo, confirmedAtKey);
+  if (existing) {
+    return json_({ status: 'ok', duplicate: true, tradeNo: tradeNo, links: existing });
+  }
+
   // 免許証以外は確認番号を保存しない（サーバ側の防御。フロントでも空にしている）
   const idType = String(rec.idType || '');
   const idNumber = (idType === '運転免許証') ? String(rec.idNumber || '') : '';
@@ -164,6 +175,23 @@ function handleCorrect_(body) {
   // 訂正後の内容は新規行として記録（新しい取引番号を持たせる想定）
   const appended = handleAppend_(body);
   return appended;
+}
+
+/** 同一取引（取引番号＋署名確定時刻）の既存行を探す。あれば既存PDFリンクを返し、無ければ null。
+ *  署名確定時刻が空のレコードは取引番号のみで判定する。 */
+function findExistingRow_(sheet, tradeNo, confirmedAt) {
+  const last = sheet.getLastRow();
+  if (last < 2) return null;
+  const confIdx = KAITORI_HEADERS.indexOf('署名確定時刻');
+  const certIdx = KAITORI_HEADERS.indexOf('証明書PDF');
+  const gIdx = KAITORI_HEADERS.indexOf('保護者同意書PDF');
+  const values = sheet.getRange(2, 1, last - 1, KAITORI_HEADERS.length).getValues();
+  for (let r = 0; r < values.length; r++) {
+    if (String(values[r][0]).trim() !== tradeNo) continue;
+    if (confirmedAt && String(values[r][confIdx]) !== confirmedAt) continue;
+    return { cert: values[r][certIdx] || '', guardian: values[r][gIdx] || '' };
+  }
+  return null;
 }
 
 /** 台帳シート取得（無ければヘッダーを作る） */
