@@ -19,6 +19,7 @@ const routes = [
   { slug: "terms", msg: "自転車のことで相談できますか？（条件ページから）" },
   { slug: "privacy", msg: "自転車のことで相談できますか？（プライバシーページから）" },
   // コラム
+  { slug: "column", msg: "自転車のことで相談できますか？（コラム一覧から）" },
   { slug: "column-recall", msg: "電動アシストのリコールを確認したいのですが、相談できますか？（リコールコラムから）" },
   { slug: "column-battery-check", msg: "バッテリーの診断をお願いできますか？（診断コラムから）" },
   { slug: "column-battery-disposal", msg: "バッテリーの処分をお願いできますか？（処分コラムから）" },

@@ -607,3 +607,17 @@ h1, h2, h3 {
 /* 生成アイコン画像（#target 車種／#why 概念）。透過webp・ネイビー線画 */
 .genre__img { width: 66px; height: 66px; object-fit: contain; }
 .whyrow__img { width: 34px; height: 34px; object-fit: contain; }
+
+/* コラム一覧（/column/）: 番号＋左罫線のエディトリアル行 */
+.collist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-hair); }
+.colrow { display: grid; grid-template-columns: 52px 1fr; gap: clamp(14px,3vw,24px); padding: clamp(24px,4vw,34px) 0; border-bottom: 1px solid var(--line-hair); }
+.colrow__n { font-family: "Barlow Semi Condensed", sans-serif; font-size: 1.6rem; font-weight: 600; color: var(--accent); line-height: 1; padding-top: 4px; }
+.colrow__body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.colrow__meta { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: var(--ink-40); }
+.colrow__h { font-size: clamp(1.1rem,2.6vw,1.35rem); line-height: 1.45; margin: 0; }
+.colrow__h a { color: var(--ink); text-decoration: none; }
+.colrow__h a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+.colrow__p { color: var(--ink-70); font-size: 0.93rem; line-height: 1.8; margin: 0; }
+.colrow__go { align-self: flex-start; font-size: 0.9rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+.colrow__go:hover { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 520px) { .colrow { grid-template-columns: 40px 1fr; } .colrow__n { font-size: 1.3rem; } }
