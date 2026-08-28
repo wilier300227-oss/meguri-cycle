@@ -183,8 +183,7 @@ C:/Users/user/meguri-cycle/
 ### ⏳ 残作業
 
 #### 緊急度：中（数日～1週間以内）
-- [ ] site:meguri-cycle.com/terms/ で検索結果から消えたか確認
-  - 確認時に一声→Claude が sitemap.xml から /terms/ を除去
+- [x] site:meguri-cycle.com/terms/ で検索結果から消えたことを確認（2026-08-28）→ sitemap.xml から /terms/ を除去済み
 
 #### 定期作業（momonさんペース）
 - [ ] GBP充実（写真追加済み・実レビュー獲得中）
