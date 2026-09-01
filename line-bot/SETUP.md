@@ -11,14 +11,20 @@
 [script.google.com](https://script.google.com) → LINEボットのプロジェクト（`code.gs` があるもの。台帳の `kaitori-ledger.gs` とは**別プロジェクト**）。
 
 ### 1-2. コードを最新化
-1. 先に、今GASに入っている **`CHANNEL_ACCESS_TOKEN` と `OWNER_LINE_USER_ID` の実値をメモ**（貼り付けで消えるため）。
+1. 先に、今GASに入っている **`OWNER_LINE_USER_ID` の実値をメモ**（貼り付けで消えるため）。
+   ※ `CHANNEL_ACCESS_TOKEN` は 2026-09 以降スクリプトプロパティ管理（下記 1-2b）のためメモ不要。
 2. リポジトリの `line-bot/code.gs` を全部コピー → GASエディタの `code.gs` に**全置換で貼り付け** → 保存。
 3. 上部の定数を**実値に戻す**：
-   - `CHANNEL_ACCESS_TOKEN`（チャネルアクセストークン）
    - `OWNER_LINE_USER_ID`（下の 1-3 で取得）
    - `GOOGLE_REVIEW_URL`（口コミリンク。未定なら空でOK）
    - `REVIEW_AUTO_ENABLED` は `false` のまま
    - ※ `inquiry-sync.gs` 等の他ファイルは既存のまま（今回変更なし）
+
+### 1-2b. CHANNEL_ACCESS_TOKEN をスクリプトプロパティに設定（初回のみ）
+GASエディタ左の歯車「プロジェクトの設定」→「スクリプト プロパティ」→「スクリプト プロパティを追加」で
+プロパティ名 `CHANNEL_ACCESS_TOKEN`、値に LINE Developers の「チャネルアクセストークン（長期）」を設定 → 保存。
+未設定のまま動かすと「スクリプトプロパティ CHANNEL_ACCESS_TOKEN が未設定です」エラーで止まる。
+以後トークンを再発行したときは、コードは触らずこのプロパティ値の更新だけでよい（再デプロイ不要）。
 
 ### 1-3. OWNER_LINE_USER_ID を取得
 個人LINEで「めぐり自転車」を友だち追加 → トークで **`MYID`** と送信 → ボットが `あなたのuserId:U…` を返信 → その `U…` を `OWNER_LINE_USER_ID` に貼る → 保存。
@@ -113,6 +119,7 @@
 - 車両ステートマシン（写真の「〇台目」自動振り分け・査定額内訳）＝§5-5 の作り込み
 - （当面は手動運用＋タブレット台帳でカバー）
 
-## セキュリティTODO（§10-7）
-- `CHANNEL_ACCESS_TOKEN` は現状コード内の定数。将来 PropertiesService へ移すのが望ましい。
+## セキュリティ（§10-7）
+- `CHANNEL_ACCESS_TOKEN` は **PropertiesService（スクリプトプロパティ）管理に移行済み（2026-09-01）**。設定手順は 1-2b。
+- `OWNER_LINE_USER_ID`・`GOOGLE_REVIEW_URL` はコード内定数のまま（トークンほどの機密性はないが、同様の移行も可）。
 - `.env`・トークンは公開リポジトリにコミットしない（コード内は空/プレースホルダのままに）。

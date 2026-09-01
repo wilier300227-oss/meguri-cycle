@@ -28,8 +28,9 @@
  *    （inquiry-sync.gs が使っているものと同じ）に記録し、オーナー個人のLINEに通知
  *
  * ── 設定 ──
- * CHANNEL_ACCESS_TOKEN に LINE Developers コンソールで発行した
- * 「チャネルアクセストークン（長期）」を貼り付けてください。
+ * CHANNEL_ACCESS_TOKEN は スクリプトプロパティ（プロジェクトの設定 → スクリプト プロパティ）に
+ * LINE Developers コンソールで発行した「チャネルアクセストークン（長期）」を設定してください
+ * （§10-7対応：コードに実値を直書きしない）。
  * GOOGLE_REVIEW_URL に Googleビジネスプロフィール承認後の口コミ投稿リンクを貼り付けてください。
  * OWNER_LINE_USER_ID に、あなた個人のLINEのuserIdを貼り付けてください。
  *   取得方法：あなた個人のLINEで「めぐり自転車」を友だち追加し、"MYID" と送信すると
@@ -39,7 +40,19 @@
  *   将来また自動運用に戻す場合のみ REVIEW_AUTO_ENABLED=true にして installReviewTrigger() を実行する。
  */
 
-const CHANNEL_ACCESS_TOKEN = 'ここにチャネルアクセストークンを貼り付け';
+/** LINEチャネルアクセストークン（長期）。実値はコードに置かず、スクリプトプロパティ
+ *  CHANNEL_ACCESS_TOKEN（プロジェクトの設定 → スクリプト プロパティ）から取得する。 */
+function getChannelAccessToken_() {
+  const token = PropertiesService.getScriptProperties().getProperty('CHANNEL_ACCESS_TOKEN');
+  if (!token) {
+    throw new Error(
+      'スクリプトプロパティ CHANNEL_ACCESS_TOKEN が未設定です。' +
+      'GASエディタの「プロジェクトの設定 → スクリプト プロパティ」で ' +
+      'LINE Developers のチャネルアクセストークン（長期）を設定してください。'
+    );
+  }
+  return token;
+}
 
 /** オーナー個人のLINEのuserId（新規問い合わせの通知先）。取得方法は上記コメント参照 */
 const OWNER_LINE_USER_ID = 'ここに自分のuserIdを貼り付け';
@@ -1408,7 +1421,7 @@ function getDisplayName_(userId) {
   let name = userId;
   try {
     const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/profile/' + userId, {
-      headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+      headers: { Authorization: 'Bearer ' + getChannelAccessToken_() },
       muteHttpExceptions: true,
     });
     const profile = JSON.parse(res.getContentText());
@@ -1443,7 +1456,7 @@ function reply(replyToken, messages) {
   UrlFetchApp.fetch('https://api.line.me/v2/bot/message/reply', {
     method: 'post',
     contentType: 'application/json',
-    headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+    headers: { Authorization: 'Bearer ' + getChannelAccessToken_() },
     payload: JSON.stringify({ replyToken: replyToken, messages: messages }),
     muteHttpExceptions: true,
   });
@@ -1454,7 +1467,7 @@ function pushMessage_(userId, messages) {
   UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
     method: 'post',
     contentType: 'application/json',
-    headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+    headers: { Authorization: 'Bearer ' + getChannelAccessToken_() },
     payload: JSON.stringify({ to: userId, messages: messages }),
     muteHttpExceptions: true,
   });
@@ -1473,7 +1486,7 @@ function linkRichMenu_(userId, which) {
   try {
     UrlFetchApp.fetch('https://api.line.me/v2/bot/user/' + userId + '/richmenu/' + id, {
       method: 'post',
-      headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+      headers: { Authorization: 'Bearer ' + getChannelAccessToken_() },
       muteHttpExceptions: true,
     });
   } catch (e) {}
@@ -1485,7 +1498,7 @@ function switchToMenuA_(userId) { linkRichMenu_(userId, 'A'); } // 通常/停止
  *  ここで得た A/B の richMenuId を スクリプトプロパティ RICHMENU_A_ID / RICHMENU_B_ID に設定する。 */
 function listRichMenus() {
   const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/richmenu/list', {
-    headers: { Authorization: 'Bearer ' + CHANNEL_ACCESS_TOKEN },
+    headers: { Authorization: 'Bearer ' + getChannelAccessToken_() },
     muteHttpExceptions: true,
   });
   let data = {};
