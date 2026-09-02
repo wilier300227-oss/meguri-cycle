@@ -288,6 +288,15 @@ h1, h2, h3 {
 .foot__col h4 { font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-40); margin: 0 0 14px; font-weight: 600; }
 .foot__col a { display: block; font-size: 0.88rem; color: var(--ink-70); text-decoration: none; padding: 6px 0; transition: color .2s; }
 .foot__col a:hover { color: var(--accent); }
+/* フッター対応エリア帯：全24市町へ全ページからリンクする（回遊＋内部リンク） */
+.foot__areas { margin-top: 40px; padding-top: 26px; border-top: 1px solid var(--line-hair); }
+.foot__areas h4 { font-family: "Barlow Semi Condensed", sans-serif; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-40); margin: 0 0 16px; font-weight: 600; }
+.foot__areagrp { display: grid; gap: 4px 18px; margin-bottom: 14px; }
+@media (min-width: 760px) { .foot__areagrp { grid-template-columns: 5em 1fr; align-items: baseline; gap: 6px 20px; } }
+.foot__areapref { font-size: 0.8rem; font-weight: 700; color: var(--ink-55); }
+.foot__arealist { display: flex; flex-wrap: wrap; gap: 2px 18px; }
+.foot__arealist a { font-size: 0.86rem; color: var(--ink-70); text-decoration: none; padding: 5px 0; transition: color .2s; }
+.foot__arealist a:hover { color: var(--accent); }
 .foot__legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--line-hair); font-size: 0.78rem; color: var(--ink-40); }
 
 /* スマホ固定CTA */
