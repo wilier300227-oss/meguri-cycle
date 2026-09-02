@@ -1,0 +1,13 @@
+  {# OGP 共通メタ（og:site_name / og:image / twitter:card）
+     head-new.njk から読み込まれるため、head-new.njk を include しているページには
+     自動で出力される。市町ページを1枚増やしても手書きは不要。
+
+     ページ個別の画像を使いたい場合は、そのページのフロントマターで上書きする：
+       ---
+       ogImage: "https://meguri-cycle.com/images/ogp-takaoka.jpg"
+       ---
+     未指定なら共通のOGP画像。og:title / og:description / og:type / og:url は
+     ページ固有のため、従来どおり各ページの <head> に書く。 #}
+  <meta property="og:site_name" content="めぐり自転車">
+  <meta property="og:image" content="{{ ogImage | default('https://meguri-cycle.com/images/ogp.jpg') }}">
+  <meta name="twitter:card" content="summary_large_image">

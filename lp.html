@@ -14,14 +14,7 @@ ctaUrl: "/line/lp/"
   <link rel="canonical" href="https://meguri-cycle.com/lp/">
   <link rel="icon" type="image/png" href="/logo/favicon.png">
 
-  <!-- 新デザイン用フォント -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Barlow+Semi+Condensed:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/lp.css">
-
-  <!-- モーション有効化（JS無しでも本文は表示される） -->
-  <script>document.documentElement.classList.add('js-motion');</script>
+  {% include "head-new.njk" %}
 </head>
 <body>
 
@@ -354,15 +347,6 @@ ctaUrl: "/line/lp/"
       }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
       els.forEach(function (el) { io.observe(el); });
     });
-  </script>
-  <script>
-    // PCブラウザではLINEのメッセージ送信リンク（oaMessage＝スマホアプリ専用。PCだとLINEトップに
-    // フォールバックしてしまう）を、友だち追加ページ（PCでQR表示）に差し替える。スマホはそのまま。
-    (function () {
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) return;
-      var pcUrl = 'https://line.me/R/ti/p/@136bpsyc';
-      document.querySelectorAll('a[href*="/R/oaMessage/"]').forEach(function (a) { a.href = pcUrl; });
-    })();
   </script>
 
   <!-- Cloudflare Web Analytics -->

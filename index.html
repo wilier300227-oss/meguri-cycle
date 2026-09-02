@@ -15,8 +15,6 @@ ctaUrl: "/line/top/"
   <meta property="og:description" content="整備士が査定。写真でオンライン査定→確定額をご確認→お引き取りに伺います。買取は出張費0円、引取は処分費0円（出張費のみ）。防犯登録抹消も代行します。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://meguri-cycle.com/">
-  <meta property="og:image" content="https://meguri-cycle.com/images/ogp.jpg">
-  <meta name="twitter:card" content="summary_large_image">
   <!-- canonical（トップ。他ページは各自設定済み。トップだけ抜けていたため追加） -->
   <link rel="canonical" href="https://meguri-cycle.com/">
   <!-- favicon（ロゴマーク） -->
@@ -46,12 +44,7 @@ ctaUrl: "/line/top/"
   }
   </script>
 
-  <!-- 新デザイン用フォント -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Barlow+Semi+Condensed:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/lp.css">
-  <script>document.documentElement.classList.add('js-motion');</script>
+  {% include "head-new.njk" %}
 </head>
 <body>
 
@@ -640,15 +633,6 @@ ctaUrl: "/line/top/"
         [hero].concat(tail).forEach(function (el) { if (el) dio.observe(el); });
       }
     });
-  </script>
-  <script>
-    // PCブラウザではLINEのメッセージ送信リンク（oaMessage＝スマホアプリ専用。PCだとLINEトップに
-    // フォールバックしてしまう）を、友だち追加ページ（PCでQR表示）に差し替える。スマホはそのまま。
-    (function () {
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) return;
-      var pcUrl = 'https://line.me/R/ti/p/@136bpsyc';
-      document.querySelectorAll('a[href*="/R/oaMessage/"]').forEach(function (a) { a.href = pcUrl; });
-    })();
   </script>
   <!-- Cloudflare Web Analytics -->
   {% include "cf-beacon.njk" %}
