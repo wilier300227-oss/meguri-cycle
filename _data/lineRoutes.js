@@ -48,6 +48,7 @@ const routes = [
   { slug: "imizu", msg: "自転車の査定をお願いできますか？（射水ページから）" },
   { slug: "tonami", msg: "自転車の査定をお願いできますか？（砺波ページから）" },
   { slug: "toyama", msg: "自転車の査定をお願いできますか？（富山ページから）" },
+  { slug: "nanto", msg: "自転車の査定をお願いできますか？（南砺ページから）" },
 ];
 
 module.exports = routes.map(function (r) {
