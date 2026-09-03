@@ -31,6 +31,26 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://meguri-cycle.com/column/battery-disposal-kanazawa/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://meguri-cycle.com/column/battery-disposal-kahoku/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://meguri-cycle.com/column/battery-disposal-hakusan/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://meguri-cycle.com/column/battery-disposal-nonoichi/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://meguri-cycle.com/brands/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
