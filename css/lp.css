@@ -140,6 +140,7 @@ h1, h2, h3 {
 /* ---------- ヒーロー（全面動画・ダーク・白文字） ---------- */
 .hero { position: relative; overflow: hidden; min-height: clamp(560px, 84vh, 800px); display: flex; align-items: center; color: #fff; background: var(--dark-hero); }
 .hero__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.hero__poster { background: url('/video/hero-poster.jpg') center / cover no-repeat; } /* スマホ・動画生成前の静止画 */
 .hero__scrim { position: absolute; inset: 0; z-index: 1;
   background:
     linear-gradient(90deg, rgba(10,18,32,0.88) 0%, rgba(10,18,32,0.58) 48%, rgba(10,18,32,0.22) 100%),

@@ -68,7 +68,8 @@ ctaUrl: "/line/top/"
 
   <!-- ヒーロー（全面動画・ダーク・白文字）トップは従来どおり全車種の顔。電動の訴求は /dendo/ に集約 -->
   <section class="hero" id="hero">
-    <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="/video/hero-poster.jpg" aria-hidden="true" data-video="/video/hero.mp4"></video>
+    <!-- ヒーロー背景：HTMLにはvideoタグを置かない（Googleが動画ページと誤認するため）。PC幅のみJSでvideo要素を生成し、スマホはポスター静止画のみ -->
+    <div class="hero__video hero__poster" data-video="/video/hero.mp4" data-poster="/video/hero-poster.jpg" aria-hidden="true"></div>
     <div class="hero__scrim" aria-hidden="true"></div>
     <div class="wrap hero__inner">
       <div class="stack reveal hero__copy">
@@ -601,11 +602,15 @@ ctaUrl: "/line/top/"
         lk.addEventListener('click', function (e) { if (e.target.tagName === 'A') { lk.classList.remove('open'); tg.setAttribute('aria-expanded', 'false'); } });
       }
       // ヒーロー動画：モバイル・省モーション時は読み込まずポスター静止画のみ（LCP対策）
-      var hv = document.querySelector('.hero__video[data-video]');
-      if (hv && matchMedia('(min-width: 768px)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      var hp = document.querySelector('.hero__poster[data-video]');
+      if (hp && matchMedia('(min-width: 768px)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        var hv = document.createElement('video');
+        hv.className = 'hero__video'; hv.muted = true; hv.loop = true; hv.autoplay = true; hv.playsInline = true; hv.preload = 'metadata';
+        hv.setAttribute('muted', ''); hv.setAttribute('playsinline', ''); hv.setAttribute('aria-hidden', 'true');
+        hv.poster = hp.getAttribute('data-poster');
         var sc = document.createElement('source');
-        sc.src = hv.getAttribute('data-video'); sc.type = 'video/mp4';
-        hv.appendChild(sc); hv.load();
+        sc.src = hp.getAttribute('data-video'); sc.type = 'video/mp4';
+        hv.appendChild(sc); hp.parentNode.insertBefore(hv, hp.nextSibling); hv.load();
         var p = hv.play(); if (p && p.catch) p.catch(function () {});
       }
       var els = [].slice.call(document.querySelectorAll('.reveal'));
