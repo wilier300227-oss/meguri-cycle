@@ -4,6 +4,7 @@
   <text x="60" y="60" font-family="sans-serif" font-size="20" font-weight="700" fill="#191C1A">ヤマハ（PAS）の場合（図解イメージ）</text>
   <!-- 横長バッテリー -->
   <rect x="90" y="140" width="340" height="180" rx="20" fill="#EAEAE5" stroke="#191C1A" stroke-opacity="0.25" stroke-width="2"/>
+  <text x="260" y="172" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#191C1A" opacity="0.55">バッテリー本体</text>
   <!-- ランプ列（横4灯） -->
   <circle cx="150" cy="200" r="10" fill="#43A047"/>
   <circle cx="195" cy="200" r="10" fill="#43A047"/>

@@ -1,25 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" role="img" aria-labelledby="dlpTitle">
   <title id="dlpTitle">バッテリー残量ボタンの長押し診断の図解</title>
   <rect width="800" height="420" fill="#FCFCFB"/>
-  <!-- バッテリー本体 -->
-  <rect x="90" y="90" width="300" height="240" rx="22" fill="#EAEAE5" stroke="#191C1A" stroke-opacity="0.25" stroke-width="2"/>
-  <rect x="120" y="120" width="240" height="70" rx="10" fill="#191C1A" opacity="0.85"/>
-  <!-- 残量ランプ5つ -->
-  <circle cx="150" cy="155" r="11" fill="#43A047"/>
-  <circle cx="195" cy="155" r="11" fill="#43A047"/>
-  <circle cx="240" cy="155" r="11" fill="#43A047"/>
-  <circle cx="285" cy="155" r="11" fill="#43A047" opacity="0.35"/>
-  <circle cx="330" cy="155" r="11" fill="#43A047" opacity="0.35"/>
+  <!-- バッテリー本体（縦長。手元スイッチと誤認しないよう縦置き＋ラベル入り＝2026-09-13修正） -->
+  <rect x="110" y="60" width="180" height="310" rx="20" fill="#EAEAE5" stroke="#191C1A" stroke-opacity="0.25" stroke-width="2"/>
+  <text x="200" y="95" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#191C1A" opacity="0.55">バッテリー本体</text>
+  <!-- 残量ランプ5つ（縦） -->
+  <circle cx="160" cy="130" r="10" fill="#43A047"/>
+  <circle cx="160" cy="165" r="10" fill="#43A047"/>
+  <circle cx="160" cy="200" r="10" fill="#43A047"/>
+  <circle cx="160" cy="235" r="10" fill="#43A047" opacity="0.35"/>
+  <circle cx="160" cy="270" r="10" fill="#43A047" opacity="0.35"/>
   <!-- 残量ボタン -->
-  <circle cx="240" cy="255" r="34" fill="#FCFCFB" stroke="#2E7D50" stroke-width="4"/>
-  <text x="240" y="262" font-family="sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#245F3E">残量</text>
+  <circle cx="235" cy="300" r="30" fill="#FCFCFB" stroke="#2E7D50" stroke-width="4"/>
+  <text x="235" y="306" font-family="sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#245F3E">残量</text>
+  <!-- 長押しの波紋 -->
+  <circle cx="235" cy="300" r="44" fill="none" stroke="#2E7D50" stroke-width="2" opacity="0.5"/>
+  <circle cx="235" cy="300" r="58" fill="none" stroke="#2E7D50" stroke-width="2" opacity="0.25"/>
   <!-- 指 -->
-  <g opacity="0.9">
+  <g opacity="0.9" transform="translate(-5 45)">
     <path d="M300 340 q-14 -34 -32 -58 q-8 -11 2 -18 q10 -7 18 3 l14 19 l0 -8 q0 -12 12 -12 q12 0 12 12 l0 26 q0 40 -26 36 z" fill="#F4F4F1" stroke="#191C1A" stroke-opacity="0.5" stroke-width="2.5"/>
   </g>
-  <!-- 長押しの波紋 -->
-  <circle cx="240" cy="255" r="50" fill="none" stroke="#2E7D50" stroke-width="2" opacity="0.5"/>
-  <circle cx="240" cy="255" r="64" fill="none" stroke="#2E7D50" stroke-width="2" opacity="0.25"/>
   <!-- 説明 -->
   <text x="470" y="150" font-family="sans-serif" font-size="26" font-weight="700" fill="#191C1A">残量ボタンを長押し</text>
   <text x="470" y="192" font-family="sans-serif" font-size="17" fill="#191C1A" opacity="0.7">押してすぐ離すと「いまの残量」、</text>

@@ -4,6 +4,7 @@
   <text x="60" y="60" font-family="sans-serif" font-size="20" font-weight="700" fill="#191C1A">パナソニック（Panasonic）の場合（図解イメージ）</text>
   <!-- 縦長バッテリー -->
   <rect x="90" y="100" width="180" height="300" rx="20" fill="#EAEAE5" stroke="#191C1A" stroke-opacity="0.25" stroke-width="2"/>
+  <text x="180" y="128" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#191C1A" opacity="0.55">バッテリー本体</text>
   <!-- ランプ列（縦） -->
   <circle cx="150" cy="150" r="9" fill="#43A047"/>
   <circle cx="150" cy="185" r="9" fill="#43A047"/>
