@@ -1166,9 +1166,12 @@ async function enqueueAndSync() {
     // 確定時に生成済みのPDF（savedArtifacts）を流用して二重描画を避ける。無ければ都度生成。
     const certB64 = savedArtifacts && savedArtifacts.certPdf
       ? await blobToBase64(savedArtifacts.certPdf) : await certPdfBase64();
+    // ファイル名にお客様名を入れて、Drive上で誰の書類か一目で分かるようにする。
+    // 取引番号の先頭付与は帳簿の検索性要件なので維持する。
+    const custName = sanitizeFileName(els.pName.value) || 'お客様';
     const pdfs = [{
       kind: 'cert',
-      name: `${els.tradeNo.value}_譲渡証明書.pdf`,
+      name: `${els.tradeNo.value}_${custName}様_譲渡証明書.pdf`,
       b64: certB64,
     }];
     if (isMinor()) {
@@ -1176,7 +1179,7 @@ async function enqueueAndSync() {
         ? await blobToBase64(savedArtifacts.guardianPdf) : await guardianPdfBase64();
       pdfs.push({
         kind: 'guardian',
-        name: `${els.tradeNo.value}_保護者同意書.pdf`,
+        name: `${els.tradeNo.value}_${custName}様_保護者同意書.pdf`,
         b64: gB64,
       });
     }

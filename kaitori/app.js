@@ -1078,16 +1078,19 @@ async function enqueueAndSync() {
   setSyncStatus('pending', '⏳ 台帳・Driveへ保存する書類を準備しています…');
   try {
     buildCertSheet();
+    // ファイル名にお客様名を入れて、Drive上で誰の書類か一目で分かるようにする。
+    // 取引番号の先頭付与は帳簿の検索性要件なので維持する。
+    const custName = sanitizeFileName(els.pName.value) || 'お客様';
     const pdfs = [{
       kind: 'cert',
-      name: `${els.tradeNo.value}_譲渡証明書.pdf`,
+      name: `${els.tradeNo.value}_${custName}様_譲渡証明書.pdf`,
       b64: await sheetToPdfBase64(els.sheetCert),
     }];
     if (isMinor()) {
       buildGuardianSheet();
       pdfs.push({
         kind: 'guardian',
-        name: `${els.tradeNo.value}_保護者同意書.pdf`,
+        name: `${els.tradeNo.value}_${custName}様_保護者同意書.pdf`,
         b64: await sheetToPdfBase64(els.sheetGuardian),
       });
     }
