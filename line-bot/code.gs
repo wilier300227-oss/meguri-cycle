@@ -284,16 +284,18 @@ function handleEvent(event) {
       rule = 'OPT_OUT_SET';
     } else if (text === '写真をおくります。' || text === '写真をおくります' || text === '写真を送ります') {
       replyPhotoGuide(event.replyToken); rule = '写真ガイド';
-    } else if (text === '電動') {
+    } else if (text === '電動アシストの案内を見る' || text === '電動アシストの案内') {
+      // 電動QRボタンの送信テキスト（旧「電動」完全一致は誤爆防止のため廃止＝2026-09-13）
       replyEbikeGuide(event.replyToken); rule = '電動ガイド';
     } else if (detectMakerGuide_(text)) {
       // J改: メーカー名の完全一致のみ（ボタン選択・手打ち共通）。文章中の部分一致では発火しない
       replyMakerGuide_(event.replyToken, detectMakerGuide_(text)); rule = '診断ガイド:' + detectMakerGuide_(text);
     } else if (text === 'その他のメーカー') {
       replyMakerOther_(event.replyToken); rule = '診断ガイド:その他';
-    } else if (text === '買取査定を申し込みます' || text === '買取査定を申し込む') {
-      // 「〜申し込む」互換：管理画面製リッチメニューの送信テキスト揺れ対策（2026-08-27。
-      // 不一致だと部分一致で査定依頼(入力完了向け)に落ち、買取フローが始まらない）
+    } else if (text === '買取を申し込む' || text === '買取査定を申し込みます' || text === '買取査定を申し込む') {
+      // 「買取を申し込む」＝2026-09-12 リッチメニュー文言変更後の送信テキスト（ラベルと一致）。
+      // 旧2種は後方互換として受理し続ける（handoff_line_apply_flow_fix.md §5-2。
+      // 不一致だと部分一致で査定依頼(入力完了向け)に落ち、買取フローが始まらない＝2026-08-27の教訓）
       replyKaitoriApply(event.replyToken, userId); rule = '買取査定申込';
     } else if (text === '出張引取を申し込みます' || text === '出張引取を申し込む') {
       replyHikitoriApply(event.replyToken, userId); rule = '出張引取申込';
@@ -303,7 +305,8 @@ function handleEvent(event) {
       replyShobun(event.replyToken); setExpectCity_(userId, 'shobun'); rule = '処分希望案内';
     } else if (text === '対応エリア・出張費' || text === '対応エリア' || text === 'エリア') {
       replyArea(event.replyToken); setExpectCity_(userId, 'area'); rule = 'エリア案内';
-    } else if (text === '査定を申し込む' || text === '査定をお願いします' || text === '入力完了' ||
+    } else if (text === '写真は以上です' || // 2026-09-12 文言変更後の送信タイル。旧「査定を申し込む」も下で互換受理
+               text === '査定を申し込む' || text === '査定をお願いします' || text === '入力完了' ||
                text.indexOf('査定を申し込む') !== -1 ||
                text.indexOf('査定をお願い') !== -1 || text.indexOf('査定お願い') !== -1) {
       replyEstimateRequest(event); rule = '査定依頼';
@@ -479,7 +482,7 @@ function replyRouteCta_(event, userId, routeId) {
         '',
         '（下の☰メニューからも、「処分・引取」や「よくある質問」に進めます）',
       ].join('\n'),
-      quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('⚡ 電動アシストの方はこちら', '電動')] },
+      quickReply: { items: [qrCameraRoll(), qrCamera(), qrEbike_()] },
     }]);
     setExpectCity_(userId, 'area');
   }
@@ -641,7 +644,7 @@ function setOptOut_(userId, reason) {
 /** 停止解除は「顧客の明示的な再依頼」のみ（時間では解除しない） */
 function isExplicitReRequest_(text) {
   if (!text) return false;
-  return text === '買取査定を申し込みます' || text === '買取査定を申し込む' ||
+  return text === '買取を申し込む' || text === '買取査定を申し込みます' || text === '買取査定を申し込む' ||
          text === '出張引取を申し込みます' || text === '出張引取を申し込む' || text === '買取希望' ||
     text.indexOf('査定をお願い') !== -1 || text.indexOf('申し込み') !== -1 || text.indexOf('お願いします') !== -1;
 }
@@ -675,7 +678,7 @@ function clearManualMode_(userId) {
    人対応の意図が明確な inquiry（担当者に相談）／check_status（進捗確認）／
    reschedule（日程変更）／cancel（キャンセル）は除外し、手動のまま維持する。 */
 var MANUAL_RESET_ACTIONS = ['apply_kaitori', 'apply_shobun', 'area_fee', 'estimate_request', 'faq', 'photo', 'add_photo', 'add_vehicle'];
-var MANUAL_RESET_TEXTS = ['買取査定を申し込みます', '買取査定を申し込む', '出張引取を申し込みます', '出張引取を申し込む', '対応エリア・出張費', '査定を申し込む', '査定をお願いします', 'よくある質問', '写真を追加する', '写真を追加', '台数を追加する', '台数を追加'];
+var MANUAL_RESET_TEXTS = ['買取を申し込む', '買取査定を申し込みます', '買取査定を申し込む', '出張引取を申し込みます', '出張引取を申し込む', '対応エリア・出張費', '写真は以上です', '査定を申し込む', '査定をお願いします', 'よくある質問', '写真を追加する', '写真を追加', '台数を追加する', '台数を追加'];
 function isManualResetAction_(action) { return MANUAL_RESET_ACTIONS.indexOf(action) !== -1; }
 function isManualResetText_(text) { return MANUAL_RESET_TEXTS.indexOf(text) !== -1; }
 /** 手動対応中/停止中の新着をオーナーへ通知（10分バースト抑制。ログは別途） */
@@ -814,21 +817,22 @@ function photoGuideMessage(withIntake) {
     '・タイヤ・チェーンまわり',
     '・メーカー名やロゴの部分',
     '',
-    '（正確な査定につながる写真：反対側の側面・ハンドル・ギアまわり・型番シール・気になる傷）',
+    '（余裕があれば：反対側の側面・ハンドル・ギアまわり・型番シール・気になる傷 も追加すると、より正確な査定につながります）',
   ].concat(intake).concat([
     '',
     '追加で見たい部分は、こちらからご案内します🚲',
     '下のボタンから写真を送れます👇',
+    '⚡ 電動アシスト自転車は「電動アシストの方はこちら」を押してください',
   ]).join('\n');
 
   return {
     type: 'text',
     text: text,
     quickReply: { items: [
+      qrEbike_(),
       qrCameraRoll(),
       qrCamera(),
-      qrMessage('⚡電動アシストの方はこちら', '電動'),
-      qrMessage('✅ 査定を申し込む', '査定を申し込む'),
+      qrMessage('✅ 写真は以上です', '写真は以上です'),
       qrMessage('💬 問い合わせ', 'お問い合わせ'),
     ]},
   };
@@ -859,7 +863,7 @@ function replyKaitoriApply(replyToken, userId) {
     '',
     '査定は写真だけでOK。金額が決まってからお引き取りに伺います（買取なら費用は一切かかりません）。',
     '',
-    '送り終わったら「査定を申し込む」を押してください🚲',
+    '送り終わったら「写真は以上です」を押してください🚲',
   ].join('\n');
 
   // 市町名の質問は photoGuideMessage(true) 側に集約する（2通で二重に聞かない）
@@ -936,9 +940,9 @@ function thankForPhoto(event) {
         text: [
           '📸 お写真ありがとうございます、受け取りました！',
           '続けて送るときは、入力欄の 📷 マークからどうぞ（見えないときは左下の ⌨ マークや 〉 を押すと出てきます）。',
-          'すべて送り終えたら「査定を申し込む」を押してください🚲',
+          'すべて送り終えたら「写真は以上です」を押してください🚲',
         ].join('\n'),
-        quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('✅ 査定を申し込む', '査定を申し込む')] },
+        quickReply: { items: [qrCameraRoll(), qrCamera(), qrMessage('✅ 写真は以上です', '写真は以上です'), qrEbike_()] },
       }]);
     }
   }
@@ -1414,6 +1418,13 @@ function qrCamera() {
 /** クイックリプライ：タップでテキストを送信するボタン */
 function qrMessage(label, text) {
   return { type: 'action', action: { type: 'message', label: label, text: text } };
+}
+
+/** クイックリプライ：電動アシスト案内。
+ *  旧トリガー「電動」（2文字の完全一致）は、会話中の単答への誤爆防止のため廃止（2026-09-13）。
+ *  ボタンは長文トリガー「電動アシストの案内を見る」を送る（偶然の入力ではまず発火しない）。 */
+function qrEbike_() {
+  return qrMessage('⚡電動アシストの方はこちら', '電動アシストの案内を見る');
 }
 
 /**
