@@ -258,7 +258,7 @@ function handleEvent(event) {
     }
   }
   // 2. 手動対応モード（§5-1）：全自動応答を停止し、通知のみ。
-  //    ただし自動応答系ボタンを押し直したら解除して通常応答に戻す（§5-1 リセット）。
+  //    タイル押し直しによる解除（§5-1 リセット）は 2026-09-14 に廃止（MANUAL_RESET_TEXTS を空に）。
   if (isManualMode_(st)) {
     if (isManualResetText_(text)) {
       clearManualMode_(userId);
@@ -673,12 +673,17 @@ function setManualMode_(userId) {
 function clearManualMode_(userId) {
   if (userId) setUserFields_(userId, { manual_mode: '', manual_until: '' });
 }
-/* 手動対応モードを解除する「自動応答系ボタン」（§5-1 リセット）。
-   お客さまが問い合わせ後に別のメニューを押し直したら、48時間を待たずに自動応答へ戻す。
-   人対応の意図が明確な inquiry（担当者に相談）／check_status（進捗確認）／
-   reschedule（日程変更）／cancel（キャンセル）は除外し、手動のまま維持する。 */
-var MANUAL_RESET_ACTIONS = ['apply_kaitori', 'apply_shobun', 'area_fee', 'estimate_request', 'faq', 'photo', 'add_photo', 'add_vehicle'];
-var MANUAL_RESET_TEXTS = ['買取を申し込む', '買取査定を申し込みます', '買取査定を申し込む', '出張引取を申し込みます', '出張引取を申し込む', '対応エリア・出張費', '写真は以上です', '査定を申し込む', '査定をお願いします', 'よくある質問', '写真を追加する', '写真を追加', '台数を追加する', '台数を追加'];
+/* 手動対応モードを解除する「自動応答系ボタン」（§5-1 リセット）— 2026-09-14 に廃止。
+   事故：確定額提示後のお客さまが申込タイルを連打し、そのたびに手動対応が解除されて自動の申込案内が返った。
+   人が対応中の会話にタイル1回で自動応答が割り込まないよう、解除は管理者操作（問い合わせ一元管理シート users タブの manual_mode 列を空にする）
+   または48時間経過のみとする（要件定義_LINEシステム.md F-4）。
+   旧リスト（互換の棚卸し用に記録）:
+   ACTIONS: apply_kaitori, apply_shobun, area_fee, estimate_request, faq, photo, add_photo, add_vehicle
+   TEXTS: 買取を申し込む, 買取査定を申し込みます, 買取査定を申し込む, 出張引取を申し込みます, 出張引取を申し込む,
+          対応エリア・出張費, 写真は以上です, 査定を申し込む, 査定をお願いします, よくある質問,
+          写真を追加する, 写真を追加, 台数を追加する, 台数を追加 */
+var MANUAL_RESET_ACTIONS = [];
+var MANUAL_RESET_TEXTS = [];
 function isManualResetAction_(action) { return MANUAL_RESET_ACTIONS.indexOf(action) !== -1; }
 function isManualResetText_(text) { return MANUAL_RESET_TEXTS.indexOf(text) !== -1; }
 /** 手動対応中/停止中の新着をオーナーへ通知（10分バースト抑制。ログは別途） */
@@ -1156,7 +1161,7 @@ function handlePostback_(event, userId) {
       logEvent_(event, 'OPT_OUT', 'NONE'); return;
     }
   }
-  // 優先順2: 手動対応モード（自動応答系ボタンを押し直したら解除して通常応答に戻す＝§5-1 リセット）
+  // 優先順2: 手動対応モード（ボタン押し直しでの解除は 2026-09-14 に廃止。通知のみ）
   if (isManualMode_(st)) {
     if (isManualResetAction_(action)) {
       clearManualMode_(userId);
