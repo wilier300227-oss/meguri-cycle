@@ -141,7 +141,8 @@ function getInquirySheet_() {
   if (ssId) {
     ss = SpreadsheetApp.openById(ssId);
   } else {
-    ss = SpreadsheetApp.create('めぐり自転車_問い合わせ一元管理');
+    // 開発用プロジェクトでは本番と同名にならないよう、プロパティ INQUIRY_SHEET_TITLE で名前を変えられる（2026-09-16）
+    ss = SpreadsheetApp.create(props.getProperty('INQUIRY_SHEET_TITLE') || 'めぐり自転車_問い合わせ一元管理');
     props.setProperty('INQUIRY_SHEET_ID', ss.getId());
     console.log('新しいスプレッドシートを作成しました: ' + ss.getUrl());
   }

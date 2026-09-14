@@ -55,10 +55,11 @@ function getChannelAccessToken_() {
 }
 
 /** オーナー個人のLINEのuserId（新規問い合わせの通知先）。取得方法は上記コメント参照 */
-const OWNER_LINE_USER_ID = 'ここに自分のuserIdを貼り付け';
+// 2026-09-16: スクリプトプロパティ OWNER_LINE_USER_ID があればそれを優先（コードに実IDを書かずに済む）
+const OWNER_LINE_USER_ID = PropertiesService.getScriptProperties().getProperty('OWNER_LINE_USER_ID') || 'ここに自分のuserIdを貼り付け';
 
 /** Googleビジネスプロフィールの「口コミを書く」リンク（承認後、共有リンクに差し替え） */
-const GOOGLE_REVIEW_URL = 'ここにGoogleビジネスプロフィールの口コミ投稿リンクを貼り付け';
+const GOOGLE_REVIEW_URL = PropertiesService.getScriptProperties().getProperty('GOOGLE_REVIEW_URL') || 'ここにGoogleビジネスプロフィールの口コミ投稿リンクを貼り付け';
 
 /**
  * レビュー依頼の自動送信を行うか。

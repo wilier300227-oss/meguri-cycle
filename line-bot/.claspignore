@@ -1,0 +1,8 @@
+# clasp push の対象は LINE ボットの GAS ファイルだけにする。
+# kaitori-ledger.gs は別プロジェクト（doPost が衝突する）。画像・文書・生成スクリプトは GAS に不要。
+**/**
+!code.gs
+!form-sync.gs
+!inquiry-sync.gs
+!sheet-format.gs
+!appsscript.json
