@@ -259,6 +259,7 @@ function v2Prompt_(event, userId, s) {
   else if (s.flow === 'satei' && s.step === 2) msgs = [v2AskBattery_('satei', 2)];
   else if (s.step === 3) msgs = [v2PhotoGuideMessage_(s)];
   else if (s.flow === 'satei' && s.step === 4) msgs = [v2AskCityMessage_()];
+  else if (s.flow === 'satei' && s.step === 5) msgs = [v2AskBohanMessage_('satei')];
   else if (s.flow === 'battery' && s.step === 1) msgs = [v2AskBattery_('battery', 1)];
   else msgs = v2FlowStartMessages_(s);
   v2Reply_(event, msgs);

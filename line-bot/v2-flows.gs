@@ -106,7 +106,15 @@ function v2PhotoGuideMessage_(s) {
   return v2Msg_(lines.join('\n'));
 }
 function v2AskCityMessage_() {
-  return v2Msg_('📍 お住まいの市町名を教えてください。\n（例：金沢市、かほく市、白山市）\n\nこの下の入力欄に打ち込んで送ってください。');
+  // 既存ボットと同じ聞き方（町名まで。番地は金額決定後にしか聞かない＝handoff §10-5）
+  return v2Msg_('📍 お住まいの市町名を教えてください（例：金沢市片町）。\n町名まで教えていただけると、出張の目安が正確になります。\n\nこの下の入力欄に打ち込んで送ってください。');
+}
+function v2AskBohanMessage_(flow) {
+  return v2Msg_('🔖 防犯登録はありますか？\n（自転車を買ったときに登録した、シールと控えの紙のことです。抹消の手続きは当方で代行します）', [
+    qrPostback_('ある', v2Pb_(flow, 5, 'next', 'bohan_yes')),
+    qrPostback_('ない', v2Pb_(flow, 5, 'next', 'bohan_no')),
+    qrPostback_('わからない', v2Pb_(flow, 5, 'next', 'bohan_unknown')),
+  ]);
 }
 function v2CityLines_(hit, intent) {
   if (intent === 'shobun') {
@@ -116,10 +124,22 @@ function v2CityLines_(hit, intent) {
   if (hit.fee === '要相談' || !hit.city) return [(hit.city ? '📍 ' + hit.city + 'ですね。' : '📍 ') + 'ご相談を承ります。買取のご依頼なら出張費はかかりません。'];
   return ['📍 ' + hit.city + 'ですね、対応エリアです！', '💰 買取は、オンライン査定もお引き取りの出張費も すべて無料です。'];
 }
+/** 完了時の案内。既存ボット（replyEstimateRequest）の「状態の自己申告」の聞き方を引き継ぐ（現地での減額トラブル防止） */
 function v2DoneLines_(intent) {
-  return intent === 'shobun'
-    ? ['', 'ありがとうございます、受付は以上です🚲', '担当者が写真と出張費を確認して、確定した金額をご連絡します（原則48時間以内）。', 'ご質問があれば、このままメッセージをどうぞ。']
-    : ['', 'ありがとうございます、受付は以上です🚲', '担当者が写真を確認して、確定した買取金額をご連絡します（原則48時間以内）。', 'ご質問があれば、このままメッセージをどうぞ。'];
+  const head = intent === 'shobun'
+    ? ['ありがとうございます、受付は以上です🚲', '担当者が写真と出張費を確認して、確定した金額をご連絡します（原則48時間以内）。']
+    : ['ありがとうございます、受付は以上です🚲', '担当者が写真を確認して、確定した買取金額をご連絡します（原則48時間以内）。'];
+  return head.concat([
+    '',
+    '【状態について】',
+    '写真で分かりにくい部分があれば、このままメッセージで教えてください。',
+    '・タイヤの空気は入りますか',
+    '・ブレーキは効きますか',
+    '・その他、気になる箇所はありますか',
+    '',
+    '特になければ、そのままお待ちください。',
+    '査定額は確定額です。写真では分からない不具合が現地で見つかった場合のみ、再査定となることがあります。',
+  ]);
 }
 
 /* ── フロー制御（v2-core の v2StartFlow_ / v2Advance_ から呼ばれる）── */
@@ -153,8 +173,10 @@ function v2Transition_(userId, s, pb) {
     if (s.step === 3) {                       // 写真工程 → 次へ進む
       s.step = 4; out.messages = [v2AskCityMessage_()]; out.menu = 'inflow'; return out;
     }
-    if (s.step === 4) {                       // 市町名（テキスト経由で v2OnCity_ が呼ぶ）
-      s.step = 5; out.done = true; return out;
+    if (s.step === 5) {                       // 防犯登録の有無 → 完了
+      s.data.bohan = pb.val;
+      out.messages = [v2Msg_(v2DoneLines_(s.intent).join('\n'))];
+      out.done = true; return out;
     }
   }
   if (s.flow === 'battery') {
@@ -184,9 +206,10 @@ function v2Complete_(event, userId, s, extraLines) {
     '【' + (s.flow === 'battery' ? 'バッテリー確認' : (s.intent === 'shobun' ? '処分・引取' : '買取')) + ' 受付】' + (cust ? ' ' + cust : ''),
     '電動: ' + (d.ebike || '-') + ' / バッテリー: ' + (d.battery || '-') + (d.bodyOnly ? '（車体のみ）' : ''),
     '写真: ' + (d.photos || 0) + '枚' + (d.batteryPhoto ? '（バッテリー確認用あり）' : ''),
-    '市町: ' + (d.city || '-') + (d.fee ? '（出張費 ' + d.fee + '）' : ''),
+    '住所: ' + (d.address || d.city || '-') + (d.fee ? '（出張費 ' + d.fee + '）' : ''),
+    '防犯登録: ' + ({ bohan_yes: 'ある', bohan_no: 'ない', bohan_unknown: 'わからない' }[d.bohan] || '-'),
   ].join('\n');
-  try { setUserFields_(userId, { state: 'S2', intent: s.intent || '', city: d.city || '' }); } catch (e) {}
+  try { setUserFields_(userId, { state: 'S2', intent: s.intent || '', city: d.city || '', town: d.town || '' }); } catch (e) {}
   try { setManualMode_(userId); } catch (e) {}
   try { notifyManualIncoming_(event, userId, event.message || { type: 'postback', id: event.webhookEventId }, summary, '📝 v2 受付完了（要査定）'); } catch (e) {}
   v2LinkMenu_(userId, 'normal');
@@ -210,12 +233,14 @@ function v2HandleText_(event, userId, text) {
     const hit = detectCityFee(text);
     if (hit && !looksLikeQuestion_(text)) {
       s.data = s.data || {};
-      s.data.city = hit.city || text.slice(0, 20);
+      s.data.city = hit.city || '';
+      s.data.address = text.slice(0, 40);                                   // 町名まで（番地は聞かない）
+      s.data.town = hit.city ? text.replace(hit.city, '').replace(/^[\s、,]+/, '').slice(0, 20) : text.slice(0, 20);
       s.data.fee = hit.fee;
-      const lines = v2CityLines_(hit, s.intent).concat(v2DoneLines_(s.intent));
-      v2Reply_(event, [v2Msg_(lines.join('\n'))]);
-      v2Complete_(event, userId, s);
-      logEvent_(event, 'v2:satei/4/city', '返信:完了 ' + s.data.city);
+      s.step = 5;
+      v2Reply_(event, [v2Msg_(v2CityLines_(hit, s.intent).join('\n')), v2AskBohanMessage_('satei')]);
+      v2SetSession_(userId, s);
+      logEvent_(event, 'v2:satei/4/city', '返信:防犯登録の質問 ' + s.data.address);
       return true;
     }
     if (!s.data.cityRetried) {
