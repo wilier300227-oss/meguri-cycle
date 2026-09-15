@@ -222,7 +222,7 @@ function v2HandlePostback_(event, userId, pb) {
     }
     if (pb.act === 'back') {
       if (!s || s.step <= 1) { v2ReplyReselect_(event); logEvent_(event, tag, '返信:選び直し（戻れない）'); return true; }
-      s.step -= 1; v2Prompt_(event, userId, s); v2SetSession_(userId, s); logEvent_(event, tag, '返信:ひとつ戻る→' + s.step); return true;
+      s.step = v2PrevStep_(s); v2Prompt_(event, userId, s); v2SetSession_(userId, s); logEvent_(event, tag, '返信:ひとつ戻る→' + s.step); return true;
     }
     v2ReplyReselect_(event); logEvent_(event, tag, '返信:選び直し'); return true;
   }

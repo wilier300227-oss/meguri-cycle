@@ -152,6 +152,13 @@ function v2DoneLines_(intent) {
 
 /* ── フロー制御（v2-core の v2StartFlow_ / v2Advance_ から呼ばれる）── */
 
+/** 「ひとつ戻る」の戻り先。電動ではない場合はバッテリー状態（step2）を飛ばしているので、写真工程からは電動の質問（step1）へ戻す */
+function v2PrevStep_(s) {
+  if (s.flow === 'satei' && s.step === 3) return (s.data && s.data.ebike === 'normal') ? 1 : 2;
+  if (s.flow === 'battery' && s.step === 3) return 1;
+  return Math.max(1, s.step - 1);
+}
+
 /** フロー開始時の案内。satei: 電動の有無 / battery: バッテリー状態 */
 function v2FlowStartMessages_(s) {
   if (s.flow === 'satei') return [v2AskEbike_(s)];
