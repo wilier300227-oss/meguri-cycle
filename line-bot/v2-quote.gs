@@ -62,7 +62,10 @@ function v2ParseQuoteCommand_(text) {
   const cust = m[2].toUpperCase();
   const amountsRaw = m[3];
   let rest = m[4] || '';
-  const q = { kind: kind, cust: cust, ebike: false, bodyOnly: false, names: [], mode: 'single', amounts: [], expires: null };
+  const q = { kind: kind, cust: cust, ebike: false, bodyOnly: false, names: [], mode: 'single', amounts: [], expires: null, note: '' };
+  // 「ポイント 〜」以降は査定のポイント（任意・1〜3行）。内訳ではなく、金額の理由を一言添えるもの（2026-09-16）
+  const np = rest.match(/ポイント\s*(.+)$/);
+  if (np) { q.note = np[1].trim().slice(0, 120); rest = rest.slice(0, np.index); }
   if (/電動/.test(rest)) { q.ebike = true; rest = rest.replace(/電動/g, ' '); }
   if (/車体のみ/.test(rest)) { q.bodyOnly = true; q.ebike = true; rest = rest.replace(/車体のみ/g, ' '); }
   const ex = rest.match(/期限\s*(\d{1,2})\/(\d{1,2})/);
@@ -85,11 +88,9 @@ function v2ParseQuoteCommand_(text) {
   if (q.amounts.some(function (n) { return isNaN(n) || n < 0; })) return { ok: false, error: '金額は半角数字で（例: 12000）' };
   if (kind === 'kaitori' && q.amounts.some(function (n) { return n === 0; })) return { ok: false, error: '0円は #引取 で（引き取り費用を指定）' };
   const names = rest.trim();
-  if (names) {
-    q.names = q.mode === 'multi' ? names.split('+').map(function (s) { return s.trim(); }) : [names];
-    const bad = QUOTE_FORBIDDEN.filter(function (w) { return names.indexOf(w) !== -1; });
-    if (bad.length) return { ok: false, error: '使えない語が含まれています: ' + bad.join(' ') };
-  }
+  if (names) q.names = q.mode === 'multi' ? names.split('+').map(function (s) { return s.trim(); }) : [names];
+  const bad = QUOTE_FORBIDDEN.filter(function (w) { return (names + ' ' + q.note).indexOf(w) !== -1; });
+  if (bad.length) return { ok: false, error: '使えない語が含まれています: ' + bad.join(' ') };
   if (!q.expires) q.expires = new Date(Date.now() + QUOTE_VALID_DAYS * 86400000);
   q.total = q.mode === 'multi' ? q.amounts.reduce(function (a, b) { return a + b; }, 0) : q.amounts[0];
   return { ok: true, quote: q };
@@ -120,6 +121,7 @@ function v2QuoteBodyText_(q) {
     L.push('', 'この金額は、お写真のとおりであればお伺い当日にそのままお支払いします。', '出張費・査定料はかかりません。');
   }
   if (q.bodyOnly) L.push('※ バッテリーは含みません（車体のみの金額です）');
+  if (q.note) L.push('', '📝 査定のポイント：' + q.note);
   L.push('有効期限は ' + v2FmtDate_(q.expires) + '（' + QUOTE_VALID_DAYS + '日間）です。');
   if (q.kind !== 'hikitori') {
     L.push('', '※ 写真では分からない次の点が当日見つかった場合だけ、その場では決めず、再査定のうえ改めて金額をご連絡します。');
@@ -245,7 +247,7 @@ function v2SendQuote_(q) {
       if (String(data[r][iU]) === q.userId && (data[r][iS] === 'sent' || data[r][iS] === 'hold')) sh.getRange(r + 1, iS + 1).setValue('expired');
     }
     sh.appendRow([quoteId, q.userId, getDisplayName_(q.userId), q.custNo, new Date(), 'owner', q.kind, q.amounts.length, q.total,
-      JSON.stringify({ mode: q.mode, amounts: q.amounts, names: q.names, ebike: q.ebike, bodyOnly: q.bodyOnly }),
+      JSON.stringify({ mode: q.mode, amounts: q.amounts, names: q.names, ebike: q.ebike, bodyOnly: q.bodyOnly, note: q.note || '' }),
       q.bodyText, new Date(q.expiresIso), 'sent', '', '', '']);
   }
   pushMessage_(q.userId, [v2QuoteFlex_(q, quoteId, q.bodyText)]);
@@ -347,11 +349,18 @@ function ownerqAskName_(event) {
     ownerqCancelQr_(),
   ])]);
 }
+function ownerqAskNote_(event) {
+  v2Reply_(event, [v2Msg_('📝 査定のポイントを一言入れますか？（任意・1〜3行）\n例：「年式が新しく、バッテリーの残量表示も良好でした」「タイヤとサドルの傷を織り込んでいます」\n入れるならそのまま文字で送ってください。\n※ 減額の内訳（−2,000円 など）は書かない', [
+    qrPostback_('ポイントなしで進む', ownerqPb_(5, 'next', 'none')),
+    ownerqCancelQr_(),
+  ])]);
+}
 /** 集めた材料からコマンド文字列を組み立てて、既存のプレビュー処理に渡す */
 function ownerqPreview_(event, userId, s) {
   ownerqClear_(userId);
   const cmd = '#' + (s.kind === 'hikitori' ? '引取' : '見積') + ' ' + s.cust + ' ' + s.amount +
-    (s.ebike === 'ebike' ? ' 電動' : '') + (s.ebike === 'bodyonly' ? ' 車体のみ' : '') + (s.name ? ' ' + s.name : '');
+    (s.ebike === 'ebike' ? ' 電動' : '') + (s.ebike === 'bodyonly' ? ' 車体のみ' : '') + (s.name ? ' ' + s.name : '') +
+    (s.note ? ' ポイント ' + s.note : '');
   return v2HandleOwnerCommand_(event, userId, cmd);
 }
 /** テキスト入力（金額・車体名）。処理したら true */
@@ -371,7 +380,12 @@ function ownerqHandleText_(event, userId, text) {
   if (s.step === 4) {
     const bad = QUOTE_FORBIDDEN.filter(function (w) { return t.indexOf(w) !== -1; });
     if (bad.length) { v2Reply_(event, [v2Msg_('使えない語が含まれています: ' + bad.join(' ') + '\n別の書き方で送ってください', [qrPostback_('車体名なしで進む', ownerqPb_(4, 'next', 'none')), ownerqCancelQr_()])]); return true; }
-    s.name = t.slice(0, 40);
+    s.name = t.slice(0, 40); s.step = 5; ownerqSet_(userId, s); ownerqAskNote_(event); return true;
+  }
+  if (s.step === 5) {
+    const bad = QUOTE_FORBIDDEN.filter(function (w) { return t.indexOf(w) !== -1; });
+    if (bad.length || /[−\-]\s*[0-9,]+円/.test(t)) { v2Reply_(event, [v2Msg_((bad.length ? '使えない語が含まれています: ' + bad.join(' ') : '減額の内訳は書かないでください') + '\n別の書き方で送ってください', [qrPostback_('ポイントなしで進む', ownerqPb_(5, 'next', 'none')), ownerqCancelQr_()])]); return true; }
+    s.note = String(text).trim().slice(0, 120);
     return ownerqPreview_(event, userId, s);
   }
   // ボタンで答える段階に文字が来た → その段階の質問を出し直す
@@ -392,7 +406,8 @@ function ownerqHandlePostback_(event, userId, pb) {
     logEvent_(event, 'ownerq:cust', pb.val); return true;
   }
   if (pb.step === 3 && s.step === 3) { s.ebike = pb.val; s.step = 4; ownerqSet_(userId, s); ownerqAskName_(event); logEvent_(event, 'ownerq:ebike', pb.val); return true; }
-  if (pb.step === 4 && s.step === 4) { s.name = ''; logEvent_(event, 'ownerq:noname', ''); return ownerqPreview_(event, userId, s); }
+  if (pb.step === 4 && s.step === 4) { s.name = ''; s.step = 5; ownerqSet_(userId, s); ownerqAskNote_(event); logEvent_(event, 'ownerq:noname', ''); return true; }
+  if (pb.step === 5 && s.step === 5) { s.note = ''; logEvent_(event, 'ownerq:nonote', ''); return ownerqPreview_(event, userId, s); }
   // 期限切れ・段階違い
   ownerqClear_(userId);
   v2ReplyText_(event, '入力が途中で切れました。「見積」と送るともう一度最初からできます');
