@@ -156,7 +156,15 @@ function v2CustNo_(userId) {
       if (String(data[r][0]) === userId) { row = r + 1; if (v) return v; }
     }
     const no = 'C' + (maxNo + 1);
-    if (row === -1) { setUserFields_(userId, {}); return v2CustNo_(userId); }
+    if (row === -1) {
+      // users に行が無ければ最小限の行を作る（ロック中なので setUserFields_ は呼ばない）
+      const rec = USER_COLS.map(function (c) { return c === 'userId' ? userId : (c === 'created_at' || c === 'updated_at') ? new Date() : ''; });
+      while (rec.length <= col) rec.push('');
+      rec[col] = no;
+      sh.appendRow(rec);
+      try { CacheService.getScriptCache().remove('ustate_' + userId); } catch (e) {}
+      return no;
+    }
     sh.getRange(row, col + 1).setValue(no);
     return no;
   } catch (e) { return ''; } finally { try { lock.releaseLock(); } catch (e) {} }
@@ -204,14 +212,14 @@ function v2HandlePostback_(event, userId, pb) {
   // menu フロー = 現在のセッションに対する操作（§9-2）。step は見ない
   if (pb.flow === 'menu') {
     if (pb.act === 'consult') { replyInquiry(event); logEvent_(event, tag, '返信:担当者に相談（手動対応ON）'); return true; }
-    if (pb.act === 'stop') { v2ClearSession_(userId); v2LinkMenu_(userId, 'normal'); v2ReplyText_(event, '中断しました。また最初からご利用いただけます🚲'); logEvent_(event, tag, '返信:中断'); return true; }
+    if (pb.act === 'stop') { v2ReplyText_(event, '中断しました。また最初からご利用いただけます🚲'); v2LinkMenu_(userId, 'normal'); v2ClearSession_(userId); logEvent_(event, tag, '返信:中断'); return true; }
     if (pb.act === 'reset') {
       if (!s) { v2ReplyReselect_(event); logEvent_(event, tag, '返信:選び直し（セッション無し）'); return true; }
       v2StartFlow_(event, userId, s.flow, s.intent); logEvent_(event, tag, '返信:最初から'); return true;
     }
     if (pb.act === 'back') {
       if (!s || s.step <= 1) { v2ReplyReselect_(event); logEvent_(event, tag, '返信:選び直し（戻れない）'); return true; }
-      s.step -= 1; v2SetSession_(userId, s); v2Prompt_(event, userId, s); logEvent_(event, tag, '返信:ひとつ戻る→' + s.step); return true;
+      s.step -= 1; v2Prompt_(event, userId, s); v2SetSession_(userId, s); logEvent_(event, tag, '返信:ひとつ戻る→' + s.step); return true;
     }
     v2ReplyReselect_(event); logEvent_(event, tag, '返信:選び直し'); return true;
   }
@@ -237,9 +245,10 @@ function v2HandlePostback_(event, userId, pb) {
 /* ── フローの骨組み（本文は段階2で差し替える）── */
 function v2StartFlow_(event, userId, flow, intent) {
   const s = { flow: flow, step: 1, intent: intent || '', data: {} };
-  v2SetSession_(userId, s);
-  v2LinkMenu_(userId, 'inflow');
+  // 体感の遅さ対策: 先に返信し、そのあとでメニュー切替とセッション保存（シート書き込み）をする
   v2Prompt_(event, userId, s);
+  v2LinkMenu_(userId, 'inflow');
+  v2SetSession_(userId, s);
 }
 /** 現在の step の案内を返す（段階1は動作確認用の仮文） */
 function v2Prompt_(event, userId, s) {
@@ -251,8 +260,8 @@ function v2Advance_(event, userId, s, pb) {
   s.data = s.data || {};
   s.data['step' + s.step] = pb.val;
   s.step += 1;
-  v2SetSession_(userId, s);
   v2Prompt_(event, userId, s);
+  v2SetSession_(userId, s);
 }
 function v2ReplyReselect_(event) {
   v2ReplyText_(event, 'このボタンは今は使えません。下の「メニューを開く／閉じる」から選び直してください🚲');

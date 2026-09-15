@@ -627,21 +627,30 @@ function getUsersSheet_() {
 /** userId の状態を1行読む（無ければ {}） */
 function getUserState_(userId) {
   if (!userId) return {};
+  // 2026-09-16: 毎イベントのシート全読みが遅いので 60 秒キャッシュ（setUserFields_ で無効化）
+  const cache = CacheService.getScriptCache();
+  const ck = 'ustate_' + userId;
+  const cached = cache.get(ck);
+  if (cached) { try { return JSON.parse(cached); } catch (e) {} }
+  let result = {};
   try {
     const sheet = getUsersSheet_();
-    if (!sheet) return {};
-    const data = sheet.getDataRange().getValues();
-    for (let r = 1; r < data.length; r++) {
-      if (String(data[r][0]) === userId) {
-        const o = {}; USER_COLS.forEach((c, i) => o[c] = data[r][i]); return o;
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      for (let r = 1; r < data.length; r++) {
+        if (String(data[r][0]) === userId) {
+          const o = {}; USER_COLS.forEach((c, i) => o[c] = data[r][i]); result = o; break;
+        }
       }
     }
   } catch (e) {}
-  return {};
+  try { cache.put(ck, JSON.stringify(result), 60); } catch (e) {}
+  return result;
 }
 /** userId の指定フィールドだけ更新（無ければ新規行）。LockServiceで競合防止 */
 function setUserFields_(userId, fields) {
   if (!userId) return;
+  try { CacheService.getScriptCache().remove('ustate_' + userId); } catch (e) {}
   const lock = LockService.getScriptLock();
   try {
     lock.waitLock(5000);
