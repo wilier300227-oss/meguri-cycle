@@ -711,15 +711,24 @@ var MANUAL_RESET_ACTIONS = [];
 var MANUAL_RESET_TEXTS = [];
 function isManualResetAction_(action) { return MANUAL_RESET_ACTIONS.indexOf(action) !== -1; }
 function isManualResetText_(text) { return MANUAL_RESET_TEXTS.indexOf(text) !== -1; }
-/** 手動対応中/停止中の新着をオーナーへ通知（10分バースト抑制。ログは別途） */
+/** 手動対応中/停止中の新着をオーナーへ通知（ログは別途）。
+ *  バースト抑制（2026-09-16 要件定義 §6 #6）: 同一ユーザーは1分に1回まで、10分間で最大5回。
+ *  抑制した件数は次に通知できたときに「ほか○件」として添える。旧「10分に1回」だと連打に気づけなかった。 */
 function notifyManualIncoming_(event, userId, msg, text, subject) {
   if (!userId) return;
   const cache = CacheService.getScriptCache();
-  const key = 'mnotify_' + userId;
-  if (cache.get(key)) return;
-  cache.put(key, '1', 600);
+  const kMin = 'mnotify_' + userId, kWin = 'mnotify10_' + userId, kSup = 'mnotifysup_' + userId;
+  const inWin = parseInt(cache.get(kWin) || '0', 10);
+  if (cache.get(kMin) || inWin >= 5) {
+    cache.put(kSup, String(parseInt(cache.get(kSup) || '0', 10) + 1), 600);
+    return;
+  }
+  cache.put(kMin, '1', 60);
+  cache.put(kWin, String(inWin + 1), 600);
+  const suppressed = parseInt(cache.get(kSup) || '0', 10);
+  cache.remove(kSup);
   const name = getDisplayName_(userId);
-  const body = text || ('(' + (msg && msg.type) + ')');
+  const body = (text || ('(' + (msg && msg.type) + ')')) + (suppressed ? '\n（ほか ' + suppressed + ' 件の新着を省略）' : '');
   const id = 'line_' + (msg && msg.id);
   try { appendInquiryRow_(new Date(), 'LINE', name, subject || '💬 手動対応中の新着', body, id); }
   catch (e) { notifyOwner_('LINE', name, subject || '💬 手動対応中の新着', body); }
@@ -1176,10 +1185,13 @@ function handlePostback_(event, userId) {
   const action = parseAction_(event.postback && event.postback.data);
   const pmsg = { type: 'postback', id: event.webhookEventId };
   const st = getUserState_(userId);
+  // v2（2026-09-16）: v=2 形式と旧 action= はここで解析し、停止/手動の判定のあと v2HandlePostback_ へ渡す
+  const pb = v2ParsePostback_(event.postback && event.postback.data);
+  const isApply = !!pb && pb.flow === 'satei' && pb.step === 0 && pb.act === 'next';
 
   // 優先順1: 停止フラグ（apply/estimate は明示的な再依頼として解除）
   if (isOptedOut_(st)) {
-    if (action === 'apply_kaitori' || action === 'apply_shobun' || action === 'estimate_request') {
+    if (isApply || action === 'apply_kaitori' || action === 'apply_shobun' || action === 'estimate_request') {
       setUserFields_(userId, { opt_out: '', opt_out_reason: '（メニュー再依頼で解除）' });
     } else {
       handleOptedOut_(event, userId, pmsg, '[postback ' + action + ']');
@@ -1195,6 +1207,14 @@ function handlePostback_(event, userId) {
       notifyManualIncoming_(event, userId, pmsg, '[postback ' + action + ']', '💬 手動対応中の新着');
       logEvent_(event, 'MANUAL_MODE', 'NONE'); return;
     }
+  }
+
+  if (pb && v2HandlePostback_(event, userId, pb)) return;
+  if (!pb) {
+    // v2 でも旧 action= でもない未知の data（F-3）
+    v2ReplyReselect_(event);
+    logEvent_(event, 'postback:unknown', '返信:選び直し ' + String(event.postback && event.postback.data).slice(0, 80));
+    return;
   }
 
   let rule = 'postback:' + action;
