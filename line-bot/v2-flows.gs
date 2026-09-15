@@ -81,7 +81,7 @@ function v2BatteryUnknownMessage_() {
     '',
     '外し方がわからない場合は、車体に付いたままでバッテリー全体が写る1枚でも大丈夫です。',
     '下のメニューの「カメラで撮る」「アルバムから選ぶ」から送れます。送り終わったら「次へ進む」を押してください。',
-  ].join('\n'));
+  ].join('\n'), v2PhotoStepQuick_());
 }
 /** §11-4 / F-8 長押し診断の案内（動画が来るまではコラム。ブリヂストン1本を全メーカー共通で使う予定） */
 function v2BatteryCheckMessage_() {
@@ -103,7 +103,15 @@ function v2PhotoGuideMessage_(s) {
   if (ebike) lines.push('・電動：電源を入れたパネル、バッテリー、充電器、鍵');
   if (s.data && s.data.bodyOnly) lines.push('※ バッテリーは外した状態で撮ってください');
   lines.push('', '下のメニューの「カメラで撮る」「アルバムから選ぶ」から送れます。', '送り終わったら「次へ進む」を押してください。写真がなくても「次へ進む」で大丈夫です。');
-  return v2Msg_(lines.join('\n'));
+  return v2Msg_(lines.join('\n'), v2PhotoStepQuick_());
+}
+/** 写真工程の吹き出しに付けるボタン（写真を撮らなくても進む・戻る・やめるができるように。2026-09-16） */
+function v2PhotoStepQuick_() {
+  return [
+    qrPostback_('▶ 次へ進む', v2Pb_('satei', 3, 'next', 'photos_done')),
+    qrPostback_('◀ ひとつ戻る', v2Pb_('menu', 0, 'back')),
+    qrPostback_('✖ やめる', v2Pb_('menu', 0, 'stop')),
+  ];
 }
 function v2AskCityMessage_() {
   // 既存ボットと同じ聞き方（町名まで。番地は金額決定後にしか聞かない＝handoff §10-5）
@@ -261,7 +269,7 @@ function v2HandleImage_(event, userId) {
   s.data = s.data || {};
   s.data.photos = (s.data.photos || 0) + 1;
   if (s.data.photos === 1) {
-    v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\n続けて送れます。送り終わったら、下のメニューの「次へ進む」を押してください🚲')]);
+    v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\n続けて送れます。送り終わったら「次へ進む」を押してください🚲', v2PhotoStepQuick_())]);
   }
   v2SetSession_(userId, s);
   try { logLineInquiry_(userId, '写真を送信（v2）', '(画像メッセージ ' + s.data.photos + '枚目)', 'line_' + event.message.id); } catch (e) {}

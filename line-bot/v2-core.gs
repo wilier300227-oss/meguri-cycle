@@ -211,8 +211,9 @@ function v2HandlePostback_(event, userId, pb) {
   const s = v2GetSession_(userId);
   const tag = 'v2:' + pb.flow + '/' + pb.step + '/' + pb.act + (pb.val ? '/' + pb.val : '') + (pb.legacy ? '(旧' + pb.legacy + ')' : '');
 
-  // menu フロー = 現在のセッションに対する操作（§9-2）。step は見ない
-  if (pb.flow === 'menu') {
+  // menu フロー = 現在のセッションに対する操作（§9-2）。step は見ない。
+  // 吹き出し内の「やめる」「ひとつ戻る」ボタン（flow=satei 等で act=stop/back/reset）も同じ扱い（2026-09-16 修正）
+  if (pb.flow === 'menu' || pb.act === 'stop' || pb.act === 'back' || pb.act === 'reset') {
     if (pb.act === 'consult') { replyInquiry(event); logEvent_(event, tag, '返信:担当者に相談（手動対応ON）'); return true; }
     if (pb.act === 'stop') { v2ReplyText_(event, '中断しました。また最初からご利用いただけます🚲'); v2LinkMenu_(userId, 'normal'); v2ClearSession_(userId); logEvent_(event, tag, '返信:中断'); return true; }
     if (pb.act === 'reset') {

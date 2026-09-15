@@ -43,7 +43,8 @@ const V2_MENUS = {
     ],
   },
   photo: {
-    name: 'v2-photo', chatBarText: '写真を送る', selected: false, image: 'richmenu_v2_photo.jpg',
+    // 写真工程は文字入力が要らないので、開いた状態で表示する（ボタンを探させない。2026-09-16）
+    name: 'v2-photo', chatBarText: '写真を送る', selected: true, image: 'richmenu_v2_photo.jpg',
     size: { width: 2500, height: 843 },
     areas: [
       { bounds: { x: 0, y: 0, width: 833, height: 843 }, action: { type: 'camera', label: 'カメラで撮る' } },
