@@ -148,7 +148,11 @@ function v2QuoteFlex_(q, quoteId, bodyText) {
 /* ── オーナーのコマンド入口（handleEvent から。処理したら true）── */
 function v2HandleOwnerCommand_(event, userId, text) {
   if (!v2IsOwner_(userId)) return false;
-  if (!/^#(見積|引取)/.test(v2NormalizeCmd_(text))) return false;
+  const nt = v2NormalizeCmd_(text);
+  // 対話式（「見積」「みつもり」「見積り」だけ、または #見積 だけ）→ 相手をボタンで選ぶ流れへ
+  if (/^#?(見積|見積り|みつもり|引取)$/.test(nt)) return ownerqStart_(event, userId);
+  if (ownerqGet_(userId) && !/^#(見積|引取)\s/.test(nt)) return ownerqHandleText_(event, userId, text);
+  if (!/^#(見積|引取)/.test(nt)) return false;
   const p = v2ParseQuoteCommand_(text);
   if (!p.ok) { v2ReplyText_(event, '⚠ ' + p.error); logEvent_(event, 'quote:parse_error', text.slice(0, 60)); return true; }
   const q = p.quote;
@@ -280,4 +284,117 @@ function v2NotifyOwnerNow_(userId, subject, body) {
     try { appendInquiryRow_(new Date(), 'LINE', name, subject, body, 'quote_' + Date.now()); }
     catch (e) { notifyOwner_('LINE', name, subject, body); }
   } catch (e) {}
+}
+
+/* =========================================================
+   見積の対話式入力（コマンドを覚えなくてよい版。2026-09-16 オーナー要望）
+   オーナーが「見積」とだけ送る → 相手をボタンで選ぶ → 金額を数字で → 電動かどうかをボタン → 車体名（任意）→ プレビュー → 送信
+   状態は CacheService（30分）。お客さま用のセッションとは別に持つ
+   ========================================================= */
+const OWNERQ_TTL = 1800;
+function ownerqKey_(userId) { return 'ownerq_' + userId; }
+function ownerqGet_(userId) { const r = CacheService.getScriptCache().get(ownerqKey_(userId)); try { return r ? JSON.parse(r) : null; } catch (e) { return null; } }
+function ownerqSet_(userId, s) { CacheService.getScriptCache().put(ownerqKey_(userId), JSON.stringify(s), OWNERQ_TTL); }
+function ownerqClear_(userId) { CacheService.getScriptCache().remove(ownerqKey_(userId)); }
+function ownerqPb_(step, act, val) { return 'v=2&flow=ownerq&step=' + step + '&act=' + act + (val ? '&val=' + val : ''); }
+function ownerqCancelQr_() { return qrPostback_('✖ やめる', ownerqPb_(0, 'stop')); }
+
+/** 受付完了（S2）・提示済み（S3）のお客さまを新しい順に最大12人 */
+function ownerqCandidates_() {
+  const sh = getUsersSheet_();
+  if (!sh) return [];
+  const data = sh.getDataRange().getValues();
+  const h = data[0];
+  const ix = function (c) { return h.indexOf(c); };
+  const out = [];
+  for (let r = 1; r < data.length; r++) {
+    const st = String(data[r][ix('state')] || '');
+    const cust = String(data[r][ix('cust_no')] || '');
+    if (!cust || !/^S[23]/.test(st)) continue;
+    out.push({ cust: cust, userId: String(data[r][0]), name: String(data[r][ix('displayName')] || ''), city: String(data[r][ix('city')] || ''),
+      intent: String(data[r][ix('intent')] || ''), state: st, upd: new Date(data[r][ix('updated_at')] || 0).getTime() });
+  }
+  out.sort(function (a, b) { return b.upd - a.upd; });
+  return out.slice(0, 12);
+}
+function ownerqStart_(event, userId) {
+  const cands = ownerqCandidates_();
+  if (!cands.length) { v2ReplyText_(event, '受付完了（査定待ち）のお客さまがいません。\n番号で指定するときは「#見積 C12 12000」の形で送ってください'); return true; }
+  const items = cands.map(function (c) {
+    const name = c.name ? c.name.slice(0, 6) : '';
+    const label = (c.cust + ' ' + name + ' ' + c.city.slice(0, 5) + (c.intent === 'shobun' ? ' 引取' : '')).slice(0, 20);
+    return qrPostback_(label, ownerqPb_(1, 'next', c.cust));
+  });
+  items.push(ownerqCancelQr_());
+  ownerqSet_(userId, { step: 1 });
+  v2Reply_(event, [v2Msg_('💰 見積を送ります。相手を選んでください👇\n（番号 = お客さま番号。新しい受付が左）', items)]);
+  return true;
+}
+function ownerqAskAmount_(event, s) {
+  v2Reply_(event, [v2Msg_(s.cust + ' ' + (s.name || '') + ' に送ります。\n\n金額を数字だけで送ってください（例: 12000）\n\n・引き取り費用なら「引取 2500」\n・点灯数で変わるなら「30000/24000/18000」（4点灯以上/3点灯/2点灯以下）\n・複数台なら「12000+15000」', [ownerqCancelQr_()])]);
+}
+function ownerqAskEbike_(event) {
+  v2Reply_(event, [v2Msg_('電動アシストですか？', [
+    qrPostback_('⚡ 電動', ownerqPb_(3, 'next', 'ebike')),
+    qrPostback_('🚲 電動ではない', ownerqPb_(3, 'next', 'normal')),
+    qrPostback_('車体のみ（バッテリー除く）', ownerqPb_(3, 'next', 'bodyonly')),
+    ownerqCancelQr_(),
+  ])]);
+}
+function ownerqAskName_(event) {
+  v2Reply_(event, [v2Msg_('車体名を入れますか？（例: パナソニック ビビDX）\n入れるならそのまま文字で送ってください。', [
+    qrPostback_('車体名なしで進む', ownerqPb_(4, 'next', 'none')),
+    ownerqCancelQr_(),
+  ])]);
+}
+/** 集めた材料からコマンド文字列を組み立てて、既存のプレビュー処理に渡す */
+function ownerqPreview_(event, userId, s) {
+  ownerqClear_(userId);
+  const cmd = '#' + (s.kind === 'hikitori' ? '引取' : '見積') + ' ' + s.cust + ' ' + s.amount +
+    (s.ebike === 'ebike' ? ' 電動' : '') + (s.ebike === 'bodyonly' ? ' 車体のみ' : '') + (s.name ? ' ' + s.name : '');
+  return v2HandleOwnerCommand_(event, userId, cmd);
+}
+/** テキスト入力（金額・車体名）。処理したら true */
+function ownerqHandleText_(event, userId, text) {
+  const s = ownerqGet_(userId);
+  if (!s) return false;
+  const t = v2NormalizeCmd_(text);
+  if (/^(やめる|キャンセル|中止)$/.test(t)) { ownerqClear_(userId); v2ReplyText_(event, '見積の入力をやめました'); return true; }
+  if (s.step === 2) {
+    let m = t.match(/^(引取|引き取り)\s*([0-9,]+)$/);
+    if (m) { s.kind = 'hikitori'; s.amount = m[2].replace(/,/g, ''); }
+    else if (/^[0-9,]+(?:[\/+][0-9,]+)*$/.test(t)) { s.kind = 'kaitori'; s.amount = t.replace(/,/g, ''); }
+    else { v2Reply_(event, [v2Msg_('金額は数字だけで送ってください（例: 12000）', [ownerqCancelQr_()])]); return true; }
+    if (s.kind === 'hikitori' || s.amount.indexOf('/') !== -1) { s.ebike = s.amount.indexOf('/') !== -1 ? 'ebike' : 'normal'; s.step = 4; ownerqSet_(userId, s); ownerqAskName_(event); return true; }
+    s.step = 3; ownerqSet_(userId, s); ownerqAskEbike_(event); return true;
+  }
+  if (s.step === 4) {
+    const bad = QUOTE_FORBIDDEN.filter(function (w) { return t.indexOf(w) !== -1; });
+    if (bad.length) { v2Reply_(event, [v2Msg_('使えない語が含まれています: ' + bad.join(' ') + '\n別の書き方で送ってください', [qrPostback_('車体名なしで進む', ownerqPb_(4, 'next', 'none')), ownerqCancelQr_()])]); return true; }
+    s.name = t.slice(0, 40);
+    return ownerqPreview_(event, userId, s);
+  }
+  // ボタンで答える段階に文字が来た → その段階の質問を出し直す
+  if (s.step === 1) return ownerqStart_(event, userId);
+  if (s.step === 3) { ownerqAskEbike_(event); return true; }
+  return false;
+}
+/** postback（相手の選択・電動の選択・車体名なし・やめる） */
+function ownerqHandlePostback_(event, userId, pb) {
+  if (!v2IsOwner_(userId)) { v2ReplyReselect_(event); return true; }
+  if (pb.act === 'stop') { ownerqClear_(userId); v2ReplyText_(event, '見積の入力をやめました'); logEvent_(event, 'ownerq:stop', ''); return true; }
+  const s = ownerqGet_(userId) || {};
+  if (pb.step === 1) {
+    const c = ownerqCandidates_().filter(function (x) { return x.cust === pb.val; })[0] || v2FindUserByCustNo_(pb.val);
+    if (!c) { v2ReplyText_(event, '⚠ ' + pb.val + ' が見つかりません'); ownerqClear_(userId); return true; }
+    s.step = 2; s.cust = pb.val; s.name = ''; s.custName = c.name || c.displayName || '';
+    ownerqSet_(userId, s); ownerqAskAmount_(event, { cust: s.cust, name: s.custName });
+    logEvent_(event, 'ownerq:cust', pb.val); return true;
+  }
+  if (pb.step === 3 && s.step === 3) { s.ebike = pb.val; s.step = 4; ownerqSet_(userId, s); ownerqAskName_(event); logEvent_(event, 'ownerq:ebike', pb.val); return true; }
+  if (pb.step === 4 && s.step === 4) { s.name = ''; logEvent_(event, 'ownerq:noname', ''); return ownerqPreview_(event, userId, s); }
+  // 期限切れ・段階違い
+  ownerqClear_(userId);
+  v2ReplyText_(event, '入力が途中で切れました。「見積」と送るともう一度最初からできます');
+  return true;
 }

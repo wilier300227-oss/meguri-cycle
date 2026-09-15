@@ -6,7 +6,7 @@
    ・ここでは「受け口と状態遷移の骨組み」だけ。各フローの本文（段階2）は v2-flows.gs（未作成）に置く
    ========================================================= */
 const V2_SESSION_TTL_SEC = 6 * 3600;
-const V2_FLOWS = ['satei', 'battery', 'area', 'faq', 'menu', 'quote'];
+const V2_FLOWS = ['satei', 'battery', 'area', 'faq', 'menu', 'quote', 'ownerq'];
 const V2_ACTS = ['next', 'back', 'reset', 'stop', 'submit', 'consult'];
 const SESSION_COLS = ['userId', 'flow', 'step', 'intent', 'data', 'updated_at'];
 
@@ -217,6 +217,7 @@ function v2HandlePostback_(event, userId, pb) {
 
   // quote フロー（§10）: オーナーの送信確認とお客さまの回答。セッションとは独立
   if (pb.flow === 'quote') return v2HandleQuotePostback_(event, userId, pb);
+  if (pb.flow === 'ownerq') return ownerqHandlePostback_(event, userId, pb);
 
   // menu フロー = 現在のセッションに対する操作（§9-2）。step は見ない。
   // 吹き出し内の「やめる」「ひとつ戻る」ボタン（flow=satei 等で act=stop/back/reset）も同じ扱い（2026-09-16 修正）

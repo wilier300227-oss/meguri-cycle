@@ -1224,7 +1224,7 @@ function handlePostback_(event, userId) {
   }
   // 優先順2: 手動対応モード（ボタン押し直しでの解除は 2026-09-14 に廃止。通知のみ）
   if (isManualMode_(st)) {
-    const nav = !!pb && (pb.flow === 'menu' || pb.flow === 'quote' || pb.act === 'stop' || pb.act === 'back' || pb.act === 'reset');
+    const nav = !!pb && (pb.flow === 'menu' || pb.flow === 'quote' || pb.flow === 'ownerq' || pb.act === 'stop' || pb.act === 'back' || pb.act === 'reset');
     if (isManualResetAction_(action)) {
       clearManualMode_(userId);
       logEvent_(event, 'MANUAL_RESET', 'postback ' + action);
