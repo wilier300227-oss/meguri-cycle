@@ -8,6 +8,9 @@
    ========================================================= */
 const V2_BATTERY_CHECK_URL = 'https://meguri-cycle.com/column/battery-check/';
 const V2_BATTERY_DISPOSAL_URL = 'https://meguri-cycle.com/column/battery-disposal/';
+// F-8 長押し診断の実演動画（54秒・字幕のみ・ブリヂストン見本を全メーカー共通で使用。2026-09-16 オーナー撮影）。サイトの video/ から配信
+const V2_BATTERY_VIDEO_URL = 'https://meguri-cycle.com/video/battery-check-howto.mp4';
+const V2_BATTERY_VIDEO_PREVIEW_URL = 'https://meguri-cycle.com/video/battery-check-howto.jpg';
 
 function qrPostback_(label, data) {
   return { type: 'action', action: { type: 'postback', label: label, data: data, displayText: label } };
@@ -83,17 +86,21 @@ function v2BatteryUnknownMessage_() {
     '下のメニューの「カメラで撮る」「アルバムから選ぶ」から送れます。送り終わったら「次へ進む」を押してください。',
   ].join('\n'), v2PhotoStepQuick_());
 }
-/** §11-4 / F-8 長押し診断の案内（動画が来るまではコラム。ブリヂストン1本を全メーカー共通で使う予定） */
+/** §11-4 / F-8 長押し診断の案内。動画メッセージ＋説明文の2通（v2Transition_ では配列を展開して使う） */
 function v2BatteryCheckMessage_() {
   return v2Msg_([
     'ありがとうございます。',
     '',
-    '🔋 バッテリーの残量ランプの調べ方（残量ボタンの長押し）はこちら👇',
-    V2_BATTERY_CHECK_URL,
-    '',
+    '🔋 バッテリーの残量ランプの調べ方（残量ボタンの長押し）を、上の動画でご覧ください（54秒・音声なし）。',
     'メーカーによってボタンの位置は違いますが、長押しの要領は同じです。',
-    '点灯したランプの数を、写真かメッセージで教えてください（できなくても大丈夫です）。',
+    '',
+    '動画のように、ランプが光るところまでを動画で撮って送ってください。写真でも、点灯した数を文字で教えていただいても大丈夫です（できなくても大丈夫です）。',
+    '文字で読みたい方はこちら👇',
+    V2_BATTERY_CHECK_URL,
   ].join('\n'));
+}
+function v2BatteryVideoMessage_() {
+  return { type: 'video', originalContentUrl: V2_BATTERY_VIDEO_URL, previewImageUrl: V2_BATTERY_VIDEO_PREVIEW_URL };
 }
 function v2PhotoGuideMessage_(s) {
   const ebike = s.data && (s.data.ebike === 'ebike' || s.data.ebike === 'unknown');
@@ -185,7 +192,7 @@ function v2Transition_(userId, s, pb) {
       if (pb.val === 'bat_ng') { out.messages = [v2BatteryNgMessage_('satei', 2)]; return out; }       // step は 2 のまま（次のボタン待ち）
       if (pb.val === 'body_only') { s.data.bodyOnly = true; s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
       if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = [v2BatteryUnknownMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
-      s.step = 3; out.messages = [v2BatteryCheckMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out;  // bat_ok
+      s.step = 3; out.messages = [v2BatteryVideoMessage_(), v2BatteryCheckMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out;  // bat_ok
     }
     if (s.step === 3) {                       // 写真工程 → 次へ進む（旧「写真を追加する」は写真の案内を出し直すだけ）
       if (pb.val === 'more_photos') { out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
@@ -204,7 +211,7 @@ function v2Transition_(userId, s, pb) {
       if (pb.val === 'body_only') { s.flow = 'satei'; s.intent = 'kaitori'; s.data.ebike = 'ebike'; s.data.bodyOnly = true; s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
       if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = [v2BatteryUnknownMessage_()]; out.menu = 'photo'; return out; }
       // bat_ok: 診断の案内で終了（買取したい人はメニューから）
-      out.messages = [v2BatteryCheckMessage_(), v2Msg_('買取をご希望のときは、下のメニューの「買取を申し込む」からどうぞ🚲')];
+      out.messages = [v2BatteryVideoMessage_(), v2BatteryCheckMessage_(), v2Msg_('買取をご希望のときは、下のメニューの「買取を申し込む」からどうぞ🚲')];
       out.stop = true; out.menu = 'normal'; return out;
     }
     if (s.step === 3) {                       // 写真 → 人が判断
