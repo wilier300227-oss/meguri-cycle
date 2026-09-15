@@ -77,6 +77,8 @@ function v2SetupRichMenus() {
     props.setProperty(v2PropKey_(key), id);
     Logger.log(key + ' = ' + id);
   });
+  // 作り直すと旧 ID へのユーザー紐付けは消えるので、開発中はそのままオーナーへ通常時メニューを紐付け直す
+  v2LinkOwnerNormal();
   return 'OK';
 }
 
