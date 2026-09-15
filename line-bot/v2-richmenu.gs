@@ -20,7 +20,7 @@ function v2PostbackArea_(x, y, w, h, label, data) {
 
 const V2_MENUS = {
   normal: {
-    name: 'v2-normal', chatBarText: 'メニューを開く', selected: false, image: 'richmenu_v2_normal.jpg',
+    name: 'v2-normal', chatBarText: 'メニューを開く／閉じる', selected: false, image: 'richmenu_v2_normal.jpg',
     size: { width: 2500, height: 1686 },
     areas: [
       v2PostbackArea_(0, 0, 1250, 562, '買取を申し込む', v2Pb_('satei', 0, 'next', 'kaitori')),
