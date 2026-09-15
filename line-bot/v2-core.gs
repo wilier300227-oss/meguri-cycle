@@ -197,6 +197,7 @@ function doGet(e) {
       out.menuProps = ['normal', 'inflow', 'photo'].map(function (k) { return k + '=' + PropertiesService.getScriptProperties().getProperty(v2PropKey_(k)); });
     }
     if (e.parameter.city) { out.cityHit = detectCityFee(e.parameter.city); out.feeKeys = Object.keys(getFeeMasterMap_()); }
+    if (e.parameter.clearmanual) { clearManualMode_(e.parameter.clearmanual); v2ClearSession_(e.parameter.clearmanual); out.cleared = e.parameter.clearmanual; } // テスト用: 手動対応とセッションを解除
     out.log = tail('log', Number(e.parameter.n) || 20);
     out.sessions = tail('sessions', 20);
     out.users = tail('users', 20);
