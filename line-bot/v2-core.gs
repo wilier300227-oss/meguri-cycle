@@ -196,6 +196,7 @@ function doGet(e) {
       out.linkedMenu = r.getResponseCode() + ' ' + r.getContentText();
       out.menuProps = ['normal', 'inflow', 'photo'].map(function (k) { return k + '=' + PropertiesService.getScriptProperties().getProperty(v2PropKey_(k)); });
     }
+    if (e.parameter.city) { out.cityHit = detectCityFee(e.parameter.city); out.feeKeys = Object.keys(getFeeMasterMap_()); }
     out.log = tail('log', Number(e.parameter.n) || 20);
     out.sessions = tail('sessions', 20);
     out.users = tail('users', 20);
@@ -232,7 +233,8 @@ function v2HandlePostback_(event, userId, pb) {
   }
 
   // F-3 状態ガード: セッションの flow/step と一致しなければ進めない
-  if (!s || s.flow !== pb.flow || s.step !== pb.step) {
+  const photosDone = pb.val === 'photos_done' && s && s.step === 3;   // 写真工程メニューは flow=satei 固定（§9-3）
+  if (!photosDone && (!s || s.flow !== pb.flow || s.step !== pb.step)) {
     v2ReplyReselect_(event);
     logEvent_(event, tag, '返信:選び直し（不一致 ' + (s ? s.flow + '/' + s.step : 'なし') + '）');
     return true;
@@ -242,25 +244,33 @@ function v2HandlePostback_(event, userId, pb) {
   return true;
 }
 
-/* ── フローの骨組み（本文は段階2で差し替える）── */
+/* ── フロー制御（本文は v2-flows.gs）── */
 function v2StartFlow_(event, userId, flow, intent) {
   const s = { flow: flow, step: 1, intent: intent || '', data: {} };
   // 体感の遅さ対策: 先に返信し、そのあとでメニュー切替とセッション保存（シート書き込み）をする
-  v2Prompt_(event, userId, s);
+  v2Reply_(event, v2FlowStartMessages_(s));
   v2LinkMenu_(userId, 'inflow');
   v2SetSession_(userId, s);
 }
-/** 現在の step の案内を返す（段階1は動作確認用の仮文） */
+/** 現在の step の案内をもう一度出す（ひとつ戻る用） */
 function v2Prompt_(event, userId, s) {
-  const label = s.flow === 'satei' ? (s.intent === 'shobun' ? '処分・引取' : '買取') : s.flow === 'battery' ? 'バッテリー診断' : s.flow;
-  v2ReplyText_(event, '【開発中】' + label + 'の案内 ' + s.step + '番目です。\n下のメニューの「ひとつ戻る」「最初からやり直す」「やめる」で動作を確認できます。');
+  let msgs;
+  if (s.flow === 'satei' && s.step === 1) msgs = [v2AskEbike_(s)];
+  else if (s.flow === 'satei' && s.step === 2) msgs = [v2AskBattery_('satei', 2)];
+  else if (s.step === 3) msgs = [v2PhotoGuideMessage_(s)];
+  else if (s.flow === 'satei' && s.step === 4) msgs = [v2AskCityMessage_()];
+  else if (s.flow === 'battery' && s.step === 1) msgs = [v2AskBattery_('battery', 1)];
+  else msgs = v2FlowStartMessages_(s);
+  v2Reply_(event, msgs);
+  v2LinkMenu_(userId, s.step === 3 ? 'photo' : 'inflow');
 }
-/** step を1つ進める（段階1は仮。段階2で val ごとの分岐を入れる） */
+/** ボタンの val に応じて次の状態へ */
 function v2Advance_(event, userId, s, pb) {
-  s.data = s.data || {};
-  s.data['step' + s.step] = pb.val;
-  s.step += 1;
-  v2Prompt_(event, userId, s);
+  const t = v2Transition_(userId, s, pb);
+  if (t.messages.length) v2Reply_(event, t.messages);
+  if (t.done) { v2Complete_(event, userId, s); return; }
+  if (t.stop) { v2LinkMenu_(userId, 'normal'); v2ClearSession_(userId); return; }
+  if (t.menu) v2LinkMenu_(userId, t.menu);
   v2SetSession_(userId, s);
 }
 function v2ReplyReselect_(event) {

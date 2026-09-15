@@ -300,6 +300,10 @@ function handleEvent(event) {
     }
   }
 
+  // v2（2026-09-16）: 進行中フローのテキスト入力（市町名）と、旧タイル文言の v2 写像。停止希望の語は v2 より先に見る
+  if (msg.type === 'text' && !detectOptOut_(text) && v2HandleText_(event, userId, text)) return;
+  if (msg.type === 'image' && v2HandleImage_(event, userId)) return;
+
   if (msg.type === 'text') {
     if (REVIEW_AUTO_ENABLED && userId && REVIEW_CANCEL_KEYWORDS.some(function (kw) { return text.indexOf(kw) !== -1; })) {
       skipReviewRequest_(userId);
@@ -683,9 +687,10 @@ function setOptOut_(userId, reason) {
 /** 停止解除は「顧客の明示的な再依頼」のみ（時間では解除しない） */
 function isExplicitReRequest_(text) {
   if (!text) return false;
-  return text === '買取を申し込む' || text === '買取査定を申し込みます' || text === '買取査定を申し込む' ||
-         text === '出張引取を申し込みます' || text === '出張引取を申し込む' || text === '買取希望' ||
-    text.indexOf('査定をお願い') !== -1 || text.indexOf('申し込み') !== -1 || text.indexOf('お願いします') !== -1;
+  // 2026-09-16（要件定義 §7 #7）: 「お願いします」「申し込み」の部分一致は範囲が広すぎるため廃止。申込タイルの文言の完全一致だけ
+  const t = String(text).replace(/[\s　]+$/, '');
+  return t === '買取を申し込む' || t === '買取査定を申し込みます' || t === '買取査定を申し込む' ||
+         t === '処分・引取を申し込む' || t === '出張引取を申し込みます' || t === '出張引取を申し込む' || t === '買取希望' || t === '処分希望';
 }
 /** 停止中の新規メッセージ：営業応答はせず、オーナー通知＋短い1文のみ（1セッション1回） */
 function handleOptedOut_(event, userId, msg, text) {
