@@ -96,9 +96,23 @@ function v2DeleteAllMenus() {
 }
 
 /** ユーザー単位でメニューを切り替える（key: normal / inflow / photo）。ID 未設定なら何もしない。 */
+/** メニュー ID。プロパティに無ければ API の一覧から名前（v2-normal 等）で探して保存する
+ *  （本番プロジェクトへの切替時にプロパティを手で入れなくて済む。同じチャネルなので開発側で作ったメニューをそのまま使える） */
+function v2MenuId_(key) {
+  const props = PropertiesService.getScriptProperties();
+  let id = props.getProperty(v2PropKey_(key));
+  if (id) return id;
+  try {
+    const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/richmenu/list', { headers: v2Headers_(), muteHttpExceptions: true });
+    const list = (JSON.parse(res.getContentText()).richmenus) || [];
+    const hit = list.filter(function (r) { return r.name === V2_MENUS[key].name; }).sort(function (a, b) { return (b.richMenuId > a.richMenuId) ? 1 : -1; })[0];
+    if (hit) { props.setProperty(v2PropKey_(key), hit.richMenuId); return hit.richMenuId; }
+  } catch (e) { console.error('v2MenuId_ ' + e); }
+  return '';
+}
 function v2LinkMenu_(userId, key) {
   if (!userId) return false;
-  const id = PropertiesService.getScriptProperties().getProperty(v2PropKey_(key));
+  const id = v2MenuId_(key);
   if (!id) return false;
   try {
     const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/user/' + userId + '/richmenu/' + id, {
@@ -121,15 +135,31 @@ function v2LinkOwnerNormal() {
 /** 自分のユーザー単位メニューを外す（管理画面のメニューＡに戻る）。 */
 function v2UnlinkOwner() { v2UnlinkUser_(OWNER_LINE_USER_ID); Logger.log('unlinked owner'); }
 
-/** 切替（N-3）: 通常時メニューをデフォルトにする。開発中は実行しない。 */
+/** 切替（N-3）: 通常時メニューを全ユーザーのデフォルトにする。オーナーの LINE から「メニュー切替」で実行 */
 function v2SetDefaultNormal() {
-  const id = PropertiesService.getScriptProperties().getProperty(v2PropKey_('normal'));
-  if (!id) throw new Error('RICHMENU_V2_NORMAL 未設定');
+  const id = v2MenuId_('normal');
+  if (!id) return 'RICHMENU_V2_NORMAL が見つかりません（v2SetupRichMenus を先に）';
   const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/user/all/richmenu/' + id, { method: 'post', headers: v2Headers_(), muteHttpExceptions: true });
-  Logger.log('setDefault ' + res.getResponseCode());
+  return 'setDefault ' + res.getResponseCode() + ' ' + id;
 }
-/** ロールバック（N-3）: API のデフォルトメニューを解除する（管理画面のメニューＡが再び表示される想定）。 */
+/** ロールバック（N-3）: API のデフォルトメニューを解除する（管理画面のメニューＡが再び表示される）。オーナーの LINE から「メニュー戻す」 */
 function v2ClearDefault() {
   const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/user/all/richmenu', { method: 'delete', headers: v2Headers_(), muteHttpExceptions: true });
-  Logger.log('clearDefault ' + res.getResponseCode());
+  return 'clearDefault ' + res.getResponseCode();
+}
+/** 現在のデフォルトメニューと ID の状態（オーナーの LINE から「メニュー確認」） */
+function v2MenuStatus_() {
+  const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/user/all/richmenu', { headers: v2Headers_(), muteHttpExceptions: true });
+  const cur = res.getResponseCode() === 200 ? JSON.parse(res.getContentText()).richMenuId : '（API デフォルト無し＝管理画面のメニュー）';
+  return ['デフォルト: ' + cur, 'normal: ' + v2MenuId_('normal'), 'inflow: ' + v2MenuId_('inflow'), 'photo: ' + v2MenuId_('photo')].join('\n');
+}
+/** オーナーのメニュー操作コマンド（handleEvent → v2HandleOwnerCommand_ 経由）。処理したら true */
+function v2HandleMenuCommand_(event, userId, text) {
+  const t = v2NormalizeCmd_(text);
+  if (t === 'メニュー確認') { v2ReplyText_(event, v2MenuStatus_()); logEvent_(event, 'menu:status', ''); return true; }
+  if (t === 'メニュー切替') { v2ReplyText_(event, '全ユーザーのデフォルトを v2 通常時メニューにしました\n' + v2SetDefaultNormal()); logEvent_(event, 'menu:setdefault', ''); return true; }
+  if (t === 'メニュー戻す') { v2ReplyText_(event, 'API のデフォルトメニューを解除しました（管理画面のメニューＡに戻ります）\n' + v2ClearDefault()); logEvent_(event, 'menu:cleardefault', ''); return true; }
+  if (t === 'メニュー自分') { v2LinkMenu_(userId, 'normal'); v2ReplyText_(event, '自分に v2 通常時メニューを紐付けました'); return true; }
+  if (t === 'メニュー自分解除') { v2UnlinkUser_(userId); v2ReplyText_(event, '自分の個別メニューを外しました（デフォルトに戻ります）'); return true; }
+  return false;
 }

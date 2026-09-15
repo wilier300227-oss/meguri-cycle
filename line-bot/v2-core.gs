@@ -173,13 +173,14 @@ function v2CustNo_(userId) {
 /* ── 開発用の診断エンドポイント（GET /exec?diag=<INQUIRY_SHEET_ID>）。
    log の末尾20行・sessions・users を JSON で返す。切替（段階5）前に削除する。 ── */
 function doGet(e) {
-  const key = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+  // 診断はプロパティ DIAG_KEY がある環境（開発）だけ。本番には DIAG_KEY を置かない＝常に 'ok' だけ返す
+  const key = PropertiesService.getScriptProperties().getProperty('DIAG_KEY');
   const out = { ok: false };
   try {
     if (!e || !e.parameter || !key || e.parameter.diag !== key) {
       return ContentService.createTextOutput('ok').setMimeType(ContentService.MimeType.TEXT);
     }
-    const ss = SpreadsheetApp.openById(key);
+    const ss = SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID'));
     const tail = function (name, n) {
       const sh = ss.getSheetByName(name);
       if (!sh) return null;

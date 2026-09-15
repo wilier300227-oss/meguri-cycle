@@ -201,38 +201,9 @@ function setupLineSheets() {
   Logger.log('セットアップ完了。INQUIRY_SHEET_ID=' + id);
   return 'OK INQUIRY_SHEET_ID=' + id;
 }
-/* ── v2 並行稼働用の転送シム（2026-09-16、要件定義_LINEシステム.md N-2）──
-   スクリプトプロパティ FORWARD_USER_IDS（カンマ区切りの userId）に含まれるユーザーのイベントだけを
-   FORWARD_URL（v2 開発プロジェクトの WebApp URL）へそのまま転送し、本番側では処理しない。
-   どちらかのプロパティが無ければ何もしない。転送に失敗しても例外を外へ出さない（既存処理に影響させない）。
-   切替（N-3）時にこの関数と doPost の呼び出しを削除する。 */
-function forwardToV2_(body) {
-  try {
-    const props = PropertiesService.getScriptProperties();
-    const url = props.getProperty('FORWARD_URL');
-    const ids = String(props.getProperty('FORWARD_USER_IDS') || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
-    if (!url || !ids.length || !body || !body.events || !body.events.length) return body;
-    // 自分自身への転送は禁止（開発プロジェクトに同じプロパティを入れると無限ループになる。2026-09-16 に実際に発生）
-    let self = '';
-    try { self = ScriptApp.getService().getUrl() || ''; } catch (e) {}
-    if (self && url.split('?')[0] === self.split('?')[0]) { console.error('forwardToV2_: FORWARD_URL が自分自身なので転送しない'); return body; }
-    if (body.forwardedFromV1) return body; // 転送されてきたものは二度と転送しない
-    const fwd = body.events.filter(function (ev) { return ev.source && ids.indexOf(ev.source.userId) !== -1; });
-    if (!fwd.length) return body;
-    UrlFetchApp.fetch(url, {
-      method: 'post', contentType: 'application/json', muteHttpExceptions: true, followRedirects: true,
-      payload: JSON.stringify({ destination: body.destination, events: fwd, forwardedFromV1: true }),
-    });
-    return { destination: body.destination, events: body.events.filter(function (ev) { return fwd.indexOf(ev) === -1; }) };
-  } catch (err) {
-    console.error('forwardToV2_ ' + err);
-    return body;
-  }
-}
-
 function doPost(e) {
   try {
-    const body = forwardToV2_(JSON.parse(e.postData.contents));
+    const body = JSON.parse(e.postData.contents);
     (body.events || []).forEach(handleEvent);
   } catch (err) {
     console.error(err);
