@@ -244,6 +244,11 @@ function handleEvent(event) {
     const st0 = getUserState_(userId);
     if (isOptedOut_(st0)) setUserFields_(userId, { opt_out: '', opt_out_reason: '（サイトCTAの再依頼で解除）' });
     if (isManualMode_(st0)) clearManualMode_(userId);
+    // v2（2026-09-16）: サイト経由もメニューと同じ v2 の流れに入れる（集計キーの記録・通知は上で済み）。v2 が無い環境では旧の経路別受付
+    if (typeof v2StartFlowFromRoute_ === 'function' && v2StartFlowFromRoute_(event, userId, routeId)) {
+      logEvent_(event, 'サイトCTA:' + routeId, '返信:v2フロー開始');
+      return;
+    }
     replyRouteCta_(event, userId, routeId);
     logEvent_(event, 'サイトCTA:' + routeId, '返信:経路別受付');
     return;

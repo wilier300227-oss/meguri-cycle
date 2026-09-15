@@ -67,8 +67,9 @@ function v2BatteryNgMessage_(flow, step) {
     '　メーカーや販売店、リサイクル協力店（JBRC）はふくらんだバッテリーを受け付けていません。',
     '　お住まいの市町のごみ担当窓口にご相談ください。市町ごとの窓口はこちらにまとめています👇',
     '　' + V2_BATTERY_DISPOSAL_URL,
+    '　金沢市の方は、月2回の資源回収「乾電池・水銀含有製品」の回収箱に出せます（ふくらんだものも可。市に確認済み）。',
     '',
-    '車体（自転車本体）だけの買取・引取は可能です。バッテリーを外した状態で、車体の写真をお送りください📷',
+    '車体（自転車本体）だけの買取・引き取りは可能です。バッテリーを外した状態で、車体の写真をお送りください📷',
   ].join('\n'), [
     qrPostback_('車体の写真を送る', v2Pb_(flow, step, 'next', 'body_only')),
     qrPostback_('やめる', v2Pb_(flow, step, 'stop', 'bat_ng')),
@@ -233,7 +234,7 @@ function v2Complete_(event, userId, s, extraLines) {
   const summary = [
     '【' + (s.flow === 'battery' ? 'バッテリー確認' : (s.intent === 'shobun' ? '処分・引取' : '買取')) + ' 受付】' + (cust ? ' ' + cust : ''),
     '電動: ' + (d.ebike || '-') + ' / バッテリー: ' + (d.battery || '-') + (d.bodyOnly ? '（車体のみ）' : ''),
-    '写真: ' + (d.photos || 0) + '枚' + (d.batteryPhoto ? '（バッテリー確認用あり）' : ''),
+    '写真: ' + (d.photos || 0) + '枚' + (d.batteryPhoto ? '（バッテリー確認用あり）' : '') + (!d.photos ? '（フロー前に送られた写真はトークを確認）' : ''),
     '住所: ' + (d.address || d.city || '-') + (d.fee ? '（出張費 ' + d.fee + '）' : ''),
     '防犯登録: ' + ({ bohan_yes: 'シールも紙もある', bohan_seal: 'シールだけ（紙はない）', bohan_no: 'ない', bohan_unknown: 'わからない' }[d.bohan] || '-'),
   ].join('\n');
@@ -248,6 +249,23 @@ function v2Complete_(event, userId, s, extraLines) {
   } catch (e) {}
   v2LinkMenu_(userId, 'normal');
   v2ClearSession_(userId);
+}
+
+/** サイトの LINE ボタン（経路識別子つき初回メッセージ）から v2 の流れを始める。処理したら true
+ *  電動ページ → 買取（電動＝はい を回答済みにしてバッテリーの質問から）／トップ・その他 → 買取／処分コラム → 処分・引取／診断コラム → バッテリーの調べ方 */
+function v2StartFlowFromRoute_(event, userId, routeId) {
+  if (!userId) return false;
+  if (routeId === '（診断コラムから）') { v2StartFlow_(event, userId, 'battery', ''); return true; }
+  if (routeId === '（処分コラムから）') { v2StartFlow_(event, userId, 'satei', 'shobun'); return true; }
+  if (routeId === '（電動ページから）') {
+    const s = { flow: 'satei', step: 2, intent: 'kaitori', data: { ebike: 'ebike', route: routeId } };
+    v2Reply_(event, [v2Msg_('⚡ 電動アシストのご相談ありがとうございます！\n査定は写真だけで大丈夫です。金額が決まってからお伺いします（買取なら費用はかかりません）。'), v2AskBattery_('satei', 2)]);
+    v2LinkMenu_(userId, 'inflow');
+    v2SetSession_(userId, s);
+    return true;
+  }
+  v2StartFlow_(event, userId, 'satei', 'kaitori');   // トップ・市町ページ・その他の「（〜から）」
+  return true;
 }
 
 /** テキスト入力の受け口（handleEvent から呼ぶ）。処理したら true */
