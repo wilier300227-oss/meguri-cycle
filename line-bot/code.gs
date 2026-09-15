@@ -260,6 +260,9 @@ function handleEvent(event) {
     return;
   }
 
+  // v2 §10: オーナー自身の LINE からの #見積 / #引取 コマンド（お客さまの判定より先に処理する）
+  if (text && typeof v2HandleOwnerCommand_ === 'function' && v2HandleOwnerCommand_(event, userId, text)) return;
+
   // H改: サイトCTA（oaMessage）の経路識別子。記録＋オーナー通知のうえ、経路別の受付応答を返す。
   //    CTAタップは「明示的な問い合わせ（再依頼）」として扱い、停止・手動対応中でも解除して応答する
   //    （旧仕様の「無応答＋手動対応モードON」はサイトからの見込み客に沈黙を返すため廃止＝2026-08-20改善）。
@@ -1208,7 +1211,7 @@ function handlePostback_(event, userId) {
   const st = getUserState_(userId);
   // v2（2026-09-16）: v=2 形式と旧 action= はここで解析し、停止/手動の判定のあと v2HandlePostback_ へ渡す
   const pb = v2ParsePostback_(event.postback && event.postback.data);
-  const isApply = !!pb && pb.flow === 'satei' && pb.step === 0 && pb.act === 'next';
+  const isApply = !!pb && ((pb.flow === 'satei' && pb.step === 0 && pb.act === 'next') || (pb.flow === 'quote' && pb.val === 'accept'));
 
   // 優先順1: 停止フラグ（apply/estimate は明示的な再依頼として解除）
   if (isOptedOut_(st)) {
@@ -1221,7 +1224,7 @@ function handlePostback_(event, userId) {
   }
   // 優先順2: 手動対応モード（ボタン押し直しでの解除は 2026-09-14 に廃止。通知のみ）
   if (isManualMode_(st)) {
-    const nav = !!pb && (pb.flow === 'menu' || pb.act === 'stop' || pb.act === 'back' || pb.act === 'reset');
+    const nav = !!pb && (pb.flow === 'menu' || pb.flow === 'quote' || pb.act === 'stop' || pb.act === 'back' || pb.act === 'reset');
     if (isManualResetAction_(action)) {
       clearManualMode_(userId);
       logEvent_(event, 'MANUAL_RESET', 'postback ' + action);

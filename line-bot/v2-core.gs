@@ -6,7 +6,7 @@
    ・ここでは「受け口と状態遷移の骨組み」だけ。各フローの本文（段階2）は v2-flows.gs（未作成）に置く
    ========================================================= */
 const V2_SESSION_TTL_SEC = 6 * 3600;
-const V2_FLOWS = ['satei', 'battery', 'area', 'faq', 'menu'];
+const V2_FLOWS = ['satei', 'battery', 'area', 'faq', 'menu', 'quote'];
 const V2_ACTS = ['next', 'back', 'reset', 'stop', 'submit', 'consult'];
 const SESSION_COLS = ['userId', 'flow', 'step', 'intent', 'data', 'updated_at'];
 
@@ -203,6 +203,7 @@ function doGet(e) {
     }
     out.log = tail('log', Number(e.parameter.n) || 20);
     out.sessions = tail('sessions', 20);
+    out.quotes = tail('quotes', 5);
     out.users = tail('users', 20);
     out.props = Object.keys(PropertiesService.getScriptProperties().getProperties()).sort();
   } catch (err) { out.error = String(err); }
@@ -213,6 +214,9 @@ function doGet(e) {
 function v2HandlePostback_(event, userId, pb) {
   const s = v2GetSession_(userId);
   const tag = 'v2:' + pb.flow + '/' + pb.step + '/' + pb.act + (pb.val ? '/' + pb.val : '') + (pb.legacy ? '(旧' + pb.legacy + ')' : '');
+
+  // quote フロー（§10）: オーナーの送信確認とお客さまの回答。セッションとは独立
+  if (pb.flow === 'quote') return v2HandleQuotePostback_(event, userId, pb);
 
   // menu フロー = 現在のセッションに対する操作（§9-2）。step は見ない。
   // 吹き出し内の「やめる」「ひとつ戻る」ボタン（flow=satei 等で act=stop/back/reset）も同じ扱い（2026-09-16 修正）
