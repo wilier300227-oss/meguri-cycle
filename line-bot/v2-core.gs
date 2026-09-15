@@ -162,6 +162,40 @@ function v2CustNo_(userId) {
   } catch (e) { return ''; } finally { try { lock.releaseLock(); } catch (e) {} }
 }
 
+/* ── 開発用の診断エンドポイント（GET /exec?diag=<INQUIRY_SHEET_ID>）。
+   log の末尾20行・sessions・users を JSON で返す。切替（段階5）前に削除する。 ── */
+function doGet(e) {
+  const key = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+  const out = { ok: false };
+  try {
+    if (!e || !e.parameter || !key || e.parameter.diag !== key) {
+      return ContentService.createTextOutput('ok').setMimeType(ContentService.MimeType.TEXT);
+    }
+    const ss = SpreadsheetApp.openById(key);
+    const tail = function (name, n) {
+      const sh = ss.getSheetByName(name);
+      if (!sh) return null;
+      const last = sh.getLastRow();
+      if (last < 1) return [];
+      const from = Math.max(1, last - n + 1);
+      return sh.getRange(from, 1, last - from + 1, sh.getLastColumn()).getValues();
+    };
+    out.ok = true;
+    if (e.parameter.setup === '1') out.setup = v2SetupRichMenus();      // メニュー3枚を作り直して ID を保存、オーナーに紐付け
+    if (e.parameter.link) out.link = v2LinkMenu_(OWNER_LINE_USER_ID, e.parameter.link); // normal/inflow/photo をオーナーに紐付け
+    if (e.parameter.menu === '1') {                                        // オーナーに今リンクされているメニュー ID
+      const r = UrlFetchApp.fetch('https://api.line.me/v2/bot/user/' + OWNER_LINE_USER_ID + '/richmenu', { headers: v2Headers_(), muteHttpExceptions: true });
+      out.linkedMenu = r.getResponseCode() + ' ' + r.getContentText();
+      out.menuProps = ['normal', 'inflow', 'photo'].map(function (k) { return k + '=' + PropertiesService.getScriptProperties().getProperty(v2PropKey_(k)); });
+    }
+    out.log = tail('log', Number(e.parameter.n) || 20);
+    out.sessions = tail('sessions', 20);
+    out.users = tail('users', 20);
+    out.props = Object.keys(PropertiesService.getScriptProperties().getProperties()).sort();
+  } catch (err) { out.error = String(err); }
+  return ContentService.createTextOutput(JSON.stringify(out, null, 1)).setMimeType(ContentService.MimeType.JSON);
+}
+
 /* ── postback の入口（handlePostback_ から呼ぶ）。処理したら true ── */
 function v2HandlePostback_(event, userId, pb) {
   const s = v2GetSession_(userId);
