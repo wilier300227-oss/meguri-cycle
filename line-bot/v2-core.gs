@@ -197,7 +197,10 @@ function doGet(e) {
       out.menuProps = ['normal', 'inflow', 'photo'].map(function (k) { return k + '=' + PropertiesService.getScriptProperties().getProperty(v2PropKey_(k)); });
     }
     if (e.parameter.city) { out.cityHit = detectCityFee(e.parameter.city); out.feeKeys = Object.keys(getFeeMasterMap_()); }
-    if (e.parameter.clearmanual) { clearManualMode_(e.parameter.clearmanual); v2ClearSession_(e.parameter.clearmanual); out.cleared = e.parameter.clearmanual; } // テスト用: 手動対応とセッションを解除
+    if (e.parameter.clearmanual) { // テスト用: 手動対応・停止フラグ・セッションを解除して通常時メニューへ
+      clearManualMode_(e.parameter.clearmanual); setUserFields_(e.parameter.clearmanual, { opt_out: '', opt_out_reason: '' });
+      v2ClearSession_(e.parameter.clearmanual); v2LinkMenu_(e.parameter.clearmanual, 'normal'); out.cleared = e.parameter.clearmanual;
+    }
     out.log = tail('log', Number(e.parameter.n) || 20);
     out.sessions = tail('sessions', 20);
     out.users = tail('users', 20);
@@ -214,14 +217,20 @@ function v2HandlePostback_(event, userId, pb) {
   // menu フロー = 現在のセッションに対する操作（§9-2）。step は見ない。
   // 吹き出し内の「やめる」「ひとつ戻る」ボタン（flow=satei 等で act=stop/back/reset）も同じ扱い（2026-09-16 修正）
   if (pb.flow === 'menu' || pb.act === 'stop' || pb.act === 'back' || pb.act === 'reset') {
-    if (pb.act === 'consult') { replyInquiry(event); logEvent_(event, tag, '返信:担当者に相談（手動対応ON）'); return true; }
-    if (pb.act === 'stop') { v2ReplyText_(event, '中断しました。また最初からご利用いただけます🚲'); v2LinkMenu_(userId, 'normal'); v2ClearSession_(userId); logEvent_(event, tag, '返信:中断'); return true; }
-    if (pb.act === 'reset') {
-      if (!s) { v2ReplyReselect_(event); logEvent_(event, tag, '返信:選び直し（セッション無し）'); return true; }
-      v2StartFlow_(event, userId, s.flow, s.intent); logEvent_(event, tag, '返信:最初から'); return true;
+    if (pb.act === 'consult') {
+      // 人が対応するので、進行中のフローは終わりにして通常時メニューへ戻す（手動対応が明けたら最初から）
+      replyInquiry(event); v2LinkMenu_(userId, 'normal'); v2ClearSession_(userId);
+      logEvent_(event, tag, '返信:担当者に相談（手動対応ON）'); return true;
     }
+    if (pb.act === 'stop') { v2ReplyText_(event, '中断しました。また最初からご利用いただけます🚲'); v2LinkMenu_(userId, 'normal'); v2ClearSession_(userId); logEvent_(event, tag, '返信:中断'); return true; }
+    if (!s) {
+      // セッションが無い（翌日に再開・切替直後など）のに進行中メニューの操作が来た → 通常時メニューに戻して選び直し
+      v2ReplyReselect_(event); v2LinkMenu_(userId, 'normal');
+      logEvent_(event, tag, '返信:選び直し（セッション無し→通常メニュー）'); return true;
+    }
+    if (pb.act === 'reset') { v2StartFlow_(event, userId, s.flow, s.intent); logEvent_(event, tag, '返信:最初から'); return true; }
     if (pb.act === 'back') {
-      if (!s || s.step <= 1) { v2ReplyReselect_(event); logEvent_(event, tag, '返信:選び直し（戻れない）'); return true; }
+      if (s.step <= 1) { v2Prompt_(event, userId, s); logEvent_(event, tag, '返信:最初の質問（これ以上戻れない）'); return true; }
       s.step = v2PrevStep_(s); v2Prompt_(event, userId, s); v2SetSession_(userId, s); logEvent_(event, tag, '返信:ひとつ戻る→' + s.step); return true;
     }
     v2ReplyReselect_(event); logEvent_(event, tag, '返信:選び直し'); return true;
@@ -237,8 +246,18 @@ function v2HandlePostback_(event, userId, pb) {
   // F-3 状態ガード: セッションの flow/step と一致しなければ進めない
   const photosDone = pb.val === 'photos_done' && s && s.step === 3;   // 写真工程メニューは flow=satei 固定（§9-3）
   if (!photosDone && (!s || s.flow !== pb.flow || s.step !== pb.step)) {
+    if (!s) {
+      // セッション無し（古いトークのボタン・翌日の再開）→ 通常時メニューに戻して選び直し
+      v2ReplyReselect_(event); v2LinkMenu_(userId, 'normal');
+      logEvent_(event, tag, '返信:選び直し（セッション無し→通常メニュー）'); return true;
+    }
+    if (s.flow === pb.flow && pb.step < s.step) {
+      // 回答済みの段階のボタン（同じ吹き出しの2度押し・上に残ったボタン）→ 今の質問をもう一度出す
+      v2Prompt_(event, userId, s);
+      logEvent_(event, tag, '返信:今の質問を再掲（回答済み ' + pb.step + '→' + s.step + '）'); return true;
+    }
     v2ReplyReselect_(event);
-    logEvent_(event, tag, '返信:選び直し（不一致 ' + (s ? s.flow + '/' + s.step : 'なし') + '）');
+    logEvent_(event, tag, '返信:選び直し（不一致 ' + s.flow + '/' + s.step + '）');
     return true;
   }
   v2Advance_(event, userId, s, pb);
@@ -256,15 +275,7 @@ function v2StartFlow_(event, userId, flow, intent) {
 }
 /** 現在の step の案内をもう一度出す（ひとつ戻る用） */
 function v2Prompt_(event, userId, s) {
-  let msgs;
-  if (s.flow === 'satei' && s.step === 1) msgs = [v2AskEbike_(s)];
-  else if (s.flow === 'satei' && s.step === 2) msgs = [v2AskBattery_('satei', 2)];
-  else if (s.step === 3) msgs = [v2PhotoGuideMessage_(s)];
-  else if (s.flow === 'satei' && s.step === 4) msgs = [v2AskCityMessage_()];
-  else if (s.flow === 'satei' && s.step === 5) msgs = [v2AskBohanMessage_('satei')];
-  else if (s.flow === 'battery' && s.step === 1) msgs = [v2AskBattery_('battery', 1)];
-  else msgs = v2FlowStartMessages_(s);
-  v2Reply_(event, msgs);
+  v2Reply_(event, v2PromptMessages_(s));
   v2LinkMenu_(userId, s.step === 3 ? 'photo' : 'inflow');
 }
 /** ボタンの val に応じて次の状態へ */

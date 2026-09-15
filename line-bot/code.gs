@@ -683,6 +683,8 @@ function isOptedOut_(st) { return st && String(st.opt_out) === '1'; }
 function setOptOut_(userId, reason) {
   setUserFields_(userId, { opt_out: '1', opt_out_at: new Date(), opt_out_reason: String(reason || '').slice(0, 100) });
   switchToMenuA_(userId); // 停止時はメニューを通常(A)に戻す（§6-3）
+  // v2（2026-09-16）: 進行中のフローも終了し、通常時メニューへ（v2 ファイルが無い本番では何もしない）
+  if (typeof v2ClearSession_ === 'function') { try { v2ClearSession_(userId); v2LinkMenu_(userId, 'normal'); } catch (e) {} }
 }
 /** 停止解除は「顧客の明示的な再依頼」のみ（時間では解除しない） */
 function isExplicitReRequest_(text) {

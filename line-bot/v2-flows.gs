@@ -179,13 +179,14 @@ function v2Transition_(userId, s, pb) {
       return out;
     }
     if (s.step === 2) {                       // バッテリー状態
-      s.data.battery = pb.val;
+      if (pb.val.indexOf('bat_') === 0) s.data.battery = pb.val;   // body_only で bat_ng を上書きしない
       if (pb.val === 'bat_ng') { out.messages = [v2BatteryNgMessage_('satei', 2)]; return out; }       // step は 2 のまま（次のボタン待ち）
       if (pb.val === 'body_only') { s.data.bodyOnly = true; s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
       if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = [v2BatteryUnknownMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
       s.step = 3; out.messages = [v2BatteryCheckMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out;  // bat_ok
     }
-    if (s.step === 3) {                       // 写真工程 → 次へ進む
+    if (s.step === 3) {                       // 写真工程 → 次へ進む（旧「写真を追加する」は写真の案内を出し直すだけ）
+      if (pb.val === 'more_photos') { out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
       s.step = 4; out.messages = [v2AskCityMessage_()]; out.menu = 'inflow'; return out;
     }
     if (s.step === 5) {                       // 防犯登録の有無 → 完了
@@ -196,7 +197,7 @@ function v2Transition_(userId, s, pb) {
   }
   if (s.flow === 'battery') {
     if (s.step === 1) {
-      s.data.battery = pb.val;
+      if (pb.val.indexOf('bat_') === 0) s.data.battery = pb.val;
       if (pb.val === 'bat_ng') { out.messages = [v2BatteryNgMessage_('battery', 1)]; return out; }
       if (pb.val === 'body_only') { s.flow = 'satei'; s.intent = 'kaitori'; s.data.ebike = 'ebike'; s.data.bodyOnly = true; s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
       if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = [v2BatteryUnknownMessage_()]; out.menu = 'photo'; return out; }
@@ -205,6 +206,7 @@ function v2Transition_(userId, s, pb) {
       out.stop = true; out.menu = 'normal'; return out;
     }
     if (s.step === 3) {                       // 写真 → 人が判断
+      if (pb.val === 'more_photos') { out.messages = [v2BatteryUnknownMessage_()]; out.menu = 'photo'; return out; }
       out.messages = [v2Msg_('ありがとうございます。担当者が写真を確認してご連絡します🚲')];
       out.done = true; return out;
     }
@@ -226,7 +228,13 @@ function v2Complete_(event, userId, s, extraLines) {
   ].join('\n');
   try { setUserFields_(userId, { state: 'S2', intent: s.intent || '', city: d.city || '', town: d.town || '' }); } catch (e) {}
   try { setManualMode_(userId); } catch (e) {}
-  try { notifyManualIncoming_(event, userId, event.message || { type: 'postback', id: event.webhookEventId }, summary, '📝 v2 受付完了（要査定）'); } catch (e) {}
+  // 受付完了の通知はバースト抑制の対象にしない（直前の通知に潰されると査定依頼を見落とす）
+  try {
+    const name = getDisplayName_(userId);
+    const id = 'line_' + (event.webhookEventId || (event.message && event.message.id));
+    try { appendInquiryRow_(new Date(), 'LINE', name, '📝 v2 受付完了（要査定）', summary, id); }
+    catch (e) { notifyOwner_('LINE', name, '📝 v2 受付完了（要査定）', summary); }
+  } catch (e) {}
   v2LinkMenu_(userId, 'normal');
   v2ClearSession_(userId);
 }
@@ -266,20 +274,45 @@ function v2HandleText_(event, userId, text) {
     }
     return false; // 2回目も読めない → 既存の分類不能（オーナー通知＋手動対応）へ
   }
+  // ボタンで答える段階で文字が来た（例:「電動です」）→ 2回までは今の質問をボタン付きで出し直す。3回目は分類不能（人が対応）へ
+  if (s.step === 1 || s.step === 2 || s.step === 3 || s.step === 5) {
+    s.data = s.data || {};
+    s.data.textMiss = (s.data.textMiss || 0) + 1;
+    if (s.data.textMiss <= 2) {
+      v2SetSession_(userId, s);
+      v2Reply_(event, [v2Msg_('ありがとうございます。お手数ですが、下のボタンから選んでください👇')].concat(v2PromptMessages_(s)));
+      logEvent_(event, 'v2:' + s.flow + '/' + s.step + '/text', '返信:ボタンの案内を再掲（' + s.data.textMiss + '回目）');
+      return true;
+    }
+  }
   return false;
+}
+/** 現在の step の質問（v2Prompt_ と同じ内容を配列で返す。文字入力への再掲用） */
+function v2PromptMessages_(s) {
+  if (s.flow === 'satei' && s.step === 1) return [v2AskEbike_(s)];
+  if (s.flow === 'satei' && s.step === 2) return [v2AskBattery_('satei', 2)];
+  if (s.flow === 'battery' && s.step === 1) return [v2AskBattery_('battery', 1)];
+  if (s.flow === 'battery' && s.step === 3) return [v2BatteryUnknownMessage_()];
+  if (s.step === 3) return [v2PhotoGuideMessage_(s)];
+  if (s.flow === 'satei' && s.step === 4) return [v2AskCityMessage_()];
+  if (s.flow === 'satei' && s.step === 5) return [v2AskBohanMessage_('satei')];
+  return v2FlowStartMessages_(s);
 }
 
 /** 画像の受け口（handleEvent から呼ぶ）。写真工程なら枚数を数えて初回だけ受領確認。処理したら true */
 function v2HandleImage_(event, userId) {
   const s = v2GetSession_(userId);
-  if (!s || s.step !== 3) return false;
+  if (!s) return false;
   s.data = s.data || {};
   s.data.photos = (s.data.photos || 0) + 1;
-  if (s.data.photos === 1) {
+  if (s.step !== 3) {
+    // 写真工程の前後に写真が来た → 受け取ったうえで、今の質問をもう一度出す（写真は記録に残す）
+    v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\nあわせて、こちらにもお答えください👇')].concat(v2PromptMessages_(s)));
+  } else if (s.data.photos === 1) {
     v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\n続けて送れます。送り終わったら「次へ進む」を押してください🚲', v2PhotoStepQuick_())]);
   }
   v2SetSession_(userId, s);
   try { logLineInquiry_(userId, '写真を送信（v2）', '(画像メッセージ ' + s.data.photos + '枚目)', 'line_' + event.message.id); } catch (e) {}
-  logEvent_(event, 'v2:' + s.flow + '/3/image', '写真 ' + s.data.photos + '枚目');
+  logEvent_(event, 'v2:' + s.flow + '/' + s.step + '/image', '写真 ' + s.data.photos + '枚目');
   return true;
 }
