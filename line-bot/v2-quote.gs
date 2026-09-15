@@ -48,10 +48,16 @@ function v2FindUserByCustNo_(custNo) {
 }
 
 /* ── コマンド解析。戻り値 {ok, error, quote} ── */
+/** 全角の ＃・数字・英字・記号・スペースを半角に（スマホの日本語入力で全角になりやすいため） */
+function v2NormalizeCmd_(text) {
+  return String(text || '').replace(/[！-～]/g, function (ch) { return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0); }).replace(/　/g, ' ').trim();
+}
 function v2ParseQuoteCommand_(text) {
-  const t = String(text || '').trim().replace(/　/g, ' ');
+  const t = v2NormalizeCmd_(text);
+  const usage = '書き方: #見積 C12 12000 [車体名] [電動] [車体のみ] [期限 9/30]\n3段: #見積 C12 30000/24000/18000 電動\n複数台: #見積 C12 12000+15000 ビビDX+アルベルト\n引取: #引取 C12 2500\n（C12 はお客さま番号。通知に載っています）';
+  if (/^#(見積|引取)\s+[0-9,]/.test(t)) return { ok: false, error: 'お客さま番号が抜けています。例: #見積 C12 12000\n' + usage };
   const m = t.match(/^#(見積|引取)\s+([A-Za-z0-9]+)\s+([0-9,]+(?:[\/+][0-9,]+)*)\s*(.*)$/);
-  if (!m) return { ok: false, error: '書き方: #見積 C12 12000 [車体名] [電動] [車体のみ] [期限 9/30]\n3段: #見積 C12 30000/24000/18000 電動\n複数台: #見積 C12 12000+15000 ビビDX+アルベルト\n引取: #引取 C12 2500' };
+  if (!m) return { ok: false, error: usage };
   const kind = m[1] === '引取' ? 'hikitori' : 'kaitori';
   const cust = m[2].toUpperCase();
   const amountsRaw = m[3];
@@ -142,7 +148,7 @@ function v2QuoteFlex_(q, quoteId, bodyText) {
 /* ── オーナーのコマンド入口（handleEvent から。処理したら true）── */
 function v2HandleOwnerCommand_(event, userId, text) {
   if (!v2IsOwner_(userId)) return false;
-  if (!/^#(見積|引取)/.test(String(text || '').trim())) return false;
+  if (!/^#(見積|引取)/.test(v2NormalizeCmd_(text))) return false;
   const p = v2ParseQuoteCommand_(text);
   if (!p.ok) { v2ReplyText_(event, '⚠ ' + p.error); logEvent_(event, 'quote:parse_error', text.slice(0, 60)); return true; }
   const q = p.quote;
