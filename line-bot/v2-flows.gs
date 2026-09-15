@@ -118,8 +118,10 @@ function v2AskCityMessage_() {
   return v2Msg_('📍 お住まいの市町名を教えてください（例：金沢市片町）。\n町名まで教えていただけると、出張の目安が正確になります。\n\nこの下の入力欄に打ち込んで送ってください。');
 }
 function v2AskBohanMessage_(flow) {
-  return v2Msg_('🔖 防犯登録はありますか？\n（自転車を買ったときに登録した、シールと控えの紙のことです。抹消の手続きは当方で代行します）', [
-    qrPostback_('ある', v2Pb_(flow, 5, 'next', 'bohan_yes')),
+  // 「シールは車体に貼ってあるが控えの紙はない」が多いので、その選択肢を用意する（2026-09-16 オーナー指摘）
+  return v2Msg_('🔖 防犯登録はありますか？\n（自転車を買ったときに登録した、車体のシールと控えの紙のことです。抹消の手続きは当方で代行します）', [
+    qrPostback_('シールも紙もある', v2Pb_(flow, 5, 'next', 'bohan_yes')),
+    qrPostback_('シールだけ（紙はない）', v2Pb_(flow, 5, 'next', 'bohan_seal')),
     qrPostback_('ない', v2Pb_(flow, 5, 'next', 'bohan_no')),
     qrPostback_('わからない', v2Pb_(flow, 5, 'next', 'bohan_unknown')),
   ]);
@@ -224,7 +226,7 @@ function v2Complete_(event, userId, s, extraLines) {
     '電動: ' + (d.ebike || '-') + ' / バッテリー: ' + (d.battery || '-') + (d.bodyOnly ? '（車体のみ）' : ''),
     '写真: ' + (d.photos || 0) + '枚' + (d.batteryPhoto ? '（バッテリー確認用あり）' : ''),
     '住所: ' + (d.address || d.city || '-') + (d.fee ? '（出張費 ' + d.fee + '）' : ''),
-    '防犯登録: ' + ({ bohan_yes: 'ある', bohan_no: 'ない', bohan_unknown: 'わからない' }[d.bohan] || '-'),
+    '防犯登録: ' + ({ bohan_yes: 'シールも紙もある', bohan_seal: 'シールだけ（紙はない）', bohan_no: 'ない', bohan_unknown: 'わからない' }[d.bohan] || '-'),
   ].join('\n');
   try { setUserFields_(userId, { state: 'S2', intent: s.intent || '', city: d.city || '', town: d.town || '' }); } catch (e) {}
   try { setManualMode_(userId); } catch (e) {}
