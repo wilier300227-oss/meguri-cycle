@@ -173,8 +173,9 @@ function v2CustNo_(userId) {
 /* ── 開発用の診断エンドポイント（GET /exec?diag=<INQUIRY_SHEET_ID>）。
    log の末尾20行・sessions・users を JSON で返す。切替（段階5）前に削除する。 ── */
 function doGet(e) {
-  // 診断はプロパティ DIAG_KEY がある環境（開発）だけ。本番には DIAG_KEY を置かない＝常に 'ok' だけ返す
-  const key = PropertiesService.getScriptProperties().getProperty('DIAG_KEY');
+  // 診断は開発環境だけ（DIAG_KEY、または開発の目印である INQUIRY_SHEET_TITLE がある場合はシート ID を鍵にする）。本番はどちらも無い＝常に 'ok' だけ返す
+  const props = PropertiesService.getScriptProperties();
+  const key = props.getProperty('DIAG_KEY') || (props.getProperty('INQUIRY_SHEET_TITLE') ? props.getProperty('INQUIRY_SHEET_ID') : null);
   const out = { ok: false };
   try {
     if (!e || !e.parameter || !key || e.parameter.diag !== key) {
