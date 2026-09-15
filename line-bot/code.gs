@@ -212,11 +212,16 @@ function forwardToV2_(body) {
     const url = props.getProperty('FORWARD_URL');
     const ids = String(props.getProperty('FORWARD_USER_IDS') || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
     if (!url || !ids.length || !body || !body.events || !body.events.length) return body;
+    // 自分自身への転送は禁止（開発プロジェクトに同じプロパティを入れると無限ループになる。2026-09-16 に実際に発生）
+    let self = '';
+    try { self = ScriptApp.getService().getUrl() || ''; } catch (e) {}
+    if (self && url.split('?')[0] === self.split('?')[0]) { console.error('forwardToV2_: FORWARD_URL が自分自身なので転送しない'); return body; }
+    if (body.forwardedFromV1) return body; // 転送されてきたものは二度と転送しない
     const fwd = body.events.filter(function (ev) { return ev.source && ids.indexOf(ev.source.userId) !== -1; });
     if (!fwd.length) return body;
     UrlFetchApp.fetch(url, {
       method: 'post', contentType: 'application/json', muteHttpExceptions: true, followRedirects: true,
-      payload: JSON.stringify({ destination: body.destination, events: fwd }),
+      payload: JSON.stringify({ destination: body.destination, events: fwd, forwardedFromV1: true }),
     });
     return { destination: body.destination, events: body.events.filter(function (ev) { return fwd.indexOf(ev) === -1; }) };
   } catch (err) {
