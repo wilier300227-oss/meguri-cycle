@@ -106,7 +106,6 @@ function v2QuoteBodyText_(q) {
     if (q.names[0]) L.push('　' + q.names[0]);
     L.push('', 'そのかわり、部品として活かせる範囲で【無償でお引き取り】できます。処分費は0円で、かかるのは出張費のみです。', '');
     L.push('【引き取り費用（出張費）】 ' + v2Yen_(q.total) + '（確定）');
-    L.push('', 'ご自身で処分される場合は「もう少し考えます」を押してください。その場合、費用は一切かかりません。');
   } else if (q.kind === 'hikitori') {
     L.push('【引き取り費用】 ' + v2Yen_(q.total) + '（確定）');
     if (q.names[0]) L.push('　' + q.names[0]);
@@ -149,7 +148,8 @@ function v2QuoteFlex_(q, quoteId, bodyText) {
       type: 'bubble',
       header: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: q.kind === 'hikitori' ? '引き取り費用のご案内' : '査定結果のご案内', weight: 'bold', size: 'lg', color: '#1a2a28' }] },
       body: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: bodyText, wrap: true, size: 'md', lineSpacing: '4px' }] },
-      footer: { type: 'box', layout: 'vertical', spacing: 'sm', contents: [btn('この金額で決定', 'accept', 'primary'), btn('もう少し考えます', 'hold', 'secondary')] },
+      // 引取（出張費の提示）は「この金額で決定」だけ（2026-09-16 オーナー指示）。買取は従来どおり2ボタン
+      footer: { type: 'box', layout: 'vertical', spacing: 'sm', contents: q.kind === 'hikitori' ? [btn('この金額で決定', 'accept', 'primary')] : [btn('この金額で決定', 'accept', 'primary'), btn('もう少し考えます', 'hold', 'secondary')] },
     },
   };
 }
