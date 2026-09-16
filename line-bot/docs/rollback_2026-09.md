@@ -15,6 +15,8 @@
 
 転送シム（段階1で追加予定）を入れたあとの本番は @48 以降になる。ロールバック時は @47 に戻せば転送シムも消える。
 
+**2026-09-16 切替実施**：本番 @49 ＝ repo `line-bot/code.gs`（実ID2行は本番値でフォールバック）＋ `v2-core/flows/quote/richmenu`、転送シム削除。form-sync / inquiry-sync / sheet-format / appsscript.json は本番のまま。メニューのデフォルト設定はオーナーが LINE で「メニュー切替」（戻すときは「メニュー戻す」＋ `-V 47` で再デプロイ）。
+
 ## 2. リッチメニュー（管理画面製・2026-09-14 時点）
 
 Messaging API 製メニューはゼロ。以下はすべて manager.line.biz で作られたもの。
