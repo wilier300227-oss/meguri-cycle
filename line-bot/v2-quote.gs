@@ -149,7 +149,8 @@ function v2QuoteFlex_(q, quoteId, bodyText) {
       header: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: q.kind === 'hikitori' ? '引き取り費用のご案内' : '査定結果のご案内', weight: 'bold', size: 'lg', color: '#1a2a28' }] },
       body: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: bodyText, wrap: true, size: 'md', lineSpacing: '4px' }] },
       // 引取（出張費の提示）は「この金額で決定」だけ（2026-09-16 オーナー指示）。買取は従来どおり2ボタン
-      footer: { type: 'box', layout: 'vertical', spacing: 'sm', contents: q.kind === 'hikitori' ? [btn('この金額で決定', 'accept', 'primary')] : [btn('この金額で決定', 'accept', 'primary'), btn('もう少し考えます', 'hold', 'secondary')] },
+      // 引取（出張費の提示）は「この金額で決定」と「やめる」（2026-09-16 オーナー指示）。買取は従来どおり「もう少し考えます」
+      footer: { type: 'box', layout: 'vertical', spacing: 'sm', contents: q.kind === 'hikitori' ? [btn('この金額で決定', 'accept', 'primary'), btn('やめる', 'decline', 'secondary')] : [btn('この金額で決定', 'accept', 'primary'), btn('もう少し考えます', 'hold', 'secondary')] },
     },
   };
 }
@@ -220,6 +221,14 @@ function v2HandleQuotePostback_(event, userId, pb) {
     try { setManualMode_(userId); } catch (e) {}
     v2NotifyOwnerNow_(userId, '✅ 「この金額で決定」', row.custNo + ' ' + pb.q + '\n' + v2Yen_(row.total) + '\n→ 日時と住所の返信を待って人が対応');
     logEvent_(event, 'quote:accept', pb.q); return true;
+  }
+  if (pb.val === 'decline') {   // 引取の提示で「やめる」（2026-09-16）。お礼を返して終わり。以後は人が対応
+    if (row.answer === 'decline') { logEvent_(event, 'quote:decline_dup', pb.q); return true; }
+    v2UpdateQuote_(pb.q, { status: 'declined', 回答: 'decline', 回答時刻: new Date(), 回答時スナップショット: row.body });
+    v2Reply_(event, [v2Msg_('承知しました。今回はお役に立てず申し訳ありません。\nありがとうございました。またご縁がありましたら、よろしくお願いいたします🚲')]);
+    try { setManualMode_(userId); } catch (e) {}
+    v2NotifyOwnerNow_(userId, '🙅 「やめる」（引取の提示）', row.custNo + ' ' + pb.q + ' ' + v2Yen_(row.total));
+    logEvent_(event, 'quote:decline', pb.q); return true;
   }
   if (pb.val === 'hold') {
     v2UpdateQuote_(pb.q, { status: row.answer === 'accept' ? 'accepted' : 'hold', 回答: row.answer === 'accept' ? 'accept→hold' : 'hold', 回答時刻: new Date(), 回答時スナップショット: row.body });
