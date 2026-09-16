@@ -29,8 +29,8 @@ def now_mark():
 
 S = "v=2&flow=satei&step=%d&act=%s&val=%s"
 scenarios = {
-  "A 買取・非電動・完走": [lambda: pb(S % (0, "next", "kaitori")), lambda: pb(S % (1, "next", "normal")), im, lambda: pb(S % (3, "next", "photos_done")), lambda: tx("かほく市高松"), lambda: pb(S % (5, "next", "bohan_no"))],
-  "B 買取・電動・NG→車体のみ": [lambda: pb(S % (0, "next", "kaitori")), lambda: pb(S % (1, "next", "ebike")), lambda: pb(S % (2, "next", "bat_ng")), lambda: pb(S % (2, "next", "body_only")), lambda: pb(S % (3, "next", "photos_done")), lambda: tx("金沢市片町"), lambda: pb(S % (5, "next", "bohan_yes"))],
+  "A 買取・非電動・完走": [lambda: pb(S % (0, "next", "kaitori")), lambda: pb(S % (1, "next", "normal")), im, lambda: pb(S % (3, "next", "photos_done")), lambda: pb(S % (3, "next", "rust_some")), lambda: tx("かほく市高松"), lambda: pb(S % (5, "next", "bohan_no"))],
+  "B 買取・電動・NG→車体のみ": [lambda: pb(S % (0, "next", "kaitori")), lambda: pb(S % (1, "next", "ebike")), lambda: pb(S % (2, "next", "bat_ng")), lambda: pb(S % (2, "next", "body_only")), lambda: pb(S % (3, "next", "photos_done")), lambda: pb(S % (3, "next", "rust_none")), lambda: tx("金沢市片町"), lambda: pb(S % (5, "next", "bohan_yes"))],
   "C 戻る": [lambda: pb(S % (0, "next", "shobun")), lambda: pb(S % (1, "next", "normal")), lambda: pb("v=2&flow=menu&step=0&act=back"), lambda: pb(S % (1, "next", "ebike")), lambda: pb(S % (2, "next", "bat_unknown")), lambda: pb("v=2&flow=menu&step=0&act=back"), lambda: pb("v=2&flow=menu&step=0&act=stop")],
   "D ボタン段階で文字": [lambda: pb(S % (0, "next", "kaitori")), lambda: tx("電動です"), lambda: tx("はい"), lambda: tx("よくわかりません")],
   "E セッション無しでナビ": [lambda: pb("v=2&flow=menu&step=0&act=back"), lambda: pb(S % (5, "next", "bohan_yes"))],
@@ -38,6 +38,8 @@ scenarios = {
   "G バッテリー調べ方": [lambda: pb("v=2&flow=battery&step=0&act=next"), lambda: pb("v=2&flow=battery&step=1&act=next&val=bat_ok"), lambda: pb("v=2&flow=battery&step=0&act=next"), lambda: pb("v=2&flow=battery&step=1&act=next&val=bat_unknown"), im, lambda: pb(S % (3, "next", "photos_done"))],
   "H フロー中に停止希望": [lambda: pb(S % (0, "next", "kaitori")), lambda: tx("やめます")],
   "I 旧文言・写真前に写真": [lambda: pb(S % (0, "next", "kaitori")), im, lambda: pb(S % (1, "next", "normal")), lambda: tx("写真を追加する"), lambda: tx("写真は以上です")],
+  "J サビ質問中に文字・戻る": [lambda: pb(S % (0, "next", "kaitori")), lambda: pb(S % (1, "next", "normal")), lambda: pb(S % (3, "next", "photos_done")), lambda: tx("少しあります"), lambda: pb("v=2&flow=menu&step=0&act=back"), lambda: pb(S % (1, "next", "normal")), lambda: tx("金沢市"), lambda: pb(S % (3, "next", "photos_done")), lambda: pb(S % (3, "next", "rust_heavy")), lambda: tx("金沢市片町"), lambda: pb(S % (5, "next", "bohan_seal"))],
+  "K 処分はサビ質問なし": [lambda: pb(S % (0, "next", "shobun")), lambda: pb(S % (1, "next", "normal")), im, lambda: pb(S % (3, "next", "photos_done")), lambda: tx("津幡町"), lambda: pb(S % (5, "next", "bohan_no"))],
 }
 only = sys.argv[1:]
 for name, steps in scenarios.items():

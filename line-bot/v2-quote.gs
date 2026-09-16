@@ -125,7 +125,7 @@ function v2QuoteBodyText_(q) {
   L.push('有効期限は ' + v2FmtDate_(q.expires) + '（' + QUOTE_VALID_DAYS + '日間）です。');
   if (q.kind !== 'hikitori') {
     L.push('', '※ 写真では分からない次の点が当日見つかった場合だけ、その場では決めず、再査定のうえ改めて金額をご連絡します。');
-    L.push('　・フレームの曲がり、割れ', '　・変速またはブレーキが動かない');
+    L.push('　・フレームの曲がり、割れ', '　・変速またはブレーキが動かない', '　・写真では分からない広い範囲のサビや、部品の固着');
     if (q.ebike && !q.bodyOnly && q.mode !== 'tiers') L.push('　・バッテリー残量ランプが2点灯以下');
   }
   L.push('', 'この金額でよろしければ、下のボタンを押してください。');
@@ -318,14 +318,21 @@ function ownerqCandidates_() {
       intent: String(data[r][ix('intent')] || ''), state: st, upd: new Date(data[r][ix('updated_at')] || 0).getTime() });
   }
   out.sort(function (a, b) { return b.upd - a.upd; });
-  return out.slice(0, 12);
+  const top = out.slice(0, 12);
+  // 2026-09-16: users の displayName が空の人は LINE プロフィールから表示名を取る（6時間キャッシュ）。ボタンが「C2 高岡市」だけだと分かりにくい
+  // users には書き戻さない（setUserFields_ が updated_at を進めて並び順が変わるため）
+  top.forEach(function (c) {
+    if (c.name) return;
+    try { const nm = getDisplayName_(c.userId); if (nm && nm !== c.userId) c.name = nm; } catch (e) {}
+  });
+  return top;
 }
 function ownerqStart_(event, userId) {
   const cands = ownerqCandidates_();
   if (!cands.length) { v2ReplyText_(event, '受付完了（査定待ち）のお客さまがいません。\n番号で指定するときは「#見積 C12 12000」の形で送ってください'); return true; }
   const items = cands.map(function (c) {
-    const name = c.name ? c.name.slice(0, 6) : '';
-    const label = (c.cust + ' ' + name + ' ' + c.city.slice(0, 5) + (c.intent === 'shobun' ? ' 引取' : '')).slice(0, 20);
+    const name = c.name ? c.name.slice(0, 8) : '';
+    const label = (c.cust + ' ' + name + ' ' + c.city.slice(0, 5) + (c.intent === 'shobun' ? ' 引取' : '')).replace(/\s+/g, ' ').slice(0, 20);
     return qrPostback_(label, ownerqPb_(1, 'next', c.cust));
   });
   items.push(ownerqCancelQr_());

@@ -90,3 +90,5 @@ Messaging API 製メニューはゼロ。以下はすべて manager.line.biz で
 
 - 応答設定（チャット: オン、Webhook: オン）は変更しない
 - 本番 Sheets「めぐり自転車_問い合わせ一元管理」（Drive id `19UxlX6FIsABenNRDTSHYbLEvehMuai72T0FIZBAZaAc`）に切替で追加するタブ: `sessions` / `quotes`、`users.cust_no` 列。ロールバック時は残しておいてよい（旧コードは読まない）
+
+**2026-09-16 @50**：v2-flows / v2-quote のみ差し替え（買取フローにサビ質問を1問、確定金額の再査定条件に「広い範囲のサビ・固着」、受付通知に「見積を送る」ボタン、見積の相手ボタンに LINE 表示名）。開発 @28 で偽イベント11シナリオ確認済み。戻すときは `-V 49`。

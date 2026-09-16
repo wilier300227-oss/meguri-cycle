@@ -127,6 +127,16 @@ function v2AskCityMessage_() {
   // 既存ボットと同じ聞き方（町名まで。番地は金額決定後にしか聞かない＝handoff §10-5）
   return v2Msg_('📍 お住まいの市町名を教えてください（例：金沢市片町）。\n\nこの下の入力欄に打ち込んで送ってください。');
 }
+/** サビの程度（買取のみ、写真のあと）。ボタンで答えるだけ。回答は受付通知に載せる（2026-09-16） */
+function v2AskRustMessage_() {
+  return v2Msg_('🔧 サビの程度を教えてください。\n（写真では分かりにくいので、近いものを選んでください）', [
+    qrPostback_('ほとんどない', v2Pb_('satei', 3, 'next', 'rust_none')),
+    qrPostback_('少しある（表面だけ）', v2Pb_('satei', 3, 'next', 'rust_some')),
+    qrPostback_('かなりある（茶色・動きが固い）', v2Pb_('satei', 3, 'next', 'rust_heavy')),
+  ]);
+}
+const V2_RUST_LABELS = { rust_none: 'ほとんどない', rust_some: '少しある（表面だけ）', rust_heavy: 'かなりある（チェーンや歯車が茶色・動きが固い）' };
+
 function v2AskBohanMessage_(flow) {
   // 「シールは車体に貼ってあるが控えの紙はない」が多いので、その選択肢を用意する（2026-09-16 オーナー指摘）
   return v2Msg_('🔖 防犯登録はありますか？\n（自転車を買ったときに登録した、車体のシールと控えの紙のことです。抹消の手続きは当方で代行します）', [
@@ -182,6 +192,7 @@ function v2FlowStartMessages_(s) {
 function v2Transition_(userId, s, pb) {
   s.data = s.data || {};
   const out = { messages: [], menu: null, done: false, stop: false };
+  if (s.step !== 3 && s.data.rustAsk) delete s.data.rustAsk;   // 「ひとつ戻る」で写真工程より前に戻ったら、サビ質問中の印は消す
 
   if (s.flow === 'satei') {
     if (s.step === 1) {                       // 電動の有無
@@ -199,6 +210,9 @@ function v2Transition_(userId, s, pb) {
     }
     if (s.step === 3) {                       // 写真工程 → 次へ進む（旧「写真を追加する」は写真の案内を出し直すだけ）
       if (pb.val === 'more_photos') { out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
+      // 2026-09-16: 買取は写真のあとにサビの程度をボタンで1問（現地で写真より状態が悪い事例への対策。写真は3枚のまま）
+      if (pb.val && pb.val.indexOf('rust_') === 0) { s.data.rust = pb.val; delete s.data.rustAsk; s.step = 4; out.messages = [v2AskCityMessage_()]; out.menu = 'inflow'; return out; }
+      if (s.intent === 'kaitori' && !s.data.rust) { s.data.rustAsk = 1; out.messages = [v2AskRustMessage_()]; out.menu = 'inflow'; return out; }
       s.step = 4; out.messages = [v2AskCityMessage_()]; out.menu = 'inflow'; return out;
     }
     if (s.step === 5) {                       // 防犯登録の有無 → 完了
@@ -235,6 +249,7 @@ function v2Complete_(event, userId, s, extraLines) {
     '【' + (s.flow === 'battery' ? 'バッテリー確認' : (s.intent === 'shobun' ? '処分・引取' : '買取')) + ' 受付】' + (cust ? ' ' + cust : ''),
     '電動: ' + (d.ebike || '-') + ' / バッテリー: ' + (d.battery || '-') + (d.bodyOnly ? '（車体のみ）' : ''),
     '写真: ' + (d.photos || 0) + '枚' + (d.batteryPhoto ? '（バッテリー確認用あり）' : '') + (!d.photos ? '（フロー前に送られた写真はトークを確認）' : ''),
+    'サビ（自己申告）: ' + (V2_RUST_LABELS[d.rust] || '-'),
     '住所: ' + (d.address || d.city || '-') + (d.fee ? '（出張費 ' + d.fee + '）' : ''),
     '防犯登録: ' + ({ bohan_yes: 'シールも紙もある', bohan_seal: 'シールだけ（紙はない）', bohan_no: 'ない', bohan_unknown: 'わからない' }[d.bohan] || '-'),
   ].join('\n');
@@ -246,6 +261,14 @@ function v2Complete_(event, userId, s, extraLines) {
     const id = 'line_' + (event.webhookEventId || (event.message && event.message.id));
     try { appendInquiryRow_(new Date(), 'LINE', name, '📝 v2 受付完了（要査定）', summary, id); }
     catch (e) { notifyOwner_('LINE', name, '📝 v2 受付完了（要査定）', summary); }
+    // 2026-09-16: 通知の直後に「見積を送る」ボタンを添える（オーナーは個人 LINE の通知から1タップで、この相手の見積入力に入れる）
+    if (cust && typeof ownerqPb_ === 'function' && OWNER_LINE_USER_ID && OWNER_LINE_USER_ID.indexOf('ここに') !== 0) {
+      try {
+        pushMessage_(OWNER_LINE_USER_ID, [v2Msg_('👆 ' + cust + '（' + name + '）に見積を送るときは、このボタンからどうぞ', [
+          qrPostback_('💰 ' + cust + ' に見積を送る', ownerqPb_(1, 'next', cust)),
+        ])]);
+      } catch (e) {}
+    }
   } catch (e) {}
   v2LinkMenu_(userId, 'normal');
   v2ClearSession_(userId);
@@ -322,6 +345,7 @@ function v2PromptMessages_(s) {
   if (s.flow === 'satei' && s.step === 2) return [v2AskBattery_('satei', 2)];
   if (s.flow === 'battery' && s.step === 1) return [v2AskBattery_('battery', 1)];
   if (s.flow === 'battery' && s.step === 3) return [v2BatteryUnknownMessage_()];
+  if (s.flow === 'satei' && s.step === 3 && s.data && s.data.rustAsk) return [v2AskRustMessage_()];   // サビの質問中に文字が来た → 同じ質問を出し直す
   if (s.step === 3) return [v2PhotoGuideMessage_(s)];
   if (s.flow === 'satei' && s.step === 4) return [v2AskCityMessage_()];
   if (s.flow === 'satei' && s.step === 5) return [v2AskBohanMessage_('satei')];
