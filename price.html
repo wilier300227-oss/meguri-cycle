@@ -44,17 +44,7 @@ ctaUrl: "/line/price/"
           <h2 style="font-size:1.3rem; margin-bottom:6px;">出張費の目安（出張引取のみ）</h2>
           <p style="color:var(--ink-55); font-size:0.9rem; margin-bottom:16px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。訪問というお仕事への費用で、引き取る車体の台数・種類とは連動しません。</p>
           <div class="card" style="margin-bottom:12px;">
-            <table class="rate">
-              <thead><tr><th>片道距離（かほく市役所起点）</th><th>出張費の目安</th></tr></thead>
-              <tbody>
-                <tr><td>〜10km</td><td class="num">1,000円</td></tr>
-                <tr><td>10〜20km</td><td class="num">1,500円</td></tr>
-                <tr><td>20〜30km</td><td class="num">2,000円</td></tr>
-                <tr><td>30〜40km</td><td class="num">2,500円</td></tr>
-                <tr><td>40〜50km</td><td class="num">3,000円</td></tr>
-                <tr><td>50km超</td><td class="num" style="color:var(--ink-40)">応相談</td></tr>
-              </tbody>
-            </table>
+            {% set feeTableHead = "片道距離（かほく市役所起点）" %}{% include "fee-table.njk" %}
           </div>
           <p style="font-size:0.8rem; color:var(--ink-40);">※ 市区町村をお知らせいただければ、出張費はこちらで計算して事前にご案内します。ガソリン代により改定する場合があります。</p>
         </div>
