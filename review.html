@@ -1,0 +1,44 @@
+---
+permalink: "/review/"
+eleventyExcludeFromCollections: true
+reviewUrl: "https://g.page/r/CdZATCD3-TNjEBM/review"
+---
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Google の口コミページを開いています…｜めぐり自転車</title>
+  <!-- 口コミ依頼（LINE）からの着地用。Google ビジネスプロフィールの口コミ投稿画面へ即時リダイレクトする。
+       訪問数は Cloudflare で計測する（/review/ の訪問＝依頼への反応）。sitemap.xml には載せない（/line/ と同じ扱い）。
+       投稿URLは GBP「クチコミを増やす」で表示されるもの（2026-09-16 取得）。 -->
+  <!-- JS無効環境向けフォールバック（3秒後に遷移） -->
+  <meta http-equiv="refresh" content="3;url={{ reviewUrl }}">
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;background:#fff;color:#1a2b45;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center}
+    .box{padding:24px}
+    p{margin:0 0 14px;font-size:1rem;line-height:1.7}
+    a{color:#0aa04a;font-weight:700}
+    .site{font-size:0.8rem;color:#8a93a3;margin-top:22px}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <p>Google の口コミページを開いています…</p>
+    <p><a id="go" href="{{ reviewUrl }}" rel="nofollow noopener">開かない場合はこちら</a></p>
+    <p class="site">めぐり自転車</p>
+  </div>
+  <script>
+    // location.replace で履歴に中間ページを残さない（戻るで元の画面に直接戻す）。/line/ と同じ方式。
+    (function () {
+      var dest = document.getElementById('go').href;
+      addEventListener('load', function () {
+        setTimeout(function () { location.replace(dest); }, 400);
+      });
+    })();
+  </script>
+  <!-- Cloudflare Web Analytics（訪問数の計測のため残す） -->
+  {% include "cf-beacon.njk" %}
+</body>
+</html>
