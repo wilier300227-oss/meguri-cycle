@@ -100,7 +100,14 @@ function v2ParseQuoteCommand_(text) {
 function v2QuoteBodyText_(q) {
   const L = [];
   L.push('お写真を拝見しました。', '');
-  if (q.kind === 'hikitori') {
+  if (q.kind === 'hikitori' && q.fromKaitori) {
+    // 買取で申し込んだ方に、値段がつかず無償引取に切り替える提案（2026-09-16）
+    L.push('申し訳ありません。今回の車体は、買取価格をおつけできませんでした。');
+    if (q.names[0]) L.push('　' + q.names[0]);
+    L.push('', 'そのかわり、部品として活かせる範囲で【無償でお引き取り】できます。処分費は0円で、かかるのは出張費のみです。', '');
+    L.push('【引き取り費用（出張費）】 ' + v2Yen_(q.total) + '（確定）');
+    L.push('', 'ご自身で処分される場合は「もう少し考えます」を押してください。その場合、費用は一切かかりません。');
+  } else if (q.kind === 'hikitori') {
     L.push('【引き取り費用】 ' + v2Yen_(q.total) + '（確定）');
     if (q.names[0]) L.push('　' + q.names[0]);
     L.push('', '処分費は0円です。上記の出張費のみ、お伺い当日にお支払いください。');
@@ -165,6 +172,8 @@ function v2HandleOwnerCommand_(event, userId, text) {
   if (isOptedOut_(st)) { v2ReplyText_(event, '⚠ ' + q.cust + ' は停止フラグ中です（再勧誘禁止）。送信しません'); logEvent_(event, 'quote:opted_out', q.cust); return true; }
   if (/^S[4-9]/.test(String(st.state || ''))) { v2ReplyText_(event, '⚠ ' + q.cust + ' は state=' + st.state + '（訪問確定以降）です。送信しません'); logEvent_(event, 'quote:state', q.cust); return true; }
   q.userId = target.userId; q.custNo = target.cust_no || q.cust;
+  // 2026-09-16: 買取で申し込んだ方への引取提示は「買取価格をつけられなかった」説明を本文の冒頭に自動で付ける
+  q.fromKaitori = q.kind === 'hikitori' && String(st.intent || '') === 'kaitori';
   const draftId = 'D' + Utilities.getUuid().slice(0, 8);
   const bodyText = v2QuoteBodyText_(q);
   q.bodyText = bodyText; q.expiresIso = q.expires.toISOString();
@@ -341,7 +350,7 @@ function ownerqStart_(event, userId) {
   return true;
 }
 function ownerqAskAmount_(event, s) {
-  v2Reply_(event, [v2Msg_(s.cust + ' ' + (s.name || '') + ' に送ります。\n\n金額を数字だけで送ってください（例: 12000）\n\n・引き取り費用なら「引取 2500」\n・点灯数で変わるなら「30000/24000/18000」（4点灯以上/3点灯/2点灯以下）\n・複数台なら「12000+15000」', [ownerqCancelQr_()])]);
+  v2Reply_(event, [v2Msg_(s.cust + ' ' + (s.name || '') + ' に送ります。\n\n金額を数字だけで送ってください（例: 12000）\n\n・引き取り費用なら「引取 2500」（買取で申し込んだ方には「値段がつかず無償引取に」の説明が自動で付きます）\n・点灯数で変わるなら「30000/24000/18000」（4点灯以上/3点灯/2点灯以下）\n・複数台なら「12000+15000」', [ownerqCancelQr_()])]);
 }
 function ownerqAskEbike_(event) {
   v2Reply_(event, [v2Msg_('電動アシストですか？', [
