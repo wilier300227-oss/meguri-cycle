@@ -86,7 +86,7 @@ function v2ParseQuoteCommand_(text) {
     q.amounts = [toNum(amountsRaw)];
   }
   if (q.amounts.some(function (n) { return isNaN(n) || n < 0; })) return { ok: false, error: '金額は半角数字で（例: 12000）' };
-  if (kind === 'kaitori' && q.amounts.some(function (n) { return n === 0; })) return { ok: false, error: '0円は #引取 で（引き取り費用を指定）' };
+  if (kind === 'kaitori' && q.amounts.some(function (n) { return n === 0; })) return { ok: false, error: '0円は #引取 で（出張費を指定）' };
   const names = rest.trim();
   if (names) q.names = q.mode === 'multi' ? names.split('+').map(function (s) { return s.trim(); }) : [names];
   const bad = QUOTE_FORBIDDEN.filter(function (w) { return (names + ' ' + q.note).indexOf(w) !== -1; });
@@ -100,16 +100,21 @@ function v2ParseQuoteCommand_(text) {
 function v2QuoteBodyText_(q) {
   const L = [];
   L.push('お写真を拝見しました。', '');
-  if (q.kind === 'hikitori' && q.fromKaitori) {
-    // 買取で申し込んだ方に、値段がつかず無償引取に切り替える提案（2026-09-16）
-    L.push('申し訳ありません。今回の車体は、買取価格をおつけできませんでした。');
-    if (q.names[0]) L.push('　' + q.names[0]);
-    L.push('', 'そのかわり、部品として活かせる範囲で【無償でお引き取り】できます。処分費は0円で、かかるのは出張費のみです。', '');
-    L.push('【引き取り費用（出張費）】 ' + v2Yen_(q.total) + '（確定）');
-  } else if (q.kind === 'hikitori') {
-    L.push('【引き取り費用】 ' + v2Yen_(q.total) + '（確定）');
-    if (q.names[0]) L.push('　' + q.names[0]);
-    L.push('', '処分費は0円です。上記の出張費のみ、お伺い当日にお支払いください。');
+  if (q.kind === 'hikitori') {
+    // 引取（出張費の提示）。2026-09-17 ハンドオフ handoff_line_quote_hikitori.md：誰が払うかを明記し、「引き取り費用」の語を使わない。
+    // 査定のポイントは金額行から離して、事情の説明の直後に置く（買取額の提示に見えないように）
+    if (q.fromKaitori) {
+      // 買取で申し込んだ方に、値段がつかず無償引取に切り替える提案（2026-09-16）
+      L.push('申し訳ありません。今回の車体' + (q.names[0] ? '（' + q.names[0] + '）' : '') + 'は、買取価格をおつけできませんでした。');
+      if (q.note) L.push('📝 査定のポイント：' + q.note);
+      L.push('', 'そのかわり、部品として活かせる範囲で【無償でお引き取り】できます。処分費は0円で、かかるのは出張費のみです。');
+    } else {
+      if (q.names[0]) L.push('お引き取りする車体：' + q.names[0]);
+      if (q.note) L.push('📝 査定のポイント：' + q.note);
+      if (q.names[0] || q.note) L.push('');
+      L.push('部品として活かせる範囲で【無償でお引き取り】します。処分費は0円で、かかるのは出張費のみです。');
+    }
+    L.push('', '【お客様のご負担】出張費 ' + v2Yen_(q.total) + '（確定）', 'お伺い当日にお支払いください。', '');
   } else if (q.mode === 'tiers') {
     L.push('【買取金額】 バッテリー残量ランプの点灯数で決まります');
     L.push('　4点灯以上 … ' + v2Yen_(q.amounts[0]) + '（確定）');
@@ -127,7 +132,7 @@ function v2QuoteBodyText_(q) {
     L.push('', 'この金額は、お写真のとおりであればお伺い当日にそのままお支払いします。', '出張費・査定料はかかりません。');
   }
   if (q.bodyOnly) L.push('※ バッテリーは含みません（車体のみの金額です）');
-  if (q.note) L.push('', '📝 査定のポイント：' + q.note);
+  if (q.note && q.kind !== 'hikitori') L.push('', '📝 査定のポイント：' + q.note);
   L.push('有効期限は ' + v2FmtDate_(q.expires) + '（' + QUOTE_VALID_DAYS + '日間）です。');
   if (q.kind !== 'hikitori') {
     L.push('', '※ 写真では分からない次の点が当日見つかった場合だけ、その場では決めず、再査定のうえ改めて金額をご連絡します。');
@@ -138,7 +143,7 @@ function v2QuoteBodyText_(q) {
   return L.join('\n');
 }
 function v2QuoteFlex_(q, quoteId, bodyText) {
-  const alt = (q.kind === 'hikitori' ? '引き取り費用のご案内（' : '査定結果のご案内（買取金額 ') + v2Yen_(q.total) + '）';
+  const alt = q.kind === 'hikitori' ? 'お引き取りのご案内（出張費 ' + v2Yen_(q.total) + '）' : '査定結果のご案内（買取金額 ' + v2Yen_(q.total) + '）';
   const btn = function (label, val, style) {
     return { type: 'button', style: style, height: 'sm', action: { type: 'postback', label: label, displayText: label, data: 'v=2&flow=quote&step=1&act=submit&val=' + val + '&q=' + quoteId } };
   };
@@ -146,7 +151,7 @@ function v2QuoteFlex_(q, quoteId, bodyText) {
     type: 'flex', altText: alt,
     contents: {
       type: 'bubble',
-      header: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: q.kind === 'hikitori' ? '引き取り費用のご案内' : '査定結果のご案内', weight: 'bold', size: 'lg', color: '#1a2a28' }] },
+      header: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: q.kind === 'hikitori' ? 'お引き取りと出張費のご案内' : '査定結果のご案内', weight: 'bold', size: 'lg', color: '#1a2a28' }] },
       body: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: bodyText, wrap: true, size: 'md', lineSpacing: '4px' }] },
       // 引取（出張費の提示）は「この金額で決定」だけ（2026-09-16 オーナー指示）。買取は従来どおり2ボタン
       // 引取（出張費の提示）は「この金額で決定」と「やめる」（2026-09-16 オーナー指示）。買取は従来どおり「もう少し考えます」
@@ -240,18 +245,26 @@ function v2HandleQuotePostback_(event, userId, pb) {
   v2ReplyReselect_(event); return true;
 }
 function v2AcceptedText_(row) {
+  const hikitori = row.q && row.q.kind === 'hikitori';
   return [
-    'ありがとうございます。' + v2Yen_(row.total) + 'で決定しました。',
+    // 引取は「誰が払うか」を明記（2026-09-17）。買取の文面は従来どおり
+    hikitori ? 'ありがとうございます。出張費' + v2Yen_(row.total) + '（お客様のご負担）で、お引き取りを承りました。' : 'ありがとうございます。' + v2Yen_(row.total) + 'で決定しました。',
     '',
     'お伺いの準備のため、次の2つをこのまま入力して送ってください。',
     '',
     '① ご希望の日時',
-    '　（例：9月20日 土曜 午前中／第2希望もあれば助かります）',
+    '　（例：' + v2ExampleDate_() + ' 午前中／第2希望もあれば助かります）',
     '② お伺い先のご住所',
     '　（市町名・町名・番地まで。マンション等は建物名とお部屋番号も）',
     '',
     '担当者が確認して、日時をご連絡します。',
   ].join('\n');
+}
+/** 日時の例（送信日の3日後、Asia/Tokyo の日付と曜日）。固定の例文だと曜日が暦とずれるため（2026-09-17） */
+function v2ExampleDate_() {
+  const d = new Date(Date.now() + 3 * 86400000);
+  const u = Number(Utilities.formatDate(d, 'Asia/Tokyo', 'u'));   // 1=月 … 7=日
+  return Utilities.formatDate(d, 'Asia/Tokyo', 'M月d日') + ' ' + '月火水木金土日'.charAt(u - 1) + '曜';
 }
 
 /* ── 送信・記録 ── */
@@ -359,7 +372,7 @@ function ownerqStart_(event, userId) {
   return true;
 }
 function ownerqAskAmount_(event, s) {
-  v2Reply_(event, [v2Msg_(s.cust + ' ' + (s.name || '') + ' に送ります。\n\n金額を数字だけで送ってください（例: 12000）\n\n・引き取り費用なら「引取 2500」（買取で申し込んだ方には「値段がつかず無償引取に」の説明が自動で付きます）\n・点灯数で変わるなら「30000/24000/18000」（4点灯以上/3点灯/2点灯以下）\n・複数台なら「12000+15000」', [ownerqCancelQr_()])]);
+  v2Reply_(event, [v2Msg_(s.cust + ' ' + (s.name || '') + ' に送ります。\n\n金額を数字だけで送ってください（例: 12000）\n\n・引取（出張費の提示）なら「引取 2500」（買取で申し込んだ方には「値段がつかず無償引取に」の説明が自動で付きます）\n・点灯数で変わるなら「30000/24000/18000」（4点灯以上/3点灯/2点灯以下）\n・複数台なら「12000+15000」', [ownerqCancelQr_()])]);
 }
 function ownerqAskEbike_(event) {
   v2Reply_(event, [v2Msg_('電動アシストですか？', [
