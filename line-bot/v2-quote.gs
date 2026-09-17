@@ -114,7 +114,7 @@ function v2QuoteBodyText_(q) {
       if (q.names[0] || q.note) L.push('');
       L.push('部品として活かせる範囲で【無償でお引き取り】します。処分費は0円で、かかるのは出張費のみです。');
     }
-    L.push('', '【お客様のご負担】出張費 ' + v2Yen_(q.total) + '（確定）', 'お伺い当日にお支払いください。', '');
+    L.push('', '【お客様のご負担】出張費 ' + v2Yen_(q.total) + '（確定）', 'お伺い当日に現金でお支払いください。', '');
   } else if (q.mode === 'tiers') {
     L.push('【買取金額】 バッテリー残量ランプの点灯数で決まります');
     L.push('　4点灯以上 … ' + v2Yen_(q.amounts[0]) + '（確定）');
@@ -253,18 +253,12 @@ function v2AcceptedText_(row) {
     'お伺いの準備のため、次の2つをこのまま入力して送ってください。',
     '',
     '① ご希望の日時',
-    '　（例：' + v2ExampleDate_() + ' 午前中／第2希望もあれば助かります）',
+    '　（例：〇日の午前中、〇日の夕方以降／第2希望もあれば助かります）',
     '② お伺い先のご住所',
     '　（市町名・町名・番地まで。マンション等は建物名とお部屋番号も）',
     '',
     '担当者が確認して、日時をご連絡します。',
   ].join('\n');
-}
-/** 日時の例（送信日の3日後、Asia/Tokyo の日付と曜日）。固定の例文だと曜日が暦とずれるため（2026-09-17） */
-function v2ExampleDate_() {
-  const d = new Date(Date.now() + 3 * 86400000);
-  const u = Number(Utilities.formatDate(d, 'Asia/Tokyo', 'u'));   // 1=月 … 7=日
-  return Utilities.formatDate(d, 'Asia/Tokyo', 'M月d日') + ' ' + '月火水木金土日'.charAt(u - 1) + '曜';
 }
 
 /* ── 送信・記録 ── */
