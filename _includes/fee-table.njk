@@ -1,0 +1,9 @@
+{# 出張費の目安表。値は _data/fees.js（2026-09-16）。見出し列の文言だけ呼び出し側で feeTableHead を指定できる #}
+<table class="rate">
+  <thead><tr><th>{{ feeTableHead or "片道距離" }}</th><th>出張費の目安</th></tr></thead>
+  <tbody>
+    {%- for r in fees.rows %}
+    <tr><td>{{ r.label }}</td><td class="num"{% if r.muted %} style="color:var(--ink-40)"{% endif %}>{{ r.price }}</td></tr>
+    {%- endfor %}
+  </tbody>
+</table>

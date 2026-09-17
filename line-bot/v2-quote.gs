@@ -100,7 +100,13 @@ function v2ParseQuoteCommand_(text) {
 function v2QuoteBodyText_(q) {
   const L = [];
   L.push('お写真を拝見しました。', '');
-  if (q.kind === 'hikitori') {
+  if (q.kind === 'hikitori' && q.fromKaitori) {
+    // 買取で申し込んだ方に、値段がつかず無償引取に切り替える提案（2026-09-16）
+    L.push('申し訳ありません。今回の車体は、買取価格をおつけできませんでした。');
+    if (q.names[0]) L.push('　' + q.names[0]);
+    L.push('', 'そのかわり、部品として活かせる範囲で【無償でお引き取り】できます。処分費は0円で、かかるのは出張費のみです。', '');
+    L.push('【引き取り費用（出張費）】 ' + v2Yen_(q.total) + '（確定）');
+  } else if (q.kind === 'hikitori') {
     L.push('【引き取り費用】 ' + v2Yen_(q.total) + '（確定）');
     if (q.names[0]) L.push('　' + q.names[0]);
     L.push('', '処分費は0円です。上記の出張費のみ、お伺い当日にお支払いください。');
@@ -125,7 +131,7 @@ function v2QuoteBodyText_(q) {
   L.push('有効期限は ' + v2FmtDate_(q.expires) + '（' + QUOTE_VALID_DAYS + '日間）です。');
   if (q.kind !== 'hikitori') {
     L.push('', '※ 写真では分からない次の点が当日見つかった場合だけ、その場では決めず、再査定のうえ改めて金額をご連絡します。');
-    L.push('　・フレームの曲がり、割れ', '　・変速またはブレーキが動かない');
+    L.push('　・フレームの曲がり、割れ', '　・変速またはブレーキが動かない', '　・写真では分からない広い範囲のサビや、部品の固着');
     if (q.ebike && !q.bodyOnly && q.mode !== 'tiers') L.push('　・バッテリー残量ランプが2点灯以下');
   }
   L.push('', 'この金額でよろしければ、下のボタンを押してください。');
@@ -142,7 +148,9 @@ function v2QuoteFlex_(q, quoteId, bodyText) {
       type: 'bubble',
       header: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: q.kind === 'hikitori' ? '引き取り費用のご案内' : '査定結果のご案内', weight: 'bold', size: 'lg', color: '#1a2a28' }] },
       body: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: bodyText, wrap: true, size: 'md', lineSpacing: '4px' }] },
-      footer: { type: 'box', layout: 'vertical', spacing: 'sm', contents: [btn('この金額で決定', 'accept', 'primary'), btn('もう少し考えます', 'hold', 'secondary')] },
+      // 引取（出張費の提示）は「この金額で決定」だけ（2026-09-16 オーナー指示）。買取は従来どおり2ボタン
+      // 引取（出張費の提示）は「この金額で決定」と「やめる」（2026-09-16 オーナー指示）。買取は従来どおり「もう少し考えます」
+      footer: { type: 'box', layout: 'vertical', spacing: 'sm', contents: q.kind === 'hikitori' ? [btn('この金額で決定', 'accept', 'primary'), btn('やめる', 'decline', 'secondary')] : [btn('この金額で決定', 'accept', 'primary'), btn('もう少し考えます', 'hold', 'secondary')] },
     },
   };
 }
@@ -165,6 +173,8 @@ function v2HandleOwnerCommand_(event, userId, text) {
   if (isOptedOut_(st)) { v2ReplyText_(event, '⚠ ' + q.cust + ' は停止フラグ中です（再勧誘禁止）。送信しません'); logEvent_(event, 'quote:opted_out', q.cust); return true; }
   if (/^S[4-9]/.test(String(st.state || ''))) { v2ReplyText_(event, '⚠ ' + q.cust + ' は state=' + st.state + '（訪問確定以降）です。送信しません'); logEvent_(event, 'quote:state', q.cust); return true; }
   q.userId = target.userId; q.custNo = target.cust_no || q.cust;
+  // 2026-09-16: 買取で申し込んだ方への引取提示は「買取価格をつけられなかった」説明を本文の冒頭に自動で付ける
+  q.fromKaitori = q.kind === 'hikitori' && String(st.intent || '') === 'kaitori';
   const draftId = 'D' + Utilities.getUuid().slice(0, 8);
   const bodyText = v2QuoteBodyText_(q);
   q.bodyText = bodyText; q.expiresIso = q.expires.toISOString();
@@ -211,6 +221,14 @@ function v2HandleQuotePostback_(event, userId, pb) {
     try { setManualMode_(userId); } catch (e) {}
     v2NotifyOwnerNow_(userId, '✅ 「この金額で決定」', row.custNo + ' ' + pb.q + '\n' + v2Yen_(row.total) + '\n→ 日時と住所の返信を待って人が対応');
     logEvent_(event, 'quote:accept', pb.q); return true;
+  }
+  if (pb.val === 'decline') {   // 引取の提示で「やめる」（2026-09-16）。お礼を返して終わり。以後は人が対応
+    if (row.answer === 'decline') { logEvent_(event, 'quote:decline_dup', pb.q); return true; }
+    v2UpdateQuote_(pb.q, { status: 'declined', 回答: 'decline', 回答時刻: new Date(), 回答時スナップショット: row.body });
+    v2Reply_(event, [v2Msg_('承知しました。今回はお役に立てず申し訳ありません。\nありがとうございました。またご縁がありましたら、よろしくお願いいたします🚲')]);
+    try { setManualMode_(userId); } catch (e) {}
+    v2NotifyOwnerNow_(userId, '🙅 「やめる」（引取の提示）', row.custNo + ' ' + pb.q + ' ' + v2Yen_(row.total));
+    logEvent_(event, 'quote:decline', pb.q); return true;
   }
   if (pb.val === 'hold') {
     v2UpdateQuote_(pb.q, { status: row.answer === 'accept' ? 'accepted' : 'hold', 回答: row.answer === 'accept' ? 'accept→hold' : 'hold', 回答時刻: new Date(), 回答時スナップショット: row.body });
@@ -318,14 +336,21 @@ function ownerqCandidates_() {
       intent: String(data[r][ix('intent')] || ''), state: st, upd: new Date(data[r][ix('updated_at')] || 0).getTime() });
   }
   out.sort(function (a, b) { return b.upd - a.upd; });
-  return out.slice(0, 12);
+  const top = out.slice(0, 12);
+  // 2026-09-16: users の displayName が空の人は LINE プロフィールから表示名を取る（6時間キャッシュ）。ボタンが「C2 高岡市」だけだと分かりにくい
+  // users には書き戻さない（setUserFields_ が updated_at を進めて並び順が変わるため）
+  top.forEach(function (c) {
+    if (c.name) return;
+    try { const nm = getDisplayName_(c.userId); if (nm && nm !== c.userId) c.name = nm; } catch (e) {}
+  });
+  return top;
 }
 function ownerqStart_(event, userId) {
   const cands = ownerqCandidates_();
   if (!cands.length) { v2ReplyText_(event, '受付完了（査定待ち）のお客さまがいません。\n番号で指定するときは「#見積 C12 12000」の形で送ってください'); return true; }
   const items = cands.map(function (c) {
-    const name = c.name ? c.name.slice(0, 6) : '';
-    const label = (c.cust + ' ' + name + ' ' + c.city.slice(0, 5) + (c.intent === 'shobun' ? ' 引取' : '')).slice(0, 20);
+    const name = c.name ? c.name.slice(0, 8) : '';
+    const label = (c.cust + ' ' + name + ' ' + c.city.slice(0, 5) + (c.intent === 'shobun' ? ' 引取' : '')).replace(/\s+/g, ' ').slice(0, 20);
     return qrPostback_(label, ownerqPb_(1, 'next', c.cust));
   });
   items.push(ownerqCancelQr_());
@@ -334,7 +359,7 @@ function ownerqStart_(event, userId) {
   return true;
 }
 function ownerqAskAmount_(event, s) {
-  v2Reply_(event, [v2Msg_(s.cust + ' ' + (s.name || '') + ' に送ります。\n\n金額を数字だけで送ってください（例: 12000）\n\n・引き取り費用なら「引取 2500」\n・点灯数で変わるなら「30000/24000/18000」（4点灯以上/3点灯/2点灯以下）\n・複数台なら「12000+15000」', [ownerqCancelQr_()])]);
+  v2Reply_(event, [v2Msg_(s.cust + ' ' + (s.name || '') + ' に送ります。\n\n金額を数字だけで送ってください（例: 12000）\n\n・引き取り費用なら「引取 2500」（買取で申し込んだ方には「値段がつかず無償引取に」の説明が自動で付きます）\n・点灯数で変わるなら「30000/24000/18000」（4点灯以上/3点灯/2点灯以下）\n・複数台なら「12000+15000」', [ownerqCancelQr_()])]);
 }
 function ownerqAskEbike_(event) {
   v2Reply_(event, [v2Msg_('電動アシストですか？', [
