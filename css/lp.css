@@ -451,12 +451,24 @@ h1, h2, h3 {
 .route .price-tag { display: inline-block; margin-top: 4px; font-weight: 700; color: var(--accent-d); font-size: 1rem; }
 
 /* 電動ページ：査定アップポイント（車体だけでも査定OK、そのうえで加点される要素をカードで） */
-.routeflow { display: grid; gap: 12px; }
-.rf { display: flex; flex-direction: column; gap: 3px; background: var(--card); border: 1px solid var(--line-hair); border-left: 5px solid var(--accent); border-radius: var(--radius-sm); padding: clamp(16px,2.6vw,20px) clamp(18px,3vw,22px); box-shadow: 0 12px 32px -22px rgba(25,28,26,0.24); }
-.rf__body { display: flex; flex-direction: column; gap: 3px; }
-.rf__pt { font-weight: 700; color: var(--ink); font-size: clamp(0.98rem,2.4vw,1.06rem); }
+.routeflow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rf { display: flex; align-items: center; gap: 14px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius-sm); padding: clamp(14px,2.4vw,18px) clamp(14px,2.6vw,20px); box-shadow: 0 12px 32px -22px rgba(25,28,26,0.24); }
+.rf--main { grid-column: 1 / -1; background: linear-gradient(135deg, #EAF6EC 0%, var(--card) 70%); border-color: rgba(67,160,71,0.35); padding: clamp(18px,3vw,24px); }
+.rf__body { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.rf__ic { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; }
+.rf--main .rf__ic { width: 60px; height: 60px; }
+.rf__ic--bat { background: #43A047; color: #fff; }
+.rf__ic--key { background: #FFF1DE; color: #E07B00; }
+.rf__ic--shine { background: #E3F0FC; color: #1E6FC2; }
+.rf__badge { display: inline-block; background: #43A047; color: #fff; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 10px; border-radius: 999px; }
+.rf__pt { font-weight: 700; color: var(--ink); font-size: clamp(0.92rem,2.3vw,1.02rem); line-height: 1.5; }
+.rf--main .rf__pt { font-size: clamp(1.05rem,2.8vw,1.2rem); }
 .rf__why { color: var(--ink-70); font-size: 0.88rem; line-height: 1.6; }
-.routeflow .price-tag { font-weight: 700; color: var(--accent-d); }
+.routeflow .price-tag { font-weight: 700; color: #2E7D32; }
+@media (max-width: 560px) {
+  .rf--sub { flex-direction: column; text-align: center; gap: 8px; padding: 14px 10px; }
+  .rf--sub .rf__pt { font-size: 0.88rem; }
+}
 
 /* トップ：ご利用の流れ（横並び4ステップ＋矢印。モバイルは縦＋下向き矢印） */
 .flowline { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: stretch; gap: clamp(6px,1.4vw,12px); }
