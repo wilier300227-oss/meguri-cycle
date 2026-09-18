@@ -8,7 +8,7 @@
    ========================================================= */
 const V2_BATTERY_CHECK_URL = 'https://meguri-cycle.com/column/battery-check/';
 const V2_BATTERY_DISPOSAL_URL = 'https://meguri-cycle.com/column/battery-disposal/';
-// F-8 長押し診断の実演動画（約84秒・字幕ごとに静止入り・字幕のみ・ブリヂストン見本を全メーカー共通で使用。2026-09-16 オーナー撮影）。サイトの video/ から配信
+// F-8 長押し診断の実演動画（約72秒・元動画から再編集・カウントダウン付き・字幕のみ・ブリヂストン見本を全メーカー共通で使用。2026-09-16 オーナー撮影）。サイトの video/ から配信
 const V2_BATTERY_VIDEO_URL = 'https://meguri-cycle.com/video/battery-check-howto.mp4';
 const V2_BATTERY_VIDEO_PREVIEW_URL = 'https://meguri-cycle.com/video/battery-check-howto.jpg';
 
