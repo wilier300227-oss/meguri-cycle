@@ -8,7 +8,7 @@
    ========================================================= */
 const V2_BATTERY_CHECK_URL = 'https://meguri-cycle.com/column/battery-check/';
 const V2_BATTERY_DISPOSAL_URL = 'https://meguri-cycle.com/column/battery-disposal/';
-// F-8 長押し診断の実演動画（54秒・字幕のみ・ブリヂストン見本を全メーカー共通で使用。2026-09-16 オーナー撮影）。サイトの video/ から配信
+// F-8 長押し診断の実演動画（約84秒・字幕ごとに静止入り・字幕のみ・ブリヂストン見本を全メーカー共通で使用。2026-09-16 オーナー撮影）。サイトの video/ から配信
 const V2_BATTERY_VIDEO_URL = 'https://meguri-cycle.com/video/battery-check-howto.mp4';
 const V2_BATTERY_VIDEO_PREVIEW_URL = 'https://meguri-cycle.com/video/battery-check-howto.jpg';
 
@@ -92,7 +92,7 @@ function v2BatteryCheckMessage_() {
   return v2Msg_([
     'ありがとうございます。',
     '',
-    '🔋 バッテリーの残量ランプの調べ方（残量ボタンの長押し）を、上の動画でご覧ください（54秒・音声なし）。',
+    '🔋 バッテリーの残量ランプの調べ方（残量ボタンの長押し）を、上の動画でご覧ください（音声なし）。',
     'メーカーによってボタンの位置は違いますが、長押しの要領は同じです。',
     '',
     '動画のように、ランプが光るところまでを動画で撮って送ってください。写真でも、点灯した数を文字で教えていただいても大丈夫です（できなくても大丈夫です）。',
