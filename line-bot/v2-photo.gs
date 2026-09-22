@@ -37,7 +37,7 @@ function v2PhotoGroups_(s) {
     alt: '難しければ、ランプが光った瞬間の写真2〜3枚でも大丈夫です。' };
   if (v === 'battery') {
     return [
-      { title: 'バッテリーの写真（正面・横・型番シール・端子）', need: 4, kinds: ['image'], img: null, tip: V2_TIP_SEAL },
+      { title: 'バッテリーの型番シール', need: 1, kinds: ['image'], img: null, tip: V2_TIP_SEAL },   // 2026-09-22 オーナー：充電できて動作が分かれば十分。正面・横・端子は撮らない
       { title: '充電器に載せた状態（写真か動画）', need: 1, kinds: ['image', 'video'], img: 'ebike/15' },
       VIDEO,
     ];
@@ -108,7 +108,9 @@ function v2PhotoIntroMsgs_(s) {
     'できる範囲で大丈夫です（少ないと、確認できない部分の金額が下がる可能性があります）。',
     'ご家族に撮ってもらっても、あとで続きからでもOKです。',
   ];
-  return [v2Msg_(lines.join('\n')), v2PhotoMap_(v)].concat(v2PhotoGroupMsgs_(s, ''));
+  const msgs = [v2Msg_(lines.join('\n'))];
+  if (v !== 'battery') msgs.push(v2PhotoMap_(v));   // バッテリー単体は撮る場所が少ないので図は出さない
+  return msgs.concat(v2PhotoGroupMsgs_(s, ''));
 }
 /** 今の工程の案内。見本画像 → 文＋ボタン（クイックリプライは最後の吹き出しに付ける）。prefix は受け取りの一言 */
 function v2PhotoGroupMsgs_(s, prefix) {

@@ -57,7 +57,7 @@ scenarios = {
   # 写真工程の前に画像 → 案内は1回だけ
   "P6 写真前に画像2枚": [lambda: pb(S % (0, "next", "kaitori")), im, im, lambda: pb(S % (1, "next", "normal"))],
   # バッテリー単体3工程：写真4 → 充電器1 → 動画 → 完了
-  "P7 バッテリー単体": [lambda: pb(B % (0, "next", "")), lambda: pb(B % (1, "next", "bat_unknown"))] + ims(4) + ims(1) + [vi],
+  "P7 バッテリー単体": [lambda: pb(B % (0, "next", "")), lambda: pb(B % (1, "next", "bat_unknown"))] + ims(1) + ims(1) + [vi],
   # 処分（shobun）：サビ質問なしで市町へ。最初の「次へ」は確認に使われる
   "P8 処分・一般車": [lambda: pb(S % (0, "next", "shobun")), lambda: pb(S % (1, "next", "normal"))] + ims(3) + [nxt(), nxt(), nxt(), nxt()]
       + [lambda: tx("内灘町"), lambda: pb(S % (5, "next", "bohan_no"))],
