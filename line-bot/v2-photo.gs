@@ -15,7 +15,7 @@ const V2_MIHON_BASE = 'https://meguri-cycle.com/images/mihon/';
 const V2_PHOTO_TTL_SEC = 7 * 86400;
 const V2_PHOTO_LOG_COLS = ['userId', 'cust_no', '種別', '開始', '最終操作', '到達工程', '受信数JSON', '飛ばした回数', '完了', '24h通知'];
 const V2_TIP_SEAL = 'シールの文字が読めるように、近づけて撮ってください。';
-const V2_TIP_HINBAN = 'シールの場所や書き方はメーカーによって違います。いちばん下の型番（英数字）が読めるように、近づけて撮ってください。シールが無い自転車もあります。その場合はフレームの車種名やロゴが写る1枚で、どちらも無ければ2枚で「次へ」を押してください。';
+const V2_TIP_HINBAN = '品番シールは型番が読めるように近づけて。シールがない場合はロゴや車種名が分かるもので大丈夫です。';
 
 /* ── 工程の定義 ── */
 function v2PhotoImg_(rel) {
