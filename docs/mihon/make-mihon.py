@@ -206,7 +206,8 @@ def make_single(src_dir, n, spec):
             box = (SIZE - box[2], box[1], SIZE - box[0], box[3])
         d = ImageDraw.Draw(im)
         dashed_rect(d, box)
-        badge(d, box[0] + 60, box[1] + 60, n)
+        # 番号は枠の左上の角に置く（枠の内側に置くと写したい部分＝型番の先頭などを隠す。2026-09-22 オーナー指摘）
+        badge(d, max(50, box[0]), max(50, box[1]), n)
         if note:
             f = font(30, bold=False)
             tw = d.textlength(note, font=f)
