@@ -373,19 +373,19 @@ function v2HandleImage_(event, userId, kind) {
   return true;
 }
 
-/** 受付完了の自分宛て通知。本文と「見積を送る」ボタンを 1 リクエスト（Push 1通）で送る。
- *  Push が失敗したときは Discord に本文を送る（2026-09-22 Push通数対策）。 */
+/** 受付完了の自分宛て通知。2026-09-22 オーナー決定：通知は全部 Discord に統一（LINE の Push を消費しない）。
+ *  見積は、オーナーが自分の LINE からボットに「見積」と送って相手を選ぶ。Discord が未設定・失敗のときだけ、これまでどおり LINE に本文＋ボタンを1通。 */
 function v2NotifyReceipt_(name, cust, summary, userId) {
   const text = ownerNotifyText_('LINE', name, '📝 v2 受付完了（要査定）', summary, userId);
+  const hint = cust ? '（見積を送るときは、ボットに「見積」と送って ' + cust + ' を選んでください）' : '';
+  if (postDiscord_(text + String.fromCharCode(10) + hint)) return;
   const messages = [{ type: 'text', text: text }];
   if (cust && typeof ownerqPb_ === 'function') {
     messages.push(v2Msg_('👆 ' + cust + '（' + name + '）に見積を送るときは、このボタンからどうぞ', [
       qrPostback_('💰 ' + cust + ' に見積を送る', ownerqPb_(1, 'next', cust)),
     ]));
   }
-  let ok = false;
   if (OWNER_LINE_USER_ID && OWNER_LINE_USER_ID.indexOf('ここに') !== 0) {
-    try { ok = pushMessage_(OWNER_LINE_USER_ID, messages).ok; } catch (e) { ok = false; }
+    try { pushMessage_(OWNER_LINE_USER_ID, messages); } catch (e) {}
   }
-  if (!ok) postDiscord_(text + '\n（LINEに送れなかったためDiscordに届いています。見積はボットに「見積」と送ると入力できます）');
 }
