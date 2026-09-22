@@ -34,6 +34,10 @@ function v2PhotoVariant_(s) {
 function v2PhotoGroups_(s) {
   const d = s.data || {};
   const v = v2PhotoVariant_(s);
+  // 処分（出張引取）は査定しないので、全体の写真2枚だけ（2026-09-22 オーナー決定）
+  if (s.flow === 'satei' && s.intent === 'shobun') {
+    return [{ title: '自転車ぜんぶ（右から・左から）', need: 2, min: 2, kinds: ['image'], img: v + '/set0' }];
+  }
   const VIDEO = { title: 'バッテリー診断の動画', need: 1, kinds: ['image', 'video'], img: null, video: true,
     alt: '難しければ、ランプが光った瞬間の写真2〜3枚でも大丈夫です。' };
   if (v === 'battery') {
@@ -101,6 +105,10 @@ function v2PhotoChargeMsg_(s) {
 /** 最初の案内：数字を出さない。順番に案内する、できる範囲で、家族OK・あとで続きからOK */
 function v2PhotoIntroMsgs_(s) {
   const v = v2PhotoVariant_(s);
+  if (s.flow === 'satei' && s.intent === 'shobun') {
+    const t = ['📷 自転車の写真をお願いします', '右から・左から、自転車がぜんぶ入るように2枚お願いします。', 'ご家族に撮ってもらっても、あとで続きからでもOKです。'];
+    return [v2Msg_(t.join(String.fromCharCode(10)))].concat(v2PhotoGroupMsgs_(s, ''));
+  }
   const lines = [
     '📷 写真をお願いします',
     '写真で金額を確定するので、当日その場で金額が変わることはありません。',
@@ -118,7 +126,7 @@ function v2PhotoGroupMsgs_(s, prefix) {
   const gs = v2PhotoGroups_(s);
   const p = s.data.photo;
   const g = gs[p.g - 1];
-  const head = '【' + p.g + '/' + gs.length + '】' + g.title + (g.need ? '（' + g.need + (g.video ? '本' : '枚') + '）' : '');
+  const head = (gs.length > 1 ? '【' + p.g + '/' + gs.length + '】' : '') + g.title + (g.need ? '（' + g.need + (g.video ? '本' : '枚') + '）' : '');
   const lines = [(prefix ? prefix + '\n' : '') + head];
   if (g.video) lines.push('上の動画のように、長押しでランプが光るところまでを動画で撮って送ってください。', g.alt || '');
   else if (p.g === 1) lines.push('見本のように、枠の部分が大きく写るように撮ってください。');
