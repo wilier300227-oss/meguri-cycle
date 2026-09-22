@@ -114,11 +114,16 @@ function v2LinkMenu_(userId, key) {
   if (!userId) return false;
   const id = v2MenuId_(key);
   if (!id) return false;
+  // 同じメニューが直前に紐付いていれば API を呼ばない（写真1枚ごとに呼んでいた。2026-09-22 速度対策。6時間で忘れる）
+  const ck = 'v2menu_' + userId;
+  try { if (CacheService.getScriptCache().get(ck) === id) return true; } catch (e) {}
   try {
     const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/user/' + userId + '/richmenu/' + id, {
       method: 'post', headers: v2Headers_(), muteHttpExceptions: true,
     });
-    return res.getResponseCode() === 200;
+    const ok = res.getResponseCode() === 200;
+    if (ok) { try { CacheService.getScriptCache().put(ck, id, 21600); } catch (e) {} }
+    return ok;
   } catch (e) { console.error('v2LinkMenu_ ' + e); return false; }
 }
 function v2UnlinkUser_(userId) {

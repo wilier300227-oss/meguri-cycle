@@ -145,19 +145,19 @@ function v2PhotoStartMsgs_(s, userId) {
 
 /* ── 進行 ── */
 /** 次の工程へ。最後まで来たら終了して既存フローの次の段階へ。戻り値 { messages, menu, done } */
-function v2PhotoAdvance_(s, receivedLine) {
+function v2PhotoAdvance_(s, receivedLine, deferLog) {
   const p = s.data.photo;
   const gs = v2PhotoGroups_(s);
   p.t = new Date().toISOString();
   if (p.g < gs.length) {
     p.g += 1;
-    v2PhotoLog_(s, '');
-    return { messages: v2PhotoGroupMsgs_(s, receivedLine), menu: 'photo', done: false };
+    if (!deferLog) v2PhotoLog_(s, '');
+    return { messages: v2PhotoGroupMsgs_(s, receivedLine), menu: 'photo', done: false, logStatus: '' };
   }
   s.data.photoDone = 1;
-  v2PhotoLog_(s, 'done');
+  if (!deferLog) v2PhotoLog_(s, 'done');
   const thanks = (receivedLine ? receivedLine + '\n' : '') + '写真ありがとうございました📷（写真は査定のためだけに使います）';
-  const out = { messages: [], menu: 'inflow', done: false };
+  const out = { messages: [], menu: 'inflow', done: false, logStatus: 'done' };
   if (s.flow === 'battery') { out.messages = [v2Msg_(thanks)]; out.done = true; return out; }
   if (s.intent === 'kaitori' && !s.data.rust) { s.data.rustAsk = 1; out.messages = [v2Msg_(thanks), v2AskRustMessage_()]; return out; }
   s.step = 4; out.messages = [v2Msg_(thanks), v2AskCityMessage_()]; return out;
@@ -205,7 +205,7 @@ function v2PhotoOnMedia_(event, userId, s0, kind) {
   const lock = LockService.getUserLock();   // v2WriteSessionRow_ の script lock とは別物（入れ子で待ち合わない）
   let locked = false;
   try { locked = lock.tryLock(20000); } catch (e) { locked = false; }
-  let s = s0, out = null, gi = 0, n = 0, unit = '枚', shouldReply = true;
+  let s = s0, out = null, gi = 0, n = 0, unit = '枚', shouldReply = true, advanced = false;
   try {
     if (locked) { const fresh = v2GetSession_(userId); if (fresh) s = fresh; }   // 並行実行が書いた最新の枚数を読む
     if (!v2PhotoActive_(s)) return false;
@@ -216,8 +216,6 @@ function v2PhotoOnMedia_(event, userId, s0, kind) {
     p.c[p.g] = (p.c[p.g] || 0) + 1;
     p.t = new Date().toISOString();
     s.data.photos = (s.data.photos || 0) + 1;
-    // 返事は「同時送信のまとまりに1回」。total が分かれば「その組の何枚目を数え終えたか」で判断（到着順に依存しない）。
-    // 分からなければ最初の1枚で
     const set = event.message && event.message.imageSet;
     if (set && set.id) {
       p.sets[set.id] = (p.sets[set.id] || 0) + 1;
@@ -228,24 +226,34 @@ function v2PhotoOnMedia_(event, userId, s0, kind) {
     if (shouldReply) {
       const received = n + unit + '受け取りました📷';
       if (g.need > 0 && n >= g.need) {
-        out = v2PhotoAdvance_(s, received);
+        out = v2PhotoAdvance_(s, received, true); advanced = true;
       } else {
         const lines = [received + (g.need ? ' あと' + (g.need - n) + '枚です。' : '') + '送り終わったら「' + (g.skipLabel || '次へ') + '」を押してください。'];
         if (!p.tip) { lines.push('（撮り直したいときは、そのままもう1枚送ってください）'); p.tip = 1; }
-        out = { messages: [v2Msg_(lines.join('\n'), v2PhotoQuick_(s, g))], menu: 'photo', done: false };
+        out = { messages: [v2Msg_(lines.join(String.fromCharCode(10)), v2PhotoQuick_(s, g))], menu: 'photo', done: false };
       }
     }
-    v2PhotoLog_(s, '');
-    v2SetSession_(userId, s);
+    // ロック内はキャッシュの更新だけ（速い）。シートへの保存は返信のあと
+    CacheService.getScriptCache().put(v2SessionKey_(userId), JSON.stringify(s), V2_SESSION_TTL_SEC);
   } finally {
     if (locked) { try { lock.releaseLock(); } catch (e) {} }
   }
+  if (out) { v2Reply_(event, out.messages); tReply = Date.now() - t0; }   // 先に返す（体感の速さ）
+  // ここから後回しにした重い処理：セッションのシート保存（工程の切替時・完了時は必ず、それ以外は5分に1回）、写真査定ログ、メニュー
+  const p2 = s.data.photo;
+  const now = Date.now();
+  const needSheet = advanced || (s.data.photoDone) || !p2.fl || (now - p2.fl > 5 * 60 * 1000);
+  if (needSheet) {
+    p2.fl = now;
+    CacheService.getScriptCache().put(v2SessionKey_(userId), JSON.stringify(s), V2_SESSION_TTL_SEC);
+    v2WriteSessionRow_(userId, s);
+  }
   if (out) {
-    v2Reply_(event, out.messages); tReply = Date.now() - t0;
+    if (advanced) v2PhotoLog_(s, out.logStatus || '');
     if (out.done) { v2Complete_(event, userId, s); return true; }
     if (out.menu) v2LinkMenu_(userId, out.menu);
   }
-  logEvent_(event, 'v2:' + s.flow + '/3/' + kind, '工程' + gi + ' ' + n + unit + (s.data.photo && s.data.photo.g !== gi ? ' → 次へ' : '') + (s.data.photoDone ? ' → 完了' : '') + (shouldReply ? '' : '（無言）') + (locked ? '' : '（ロック取れず）') + ' ⏱返信まで' + tReply + 'ms/全体' + (Date.now() - t0) + 'ms');
+  logEvent_(event, 'v2:' + s.flow + '/3/' + kind, '工程' + gi + ' ' + n + unit + (p2.g !== gi ? ' → 次へ' : '') + (s.data.photoDone ? ' → 完了' : '') + (shouldReply ? '' : '（無言）') + (locked ? '' : '（ロック取れず）') + ' ⏱返信まで' + tReply + 'ms/全体' + (Date.now() - t0) + 'ms' + (needSheet ? ' 保存' : ''));
   return true;
 }
 
