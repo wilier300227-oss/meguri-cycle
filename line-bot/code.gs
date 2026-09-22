@@ -281,7 +281,8 @@ function handleEvent(event) {
 
   // v2（2026-09-16）: 進行中フローのテキスト入力（市町名）と、旧タイル文言の v2 写像。停止希望の語は v2 より先に見る
   if (msg.type === 'text' && !detectOptOut_(text) && v2HandleText_(event, userId, text)) return;
-  if (msg.type === 'image' && v2HandleImage_(event, userId)) return;
+  if (msg.type === 'image' && v2HandleImage_(event, userId, 'image')) return;
+  if (msg.type === 'video' && v2HandleImage_(event, userId, 'video')) return;   // 診断動画・充電器の動画（v2-photo.gs）
 
   if (msg.type === 'text') {
     if (REVIEW_AUTO_ENABLED && userId && REVIEW_CANCEL_KEYWORDS.some(function (kw) { return text.indexOf(kw) !== -1; })) {

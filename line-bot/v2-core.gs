@@ -101,9 +101,11 @@ function v2GetSession_(userId) {
     for (let r = 1; r < data.length; r++) {
       if (String(data[r][0]) === userId) {
         const upd = data[r][5] ? new Date(data[r][5]).getTime() : 0;
-        if (!data[r][1] || Date.now() - upd > V2_SESSION_TTL_SEC * 1000) return null;
-        const s = { flow: data[r][1], step: Number(data[r][2]) || 0, intent: data[r][3] || '', data: {} };
-        try { s.data = JSON.parse(data[r][4] || '{}'); } catch (e) {}
+        let d = {}; try { d = JSON.parse(data[r][4] || '{}'); } catch (e) {}
+        // 写真工程のセッションは 7 日（「あとで続きから送れます」の約束。2026-09-22）。それ以外は 6 時間
+        const ttl = (d.photo && !d.photoDone) ? V2_PHOTO_TTL_SEC : V2_SESSION_TTL_SEC;
+        if (!data[r][1] || Date.now() - upd > ttl * 1000) return null;
+        const s = { flow: data[r][1], step: Number(data[r][2]) || 0, intent: data[r][3] || '', data: d };
         CacheService.getScriptCache().put(v2SessionKey_(userId), JSON.stringify(s), V2_SESSION_TTL_SEC);
         return s;
       }

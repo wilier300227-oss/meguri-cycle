@@ -197,18 +197,20 @@ function v2Transition_(userId, s, pb) {
   if (s.flow === 'satei') {
     if (s.step === 1) {                       // 電動の有無
       s.data.ebike = pb.val;
-      if (pb.val === 'normal') { s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; }
+      if (pb.val === 'normal') { s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; }
       else { s.step = 2; out.messages = [v2AskBattery_('satei', 2)]; }
       return out;
     }
     if (s.step === 2) {                       // バッテリー状態
       if (pb.val.indexOf('bat_') === 0) s.data.battery = pb.val;   // body_only で bat_ng を上書きしない
       if (pb.val === 'bat_ng') { out.messages = [v2BatteryNgMessage_('satei', 2)]; return out; }       // step は 2 のまま（次のボタン待ち）
-      if (pb.val === 'body_only') { s.data.bodyOnly = true; s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
-      if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = [v2BatteryUnknownMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
-      s.step = 3; out.messages = [v2BatteryVideoMessage_(), v2BatteryCheckMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out;  // bat_ok
+      if (pb.val === 'body_only') { s.data.bodyOnly = true; s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out; }
+      if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out; }
+      s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out;  // bat_ok（診断動画はまとまり6で案内する）
     }
-    if (s.step === 3) {                       // 写真工程 → 次へ進む（旧「写真を追加する」は写真の案内を出し直すだけ）
+    if (s.step === 3) {                       // 写真工程（v2-photo.gs）。まとまり単位の受け付け
+      const pt = v2PhotoTransition_(userId, s, pb);
+      if (pt) { out.messages = pt.messages; out.menu = pt.menu || null; out.done = !!pt.done; return out; }
       if (pb.val === 'more_photos') { out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
       // 2026-09-16: 買取は写真のあとにサビの程度をボタンで1問（現地で写真より状態が悪い事例への対策。写真は3枚のまま）
       if (pb.val && pb.val.indexOf('rust_') === 0) { s.data.rust = pb.val; delete s.data.rustAsk; s.step = 4; out.messages = [v2AskCityMessage_()]; out.menu = 'inflow'; return out; }
@@ -225,14 +227,15 @@ function v2Transition_(userId, s, pb) {
     if (s.step === 1) {
       if (pb.val.indexOf('bat_') === 0) s.data.battery = pb.val;
       if (pb.val === 'bat_ng') { out.messages = [v2BatteryNgMessage_('battery', 1)]; return out; }
-      if (pb.val === 'body_only') { s.flow = 'satei'; s.intent = 'kaitori'; s.data.ebike = 'ebike'; s.data.bodyOnly = true; s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
-      if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = [v2BatteryUnknownMessage_()]; out.menu = 'photo'; return out; }
+      if (pb.val === 'body_only') { s.flow = 'satei'; s.intent = 'kaitori'; s.data.ebike = 'ebike'; s.data.bodyOnly = true; s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out; }
+      if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out; }
       // bat_ok: 診断の案内で終了（買取したい人はメニューから）
       out.messages = [v2BatteryVideoMessage_(), v2BatteryCheckMessage_(), v2Msg_('買取をご希望のときは、下のメニューの「買取を申し込む」からどうぞ🚲')];
       out.stop = true; out.menu = 'normal'; return out;
     }
-    if (s.step === 3) {                       // 写真 → 人が判断
-      if (pb.val === 'more_photos') { out.messages = [v2BatteryUnknownMessage_()]; out.menu = 'photo'; return out; }
+    if (s.step === 3) {                       // 写真（バッテリー単体の4ステップ）→ 人が判断
+      const pt = v2PhotoTransition_(userId, s, pb);
+      if (pt) { out.messages = pt.messages; out.menu = pt.menu || null; out.done = !!pt.done; return out; }
       out.messages = [v2Msg_('ありがとうございます。担当者が写真を確認してご連絡します🚲')];
       out.done = true; return out;
     }
@@ -252,7 +255,7 @@ function v2Complete_(event, userId, s, extraLines) {
     'サビ（自己申告）: ' + (V2_RUST_LABELS[d.rust] || '-'),
     '住所: ' + (d.address || d.city || '-') + (d.fee ? '（出張費 ' + d.fee + '）' : ''),
     '防犯登録: ' + ({ bohan_yes: 'シールも紙もある', bohan_seal: 'シールだけ（紙はない）', bohan_no: 'ない', bohan_unknown: 'わからない' }[d.bohan] || '-'),
-  ].join('\n');
+  ].concat(v2PhotoSummaryLines_(s)).join('\n');
   try { setUserFields_(userId, { state: 'S2', intent: s.intent || '', city: d.city || '', town: d.town || '' }); } catch (e) {}
   try { setManualMode_(userId); } catch (e) {}
   // 受付完了の通知はバースト抑制の対象にしない（直前の通知に潰されると査定依頼を見落とす）
@@ -340,23 +343,26 @@ function v2PromptMessages_(s) {
   if (s.flow === 'satei' && s.step === 1) return [v2AskEbike_(s)];
   if (s.flow === 'satei' && s.step === 2) return [v2AskBattery_('satei', 2)];
   if (s.flow === 'battery' && s.step === 1) return [v2AskBattery_('battery', 1)];
-  if (s.flow === 'battery' && s.step === 3) return [v2BatteryUnknownMessage_()];
   if (s.flow === 'satei' && s.step === 3 && s.data && s.data.rustAsk) return [v2AskRustMessage_()];   // サビの質問中に文字が来た → 同じ質問を出し直す
-  if (s.step === 3) return [v2PhotoGuideMessage_(s)];
+  if (s.step === 3) return v2PhotoPromptMsgs_(s);
   if (s.flow === 'satei' && s.step === 4) return [v2AskCityMessage_()];
   if (s.flow === 'satei' && s.step === 5) return [v2AskBohanMessage_('satei')];
   return v2FlowStartMessages_(s);
 }
 
-/** 画像の受け口（handleEvent から呼ぶ）。写真工程なら枚数を数えて初回だけ受領確認。処理したら true */
-function v2HandleImage_(event, userId) {
+/** 画像・動画の受け口（handleEvent から呼ぶ）。写真工程なら v2-photo.gs が数えて返事する。
+ *  写真工程以外で届いた画像は、受け取ったうえで今の質問を1回だけ出し直す（2回目以降は無言で数えるだけ） */
+function v2HandleImage_(event, userId, kind) {
   const s = v2GetSession_(userId);
   if (!s) return false;
+  if (v2PhotoOnMedia_(event, userId, s, kind || 'image')) return true;
   s.data = s.data || {};
   s.data.photos = (s.data.photos || 0) + 1;
   if (s.step !== 3) {
-    // 写真工程の前後に写真が来た → 受け取ったうえで、今の質問をもう一度出す（写真は記録に残す）
-    v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\nあわせて、こちらにもお答えください👇')].concat(v2PromptMessages_(s)));
+    if (!s.data.extraImg) {
+      s.data.extraImg = 1;
+      v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\nあわせて、こちらにもお答えください👇')].concat(v2PromptMessages_(s)));
+    }
   } else if (s.data.photos === 1) {
     v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\n続けて送れます。送り終わったら「次へ進む」を押してください🚲', v2PhotoStepQuick_())]);
   }
