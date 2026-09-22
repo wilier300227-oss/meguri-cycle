@@ -80,7 +80,7 @@ function syncGmailToSheet() {
  * knownIdsOpt を渡すと（大量処理時に）毎回シートを読み直さずに済み、高速化できる。
  * 戻り値：実際に書き込んだら true、既に記録済みでスキップしたら false
  */
-function appendInquiryRow_(date, channel, from, subject, content, id, knownIdsOpt, skipNotifyOpt) {
+function appendInquiryRow_(date, channel, from, subject, content, id, knownIdsOpt, skipNotifyOpt, userIdOpt) {
   const sheet = getInquirySheet_();
   const knownIds = knownIdsOpt || getKnownIds_(sheet);
   if (knownIds.has(id)) return false; // 既に記録済み
@@ -89,7 +89,7 @@ function appendInquiryRow_(date, channel, from, subject, content, id, knownIdsOp
   knownIds.add(id);
   // 通常はここで自分宛て通知を出す（code.gs の notifyOwner_。Discord 優先・失敗時は LINE Push）。
   // skipNotifyOpt を true にすると通知を出さない（呼び出し元が自分でまとめて送る場合に使う）
-  if (!skipNotifyOpt) notifyOwner_(channel, from, subject, content);
+  if (!skipNotifyOpt) notifyOwner_(channel, from, subject, content, userIdOpt);
   return true;
 }
 

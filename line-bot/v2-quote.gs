@@ -341,8 +341,8 @@ function v2UpdateQuote_(quoteId, fields) {
 function v2NotifyOwnerNow_(userId, subject, body) {
   try {
     const name = getDisplayName_(userId);
-    try { appendInquiryRow_(new Date(), 'LINE', name, subject, body, 'quote_' + Date.now()); }
-    catch (e) { notifyOwner_('LINE', name, subject, body); }
+    try { appendInquiryRow_(new Date(), 'LINE', name, subject, body, 'quote_' + Date.now(), null, false, userId); }
+    catch (e) { notifyOwner_('LINE', name, subject, body, userId); }
   } catch (e) {}
 }
 

@@ -421,8 +421,8 @@ function logRouteMessage_(userId, routeId, text) {
 function notifyRouteMessage_(event, userId, routeId, text) {
   const name = userId ? getDisplayName_(userId) : '';
   const id = 'line_' + (event.message && event.message.id);
-  try { appendInquiryRow_(new Date(), 'LINE', name, '🆕 サイトCTA ' + routeId, text, id); }
-  catch (e) { notifyOwner_('LINE', name, '🆕 サイトCTA ' + routeId, text); }
+  try { appendInquiryRow_(new Date(), 'LINE', name, '🆕 サイトCTA ' + routeId, text, id, null, false, userId); }
+  catch (e) { notifyOwner_('LINE', name, '🆕 サイトCTA ' + routeId, text, userId); }
 }
 
 /** H改: 経路CTAへの受付応答（経路別）。サイト側の案内（/dendo/ 確認要項v2）と同じ内容に揃える。 */
@@ -576,9 +576,9 @@ function notifyUnmatched_(event, userId, text) {
   const name = getDisplayName_(userId);
   const id = 'line_' + (event.message && event.message.id);
   try {
-    appendInquiryRow_(new Date(), 'LINE', name, '⚠要返信（自動分類不可）', text, id);
+    appendInquiryRow_(new Date(), 'LINE', name, '⚠要返信（自動分類不可）', text, id, null, false, userId);
   } catch (e) {
-    notifyOwner_('LINE', name, '⚠要返信（自動分類不可）', text); // 中央シート未設定でも通知は試みる
+    notifyOwner_('LINE', name, '⚠要返信（自動分類不可）', text, userId); // 中央シート未設定でも通知は試みる
   }
 }
 /** 顧客へは短い受付一文を1セッション（6時間）に1回だけ。無応答でも可だが到達不安をなくすため。 */
@@ -731,8 +731,8 @@ function notifyManualIncoming_(event, userId, msg, text, subject) {
   const name = getDisplayName_(userId);
   const body = (text || ('(' + (msg && msg.type) + ')')) + (suppressed ? '\n（ほか ' + suppressed + ' 件の新着を省略）' : '');
   const id = 'line_' + (msg && msg.id);
-  try { appendInquiryRow_(new Date(), 'LINE', name, subject || '💬 手動対応中の新着', body, id); }
-  catch (e) { notifyOwner_('LINE', name, subject || '💬 手動対応中の新着', body); }
+  try { appendInquiryRow_(new Date(), 'LINE', name, subject || '💬 手動対応中の新着', body, id, null, false, userId); }
+  catch (e) { notifyOwner_('LINE', name, subject || '💬 手動対応中の新着', body, userId); }
 }
 
 /**
@@ -1494,7 +1494,7 @@ function logLineInquiry_(userId, subject, content, id) {
   if (cache.get(key)) return;
   cache.put(key, '1', 21600); // 21600秒 = 6時間（CacheServiceの上限）
   const name = getDisplayName_(userId);
-  appendInquiryRow_(new Date(), 'LINE', name, subject, content, id);
+  appendInquiryRow_(new Date(), 'LINE', name, subject, content, id, null, false, userId);
 }
 
 /** LINEのプロフィールAPIで表示名を取得する（1時間キャッシュ、失敗時はuserIdをそのまま返す） */
@@ -1520,17 +1520,35 @@ function getDisplayName_(userId) {
 }
 
 /** 新しい問い合わせが中央スプレッドシートに記録されたとき、オーナー個人のLINEに通知する（inquiry-sync.gsから呼ばれる） */
-/** 自分宛て通知の本文を組み立てる（LINE・Discord で共通） */
-function ownerNotifyText_(channel, from, subject, content) {
+/** LINE 公式アカウントのチャット画面の URL。ボットの ID は初回に /v2/bot/info から取ってプロパティ LINE_BOT_USER_ID に保存する */
+function lineChatBotId_() {
+  const ps = PropertiesService.getScriptProperties();
+  let id = ps.getProperty('LINE_BOT_USER_ID');
+  if (id) return id;
+  try {
+    const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/info', { headers: { Authorization: 'Bearer ' + getChannelAccessToken_() }, muteHttpExceptions: true });
+    if (res.getResponseCode() === 200) { id = (JSON.parse(res.getContentText()) || {}).userId || ''; if (id) ps.setProperty('LINE_BOT_USER_ID', id); }
+  } catch (e) {}
+  return id || '';
+}
+function lineChatUrl_(userId) {
+  const b = lineChatBotId_();
+  if (!b) return '';
+  return 'https://chat.line.biz/' + b + (userId ? '/chat/' + userId : '');
+}
+
+/** 自分宛て通知の本文を組み立てる（LINE・Discord で共通）。LINE 経路はチャット画面へのリンク、それ以外は中央シート */
+function ownerNotifyText_(channel, from, subject, content, userId) {
   const sheetId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
   const sheetUrl = sheetId ? 'https://docs.google.com/spreadsheets/d/' + sheetId + '/edit' : '';
+  const link = (channel === 'LINE' ? lineChatUrl_(userId) : '') || sheetUrl;
   return [
     '📩 新しい問い合わせ（' + channel + '）',
     from,
     subject,
     flattenText_(String(content)).slice(0, 200), // 空行だらけのメール本文でも通知は詰めて表示（flattenText_はinquiry-sync.gs側）
     '',
-    sheetUrl,
+    link,
   ].filter(String).join('\n');
 }
 
@@ -1560,8 +1578,8 @@ function postDiscord_(text) {
 
 /** 自分宛ての通知。Discord を優先し、未設定か失敗のときだけ LINE Push に送る。
  *  （LINE の Push は月200通の無料枠を消費するため。2026-09-22） */
-function notifyOwner_(channel, from, subject, content) {
-  const text = ownerNotifyText_(channel, from, subject, content);
+function notifyOwner_(channel, from, subject, content, userId) {
+  const text = ownerNotifyText_(channel, from, subject, content, userId);
   if (postDiscord_(text)) return;
   if (!OWNER_LINE_USER_ID || OWNER_LINE_USER_ID.indexOf('ここに') === 0) return; // 未設定ならスキップ
   pushMessage_(OWNER_LINE_USER_ID, [{ type: 'text', text: text }]);

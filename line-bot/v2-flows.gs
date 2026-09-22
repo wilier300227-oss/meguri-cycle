@@ -268,7 +268,7 @@ function v2Complete_(event, userId, s, extraLines) {
     let wrote = true;
     try { wrote = appendInquiryRow_(new Date(), 'LINE', name, '📝 v2 受付完了（要査定）', summary, id, null, true); }
     catch (e) { wrote = true; } // シート書き込みが例外でも通知は試みる（今までどおり）
-    if (wrote) v2NotifyReceipt_(name, cust, summary);
+    if (wrote) v2NotifyReceipt_(name, cust, summary, userId);
   } catch (e) {}
   v2LinkMenu_(userId, 'normal');
   v2ClearSession_(userId);
@@ -375,8 +375,8 @@ function v2HandleImage_(event, userId, kind) {
 
 /** 受付完了の自分宛て通知。本文と「見積を送る」ボタンを 1 リクエスト（Push 1通）で送る。
  *  Push が失敗したときは Discord に本文を送る（2026-09-22 Push通数対策）。 */
-function v2NotifyReceipt_(name, cust, summary) {
-  const text = ownerNotifyText_('LINE', name, '📝 v2 受付完了（要査定）', summary);
+function v2NotifyReceipt_(name, cust, summary, userId) {
+  const text = ownerNotifyText_('LINE', name, '📝 v2 受付完了（要査定）', summary, userId);
   const messages = [{ type: 'text', text: text }];
   if (cust && typeof ownerqPb_ === 'function') {
     messages.push(v2Msg_('👆 ' + cust + '（' + name + '）に見積を送るときは、このボタンからどうぞ', [

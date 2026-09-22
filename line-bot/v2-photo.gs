@@ -331,7 +331,7 @@ function v2PhotoStaleCheck() {
     p.n24 = 1;
     let name = userId; try { name = getDisplayName_(userId) || userId; } catch (e) {}
     const gs = v2PhotoGroups_(s);
-    notifyOwner_('LINE', name, '⏳ 写真が24時間止まっています', ['工程' + p.g + '/' + gs.length + ' で止まっています。'].concat(v2PhotoSummaryLines_(s)).join('\n'));
+    notifyOwner_('LINE', name, '⏳ 写真が24時間止まっています', ['工程' + p.g + '/' + gs.length + ' で止まっています。'].concat(v2PhotoSummaryLines_(s)).join('\n'), userId);
     v2SetSession_(userId, s);
     v2PhotoLog_(s, '');
   }
