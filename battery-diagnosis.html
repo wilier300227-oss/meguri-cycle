@@ -1,0 +1,109 @@
+---
+permalink: /battery-diagnosis/
+ctaUrl: "/line/dendo/"
+---
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>電動アシスト自転車のバッテリー診断のやり方｜長押しで実容量を見る めぐり自転車</title>
+  <meta name="description" content="電動アシスト自転車のバッテリー診断のやり方を、実演動画で説明します。残量ボタンの長押しで、いまの充電量ではなく実容量（劣化の度合い）が分かります。充電できない場合は診断なしで大丈夫です。">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://meguri-cycle.com/battery-diagnosis/">
+  <link rel="icon" type="image/png" href="/logo/favicon.png">
+  <meta property="og:title" content="電動アシスト自転車のバッテリー診断のやり方 めぐり自転車">
+  <meta property="og:description" content="残量ボタンの長押しで実容量を見る手順を、実演動画で説明します。うまく出ないときは写真だけでも大丈夫です。">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="めぐり自転車">
+  <meta property="og:url" content="https://meguri-cycle.com/battery-diagnosis/">
+  {% include "head-new.njk" %}
+</head>
+<body>
+  {% include "nav-new.njk" %}
+
+  <!-- ヒーロー -->
+  <section class="section" style="padding-bottom: clamp(40px,6vw,64px);">
+    <div class="wrap" style="max-width:760px;">
+      <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">Battery Diagnosis</p>
+      <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(2rem,5.5vw,3rem); line-height:1.24; margin-bottom:20px;">バッテリー診断のやり方</h1>
+      <p class="lead" style="margin-bottom:14px;">電動アシスト自転車は、<strong>バッテリーの状態で金額が大きく変わります。</strong>残量ボタンを長押しすると、いまの充電量ではなく<strong>実容量（どれだけ劣化しているか）</strong>を見ることができます。</p>
+      <p class="lead" style="margin-bottom:24px;"><strong>うまく出ないときは、写真だけでも大丈夫です。</strong>無理に操作していただく必要はありません。</p>
+    </div>
+  </section>
+
+  <!-- 実演動画 -->
+  <section class="section section--alt" id="video">
+    <div class="wrap" style="max-width:760px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2.1rem); margin-bottom:8px;">実演動画（約72秒）</h2>
+      <p class="reveal" style="color:var(--ink-70); margin-bottom:16px;">見本はブリヂストンのバッテリーですが、押す場所と待ち方はどのメーカーでもおおむね同じです。<strong>バッテリーの位置やボタンの形はメーカーによって違います。</strong></p>
+      <video controls preload="none" playsinline poster="/video/battery-check-howto.jpg" style="width:100%; max-width:320px; height:auto; display:block; margin:0 auto; border-radius:10px;">
+        <source src="/video/battery-check-howto.mp4" type="video/mp4">
+        お使いの環境では動画を再生できません。
+      </video>
+      <p style="font-size:0.8rem; color:var(--ink-40); text-align:center; margin-top:8px;">字幕つき・音は出ません</p>
+    </div>
+  </section>
+
+  <!-- 手順 -->
+  <section class="section">
+    <div class="wrap" style="max-width:760px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2.1rem); margin-bottom:8px;">手順</h2>
+      <ol style="color:var(--ink-70); font-size:0.94rem; line-height:1.9; padding-left:1.4em;">
+        <li>バッテリーを自転車から外して、明るい場所に置きます</li>
+        <li><strong>残量ボタンを押したままにします</strong>（指を離さないでください）</li>
+        <li>数秒でランプが点きます。<strong>そのまま押し続けます</strong></li>
+        <li>いったん消えたあと、<strong>もう一度点いたところが実容量の表示</strong>です</li>
+        <li>点いているランプの数を、写真か動画で撮ってください</li>
+      </ol>
+      <p style="color:var(--ink-70); font-size:0.94rem; margin-top:14px;">押し続ける時間はメーカーによって20〜30秒ほどかかります。途中で指を離すと、いまの充電量の表示に戻ってしまいます。動画の中では秒数のカウントを出しているので、それに合わせて押し続けてください。</p>
+    </div>
+  </section>
+
+  <!-- 表示の見方 -->
+  <section class="section section--alt" id="yomikata">
+    <div class="wrap" style="max-width:760px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2.1rem); margin-bottom:8px;">表示の見方</h2>
+      <p class="reveal" style="color:var(--ink-70); margin-bottom:12px;">点いているランプの数が、おおよその実容量です（5個のタイプの場合）。</p>
+      <ul class="list-plain" style="color:var(--ink-70); font-size:0.94rem; line-height:1.9;">
+        <li>5個　81〜100％</li>
+        <li>4個　61〜80％</li>
+        <li>3個　41〜60％</li>
+        <li>2個　21〜40％</li>
+        <li>1個　0〜20％</li>
+      </ul>
+      <p style="color:var(--ink-70); font-size:0.94rem; margin-top:14px;"><strong>この数値は目安です。</strong>メーカーはこの表示を一般のお客さま向けに公開している情報ではなく、劣化の状態を正確に示すものでもないとしています。査定では、年式や充電回数とあわせて総合的に判断します。<strong>うまく出ないときは、写真だけでも大丈夫です。</strong></p>
+    </div>
+  </section>
+
+  <!-- 充電できない場合 -->
+  <section class="section">
+    <div class="wrap" style="max-width:760px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2.1rem); margin-bottom:8px;">充電できない場合は、診断なしで大丈夫です</h2>
+      <p class="reveal" style="color:var(--ink-70); margin-bottom:12px;">充電できないバッテリーは、そもそも診断の表示が出ません。電源を入れた手元スイッチの写真や診断の動画は<strong>お願いしません。</strong>充電器に載せた状態の写真だけお送りください。</p>
+      <p class="reveal" style="color:var(--ink-70);">バッテリーが使えない状態でも、<strong>車体だけで査定できます。</strong>膨らみ・液漏れ・破損のあるバッテリーはお預かりできませんが、その場合もバッテリーを外した状態で車体を査定します。</p>
+    </div>
+  </section>
+
+  {#
+    メーカー別の手順（未公開の枠。2026-09-22）：
+    実機で確かめたメーカーだけを載せる方針（要件定義_写真査定.md §2.6）。
+    どのメーカーを確認済みとするかはオーナーが指定する。指定が来たら、この位置に
+    「パナソニック」「ヤマハ」「ブリヂストン」などの手順を節として追加し、未確認のメーカーは載せない。
+  #}
+
+  <!-- CTA -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:760px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2.1rem); margin-bottom:8px;">診断ができたら、写真と一緒に送ってください</h2>
+      <p class="reveal" style="color:var(--ink-70); margin-bottom:24px;">撮る場所は<a href="/photo-guide/" style="color:var(--accent-d); font-weight:600;">写真の送り方</a>にまとめています。写真をもとに金額を確定するので、当日その場で金額が変わることはありません。</p>
+      <span class="cta-underline">
+        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINEで写真を送る</a>
+        <span class="rainbow-line" aria-hidden="true"></span>
+      </span>
+    </div>
+  </section>
+
+  {% include "footer-new.njk" %}
+</body>
+</html>
