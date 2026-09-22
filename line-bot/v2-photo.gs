@@ -191,45 +191,56 @@ function v2PhotoTransition_(userId, s, pb) {
   if (pb.val === 'photo_more' || pb.val === 'more_photos') return { messages: v2PhotoGroupMsgs_(s, ''), menu: 'photo', done: false };
   return null;
 }
-/** 画像・動画が届いた（v2HandleImage_ から）。写真工程なら数えて、返事が要るときだけ返す。処理したら true */
-function v2PhotoOnMedia_(event, userId, s, kind) {
-  if (!v2PhotoActive_(s)) return false;
-  const p = s.data.photo;
-  if (!p.uid) p.uid = userId;
-  const gs = v2PhotoGroups_(s);
-  const g = gs[p.g - 1];
-  p.c[p.g] = (p.c[p.g] || 0) + 1;
-  p.t = new Date().toISOString();
-  s.data.photos = (s.data.photos || 0) + 1;
-  // 返事は「同時送信のまとまりに1回」。imageSet.total が分かれば最後の1枚で、分からなければ最初の1枚で
-  const set = event.message && event.message.imageSet;
-  let shouldReply = true;
-  if (set && set.id) {
-    if (set.total && set.index) shouldReply = Number(set.index) === Number(set.total);
-    else { shouldReply = !p.sets[set.id]; p.sets[set.id] = 1; }
-  }
-  const n = p.c[p.g];
-  const gi = p.g;
-  const unit = (kind === 'video' ? '本' : '枚');
-  let out = null;
-  if (shouldReply) {
-    const received = n + unit + '受け取りました📷';
-    if (g.need > 0 && n >= g.need) {
-      out = v2PhotoAdvance_(s, received);
-    } else {
-      const lines = [received + (g.need ? ' あと' + (g.need - n) + '枚です。' : '') + '送り終わったら「' + (g.skipLabel || '次へ') + '」を押してください。'];
-      if (!p.tip) { lines.push('（撮り直したいときは、そのままもう1枚送ってください）'); p.tip = 1; }
-      out = { messages: [v2Msg_(lines.join('\n'), v2PhotoQuick_(s, g))], menu: 'photo', done: false };
+/** 画像・動画が届いた（v2HandleImage_ から）。写真工程なら数えて、返事が要るときだけ返す。処理したら true
+ *  3枚同時に送ると LINE から3件がほぼ同時に別リクエストで届き、並行処理で枚数が上書きされて「1枚」になる事故があった
+ *  （2026-09-22 オーナー実機テスト）。ロックで「セッションを読み直す→数える→保存」を直列化し、
+ *  返事は「その同時送信の最後の1枚を数え終えた実行」が出す（到着順に依存しない）。 */
+function v2PhotoOnMedia_(event, userId, s0, kind) {
+  if (!v2PhotoActive_(s0)) return false;
+  const lock = LockService.getUserLock();   // v2WriteSessionRow_ の script lock とは別物（入れ子で待ち合わない）
+  let locked = false;
+  try { locked = lock.tryLock(20000); } catch (e) { locked = false; }
+  let s = s0, out = null, gi = 0, n = 0, unit = '枚', shouldReply = true;
+  try {
+    if (locked) { const fresh = v2GetSession_(userId); if (fresh) s = fresh; }   // 並行実行が書いた最新の枚数を読む
+    if (!v2PhotoActive_(s)) return false;
+    const p = s.data.photo;
+    if (!p.uid) p.uid = userId;
+    const gs = v2PhotoGroups_(s);
+    const g = gs[p.g - 1];
+    p.c[p.g] = (p.c[p.g] || 0) + 1;
+    p.t = new Date().toISOString();
+    s.data.photos = (s.data.photos || 0) + 1;
+    // 返事は「同時送信のまとまりに1回」。total が分かれば「その組の何枚目を数え終えたか」で判断（到着順に依存しない）。
+    // 分からなければ最初の1枚で
+    const set = event.message && event.message.imageSet;
+    if (set && set.id) {
+      p.sets[set.id] = (p.sets[set.id] || 0) + 1;
+      shouldReply = (set.total) ? p.sets[set.id] >= Number(set.total) : p.sets[set.id] === 1;
     }
+    n = p.c[p.g]; gi = p.g;
+    unit = (kind === 'video' ? '本' : '枚');
+    if (shouldReply) {
+      const received = n + unit + '受け取りました📷';
+      if (g.need > 0 && n >= g.need) {
+        out = v2PhotoAdvance_(s, received);
+      } else {
+        const lines = [received + (g.need ? ' あと' + (g.need - n) + '枚です。' : '') + '送り終わったら「' + (g.skipLabel || '次へ') + '」を押してください。'];
+        if (!p.tip) { lines.push('（撮り直したいときは、そのままもう1枚送ってください）'); p.tip = 1; }
+        out = { messages: [v2Msg_(lines.join('\n'), v2PhotoQuick_(s, g))], menu: 'photo', done: false };
+      }
+    }
+    v2PhotoLog_(s, '');
+    v2SetSession_(userId, s);
+  } finally {
+    if (locked) { try { lock.releaseLock(); } catch (e) {} }
   }
-  v2PhotoLog_(s, '');
   if (out) {
     v2Reply_(event, out.messages);
     if (out.done) { v2Complete_(event, userId, s); return true; }
     if (out.menu) v2LinkMenu_(userId, out.menu);
   }
-  v2SetSession_(userId, s);
-  logEvent_(event, 'v2:' + s.flow + '/3/' + kind, '工程' + gi + ' ' + n + unit + (p.g !== gi ? ' → 次へ' : '') + (s.data.photoDone ? ' → 完了' : '') + (shouldReply ? '' : '（無言）'));
+  logEvent_(event, 'v2:' + s.flow + '/3/' + kind, '工程' + gi + ' ' + n + unit + (s.data.photo && s.data.photo.g !== gi ? ' → 次へ' : '') + (s.data.photoDone ? ' → 完了' : '') + (shouldReply ? '' : '（無言）') + (locked ? '' : '（ロック取れず）'));
   return true;
 }
 
