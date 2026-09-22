@@ -203,9 +203,17 @@ function v2HandleQuotePostback_(event, userId, pb) {
     if (!raw) { v2ReplyText_(event, '⚠ 下書きの期限（10分）が切れました。コマンドをもう一度送ってください'); logEvent_(event, 'quote:draft_expired', pb.q); return true; }
     const q = JSON.parse(raw);
     CacheService.getScriptCache().remove('quotedraft_' + pb.q);
-    const quoteId = v2SendQuote_(q);
-    v2ReplyText_(event, '✅ 送信しました（' + quoteId + '）。回答があれば通知します');
-    logEvent_(event, 'quote:sent', quoteId + ' ' + q.custNo + ' ' + q.total);
+    const sent = v2SendQuote_(q);
+    if (sent.ok) {
+      v2ReplyText_(event, '✅ 送信しました（' + sent.quoteId + '）。回答があれば通知します');
+      logEvent_(event, 'quote:sent', sent.quoteId + ' ' + q.custNo + ' ' + q.total);
+    } else {
+      // 届いていないので、前の見積は失効させず、状態も変えていない（v2SendQuote_ 側で制御）
+      v2ReplyText_(event, sent.monthlyLimit
+        ? '⚠ 見積を送れませんでした。今月のPush上限（200通）に達しています。お客さまには届いていません'
+        : '⚠ 見積を送れませんでした（' + sent.status + ' ' + sent.message + '）。お客さまには届いていません');
+      logEvent_(event, 'quote:send_failed', sent.quoteId + ' ' + sent.status + ' ' + sent.message);
+    }
     return true;
   }
   // お客さまの回答
@@ -262,23 +270,42 @@ function v2AcceptedText_(row) {
 }
 
 /* ── 送信・記録 ── */
+/** 見積を送る。**お客さまに届いたときだけ**「送信済み」として確定する。
+ *  失敗時は、前の見積を失効させない・状態を S3 にしない・新しい行は send_failed で残す
+ *  （提示していない記録として。quotes は提示金額のログを兼ねるため、行自体は消さない）。
+ *  戻り値：{ quoteId, ok, status, message, monthlyLimit } */
 function v2SendQuote_(q) {
-  const quoteId = 'Q' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyMMdd') + '-' + Utilities.getUuid().slice(0, 4).toUpperCase();
-  // 同じお客さまの過去の提示は expired にする（古いボタンが押されても金額を再掲しない）
+  const quoteId = 'Q' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyMMdd') + '-' + Utilities.getUuid().slice(0, 4);
   const sh = getQuotesSheet_();
+  const iS = QUOTE_COLS.indexOf('status');
+  let newRow = 0;
+
+  // 先に行を書く（「届いたのに記録が無い」状態を作らない）。status は送信結果で確定する
   if (sh) {
-    const data = sh.getDataRange().getValues();
-    const iU = QUOTE_COLS.indexOf('userId'), iS = QUOTE_COLS.indexOf('status');
-    for (let r = 1; r < data.length; r++) {
-      if (String(data[r][iU]) === q.userId && (data[r][iS] === 'sent' || data[r][iS] === 'hold')) sh.getRange(r + 1, iS + 1).setValue('expired');
-    }
-    sh.appendRow([quoteId, q.userId, getDisplayName_(q.userId), q.custNo, new Date(), 'owner', q.kind, q.amounts.length, q.total,
-      JSON.stringify({ mode: q.mode, amounts: q.amounts, names: q.names, ebike: q.ebike, bodyOnly: q.bodyOnly, note: q.note || '' }),
-      q.bodyText, new Date(q.expiresIso), 'sent', '', '', '']);
+    sh.appendRow([quoteId, q.userId, getDisplayName_(q.userId), q.custNo, new Date(), 'owner', q.kind, q.amounts.reduce(function (a, b) { return a + b; }, 0),
+      JSON.stringify({ mode: q.mode, amounts: q.amounts, names: q.names, ebike: q.ebike, bodyOnly: q.bodyOnly, points: q.points }),
+      q.bodyText, new Date(q.expiresIso), 'sending', '', '', '']);
+    newRow = sh.getLastRow();
   }
-  pushMessage_(q.userId, [v2QuoteFlex_(q, quoteId, q.bodyText)]);
-  try { setUserFields_(q.userId, { state: 'S3' }); } catch (e) {}
-  return quoteId;
+
+  const res = pushMessage_(q.userId, [v2QuoteFlex_(q, quoteId, q.bodyText)]);
+
+  if (sh && newRow) sh.getRange(newRow, iS + 1).setValue(res.ok ? 'sent' : 'send_failed');
+
+  if (res.ok) {
+    // 届いたときだけ、同じお客さまの過去の提示を expired にする（古いボタンで金額が確定しないように）
+    if (sh) {
+      const data = sh.getDataRange().getValues();
+      const iU = QUOTE_COLS.indexOf('userId');
+      for (let r = 1; r < data.length; r++) {
+        if (r + 1 === newRow) continue; // 今書いた行は対象外
+        if (String(data[r][iU]) === q.userId && (data[r][iS] === 'sent' || data[r][iS] === 'hold')) sh.getRange(r + 1, iS + 1).setValue('expired');
+      }
+    }
+    try { setUserFields_(q.userId, { state: 'S3' }); } catch (e) {}
+  }
+
+  return { quoteId: quoteId, ok: res.ok, status: res.status, message: res.message, monthlyLimit: res.monthlyLimit };
 }
 function v2FindQuote_(quoteId) {
   const sh = getQuotesSheet_();

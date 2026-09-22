@@ -259,16 +259,12 @@ function v2Complete_(event, userId, s, extraLines) {
   try {
     const name = getDisplayName_(userId);
     const id = 'line_' + (event.webhookEventId || (event.message && event.message.id));
-    try { appendInquiryRow_(new Date(), 'LINE', name, '📝 v2 受付完了（要査定）', summary, id); }
-    catch (e) { notifyOwner_('LINE', name, '📝 v2 受付完了（要査定）', summary); }
-    // 2026-09-16: 通知の直後に「見積を送る」ボタンを添える（オーナーは個人 LINE の通知から1タップで、この相手の見積入力に入れる）
-    if (cust && typeof ownerqPb_ === 'function' && OWNER_LINE_USER_ID && OWNER_LINE_USER_ID.indexOf('ここに') !== 0) {
-      try {
-        pushMessage_(OWNER_LINE_USER_ID, [v2Msg_('👆 ' + cust + '（' + name + '）に見積を送るときは、このボタンからどうぞ', [
-          qrPostback_('💰 ' + cust + ' に見積を送る', ownerqPb_(1, 'next', cust)),
-        ])]);
-      } catch (e) {}
-    }
+    // 受付完了だけは LINE に残す（オーナーが個人 LINE の通知から見積を送れるように）。
+    // 記録は今までどおり中央シートへ。通知は本文＋ボタンを 1 リクエスト（Push 1通）にまとめる（2026-09-22 Push通数対策）
+    let wrote = true;
+    try { wrote = appendInquiryRow_(new Date(), 'LINE', name, '📝 v2 受付完了（要査定）', summary, id, null, true); }
+    catch (e) { wrote = true; } // シート書き込みが例外でも通知は試みる（今までどおり）
+    if (wrote) v2NotifyReceipt_(name, cust, summary);
   } catch (e) {}
   v2LinkMenu_(userId, 'normal');
   v2ClearSession_(userId);
@@ -368,4 +364,21 @@ function v2HandleImage_(event, userId) {
   try { logLineInquiry_(userId, '写真を送信（v2）', '(画像メッセージ ' + s.data.photos + '枚目)', 'line_' + event.message.id); } catch (e) {}
   logEvent_(event, 'v2:' + s.flow + '/' + s.step + '/image', '写真 ' + s.data.photos + '枚目');
   return true;
+}
+
+/** 受付完了の自分宛て通知。本文と「見積を送る」ボタンを 1 リクエスト（Push 1通）で送る。
+ *  Push が失敗したときは Discord に本文を送る（2026-09-22 Push通数対策）。 */
+function v2NotifyReceipt_(name, cust, summary) {
+  const text = ownerNotifyText_('LINE', name, '📝 v2 受付完了（要査定）', summary);
+  const messages = [{ type: 'text', text: text }];
+  if (cust && typeof ownerqPb_ === 'function') {
+    messages.push(v2Msg_('👆 ' + cust + '（' + name + '）に見積を送るときは、このボタンからどうぞ', [
+      qrPostback_('💰 ' + cust + ' に見積を送る', ownerqPb_(1, 'next', cust)),
+    ]));
+  }
+  let ok = false;
+  if (OWNER_LINE_USER_ID && OWNER_LINE_USER_ID.indexOf('ここに') !== 0) {
+    try { ok = pushMessage_(OWNER_LINE_USER_ID, messages).ok; } catch (e) { ok = false; }
+  }
+  if (!ok) postDiscord_(text + '\n（LINEに送れなかったためDiscordに届いています。見積はボットに「見積」と送ると入力できます）');
 }
