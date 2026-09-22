@@ -1,85 +1,65 @@
 # -*- coding: utf-8 -*-
-"""撮影マップ（横から見た自転車の線画に番号付きの丸）を PNG で作る。LINE の画像メッセージ用。
-要件定義 §2.4：一般車・電動・バッテリー単体の3種。/photo-guide/ のインライン SVG と同じ構図。
+"""撮影マップを PNG で作る。LINE の画像メッセージ用。
+線画だと伝わらない（2026-09-22 オーナー指摘）ので、実物の全体写真の上に番号を置く形にした。
 
-  python docs/mihon/make-map.py --out images/mihon
-出力：map_normal.png / map_ebike.png / map_battery.png（1000×600 前後）と、それぞれの _p.png（プレビュー、幅 400）
+  python docs/mihon/make-map.py --src <生成画像のフォルダ> --out images/mihon
+出力：map_normal.png / map_ebike.png / map_battery.png と、それぞれの _p.png（プレビュー、幅 400）
 """
-import argparse, os
-from PIL import Image, ImageDraw, ImageFont
+import argparse, os, sys, importlib.util
+from PIL import Image, ImageDraw
 
-NAVY = (30, 58, 95)
-LINE = (58, 90, 136)
+HERE = os.path.dirname(os.path.abspath(__file__))
+spec = importlib.util.spec_from_file_location('make_mihon', os.path.join(HERE, 'make-mihon.py'))
+mm = importlib.util.module_from_spec(spec); spec.loader.exec_module(mm)
+
 INK = (26, 43, 69)
-W, H = 1000, 600
-S = W / 420.0  # SVG（420×240）からの倍率
+SUB = (90, 105, 130)
+TOP, BOTTOM = 96, 150
+CROP = (0, 150, 1024, 870)   # 全体写真の上下（壁と床）を少し詰める
+
+# 番号 → 写真上の位置（1024px 座標）。全体（右から／左から）と、反対側・充電器は写真に置けないので下の注記に
+NORMAL_POS = {3: (700, 470), 4: (650, 250), 5: (485, 680), 6: (800, 690), 8: (240, 690), 10: (800, 380), 11: (230, 440)}
+NORMAL_NOTE = ['1 右から全体　2 左から全体（自転車がぜんぶ入るように）',
+               '7・9 は反対側から同じように1枚ずつ。前カゴ・荷台は付いていれば。']
+EBIKE_POS = {3: (660, 470), 4: (640, 260), 5: (730, 230), 6: (520, 690), 7: (800, 660), 9: (200, 660), 11: (860, 380), 12: (200, 440), 13: (450, 540), 14: (430, 610)}
+EBIKE_NOTE = ['1 右から全体　2 左から全体　15 充電器に載せた状態',
+              '8・10 は反対側から同じように1枚ずつ。13・14 の位置はメーカーで違います。']
 
 
-def font(size):
-    for p in ('C:/Windows/Fonts/NotoSansJP-VF.ttf', 'C:/Windows/Fonts/meiryob.ttc'):
-        if os.path.exists(p):
-            f = ImageFont.truetype(p, size)
-            try: f.set_variation_by_name('Bold')
-            except Exception:
-                try: f.set_variation_by_name(b'Bold')
-                except Exception: pass
-            return f
-    return ImageFont.load_default()
-
-
-def badge(d, x, y, n, r=22):
-    d.ellipse([x - r, y - r, x + r, y + r], fill=NAVY, outline=(255, 255, 255), width=3)
-    d.text((x, y + 1), str(n), font=font(24 if n < 10 else 20), fill=(255, 255, 255), anchor='mm')
-
-
-def bike(d):
-    def P(x, y): return (x * S, y * S + 40)
-    w = 6
-    d.ellipse([P(95 - 46, 170 - 46), P(95 + 46, 170 + 46)], outline=LINE, width=w)
-    d.ellipse([P(308 - 46, 170 - 46), P(308 + 46, 170 + 46)], outline=LINE, width=w)
-    for a, b in [((95, 170), (170, 170)), ((170, 170), (214, 98)), ((214, 98), (256, 170)), ((170, 170), (204, 104)),
-                 ((214, 98), (308, 170)), ((204, 104), (186, 80)), ((166, 82), (206, 82)), ((214, 98), (228, 70)), ((210, 66), (246, 66))]:
-        d.line([P(*a), P(*b)], fill=LINE, width=w)
-    d.ellipse([P(170 - 8, 170 - 8), P(170 + 8, 170 + 8)], fill=(107, 135, 174))
-    return P
-
-
-def make_bike_map(variant):
-    im = Image.new('RGB', (W, H), (255, 255, 255))
+def photo_map(src_dir, src_id, pos, title, notes):
+    base = mm.load_clean(src_dir, src_id)
+    if base is None:
+        base = Image.new('RGB', (1024, 1024), (238, 241, 245))
+    photo = base.crop(CROP)
+    W, H = photo.width, photo.height
+    im = Image.new('RGB', (W, TOP + H + BOTTOM), (255, 255, 255))
+    im.paste(photo, (0, TOP))
     d = ImageDraw.Draw(im)
-    P = bike(d)
-    # 番号 → 位置（SVG 座標）。一般車と電動で番号が違う（要件 §2.2）
-    if variant == 'normal':
-        pos = {1: (38, 36), 2: (76, 36), 3: (234, 46), 4: (186, 52), 5: (170, 206), 6: (308, 112), 8: (95, 112), 10: (278, 46), 11: (142, 46)}
-        note = '7・9 は反対側（左側）から同じように1枚ずつ。前カゴ・荷台は付いていれば。'
-        title = '撮る場所（一般車・11枚）'
-    else:
-        pos = {1: (38, 36), 2: (76, 36), 3: (234, 46), 4: (186, 52), 5: (150, 90), 6: (170, 206), 7: (308, 112), 9: (95, 112), 11: (278, 46), 12: (142, 46), 13: (222, 150), 14: (250, 128), 15: (330, 36)}
-        note = '8・10 は反対側から同じように1枚ずつ。13〜15 はバッテリーまわり（位置はメーカーによって違います）。'
-        title = '撮る場所（電動アシスト・15枚＋診断動画1本）'
     for n, (x, y) in pos.items():
-        badge(d, x * S, y * S + 40, n)
-    d.text((24, 12), title, font=font(30), fill=INK)
-    d.text((24, H - 44), note, font=font(20), fill=(90, 105, 130))
+        mm.badge(d, x - CROP[0], y - CROP[1] + TOP, n, r=34)
+    d.text((24, 22), title, font=mm.font(40), fill=INK)
+    for i, t in enumerate(notes):
+        d.text((24, TOP + H + 22 + i * 44), t, font=mm.font(26, bold=False), fill=SUB)
     return im
 
 
-def make_battery_map():
-    im = Image.new('RGB', (W, H), (255, 255, 255))
+def battery_map():
+    W, H = 1024, 640
+    im = Image.new('RGB', (W, TOP + H + 100), (255, 255, 255))
     d = ImageDraw.Draw(im)
-    # バッテリー本体（縦長）と端子
-    x0, y0, x1, y1 = 330, 110, 530, 470
-    d.rounded_rectangle([x0, y0, x1, y1], radius=24, outline=LINE, width=6)
-    d.rectangle([x0 + 40, y1, x1 - 40, y1 + 30], outline=LINE, width=6)  # 端子
-    d.rounded_rectangle([x0 + 60, y0 + 40, x1 - 60, y0 + 90], radius=8, outline=LINE, width=4)  # 型番シール
-    for i in range(5):  # 残量ランプ
-        d.ellipse([x0 + 150, y0 + 130 + i * 40, x0 + 170, y0 + 150 + i * 40], outline=LINE, width=3)
-    badge(d, x0 - 40, (y0 + y1) / 2, 1)
-    badge(d, x1 + 40, (y0 + y1) / 2, 2)
-    badge(d, (x0 + x1) / 2, y0 + 65, 3)
-    badge(d, (x0 + x1) / 2, y1 + 15, 4)
-    d.text((24, 12), '撮る場所（バッテリー単体・4枚＋診断動画1本）', font=font(30), fill=INK)
-    d.text((24, H - 44), '1 正面　2 横（膨らみの確認）　3 型番・ロット番号のシール　4 端子', font=font(20), fill=(90, 105, 130))
+    LINE = (58, 90, 136)
+    x0, y0, x1, y1 = 400, TOP + 60, 620, TOP + 520
+    d.rounded_rectangle([x0, y0, x1, y1], radius=26, outline=LINE, width=7)
+    d.rectangle([x0 + 50, y1, x1 - 50, y1 + 34], outline=LINE, width=7)
+    d.rounded_rectangle([x0 + 60, y0 + 40, x1 - 60, y0 + 96], radius=8, outline=LINE, width=4)
+    for i in range(5):
+        d.ellipse([x0 + 160, y0 + 140 + i * 44, x0 + 182, y0 + 162 + i * 44], outline=LINE, width=3)
+    mm.badge(d, x0 - 50, (y0 + y1) / 2, 1, r=34)
+    mm.badge(d, x1 + 50, (y0 + y1) / 2, 2, r=34)
+    mm.badge(d, (x0 + x1) / 2, y0 + 68, 3, r=34)
+    mm.badge(d, (x0 + x1) / 2, y1 + 17, 4, r=34)
+    d.text((24, 22), '撮る場所（バッテリーだけ・4枚）', font=mm.font(40), fill=INK)
+    d.text((24, TOP + H + 22), '1 正面　2 横（ふくらみの確認）　3 型番のシール　4 端子', font=mm.font(26, bold=False), fill=SUB)
     return im
 
 
@@ -92,9 +72,10 @@ def save(im, path):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
+    ap.add_argument('--src', required=True)
     ap.add_argument('--out', default='images/mihon')
     a = ap.parse_args()
-    save(make_bike_map('normal'), os.path.join(a.out, 'map_normal.png'))
-    save(make_bike_map('ebike'), os.path.join(a.out, 'map_ebike.png'))
-    save(make_battery_map(), os.path.join(a.out, 'map_battery.png'))
+    save(photo_map(a.src, '3337', NORMAL_POS, '撮る場所（一般車・11枚）', NORMAL_NOTE), os.path.join(a.out, 'map_normal.png'))
+    save(photo_map(a.src, '3343', EBIKE_POS, '撮る場所（電動アシスト・15枚＋動画1本）', EBIKE_NOTE), os.path.join(a.out, 'map_ebike.png'))
+    save(battery_map(), os.path.join(a.out, 'map_battery.png'))
     print('ok')
