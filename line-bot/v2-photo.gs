@@ -15,7 +15,7 @@ const V2_MIHON_BASE = 'https://meguri-cycle.com/images/mihon/';
 const V2_PHOTO_TTL_SEC = 7 * 86400;
 const V2_PHOTO_LOG_COLS = ['userId', 'cust_no', '種別', '開始', '最終操作', '到達工程', '受信数JSON', '飛ばした回数', '完了', '24h通知'];
 const V2_TIP_SEAL = 'シールの文字が読めるように、近づけて撮ってください。';
-const V2_TIP_HINBAN = '品番シールは型番が読めるように近づけて。シールがない場合はロゴや車種名が分かるもので大丈夫です。';
+// 撮り方の説明は見本画像の空きマスに書く（自動メッセージには入れない。2026-09-22 オーナー指示）
 
 /* ── 工程の定義 ── */
 function v2PhotoImg_(rel) {
@@ -49,7 +49,7 @@ function v2PhotoGroups_(s) {
   }
   if (v === 'normal') {
     return [
-      { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'normal/set1', tip: V2_TIP_HINBAN },
+      { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'normal/set1' },
       { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'normal/set2' },
       { title: '前輪と後輪（右と左）', need: 4, kinds: ['image'], img: 'normal/set3' },
       { title: '付属品（カゴ・荷台・泥よけ・ライトなど、あれば）', need: 0, kinds: ['image'], img: 'normal/set4', optional: true, skipLabel: '次へ' },
@@ -58,16 +58,15 @@ function v2PhotoGroups_(s) {
   const noCharge = d.charge === 'no';   // 充電できない → 手元スイッチと診断動画はお願いしない（§2.1-8）
   const bodyOnly = !!d.bodyOnly;        // バッテリーは受けられない（車体のみ）→ バッテリー関係を全部飛ばす
   const g = [
-    { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'ebike/set1', tip: V2_TIP_HINBAN },
+    { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'ebike/set1' },
     noCharge
       ? { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'ebike/set2' }
-      : { title: 'ハンドルまわり・手元スイッチ・チェーン', need: 3, kinds: ['image'], img: 'ebike/set2', tip: '手元スイッチは電源を入れて、数字が読めるように撮ってください。' },
+      : { title: 'ハンドルまわり・手元スイッチ・チェーン', need: 3, kinds: ['image'], img: 'ebike/set2' },
     { title: '前輪と後輪（右と左）', need: 4, kinds: ['image'], img: 'ebike/set3' },
     { title: '付属品（カゴ・荷台・泥よけ・ライトなど、あれば）', need: 0, kinds: ['image'], img: 'ebike/set4', optional: true, skipLabel: '次へ' },
   ];
   if (!bodyOnly) {
-    g.push({ title: 'バッテリーの鍵・型番シール・充電器', need: 3, kinds: ['image', 'video'], img: 'ebike/set5',
-      tip: V2_TIP_SEAL + '充電器は、ランプが点いている瞬間を。' });
+    g.push({ title: 'バッテリーの鍵・型番シール・充電器', need: 3, kinds: ['image', 'video'], img: 'ebike/set5' });
     if (!noCharge) g.push(VIDEO);
   }
   return g;
