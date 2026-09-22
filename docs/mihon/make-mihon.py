@@ -92,6 +92,30 @@ EBIKE = {
 # 工程 → 番号（2026-09-22 オーナー指摘で工程を減らした：一般車4・電動6。「気になる点」の工程は廃止）
 SETS_NORMAL = {0: [1, 2], 1: [1, 2, 3], 2: [4, 5], 3: [6, 7, 8, 9], 4: [10, 11]}   # set0 は処分用（全体2枚だけ）
 SETS_EBIKE = {0: [1, 2], 1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8, 9, 10], 4: [11, 12], 5: [13, 14, 15]}
+# 撮り方の説明は、合成画像の空きマス（コマが3つのとき）に書く。自動メッセージには入れない（2026-09-22 オーナー指示）
+SET_NOTES = {
+    ('normal', 1): '品番シールは、型番が
+読めるように近づけて。
+
+シールがない場合は、
+ロゴや車種名が分かる
+ものでも大丈夫です。',
+    ('ebike', 1): '品番シールは、型番が
+読めるように近づけて。
+
+シールがない場合は、
+ロゴや車種名が分かる
+ものでも大丈夫です。',
+    ('ebike', 2): '手元スイッチは
+電源を入れて、
+数字が読めるように。',
+    ('ebike', 5): '型番シールは、
+文字が読めるように
+近づけて。
+
+充電器は、ランプが
+点いている瞬間を。',
+}
 
 
 def font(size, bold=True):
@@ -224,12 +248,24 @@ def make_single(src_dir, n, spec):
     return im, False
 
 
-def make_set(tiles):
+def note_cell(text, w, h):
+    im = Image.new('RGB', (w, h), (245, 247, 250))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle([14, 14, w - 14, h - 14], radius=18, outline=(200, 206, 216), width=3)
+    f = font(36, bold=False)
+    bb = d.multiline_textbbox((0, 0), text, font=f, spacing=12)
+    d.multiline_text(((w - (bb[2] - bb[0])) // 2 - bb[0], (h - (bb[3] - bb[1])) // 2 - bb[1]), text, font=f, fill=INK, spacing=12)
+    return im
+
+
+def make_set(tiles, note=None):
     tile = 500
     cells = []
-    for im, n, label, note in tiles:
+    for im, n, label, note_ in tiles:
         t = im.resize((tile, tile))
-        cells.append(caption_strip(t, f'{n}　{label}', note))
+        cells.append(caption_strip(t, f'{n}　{label}', note_))
+    if note and len(cells) % 2 == 1:
+        cells.append(note_cell(note, cells[0].width, max(c.height for c in cells)))
     cols = 2 if len(cells) > 1 else 1
     rows = (len(cells) + cols - 1) // cols
     cw, ch = cells[0].width, max(c.height for c in cells)
@@ -262,7 +298,7 @@ def run(src_dir, out_dir):
             for n in nums:
                 im, spec, real = made[n]
                 tiles.append((im, n, spec[1], spec[2] if spec[2] != PENDING else ('実写真を準備中' if not real else '')))
-            save(make_set(tiles), os.path.join(out_dir, variant, f'set{sn}.jpg'), quality=85)
+            save(make_set(tiles, SET_NOTES.get((variant, sn))), os.path.join(out_dir, variant, f'set{sn}.jpg'), quality=85)
             report.append(f'{variant}/set{sn}.jpg  コマ {nums}')
     return report
 
