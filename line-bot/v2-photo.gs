@@ -15,7 +15,7 @@ const V2_MIHON_BASE = 'https://meguri-cycle.com/images/mihon/';
 const V2_PHOTO_TTL_SEC = 7 * 86400;
 const V2_PHOTO_LOG_COLS = ['userId', 'cust_no', '種別', '開始', '最終操作', '到達工程', '受信数JSON', '飛ばした回数', '完了', '24h通知'];
 const V2_TIP_SEAL = 'シールの文字が読めるように、近づけて撮ってください。';
-const V2_TIP_HINBAN = 'シールの場所や書き方はメーカーによって違います。いちばん下の型番（英数字）が読めるように、近づけて撮ってください。';
+const V2_TIP_HINBAN = 'シールの場所や書き方はメーカーによって違います。いちばん下の型番（英数字）が読めるように、近づけて撮ってください。シールが無い自転車もあります。その場合はフレームの車種名やロゴが写る1枚で、どちらも無ければ2枚で「次へ」を押してください。';
 
 /* ── 工程の定義 ── */
 function v2PhotoImg_(rel) {
@@ -45,7 +45,7 @@ function v2PhotoGroups_(s) {
   }
   if (v === 'normal') {
     return [
-      { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, kinds: ['image'], img: 'normal/set1', tip: V2_TIP_HINBAN },
+      { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'normal/set1', tip: V2_TIP_HINBAN },
       { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'normal/set2' },
       { title: '前輪と後輪（右と左）', need: 4, kinds: ['image'], img: 'normal/set3' },
       { title: '付属品（カゴ・荷台・泥よけ・ライトなど、あれば）', need: 0, kinds: ['image'], img: 'normal/set4', optional: true, skipLabel: '次へ' },
@@ -54,7 +54,7 @@ function v2PhotoGroups_(s) {
   const noCharge = d.charge === 'no';   // 充電できない → 手元スイッチと診断動画はお願いしない（§2.1-8）
   const bodyOnly = !!d.bodyOnly;        // バッテリーは受けられない（車体のみ）→ バッテリー関係を全部飛ばす
   const g = [
-    { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, kinds: ['image'], img: 'ebike/set1', tip: V2_TIP_HINBAN },
+    { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'ebike/set1', tip: V2_TIP_HINBAN },
     noCharge
       ? { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'ebike/set2' }
       : { title: 'ハンドルまわり・手元スイッチ・チェーン', need: 3, kinds: ['image'], img: 'ebike/set2', tip: '手元スイッチは電源を入れて、数字が読めるように撮ってください。' },
@@ -167,14 +167,15 @@ function v2PhotoNextPressed_(s) {
   const p = s.data.photo;
   const g = v2PhotoGroups_(s)[p.g - 1];
   const n = p.c[p.g] || 0;
-  if (g.need > 0 && n < g.need && !g.optional && !p.ask) {
+  const min = g.min || g.need;   // min があれば、その枚数で「足りている」扱い（品番シールが無い自転車。2026-09-22）
+  if (g.need > 0 && n < min && !g.optional && !p.ask) {
     p.ask = 1;
-    return { messages: [v2Msg_('まだ' + (g.need - n) + '枚届いていません。足りない分は、確認できない部分の金額が下がる可能性があります。', [
+    return { messages: [v2Msg_('まだ' + (min - n) + '枚届いていません。足りない分は、確認できない部分の金額が下がる可能性があります。', [
       qrPostback_('このまま進む', v2Pb_(s.flow, 3, 'next', 'photo_go')),
       qrPostback_('写真を足す', v2Pb_(s.flow, 3, 'next', 'photo_more')),
     ])], menu: 'photo', done: false };
   }
-  if (g.need > 0 && n < g.need) p.skip = (p.skip || 0) + 1;
+  if (g.need > 0 && n < min) p.skip = (p.skip || 0) + 1;
   return v2PhotoAdvance_(s, '');
 }
 /** postback（v2Transition_ の step3 から）。処理したら out、対象外なら null */
@@ -188,7 +189,7 @@ function v2PhotoTransition_(userId, s, pb) {
   if (pb.val === 'photo_next' || pb.val === 'photos_done') return v2PhotoNextPressed_(s);
   if (pb.val === 'photo_go') {
     const p = s.data.photo; const g = v2PhotoGroups_(s)[p.g - 1];
-    if (g.need > 0 && (p.c[p.g] || 0) < g.need) p.skip = (p.skip || 0) + 1;
+    if (g.need > 0 && (p.c[p.g] || 0) < (g.min || g.need)) p.skip = (p.skip || 0) + 1;
     return v2PhotoAdvance_(s, '');
   }
   if (pb.val === 'photo_more' || pb.val === 'more_photos') return { messages: v2PhotoGroupMsgs_(s, ''), menu: 'photo', done: false };
@@ -200,6 +201,7 @@ function v2PhotoTransition_(userId, s, pb) {
  *  返事は「その同時送信の最後の1枚を数え終えた実行」が出す（到着順に依存しない）。 */
 function v2PhotoOnMedia_(event, userId, s0, kind) {
   if (!v2PhotoActive_(s0)) return false;
+  const t0 = Date.now(); let tReply = 0;   // 計測：返信を送るまで／処理全体（2026-09-22）
   const lock = LockService.getUserLock();   // v2WriteSessionRow_ の script lock とは別物（入れ子で待ち合わない）
   let locked = false;
   try { locked = lock.tryLock(20000); } catch (e) { locked = false; }
@@ -239,11 +241,11 @@ function v2PhotoOnMedia_(event, userId, s0, kind) {
     if (locked) { try { lock.releaseLock(); } catch (e) {} }
   }
   if (out) {
-    v2Reply_(event, out.messages);
+    v2Reply_(event, out.messages); tReply = Date.now() - t0;
     if (out.done) { v2Complete_(event, userId, s); return true; }
     if (out.menu) v2LinkMenu_(userId, out.menu);
   }
-  logEvent_(event, 'v2:' + s.flow + '/3/' + kind, '工程' + gi + ' ' + n + unit + (s.data.photo && s.data.photo.g !== gi ? ' → 次へ' : '') + (s.data.photoDone ? ' → 完了' : '') + (shouldReply ? '' : '（無言）') + (locked ? '' : '（ロック取れず）'));
+  logEvent_(event, 'v2:' + s.flow + '/3/' + kind, '工程' + gi + ' ' + n + unit + (s.data.photo && s.data.photo.g !== gi ? ' → 次へ' : '') + (s.data.photoDone ? ' → 完了' : '') + (shouldReply ? '' : '（無言）') + (locked ? '' : '（ロック取れず）') + ' ⏱返信まで' + tReply + 'ms/全体' + (Date.now() - t0) + 'ms');
   return true;
 }
 
@@ -285,7 +287,7 @@ function v2PhotoSummaryLines_(s) {
   gs.forEach(function (g, i) {
     const n = p.c[i + 1] || 0;
     parts.push((i + 1) + ':' + n + (g.need ? '/' + g.need : ''));
-    if (g.need && n < g.need && !g.optional) missing.push('工程' + (i + 1) + ' ' + g.title + '（' + n + '/' + g.need + '）');
+    if (g.need && n < (g.min || g.need) && !g.optional) missing.push('工程' + (i + 1) + ' ' + g.title + '（' + n + '/' + g.need + '）');
   });
   const lines = ['写真（工程別）: ' + parts.join('  ') + (p.skip ? '  飛ばした:' + p.skip + '回' : '')];
   if (missing.length) lines.push('未送: ' + missing.join(' / '));
