@@ -49,7 +49,7 @@ function v2PhotoGroups_(s) {
   }
   if (v === 'normal') {
     return [
-      { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'normal/set1' },
+      { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'normal/set1', minNote: '品番シールがあれば、あと1枚。なければ「次へ」を押してください。' },
       { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'normal/set2' },
       { title: '前輪と後輪（右と左）', need: 4, kinds: ['image'], img: 'normal/set3' },
       { title: '付属品（カゴ・荷台・泥よけ・ライトなど、あれば）', need: 0, kinds: ['image'], img: 'normal/set4', optional: true, skipLabel: '次へ' },
@@ -58,7 +58,7 @@ function v2PhotoGroups_(s) {
   const noCharge = d.charge === 'no';   // 充電できない → 手元スイッチと診断動画はお願いしない（§2.1-8）
   const bodyOnly = !!d.bodyOnly;        // バッテリーは受けられない（車体のみ）→ バッテリー関係を全部飛ばす
   const g = [
-    { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'ebike/set1' },
+    { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, min: 2, kinds: ['image'], img: 'ebike/set1', minNote: '品番シールがあれば、あと1枚。なければ「次へ」を押してください。' },
     noCharge
       ? { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'ebike/set2' }
       : { title: 'ハンドルまわり・手元スイッチ・チェーン', need: 3, kinds: ['image'], img: 'ebike/set2' },
@@ -235,7 +235,9 @@ function v2PhotoOnMedia_(event, userId, s0, kind) {
       if (g.need > 0 && n >= g.need) {
         out = v2PhotoAdvance_(s, received, true); advanced = true;
       } else {
-        const lines = [received + (g.need ? ' あと' + (g.need - n) + '枚です。' : '') + '送り終わったら「' + (g.skipLabel || '次へ') + '」を押してください。'];
+        const lines = [(g.minNote && n >= (g.min || g.need))
+          ? received + ' ' + g.minNote
+          : received + (g.need ? ' あと' + (g.need - n) + '枚です。' : '') + '送り終わったら「' + (g.skipLabel || '次へ') + '」を押してください。'];
         if (!p.tip) { lines.push('（撮り直したいときは、そのままもう1枚送ってください）'); p.tip = 1; }
         out = { messages: [v2Msg_(lines.join(String.fromCharCode(10)), v2PhotoQuick_(s, g))], menu: 'photo', done: false };
       }
