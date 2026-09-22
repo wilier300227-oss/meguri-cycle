@@ -40,6 +40,11 @@ FRAMES = {
     '3346': (300, 150, 720, 900),    # 充電器に載せた状態
     '3345': (40, 60, 960, 960),      # 後輪
     '3348': (150, 250, 760, 1000),   # 鍵を挿した状態
+    'L340': (60, 30, 960, 950),      # 前輪・左（Gemini、2026-09-22 オーナー生成）
+    'L345': (40, 60, 960, 960),      # 後輪・左（Gemini）
+    'R01': (230, 30, 700, 740),      # 車体の品番シール（実写真）
+    'R02': (140, 150, 740, 810),     # 手元スイッチ（電源オン、実写真）
+    'R03': (140, 340, 930, 680),     # バッテリーの型番・ロット番号（実写真）
 }
 
 # 星マークの消し方（画像ごとに指定。自動で「平坦な隣」を選ぶと車輪やペダルを貼ってしまったため）
@@ -57,6 +62,9 @@ STAR_FIX = {
     '3341': ('inpaint', 34),
     '3342': ('inpaint', 34),
     '3348': ('inpaint', 34),
+    'L340': ('clone', (700, 960)),   # 床（タイヤの縁より下）
+    'L345': ('clone', (777, 905)),
+    'R01': ('none', None), 'R02': ('none', None), 'R03': ('none', None),   # 実写真には星マークが無い
 }
 # 文字の消し方：回転した楕円／長方形のマスクで周囲から塗る（cv2.inpaint NS）。1024px 座標
 #   ('ellipse', (cx, cy), (ax, ay), angle) / ('rect', (cx, cy), (w, h), angle)
@@ -67,19 +75,19 @@ PENDING = '実写真を準備中'
 
 # 番号 → (元画像, 短い名称, 補足, 左右反転)。元画像が None は仮パネル
 NORMAL = {
-    1: ('3337', '右から全体', '', False), 2: ('3338', '左から全体', '', False), 3: (None, '品番シール', PENDING, False),
+    1: ('3337', '右から全体', '', False), 2: ('3338', '左から全体', '', False), 3: ('R01', '品番シール', '', False),
     4: ('3344', 'ハンドルまわり', '', False), 5: ('3339', 'チェーン・ペダル', '', False),
-    6: ('3340', '前輪・右', '', False), 7: ('3340', '前輪・左', SIDE_NOTE, True),
-    8: ('3345', '後輪・右', '', False), 9: ('3345', '後輪・左', SIDE_NOTE, True),
+    6: ('3340', '前輪・右', '', False), 7: ('L340', '前輪・左', SIDE_NOTE, False),
+    8: ('3345', '後輪・右', '', False), 9: ('L345', '後輪・左', SIDE_NOTE, False),
     10: ('3341', '前カゴ', '', False), 11: ('3342', '荷台', '', False),
 }
 EBIKE = {
-    1: ('3343', '右から全体', '', False), 2: ('3338', '左から全体', '', False), 3: (None, '品番シール', PENDING, False),
-    4: ('3344', 'ハンドルまわり', '', False), 5: (None, '手元スイッチ（電源オン）', PENDING, False), 6: ('3339', 'チェーン・ペダル', '', False),
-    7: ('3340', '前輪・右', '', False), 8: ('3340', '前輪・左', SIDE_NOTE, True),
-    9: ('3345', '後輪・右', '', False), 10: ('3345', '後輪・左', SIDE_NOTE, True),
+    1: ('3343', '右から全体', '', False), 2: ('3338', '左から全体', '', False), 3: ('R01', '品番シール', '', False),
+    4: ('3344', 'ハンドルまわり', '', False), 5: ('R02', '手元スイッチ（電源オン）', '', False), 6: ('3339', 'チェーン・ペダル', '', False),
+    7: ('3340', '前輪・右', '', False), 8: ('L340', '前輪・左', SIDE_NOTE, False),
+    9: ('3345', '後輪・右', '', False), 10: ('L345', '後輪・左', SIDE_NOTE, False),
     11: ('3341', '前カゴ', '', False), 12: ('3342', '荷台', '', False),
-    13: ('3348', '鍵を挿した状態', '', False), 14: (None, '型番・ロット番号', PENDING, False), 15: ('3346', '充電器に載せた状態', '', False),
+    13: ('3348', '鍵を挿した状態', '', False), 14: ('R03', '型番・ロット番号', '', False), 15: ('3346', '充電器に載せた状態', '', False),
 }
 # 工程 → 番号（2026-09-22 オーナー指摘で工程を減らした：一般車4・電動6。「気になる点」の工程は廃止）
 SETS_NORMAL = {1: [1, 2, 3], 2: [4, 5], 3: [6, 7, 8, 9], 4: [10, 11]}
@@ -115,6 +123,8 @@ def remove_star(im, src_id):
     arr = cv2.cvtColor(np.array(im.convert('RGB')), cv2.COLOR_RGB2BGR)
     cx, cy = STAR_CENTER
     method, arg = STAR_FIX.get(src_id, ('clone', (cx - 128, cy)))
+    if method == 'none':
+        return im
     if method == 'inpaint':
         mask = np.zeros(arr.shape[:2], np.uint8)
         cv2.circle(mask, (cx, cy), int(arg), 255, -1)
@@ -146,6 +156,8 @@ def remove_text(im, src_id):
 def load_clean(src_dir, src_id):
     """元画像を読み、星マークと文字を消した 1024 の PIL 画像を返す（無ければ None）"""
     path = os.path.join(src_dir, src_id + '.png')
+    if not os.path.exists(path):
+        path = os.path.join(src_dir, src_id + '.jpg')
     if not os.path.exists(path):
         return None
     im = Image.open(path).convert('RGB').resize((SIZE, SIZE))
