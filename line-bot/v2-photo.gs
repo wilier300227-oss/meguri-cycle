@@ -163,7 +163,7 @@ function v2PhotoAdvance_(s, receivedLine, deferLog) {
   }
   s.data.photoDone = 1;
   if (!deferLog) v2PhotoLog_(s, 'done');
-  const thanks = (receivedLine ? receivedLine + '\n' : '') + '写真ありがとうございました📷（写真は査定のためだけに使います）';
+  const thanks = (receivedLine ? receivedLine + '\n' : '') + '写真ありがとうございました📷' + (s.intent === 'shobun' ? '' : '（写真は査定のためだけに使います）');
   const out = { messages: [], menu: 'inflow', done: false, logStatus: 'done' };
   if (s.flow === 'battery') { out.messages = [v2Msg_(thanks)]; out.done = true; return out; }
   if (s.intent === 'kaitori' && !s.data.rust) { s.data.rustAsk = 1; out.messages = [v2Msg_(thanks), v2AskRustMessage_()]; return out; }
