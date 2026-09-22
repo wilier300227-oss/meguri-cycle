@@ -15,6 +15,7 @@ const V2_MIHON_BASE = 'https://meguri-cycle.com/images/mihon/';
 const V2_PHOTO_TTL_SEC = 7 * 86400;
 const V2_PHOTO_LOG_COLS = ['userId', 'cust_no', '種別', '開始', '最終操作', '到達工程', '受信数JSON', '飛ばした回数', '完了', '24h通知'];
 const V2_TIP_SEAL = 'シールの文字が読めるように、近づけて撮ってください。';
+const V2_TIP_HINBAN = 'シールの場所や書き方はメーカーによって違います。いちばん下の型番（英数字）が読めるように、近づけて撮ってください。';
 
 /* ── 工程の定義 ── */
 function v2PhotoImg_(rel) {
@@ -44,7 +45,7 @@ function v2PhotoGroups_(s) {
   }
   if (v === 'normal') {
     return [
-      { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, kinds: ['image'], img: 'normal/set1', tip: V2_TIP_SEAL },
+      { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, kinds: ['image'], img: 'normal/set1', tip: V2_TIP_HINBAN },
       { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'normal/set2' },
       { title: '前輪と後輪（右と左）', need: 4, kinds: ['image'], img: 'normal/set3' },
       { title: '付属品（カゴ・荷台・泥よけ・ライトなど、あれば）', need: 0, kinds: ['image'], img: 'normal/set4', optional: true, skipLabel: '次へ' },
@@ -53,7 +54,7 @@ function v2PhotoGroups_(s) {
   const noCharge = d.charge === 'no';   // 充電できない → 手元スイッチと診断動画はお願いしない（§2.1-8）
   const bodyOnly = !!d.bodyOnly;        // バッテリーは受けられない（車体のみ）→ バッテリー関係を全部飛ばす
   const g = [
-    { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, kinds: ['image'], img: 'ebike/set1', tip: V2_TIP_SEAL },
+    { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, kinds: ['image'], img: 'ebike/set1', tip: V2_TIP_HINBAN },
     noCharge
       ? { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'ebike/set2' }
       : { title: 'ハンドルまわり・手元スイッチ・チェーン', need: 3, kinds: ['image'], img: 'ebike/set2', tip: '手元スイッチは電源を入れて、数字が読めるように撮ってください。' },
