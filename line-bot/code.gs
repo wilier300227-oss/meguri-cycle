@@ -201,7 +201,9 @@ function setupLineSheets() {
   Logger.log('セットアップ完了。INQUIRY_SHEET_ID=' + id);
   return 'OK INQUIRY_SHEET_ID=' + id;
 }
+let __T0 = 0, __TREPLY = 0;   // 計測用（2026-09-22）：受信〜返信までの ms
 function doPost(e) {
+  __T0 = Date.now(); __TREPLY = 0;
   try {
     const body = JSON.parse(e.postData.contents);
     (body.events || []).forEach(handleEvent);
@@ -551,7 +553,7 @@ function logEvent_(event, matchedRule, replySummary) {
     const flags = 'expect_city=' + (userId && expectsCity_(userId) ? '1' : '0');
     sheet.appendRow([
       new Date(), userId, userId ? getDisplayName_(userId) : '',
-      event.type || '', msg.type || '', body, '', matchedRule || '', replySummary || '', flags,
+      event.type || '', msg.type || '', body, '', matchedRule || '', (replySummary || '') + (__TREPLY ? ' ⏱' + __TREPLY + 'ms' : ''), flags,
     ]);
   } catch (e) {
     // ログ失敗は無視（webhookの本処理を止めない）
@@ -628,7 +630,7 @@ function getUserState_(userId) {
       }
     }
   } catch (e) {}
-  try { cache.put(ck, JSON.stringify(result), 60); } catch (e) {}
+  try { cache.put(ck, JSON.stringify(result), 600); } catch (e) {}
   return result;
 }
 /** userId の指定フィールドだけ更新（無ければ新規行）。LockServiceで競合防止 */
@@ -1587,6 +1589,7 @@ function notifyOwner_(channel, from, subject, content, userId) {
 
 /** LINEへの返信共通処理 */
 function reply(replyToken, messages) {
+  if (__T0 && !__TREPLY) __TREPLY = Date.now() - __T0;
   UrlFetchApp.fetch('https://api.line.me/v2/bot/message/reply', {
     method: 'post',
     contentType: 'application/json',

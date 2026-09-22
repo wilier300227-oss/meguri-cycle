@@ -146,7 +146,7 @@ function v2PhotoStartMsgs_(s, userId) {
   s.data = s.data || {};
   if (v2PhotoNeedsCharge_(s)) return [v2PhotoChargeMsg_(s)];
   if (!s.data.photo) v2PhotoInit_(s, userId);
-  v2PhotoLog_(s, '');
+  v2Defer_(function () { v2PhotoLog_(s, ''); });
   return v2PhotoIntroMsgs_(s);
 }
 
@@ -158,11 +158,11 @@ function v2PhotoAdvance_(s, receivedLine, deferLog) {
   p.t = new Date().toISOString();
   if (p.g < gs.length) {
     p.g += 1;
-    if (!deferLog) v2PhotoLog_(s, '');
+    if (!deferLog) v2Defer_(function () { v2PhotoLog_(s, ''); });
     return { messages: v2PhotoGroupMsgs_(s, receivedLine), menu: 'photo', done: false, logStatus: '' };
   }
   s.data.photoDone = 1;
-  if (!deferLog) v2PhotoLog_(s, 'done');
+  if (!deferLog) v2Defer_(function () { v2PhotoLog_(s, 'done'); });
   const thanks = (receivedLine ? receivedLine + '\n' : '') + '写真ありがとうございました📷' + (s.intent === 'shobun' ? '' : '（写真は査定のためだけに使います）');
   const out = { messages: [], menu: 'inflow', done: false, logStatus: 'done' };
   if (s.flow === 'battery') { out.messages = [v2Msg_(thanks)]; out.done = true; return out; }

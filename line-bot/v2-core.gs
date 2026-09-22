@@ -288,9 +288,14 @@ function v2Prompt_(event, userId, s) {
   v2LinkMenu_(userId, s.step === 3 ? 'photo' : 'inflow');
 }
 /** ボタンの val に応じて次の状態へ */
+/** 返信のあとに回す重い処理（写真ログの書き込みなど）。v2Transition_ の中で積んで、v2Advance_ が返信後に実行する（2026-09-22 速度対策） */
+let __V2_AFTER = [];
+function v2Defer_(fn) { __V2_AFTER.push(fn); }
+function v2RunDeferred_() { const q = __V2_AFTER; __V2_AFTER = []; q.forEach(function (f) { try { f(); } catch (e) { console.error('deferred ' + e); } }); }
 function v2Advance_(event, userId, s, pb) {
   const t = v2Transition_(userId, s, pb);
   if (t.messages.length) v2Reply_(event, t.messages);
+  v2RunDeferred_();
   if (t.done) { v2Complete_(event, userId, s); return; }
   if (t.stop) { v2LinkMenu_(userId, 'normal'); v2ClearSession_(userId); return; }
   if (t.menu) v2LinkMenu_(userId, t.menu);
