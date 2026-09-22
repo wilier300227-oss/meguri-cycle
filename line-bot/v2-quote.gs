@@ -165,6 +165,11 @@ function v2HandleOwnerCommand_(event, userId, text) {
   if (!v2IsOwner_(userId)) return false;
   const nt = v2NormalizeCmd_(text);
   if (v2HandleMenuCommand_(event, userId, text)) return true;   // メニュー確認 / メニュー切替 / メニュー戻す
+  if (/^手動解除$/.test(nt)) {   // 自分の手動対応・停止フラグ・セッションを解除して通常メニューへ（自分をお客さま役にして試したあと用。2026-09-22）
+    clearManualMode_(userId); try { setUserFields_(userId, { opt_out: '', opt_out_reason: '' }); } catch (e) {}
+    v2ClearSession_(userId); v2LinkMenu_(userId, 'normal');
+    v2ReplyText_(event, '手動対応を解除しました。通常メニューに戻します🚲'); logEvent_(event, 'owner:manual_clear', 'ok'); return true;
+  }
   // 対話式（「見積」「みつもり」「見積り」だけ、または #見積 だけ）→ 相手をボタンで選ぶ流れへ
   if (/^#?(見積|見積り|みつもり|引取)$/.test(nt)) return ownerqStart_(event, userId);
   if (ownerqGet_(userId) && !/^#(見積|引取)\s/.test(nt)) return ownerqHandleText_(event, userId, text);

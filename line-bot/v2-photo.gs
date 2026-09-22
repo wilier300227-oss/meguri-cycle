@@ -177,7 +177,7 @@ function v2PhotoNextPressed_(s) {
   const min = g.min || g.need;   // min があれば、その枚数で「足りている」扱い（品番シールが無い自転車。2026-09-22）
   if (g.need > 0 && n < min && !g.optional && !p.ask) {
     p.ask = 1;
-    return { messages: [v2Msg_('まだ' + (min - n) + '枚届いていません。足りない分は、確認できない部分の金額が下がる可能性があります。', [
+    return { messages: [v2Msg_((n === 0 ? 'まだ写真が届いていません。' : 'まだ' + (min - n) + '枚届いていません。') + 'このまま進みますか？足りない分は、確認できない部分の金額が下がる可能性があります。', [
       qrPostback_('このまま進む', v2Pb_(s.flow, 3, 'next', 'photo_go')),
       qrPostback_('写真を足す', v2Pb_(s.flow, 3, 'next', 'photo_more')),
     ])], menu: 'photo', done: false };
