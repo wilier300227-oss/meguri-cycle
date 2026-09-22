@@ -282,8 +282,8 @@ function v2SendQuote_(q) {
 
   // 先に行を書く（「届いたのに記録が無い」状態を作らない）。status は送信結果で確定する
   if (sh) {
-    sh.appendRow([quoteId, q.userId, getDisplayName_(q.userId), q.custNo, new Date(), 'owner', q.kind, q.amounts.reduce(function (a, b) { return a + b; }, 0),
-      JSON.stringify({ mode: q.mode, amounts: q.amounts, names: q.names, ebike: q.ebike, bodyOnly: q.bodyOnly, points: q.points }),
+    sh.appendRow([quoteId, q.userId, getDisplayName_(q.userId), q.custNo, new Date(), 'owner', q.kind, q.amounts.length, q.total,
+      JSON.stringify({ mode: q.mode, amounts: q.amounts, names: q.names, ebike: q.ebike, bodyOnly: q.bodyOnly, note: q.note || '' }),
       q.bodyText, new Date(q.expiresIso), 'sending', '', '', '']);
     newRow = sh.getLastRow();
   }
