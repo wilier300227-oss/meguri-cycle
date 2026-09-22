@@ -47,7 +47,7 @@ function v2PhotoGroups_(s) {
       { title: '自転車ぜんぶ（右から・左から）と、品番シール', need: 3, kinds: ['image'], img: 'normal/set1', tip: V2_TIP_SEAL },
       { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'normal/set2' },
       { title: '前輪と後輪（右と左）', need: 4, kinds: ['image'], img: 'normal/set3' },
-      { title: '前カゴと荷台（付いていれば）', need: 2, kinds: ['image'], img: 'normal/set4', optional: true, skipLabel: '付いていない' },
+      { title: '付属品（カゴ・荷台・泥よけ・ライトなど、あれば）', need: 0, kinds: ['image'], img: 'normal/set4', optional: true, skipLabel: '次へ' },
     ];
   }
   const noCharge = d.charge === 'no';   // 充電できない → 手元スイッチと診断動画はお願いしない（§2.1-8）
@@ -58,7 +58,7 @@ function v2PhotoGroups_(s) {
       ? { title: 'ハンドルまわりと、チェーン・ペダル', need: 2, kinds: ['image'], img: 'ebike/set2' }
       : { title: 'ハンドルまわり・手元スイッチ・チェーン', need: 3, kinds: ['image'], img: 'ebike/set2', tip: '手元スイッチは電源を入れて、数字が読めるように撮ってください。' },
     { title: '前輪と後輪（右と左）', need: 4, kinds: ['image'], img: 'ebike/set3' },
-    { title: '前カゴと荷台（付いていれば）', need: 2, kinds: ['image'], img: 'ebike/set4', optional: true, skipLabel: '付いていない' },
+    { title: '付属品（カゴ・荷台・泥よけ・ライトなど、あれば）', need: 0, kinds: ['image'], img: 'ebike/set4', optional: true, skipLabel: '次へ' },
   ];
   if (!bodyOnly) {
     g.push({ title: 'バッテリーの鍵・型番シール・充電器', need: 3, kinds: ['image', 'video'], img: 'ebike/set5',
@@ -119,7 +119,7 @@ function v2PhotoGroupMsgs_(s, prefix) {
   const lines = [(prefix ? prefix + '\n' : '') + head];
   if (g.video) lines.push('上の動画のように、長押しでランプが光るところまでを動画で撮って送ってください。', g.alt || '');
   else if (p.g === 1) lines.push('見本のように、枠の部分が大きく写るように撮ってください。');
-  if (g.optional) lines.push('付いていない場合は「' + g.skipLabel + '」を押してください。');
+  if (g.optional) lines.push('あれば撮って送ってください。なければ「' + g.skipLabel + '」を押してください。');
   if (g.tip) lines.push(g.tip);
   const msgs = [];
   if (g.video) msgs.push(v2BatteryVideoMessage_());
