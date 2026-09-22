@@ -234,6 +234,7 @@ function v2PhotoOnMedia_(event, userId, s, kind) {
     else { shouldReply = !p.sets[set.id]; p.sets[set.id] = 1; }
   }
   const n = p.c[p.g];
+  const gi = p.g;   // ログ用：この1枚を数えたまとまり（自動で次へ進んだあとも変わらない）
   const unit = (kind === 'video' ? '本' : '枚');
   let out = null;
   if (shouldReply) {
@@ -253,7 +254,7 @@ function v2PhotoOnMedia_(event, userId, s, kind) {
     if (out.menu) v2LinkMenu_(userId, out.menu);
   }
   v2SetSession_(userId, s);
-  logEvent_(event, 'v2:' + s.flow + '/3/' + kind, 'まとまり' + p.g + ' ' + n + unit + (shouldReply ? '' : '（無言）'));
+  logEvent_(event, 'v2:' + s.flow + '/3/' + kind, 'まとまり' + gi + ' ' + n + unit + (p.g !== gi ? ' → 次へ' : '') + (shouldReply ? '' : '（無言）'));
   return true;
 }
 
