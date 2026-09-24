@@ -190,48 +190,68 @@ ctaUrl: "/line/top/"
     </div>
   </section>
 
-  <!-- 4. 選ばれる理由（共通ポイント・訪問注意を統合） -->
+  <!-- 4. 選ばれる理由（2026-09-24 写真カード4枚＋「ほかの売り方と比べると」記号表を統合。旧 #compare セクションはここに吸収） -->
   <section class="section section--alt" id="why">
     <div class="wrap" style="max-width:1000px;">
       <div class="stack reveal" style="max-width:560px; margin-bottom:32px;">
         <h2 style="font-size:clamp(1.8rem,5vw,2.6rem)">めぐり自転車が選ばれる理由</h2>
+        <p class="lead" style="margin-top:10px;">ほかの売り方との違いと、めぐり自転車ならではの安心をまとめました。</p>
       </div>
-      <div class="whylist reveal">
-        <div class="whyrow">
-          <span class="whyrow__ic" aria-hidden="true"><img class="whyrow__img" src="/images/icons/ic-inspect.webp" width="40" height="40" loading="lazy" alt=""></span>
-          <div>
-            <h3 class="whyrow__h">整備士が一台ずつ点検・査定</h3>
-            <p class="whyrow__p">自転車安全整備士の資格を持つ担当者が直接査定。スタッフへの丸投げはありません。</p>
-          </div>
+      <div class="whygrid reveal">
+        <figure class="whycard">
+          <img class="whycard__img" src="/images/why/why-1.webp" width="1264" height="848" loading="lazy" decoding="async" alt="整備士が一台ずつ点検・査定">
+          <figcaption class="whycard__cap">
+            <h3 class="whycard__h">整備士が一台ずつ点検・査定</h3>
+            <p class="whycard__p">自転車安全整備士の資格を持つ担当者が直接査定。スタッフへの丸投げはありません。</p>
+          </figcaption>
+        </figure>
+        <figure class="whycard">
+          <img class="whycard__img" src="/images/why/why-3.webp" width="1264" height="848" loading="lazy" decoding="async" alt="年式を問わず出張買取">
+          <figcaption class="whycard__cap">
+            <h3 class="whycard__h">年式を問わず出張買取</h3>
+            <p class="whycard__p">古い自転車もあきらめずに。写真を送るだけで査定できます。</p>
+          </figcaption>
+        </figure>
+        <figure class="whycard">
+          <img class="whycard__img" src="/images/why/why-4.webp" width="1264" height="848" loading="lazy" decoding="async" alt="古物商許可 取得済み">
+          <figcaption class="whycard__cap">
+            <h3 class="whycard__h">古物商許可 取得済み</h3>
+            <p class="whycard__p">石川県公安委員会 古物商許可 第511090015059号。適法に買取・引取を行います。</p>
+          </figcaption>
+        </figure>
+        <figure class="whycard">
+          <img class="whycard__img" src="/images/why/why-5.webp" width="1264" height="848" loading="lazy" decoding="async" alt="防犯登録の抹消も代行">
+          <figcaption class="whycard__cap">
+            <h3 class="whycard__h">防犯登録の抹消も代行</h3>
+            <p class="whycard__p">手続きが面倒な防犯登録の抹消をまとめて代行します。お客様が窓口に出向く必要はありません。</p>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div id="compare" class="why-compare">
+        <h3 class="why-sub reveal">ほかの売り方と比べると</h3>
+        <p class="reveal" style="color:var(--ink-70); font-size:0.95rem; margin:0 0 18px; max-width:640px;">自転車の売り方・処分のしかたを、手間と費用で並べてみました。</p>
+        <div class="cmp-wrap reveal">
+          <table class="cmp cmp--photo">
+            <thead>
+              <tr>
+                <th scope="col"><span class="vh">売り方・処分のしかた</span></th>
+                <th scope="col"><figure class="cmp-head"><img src="/images/compare/cmp-store.webp" width="1264" height="848" loading="lazy" decoding="async" alt=""><figcaption>店頭に持ち込む</figcaption></figure></th>
+                <th scope="col"><figure class="cmp-head"><img src="/images/compare/cmp-ship.webp" width="1264" height="848" loading="lazy" decoding="async" alt=""><figcaption>宅配で送る</figcaption></figure></th>
+                <th scope="col" class="cmp-self"><figure class="cmp-head cmp-head--self"><img src="/images/compare/cmp-meguri.webp" width="1264" height="848" loading="lazy" decoding="async" alt=""><span class="cmp-badge">おすすめ</span><figcaption>めぐり自転車<span class="cmp-head__sub">自宅まで出張</span></figcaption></figure></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">車体を運ぶ手間</th><td><span class="mk mk--x" aria-hidden="true">×</span><span class="vh">手間がかかる：</span><span class="mk-t">お店まで運ぶ必要があります</span></td><td><span class="mk mk--so" aria-hidden="true">△</span><span class="vh">場合による：</span><span class="mk-t">発送場所まで運ぶ場合があります</span></td><td class="cmp-self"><span class="mk mk--best" aria-hidden="true">◎</span><span class="vh">とても良い：</span><span class="mk-t">ご自宅まで伺います</span></td></tr>
+              <tr><th scope="row">梱包</th><td><span class="mk mk--ok" aria-hidden="true">○</span><span class="vh">良い：</span><span class="mk-t">不要なことが多いです</span></td><td><span class="mk mk--so" aria-hidden="true">△</span><span class="vh">場合による：</span><span class="mk-t">梱包が必要な場合があります</span></td><td class="cmp-self"><span class="mk mk--best" aria-hidden="true">◎</span><span class="vh">とても良い：</span><span class="mk-t">不要です</span></td></tr>
+              <tr><th scope="row">金額が決まるタイミング</th><td><span class="mk mk--so" aria-hidden="true">△</span><span class="vh">場合による：</span><span class="mk-t">持ち込んだあと</span></td><td><span class="mk mk--so" aria-hidden="true">△</span><span class="vh">場合による：</span><span class="mk-t">送ったあと</span></td><td class="cmp-self"><span class="mk mk--best" aria-hidden="true">◎</span><span class="vh">とても良い：</span><span class="mk-t">訪問前（写真で確定）</span></td></tr>
+              <tr><th scope="row">玄関先での価格交渉</th><td><span class="mk mk--so" aria-hidden="true">△</span><span class="vh">場合による：</span><span class="mk-t">店頭で相談することがあります</span></td><td><span class="mk mk--none" aria-hidden="true">—</span><span class="vh">該当なし</span></td><td class="cmp-self"><span class="mk mk--best" aria-hidden="true">◎</span><span class="vh">とても良い：</span><span class="mk-t">ありません</span></td></tr>
+              <tr><th scope="row">費用</th><td><span class="mk mk--so" aria-hidden="true">△</span><span class="vh">場合による：</span><span class="mk-t">お店により異なります</span></td><td><span class="mk mk--so" aria-hidden="true">△</span><span class="vh">場合による：</span><span class="mk-t">送料がかかる場合があります</span></td><td class="cmp-self"><span class="mk mk--ok" aria-hidden="true">○</span><span class="vh">良い：</span><span class="mk-t">買取は0円／引取は出張費のみ</span></td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="whyrow">
-          <span class="whyrow__ic" aria-hidden="true"><img class="whyrow__img" src="/images/icons/ic-price.webp" width="40" height="40" loading="lazy" alt=""></span>
-          <div>
-            <h3 class="whyrow__h">金額は訪問前に確定。玄関先で交渉なし</h3>
-            <p class="whyrow__p">写真・情報と現物が一致していれば、お伝えした確定額は変わりません。査定のためだけの訪問は行わず、先に金額を確定させます。玄関先での一方的な値下げもしません。</p>
-          </div>
-        </div>
-        <div class="whyrow">
-          <span class="whyrow__ic" aria-hidden="true"><img class="whyrow__img" src="/images/icons/ic-calendar.webp" width="40" height="40" loading="lazy" alt=""></span>
-          <div>
-            <h3 class="whyrow__h">年式を問わず出張買取</h3>
-            <p class="whyrow__p">古い自転車もあきらめずに。写真を送るだけで査定できます。</p>
-          </div>
-        </div>
-        <div class="whyrow">
-          <span class="whyrow__ic" aria-hidden="true"><img class="whyrow__img" src="/images/icons/ic-shield.webp" width="40" height="40" loading="lazy" alt=""></span>
-          <div>
-            <h3 class="whyrow__h">古物商許可 取得済み</h3>
-            <p class="whyrow__p">石川県公安委員会 古物商許可 第511090015059号。適法に買取・引取を行います。</p>
-          </div>
-        </div>
-        <div class="whyrow">
-          <span class="whyrow__ic" aria-hidden="true"><img class="whyrow__img" src="/images/icons/ic-clipboard.webp" width="40" height="40" loading="lazy" alt=""></span>
-          <div>
-            <h3 class="whyrow__h">防犯登録の抹消も代行</h3>
-            <p class="whyrow__p">手続きが面倒な防犯登録の抹消をまとめて代行します。お客様が窓口に出向く必要はありません。</p>
-          </div>
-        </div>
+        <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:14px;">※ 一般的な例です。実際の手間や費用はお店・サービスにより異なります。</p>
+  
       </div>
     </div>
   </section>
@@ -437,34 +457,6 @@ ctaUrl: "/line/top/"
   <!-- 防犯登録の詳細は /terms/ へ移設（トップはヒーローバッジ＋選ばれる理由でカバー） -->
 
   <!-- FAQ -->
-  <!-- 図解G: 比較表（§5.5）。他形式は中立表現・他社名の記載なし。自社列のみ強調 -->
-  <section class="section" id="compare">
-    <div class="wrap" style="max-width:880px;">
-      <h2 class="reveal" style="font-size:clamp(1.6rem,4.5vw,2.3rem); margin-bottom:8px;">出張買取という選び方</h2>
-      <p class="lead reveal" style="margin-bottom:26px; max-width:640px;">自転車の売り方・処分のしかたを、手間と費用で並べてみました。</p>
-      <div class="cmp-wrap reveal">
-        <table class="cmp">
-          <thead>
-            <tr>
-              <th scope="col"></th>
-              <th scope="col">店頭に持ち込む</th>
-              <th scope="col">宅配で送る</th>
-              <th scope="col" class="cmp-self">めぐり自転車<br><span style="font-weight:500; font-size:0.82em; color:var(--accent-d);">（自宅まで出張）</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><th scope="row">車体を運ぶ手間</th><td>お店まで運ぶ必要があります</td><td>発送場所まで運ぶ場合があります</td><td class="cmp-self">ご自宅まで伺います</td></tr>
-            <tr><th scope="row">梱包</th><td>不要なことが多いです</td><td>梱包が必要な場合があります</td><td class="cmp-self">不要です</td></tr>
-            <tr><th scope="row">金額が決まるタイミング</th><td>持ち込んだあと</td><td>送ったあと</td><td class="cmp-self">訪問前（写真で確定）</td></tr>
-            <tr><th scope="row">玄関先での価格交渉</th><td>店頭で相談することがあります</td><td>—</td><td class="cmp-self">ありません</td></tr>
-            <tr><th scope="row">費用</th><td>お店により異なります</td><td>送料がかかる場合があります</td><td class="cmp-self">買取は0円／引取は出張費のみ</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:14px;">※ 一般的な例です。実際の手間や費用はお店・サービスにより異なります。</p>
-    </div>
-  </section>
-
   <section class="section" id="faq">
     <div class="wrap" style="max-width:760px;">
       <div class="stack reveal" style="margin-bottom:28px;">

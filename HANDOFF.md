@@ -142,6 +142,15 @@ C:/Users/user/meguri-cycle/
 
 ---
 
+## 2026-09-24 トップ「選ばれる理由」を写真化・比較表と統合
+
+- `#why` を、見出し入り実写カード4枚（整備士／年式問わず／古物商／防犯登録）＋小見出し「ほかの売り方と比べると」の◎○△×記号表に変更。旧 `#compare` セクションは廃止し、表は `#why` 内の `id="compare"` に移設（アンカー互換）。
+- 画像は Gemini 生成。`images/why/why-1,3,4,5.webp`（見出しは画像に焼き込み、h3 は視覚的に隠す）、`images/compare/cmp-store|ship|meguri.webp`（文字なし、列名は figcaption）。`why-2.webp`（金額は訪問前に確定）は表の2行と重複するため未使用で保管。
+- プロンプトは `docs/gemini-prompts-why-2026-09-24.md` / `docs/gemini-prompts-compare-2026-09-24.md`。
+- CSS：`.whygrid/.whycard`（旧カード時代の同名定義は削除）、`.cmp--photo/.cmp-head/.mk*`、`.why-sub`。旧 `.whyrow*` は削除。
+
+---
+
 ## 2026-08-24 作業報告【サイト・LINE周辺ほぼ完全クローズ】
 
 ### ✅ 完了済み（11項目）
