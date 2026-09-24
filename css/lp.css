@@ -80,39 +80,41 @@ h1, h2, h3 {
 /* アンカーリンク（#yamaha 等）で飛んだとき、sticky ヘッダー（62px+虹3px）の下に
    見出しが隠れないよう、全アンカー着地点に上余白を確保する */
 [id] { scroll-margin-top: 84px; }
+/* ヘッダー：ネイビーの帯＋白文字（2026-09-24 半透明の白地から変更。ナビをひと目で分かるように） */
 .nav {
   position: sticky; top: 0; z-index: 40;
-  background: color-mix(in srgb, var(--paper) 82%, transparent);
-  backdrop-filter: saturate(160%) blur(12px);
-  border-bottom: 1px solid var(--line-hair);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 10px 24px -18px rgba(22,24,29,0.6);
 }
 .nav::before { content:""; position:absolute; inset:0 0 auto 0; height:3px; background: var(--rainbow); }
 .nav__in { display: flex; align-items: center; justify-content: space-between; height: 62px; }
-.nav__brand { display: flex; align-items: center; gap: 10px; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.08em; text-decoration: none; }
-.nav__brand img { width: 30px; height: 30px; border-radius: 8px; }
-.nav__links { display: none; gap: 28px; font-size: 0.86rem; letter-spacing: 0.02em; }
-.nav__links a { text-decoration: none; color: var(--ink-70); transition: color .2s; }
-.nav__links a:hover { color: var(--accent); }
-/* モバイル：ハンバーガー展開パネル */
+.nav__brand { display: flex; align-items: center; gap: 10px; font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.08em; text-decoration: none; color: #fff; }
+.nav__brand img { width: 30px; height: 30px; border-radius: 8px; background: #fff; }
+.nav__links { display: none; gap: 6px; font-size: 0.9rem; letter-spacing: 0.02em; }
+.nav__links a { text-decoration: none; color: rgba(255,255,255,0.88); padding: 7px 11px; border-radius: 8px; transition: color .2s, background-color .2s; }
+.nav__links a:hover, .nav__links a:focus-visible { color: #fff; background: rgba(255,255,255,0.14); }
+.nav__links a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+/* モバイル：ハンバーガー展開パネル（ヘッダーと同じネイビー） */
 .nav__links.open {
-  display: flex; flex-direction: column; gap: 2px;
+  display: flex; flex-direction: column; gap: 0;
   position: absolute; top: 100%; left: 0; right: 0;
-  background: var(--paper); border-bottom: 1px solid var(--line-hair);
-  box-shadow: var(--shadow-sm); padding: 10px 24px 16px;
+  background: var(--accent-d);
+  box-shadow: 0 18px 30px -18px rgba(22,24,29,0.7); padding: 8px 24px 14px;
 }
-.nav__links.open a { padding: 10px 0; border-bottom: 1px solid var(--line-hair); }
+.nav__links.open a { padding: 13px 4px; border-radius: 0; border-bottom: 1px solid rgba(255,255,255,0.14); font-size: 1rem; }
 .nav__links.open a:last-child { border-bottom: none; }
 .nav__toggle {
   display: inline-flex; align-items: center; justify-content: center;
   width: 42px; height: 42px; margin-right: -8px;
-  border: none; background: transparent; color: var(--ink);
+  border: none; background: transparent; color: #fff;
   font-size: 1.4rem; line-height: 1; cursor: pointer; border-radius: 8px;
 }
-.nav__toggle:hover { background: rgba(25, 28, 26, 0.06); }
+.nav__toggle:hover { background: rgba(255,255,255,0.14); }
 @media (min-width: 860px) {
   .nav__toggle { display: none; }
   .nav__links { display: flex !important; flex-direction: row; position: static; padding: 0; background: none; box-shadow: none; border: none; }
-  .nav__links a { padding: 0; border: none; }
+  .nav__links a { border: none; }
 }
 
 /* ---------- ボタン ---------- */
