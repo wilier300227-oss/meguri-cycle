@@ -222,25 +222,35 @@ ctaUrl: "/line/kahoku/"
     </div>
   </section>
 
-  <!-- 買取価格の考え方 ＋ 出張費 -->
+  <!-- 買取価格と出張費（2026-09-24 再設計） -->
   <section class="section section--alt">
     <div class="wrap" style="max-width:980px;">
-      <div class="cols2">
-        <div class="reveal">
-          <h2 style="font-size:1.5rem; margin-bottom:14px;">金額の決め方</h2>
-          <div class="card">
-            <p style="color:var(--ink-70); font-size:0.94rem; margin-bottom:12px;">写真を拝見してから、<strong>幅ではなく1つの金額でお伝えします。</strong>写真・情報と現物が一致していれば、お伝えした金額は変わりません。<strong>有効期限は7日間です。</strong></p>
-            <p style="color:var(--ink-70); font-size:0.94rem;">伺うのは、金額にご納得いただいたあとのお引き取りのときだけです。玄関先で値段の交渉をすることはありません。</p>
-            <p style="font-size:0.8rem; color:var(--ink-40); margin-top:10px;">※ お支払いは現金、¥30,000を超える場合は銀行振込です。</p>
-          </div>
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">かほく市の買取価格と出張費</h2>
+      <div class="pts reveal">
+        <div class="pt"><span class="pt__k">幅ではなく1つの金額</span><p>LINEで写真を拝見してから、同型車の直近の相場を基準に状態を確認して算出します。「◯円〜◯円」という出し方はしません。</p></div>
+        <div class="pt"><span class="pt__k">金額は7日間有効</span><p>写真・情報と現物が一致していれば、お伝えした金額は変わりません。</p></div>
+        <div class="pt"><span class="pt__k">訪問はご納得のあとだけ</span><p>査定のためだけに伺うことはありません。お支払いは現金、¥30,000を超える場合は銀行振込です（<a href="/terms/" style="color:var(--accent-d);">ご利用条件</a>）。</p></div>
+      </div>
+      <div class="fee reveal">
+        <div>
+          <h3>かほく市内の出張費</h3>
+          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>金額を見てお断りいただいても、費用はかかりません。</p>
+          <p>値段がつかない車体を引き取る場合のみ、出張費がかかります。<strong>かほく市内は1,000円</strong>です（かほく市役所から片道10km以内の区分）。</p>
+          <p class="fee__note">※ ほかの市町の出張費は<a href="/price/" style="color:var(--accent-d);">料金・出張費</a>をご覧ください。出張費は訪問というお仕事に対する費用で、引き取る台数や種類とは連動しません。</p>
         </div>
-        <div class="reveal">
-          <h2 style="font-size:1.5rem; margin-bottom:14px;">かほく市内の出張費</h2>
-          <div class="card" style="margin-bottom:16px;">
-            <p style="color:var(--ink-70); font-size:0.94rem; margin-bottom:10px;"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>金額を見てお断りいただいても、費用はかかりません。</p>
-            <p style="color:var(--ink-70); font-size:0.94rem;">値段がつかない車体を引き取る場合のみ、出張費がかかります。<strong>かほく市内は1,000円</strong>です（かほく市役所から片道10km以内の区分）。</p>
-          </div>
-          <p style="font-size:0.85rem; color:var(--ink-55);">ほかの市町の出張費は<a href="/price/" style="color:var(--accent-d);">料金・出張費</a>をご覧ください。</p>
+        <div class="card">
+          <p style="font-size:0.85rem; color:var(--ink-55); margin-bottom:10px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
+          <table class="rate">
+            <thead><tr><th>片道距離</th><th>出張費の目安</th></tr></thead>
+            <tbody>
+              <tr><td>〜10km（かほく市内）</td><td class="num">1,000円</td></tr>
+              <tr><td>10〜20km</td><td class="num">1,500円</td></tr>
+              <tr><td>20〜30km</td><td class="num">2,000円</td></tr>
+              <tr><td>30〜40km</td><td class="num">2,500円</td></tr>
+              <tr><td>40〜50km</td><td class="num">3,000円</td></tr>
+              <tr><td>50km超</td><td class="num" style="color:var(--ink-40)">応相談</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

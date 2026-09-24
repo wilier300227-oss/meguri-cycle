@@ -140,6 +140,8 @@ h1, h2, h3 {
 .local-grid { display: grid; gap: 22px; }
 @media (min-width: 860px) { .local-grid { grid-template-columns: repeat(3, 1fr); } }
 .local-grid h3 { font-size: 1rem; margin-bottom: 6px; }
+@media (min-width: 860px) { .local-grid--4 { grid-template-columns: repeat(4, 1fr); } }
+.local-grid ul { color: var(--ink-70); font-size: 0.88rem; line-height: 1.7; padding-left: 1.1em; margin: 0 0 8px; }
 .local-grid p { font-size: 0.9rem !important; }
 /* 電動の節：買取例は横長カード（写真左・文右）を上に、残り3枚を横並び */
 .card.card--wide { display: grid; gap: 0; padding: 0; overflow: hidden; margin-bottom: clamp(12px,2vw,18px); } /* 後段の .card（padding）より優先 */
@@ -149,6 +151,19 @@ h1, h2, h3 {
 @media (min-width: 720px) { .card.card--wide { grid-template-columns: minmax(0,0.9fr) minmax(0,1.1fr); align-items: stretch; } }
 .cols3 { display: grid; gap: clamp(12px,2vw,18px); }
 @media (min-width: 860px) { .cols3 { grid-template-columns: repeat(3, 1fr); align-items: stretch; } }
+/* 買取価格と出張費：上に3つのポイント、下に本文＋料金表（左右の高さ差で余白が出ないように） */
+.pts { display: grid; gap: clamp(10px,1.6vw,14px); margin: 0 0 clamp(26px,4vw,40px); }
+@media (min-width: 720px) { .pts { grid-template-columns: repeat(3, 1fr); align-items: stretch; } }
+.pt { background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius-sm); padding: 16px 18px; box-shadow: var(--shadow-sm); }
+.pt__k { display: block; font-weight: 700; color: var(--accent-d); margin-bottom: 6px; font-size: 1rem; }
+.pt p { color: var(--ink-70); font-size: 0.9rem; line-height: 1.7; margin: 0; }
+.fee { display: grid; gap: clamp(16px,3vw,28px); }
+@media (min-width: 860px) { .fee { grid-template-columns: minmax(0,1.05fr) minmax(0,0.95fr); align-items: start; } }
+.fee h3 { font-size: 1.25rem; margin-bottom: 10px; }
+.fee h4 { font-size: 1rem; margin: 16px 0 6px; }
+.fee p { color: var(--ink-70); font-size: 0.92rem; line-height: 1.75; margin: 0 0 8px; }
+.fee__free { background: #FFF3C4; border-left: 4px solid #E9A400; padding: 10px 14px; border-radius: 8px; color: var(--ink) !important; }
+.fee__note { font-size: 0.78rem !important; color: var(--ink-40) !important; margin-top: 10px !important; }
 /* カード先頭の写真（電動の買取例など） */
 .card__img { display: block; width: calc(100% + 3.6rem); margin: -1.7rem -1.8rem 14px; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius) var(--radius) 0 0; }
 
