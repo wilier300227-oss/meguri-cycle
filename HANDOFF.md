@@ -148,6 +148,7 @@ C:/Users/user/meguri-cycle/
 - 画像は Gemini 生成。`images/why/why-1,3,4,5.webp`（見出しは画像に焼き込み、h3 は視覚的に隠す）、`images/compare/cmp-store|ship|meguri.webp`（文字なし、列名は figcaption）。`why-2.webp`（金額は訪問前に確定）は表の2行と重複するため未使用で保管。
 - プロンプトは `docs/gemini-prompts-why-2026-09-24.md` / `docs/gemini-prompts-compare-2026-09-24.md`。
 - CSS：`.whygrid/.whycard`（旧カード時代の同名定義は削除）、`.cmp--photo/.cmp-head/.mk*`、`.why-sub`。旧 `.whyrow*` は削除。
+- 同日追加：トップ「2つのサービス」（#choice 分岐図）と「ご利用の流れ」（#flow）を `#flow` 1本に統合。ステップ2の直下に買取（塗り）／引取（枠）の二股 `.fork`（`id="choice"` をアンカー互換で付与）、右列に `why-2.webp`（金額は訪問前に確定）を追従表示。ナビは「サービス」を外し「選ばれる理由」（#why）を追加。旧 `.flowtree/.ft*` CSS は削除。
 
 ---
 
