@@ -193,40 +193,50 @@ ctaUrl: "/line/kanazawa/"
   <!-- 出張費と伺っている地区 -->
   <section class="section section--alt">
     <div class="wrap" style="max-width:980px;">
-      <div class="cols2">
-        <div class="reveal">
-          <h2 style="font-size:1.5rem; margin-bottom:14px;">金沢市への出張費</h2>
-          <div class="card" style="margin-bottom:16px;">
-            <p style="color:var(--ink-70); font-size:0.94rem;"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体を引き取る場合のみです。</p>
-          </div>
-          <p style="color:var(--ink-70); font-size:0.94rem; margin-bottom:10px;">引取の出張費は、金沢市では地区によって<strong>{{ kz.range }}</strong>です（{{ kz.note }}）。かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
-          <div class="card" style="margin-bottom:12px;">
-            {% set feeTableHead = "片道距離" %}{% include "fee-table.njk" %}
-          </div>
-          <p style="font-size:0.78rem; color:var(--ink-40);">※ 町名をお知らせいただければ、距離を計算して金額を確定し、お伺いする前にお伝えします。ガソリン代により改定する場合があります。</p>
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">金沢市の買取価格と出張費</h2>
+      <div class="pts reveal">
+        <div class="pt"><span class="pt__k">幅ではなく1つの金額</span><p>LINEで写真を拝見してから、同型車の直近の相場を基準に状態を確認して算出します。「◯円〜◯円」という出し方はしません。</p></div>
+        <div class="pt"><span class="pt__k">金額は7日間有効</span><p>写真・情報と現物が一致していれば、お伝えした金額は変わりません。</p></div>
+        <div class="pt"><span class="pt__k">訪問はご納得のあとだけ</span><p>査定のためだけに伺うことはありません。お支払いは現金、¥30,000を超える場合は銀行振込です（<a href="/terms/" style="color:var(--accent-d);">ご利用条件</a>）。</p></div>
+      </div>
+      <div class="fee reveal">
+        <div>
+          <h3>金沢市への出張費と引き取り</h3>
+          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体を引き取る場合のみです。</p>
+          <p>引取の出張費は、金沢市では地区によって<strong>{{ kz.range }}</strong>です（{{ kz.note }}）。かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
+          <p class="fee__note">※ 町名をお知らせいただければ、距離を計算して金額を確定し、お伺いする前にお伝えします。ガソリン代により改定する場合があります。</p>
         </div>
-        <div class="reveal">
-          <h2 style="font-size:1.5rem; margin-bottom:14px;">金沢市で伺っている地区</h2>
-          <div class="card">
-            <p style="color:var(--ink-70); font-size:0.94rem; margin-bottom:12px;">金沢市内はどの地区にも伺っています。地区ごとの特徴は次のとおりです。</p>
-            <p style="font-size:0.92rem; font-weight:700; margin-bottom:4px;">大学の周辺</p>
-            <ul style="color:var(--ink-70); font-size:0.92rem; line-height:1.8; padding-left:1.2em; margin-bottom:12px;">
+        <div class="card">
+          {% set feeTableHead = "片道距離" %}{% include "fee-table.njk" %}
+        </div>
+      </div>
+      <h3 class="reveal" style="font-size:1.25rem; margin:clamp(28px,4vw,40px) 0 8px;">金沢市で伺っている地区</h3>
+      <p class="reveal" style="color:var(--ink-70); font-size:0.92rem; margin-bottom:16px;">金沢市内はどの地区にも伺っています。地区ごとの特徴は次のとおりです。</p>
+      <div class="reveal local-grid local-grid--4">
+          <div>
+            <h4 style="font-size:1rem; margin-bottom:6px;">大学の周辺</h4>
+<ul style="color:var(--ink-70); font-size:0.92rem; line-height:1.8; padding-left:1.2em; margin-bottom:12px;">
               <li>金沢大学（角間キャンパス）の周辺は、もりの里・若松町・鈴見台・旭町・田上の里などに学生が多く住んでいます。角間へ続く坂の上り下りがあり、電動アシスト自転車がよく使われるエリアです。</li>
               <li>金沢美術工芸大学（2023年に小立野2丁目へ移転）と金沢大学の宝町・鶴間キャンパスの周辺は、小立野・石引に学生が集まります。小立野台地は平らで、自転車で動きやすいエリアです。</li>
               <li>北陸大学（太陽が丘キャンパス）の周辺は、太陽が丘・三口新町・田上などにお住まいの方が多くなります。</li>
               <li>金沢学院大学（末町）の周辺は、末町のほか笠舞・涌波・三口新町から通う方が多いエリアです。</li>
             </ul>
             <p style="color:var(--ink-70); font-size:0.92rem; margin-bottom:10px;">卒業・進学で引っ越す前の、自転車の買取・処分のご相談に合わせて伺います。</p>
-            <p style="font-size:0.92rem; font-weight:700; margin-bottom:4px;">駅周辺・中心部</p>
-            <p style="color:var(--ink-70); font-size:0.92rem; margin-bottom:10px;">金沢駅周辺・香林坊・片町は集合住宅が多く、雪が降る前に駐輪スペースを整理したい方にも伺います。</p>
-            <p style="font-size:0.92rem; font-weight:700; margin-bottom:4px;">駅西・海側</p>
-            <p style="color:var(--ink-70); font-size:0.92rem; margin-bottom:10px;">県庁やオフィスが集まる鞍月をはじめ、諸江・示野、大徳校下の方面にも伺います。転勤・住み替えに合わせたご依頼にも対応しています。</p>
-            <p style="font-size:0.92rem; font-weight:700; margin-bottom:4px;">北部・南部</p>
-            <p style="color:var(--ink-70); font-size:0.92rem; margin-bottom:10px;">北部は森本方面、南部は野町・泉・米泉・有松のほか、三馬校下・額校下、金沢市押野の方面にも伺っています。</p>
-            <p style="color:var(--ink-40); font-size:0.8rem;">※ 地区の特徴は一例です。ここにない町名でも、金沢市内であればお伺いします。</p>
           </div>
-        </div>
+          <div>
+            <h4 style="font-size:1rem; margin-bottom:6px;">駅周辺・中心部</h4>
+<p style="color:var(--ink-70); font-size:0.92rem; margin-bottom:10px;">金沢駅周辺・香林坊・片町は集合住宅が多く、雪が降る前に駐輪スペースを整理したい方にも伺います。</p>
+          </div>
+          <div>
+            <h4 style="font-size:1rem; margin-bottom:6px;">駅西・海側</h4>
+<p style="color:var(--ink-70); font-size:0.92rem; margin-bottom:10px;">県庁やオフィスが集まる鞍月をはじめ、諸江・示野、大徳校下の方面にも伺います。転勤・住み替えに合わせたご依頼にも対応しています。</p>
+          </div>
+          <div>
+            <h4 style="font-size:1rem; margin-bottom:6px;">北部・南部</h4>
+<p style="color:var(--ink-70); font-size:0.92rem; margin-bottom:10px;">北部は森本方面、南部は野町・泉・米泉・有松のほか、三馬校下・額校下、金沢市押野の方面にも伺っています。</p>
+          </div>
       </div>
+      <p class="reveal" style="color:var(--ink-40); font-size:0.8rem; margin-top:14px;">※ 地区の特徴は一例です。ここにない町名でも、金沢市内であればお伺いします。</p>
     </div>
   </section>
 
