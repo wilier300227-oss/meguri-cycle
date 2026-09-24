@@ -117,6 +117,33 @@ h1, h2, h3 {
   .nav__links a { border: none; }
 }
 
+/* ---------- 地域ページ（2026-09-24 再設計：トップと同じ部品で） ---------- */
+.hero--city { min-height: 0; }
+.hero--city .hero__inner { padding-top: clamp(64px, 9vw, 104px); padding-bottom: clamp(44px, 6vw, 72px); }
+.hero__bg--city { position: absolute; inset: 0; z-index: 0; background: url('/images/compare/cmp-meguri.webp') center 45% / cover no-repeat; }
+.hero--city h1 { font-size: clamp(1.9rem, 5vw, 3rem); }
+/* 手放す方法：3つの選び方（査定に出す＝黄色で強調、比較表と同じ色） */
+.opts { display: grid; gap: clamp(12px, 2vw, 18px); }
+@media (min-width: 860px) { .opts { grid-template-columns: repeat(3, 1fr); align-items: start; } }
+.opt { position: relative; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); padding: 1.5rem 1.5rem 1.4rem; box-shadow: var(--shadow-sm); }
+.opt--best { background: #FFF3C4; border: 2px solid #E9A400; }
+.opt__tag { position: absolute; right: 14px; top: 14px; margin: 0; }
+.opt__n { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--paper-2); color: var(--accent); font-size: 1.15rem; font-weight: 600; margin-bottom: 10px; }
+.opt--best .opt__n { background: #FFD24D; color: var(--ink); }
+.opt__t { font-size: 1.05rem; margin-bottom: 8px; line-height: 1.4; }
+.opt__p { color: var(--ink-70); font-size: 0.9rem; margin-bottom: 8px; line-height: 1.7; }
+.opt__src { font-size: 0.78rem; color: var(--ink-40); line-height: 1.5; }
+/* 買い取っている自転車：写真タイル4枚 */
+.genres.genres--4 { grid-template-columns: repeat(4, 1fr); } /* 後段の .genres（3列）より優先 */
+@media (max-width: 640px) { .genres.genres--4 { grid-template-columns: repeat(2, 1fr); } .genres--4 .genre__jp { font-size: 0.8rem; } }
+/* 地域のお客様へ：3列の小さなコラム */
+.local-grid { display: grid; gap: 22px; }
+@media (min-width: 860px) { .local-grid { grid-template-columns: repeat(3, 1fr); } }
+.local-grid h3 { font-size: 1rem; margin-bottom: 6px; }
+.local-grid p { font-size: 0.9rem !important; }
+/* カード先頭の写真（電動の買取例など） */
+.card__img { display: block; width: calc(100% + 3.6rem); margin: -1.7rem -1.8rem 14px; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius) var(--radius) 0 0; }
+
 /* ---------- ボタン ---------- */
 .btn {
   display: inline-flex; align-items: center; gap: 0.5em;
@@ -529,6 +556,7 @@ h1, h2, h3 {
   .section { padding-top: 44px; padding-bottom: 44px; }
   /* ヒーロー：中央寄せをやめて上寄せ＋上の空きを圧縮（文字の上の余白を解消） */
   .hero { min-height: 62vh; align-items: flex-start; }
+  .hero--city { min-height: 0; } /* 地域ページは内容ぶんの高さだけ */
   .hero__inner { padding-top: clamp(36px, 6vh, 56px); padding-bottom: clamp(36px, 6vh, 56px); }
   .steps--flow .step { margin-bottom: 20px; }
   .work { width: clamp(200px, 62vw, 260px); }
