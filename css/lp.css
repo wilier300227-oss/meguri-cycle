@@ -687,7 +687,7 @@ h1, h2, h3 {
   .wfeat img { aspect-ratio: 4 / 3; }
   .wfeat__cap { padding: 10px 11px 12px; gap: 4px; }
   .wfeat__meta, .wfeat__note, .wfeat__price-sub { display: none; }
-  .wfeat__row { flex-direction: column; align-items: flex-start; gap: 5px; }
+  .wfeat .wfeat__row { flex-direction: column; align-items: flex-start; gap: 5px; } /* 後段の基本ルール（align-items:center）より優先させる */
   .wfeat__tag { font-size: 0.68rem; padding: 2px 8px; }
   .wfeat__t { font-size: 0.86rem; line-height: 1.35; }
   .wfeat__price { font-size: 0.9rem; }
