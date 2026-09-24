@@ -124,7 +124,7 @@ h1, h2, h3 {
 .hero--city h1 { font-size: clamp(1.9rem, 5vw, 3rem); }
 /* 手放す方法：3つの選び方（査定に出す＝黄色で強調、比較表と同じ色） */
 .opts { display: grid; gap: clamp(12px, 2vw, 18px); }
-@media (min-width: 860px) { .opts { grid-template-columns: repeat(3, 1fr); align-items: start; } }
+@media (min-width: 860px) { .opts { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); align-items: stretch; } } /* 2枚なら2列で埋める */
 .opt { position: relative; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); padding: 1.5rem 1.5rem 1.4rem; box-shadow: var(--shadow-sm); }
 .opt--best { background: #FFF3C4; border: 2px solid #E9A400; }
 .opt__tag { position: absolute; right: 14px; top: 14px; margin: 0; }
@@ -141,6 +141,13 @@ h1, h2, h3 {
 @media (min-width: 860px) { .local-grid { grid-template-columns: repeat(3, 1fr); } }
 .local-grid h3 { font-size: 1rem; margin-bottom: 6px; }
 .local-grid p { font-size: 0.9rem !important; }
+/* 電動の節：買取例は横長カード（写真左・文右）を上に、残り3枚を横並び */
+.card--wide { display: grid; gap: 18px; padding: 0; overflow: hidden; margin-bottom: clamp(12px,2vw,18px); }
+.card--wide .card__img { width: 100%; height: 100%; margin: 0; border-radius: 0; aspect-ratio: auto; min-height: 220px; }
+.card--wide .card__body { padding: 1.5rem 1.6rem; }
+@media (min-width: 720px) { .card--wide { grid-template-columns: minmax(0,0.9fr) minmax(0,1.1fr); align-items: stretch; } }
+.cols3 { display: grid; gap: clamp(12px,2vw,18px); }
+@media (min-width: 860px) { .cols3 { grid-template-columns: repeat(3, 1fr); align-items: stretch; } }
 /* カード先頭の写真（電動の買取例など） */
 .card__img { display: block; width: calc(100% + 3.6rem); margin: -1.7rem -1.8rem 14px; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius) var(--radius) 0 0; }
 
