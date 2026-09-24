@@ -183,6 +183,7 @@ h1, h2, h3 {
 .hero .badge:nth-child(3) { --dot: #FDD835; }
 .hero .badge:nth-child(4) { --dot: #43A047; }
 .hero .badge:nth-child(5) { --dot: #1E88E5; }
+.hero .badge:nth-child(6) { --dot: #8E24AA; }
 @media (max-width: 480px) { .hero .badges { gap: 7px 18px; } .hero .badge { font-size: 0.8rem; } }
 
 /* ---------- カード ---------- */
@@ -656,6 +657,13 @@ h1, h2, h3 {
    見出しは画像内に焼き込み済み。h3 は読み上げ・SEO 用に視覚的に隠す */
 .why-compare { margin-top: clamp(40px,6vw,64px); scroll-margin-top: 90px; }
 .why-sub { font-size: clamp(1.2rem,3.2vw,1.5rem); font-weight: 700; color: var(--ink); margin: 0 0 8px; padding-left: 14px; border-left: 4px solid var(--accent); line-height: 1.3; }
+/* 実例ストリップ（早さの強み）：比較表の黄色と同系（見出し #FFD24D／地 #FFF3C4／枠 #E9A400） */
+.why-case { display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 4px; align-items: center; background: #FFF3C4; border: 2px solid #E9A400; border-radius: var(--radius); padding: 16px 20px; margin-bottom: clamp(18px,3vw,26px); }
+.why-case__tag { grid-row: 1 / 3; margin: 0; align-self: center; }
+.why-case__t { margin: 0; font-size: clamp(1.02rem,2.2vw,1.18rem); font-weight: 700; color: var(--ink); line-height: 1.55; }
+.why-case__t strong { background: #FFD24D; padding: 0 0.2em; border-radius: 4px; }
+.why-case__s { margin: 0; font-size: 0.86rem; color: var(--ink-70); }
+@media (max-width: 560px) { .why-case { grid-template-columns: 1fr; padding: 14px 16px; } .why-case__tag { grid-row: auto; width: max-content; } }
 .whygrid { display: grid; gap: clamp(14px,2.5vw,22px); }
 .whycard { margin: 0; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); overflow: hidden; box-shadow: 0 16px 40px -26px rgba(22,24,29,0.35); display: flex; flex-direction: column; }
 .whycard__img { width: 100%; height: auto; aspect-ratio: 1264 / 848; object-fit: cover; display: block; }
