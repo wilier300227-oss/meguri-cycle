@@ -671,6 +671,16 @@ h1, h2, h3 {
 
 /* 生成アイコン画像（#target 車種）。透過webp・ネイビー線画 */
 .genre__img { width: 66px; height: 66px; object-fit: contain; }
+/* 強化買取対象: 1枚の3×3コラージュ（Gemini）を切り分けた実写タイル（2026-09-24）。ラベルはHTML */
+.genre--photo { padding: 0; gap: 0; overflow: hidden; background: var(--card); }
+.genre__photo { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: 50% 55%; display: block; }
+.genre--photo .genre__jp { padding: 11px 10px 13px; }
+@media (max-width: 640px) {
+  .genre--photo .genre__jp { padding: 9px 8px 11px; font-size: 0.92rem; }
+  /* 9枚目（パーツ類）が1枚だけ余るので、2列分に広げて横長で見せる */
+  .genres .genre--photo:last-child { grid-column: 1 / -1; }
+  .genres .genre--photo:last-child .genre__photo { aspect-ratio: 2.4 / 1; object-position: 50% 68%; }
+}
 
 /* コラム一覧（/column/）: 番号＋左罫線のエディトリアル行 */
 .collist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-hair); }

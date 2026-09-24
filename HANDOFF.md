@@ -149,6 +149,7 @@ C:/Users/user/meguri-cycle/
 - プロンプトは `docs/gemini-prompts-why-2026-09-24.md` / `docs/gemini-prompts-compare-2026-09-24.md`。
 - CSS：`.whygrid/.whycard`（旧カード時代の同名定義は削除）、`.cmp--photo/.cmp-head/.mk*`、`.why-sub`。旧 `.whyrow*` は削除。
 - 同日追加：トップ「2つのサービス」（#choice 分岐図）と「ご利用の流れ」（#flow）を `#flow` 1本に統合。ステップ2の直下に買取（塗り）／引取（枠）の二股 `.fork`（`id="choice"` をアンカー互換で付与）、右列に `why-2.webp`（金額は訪問前に確定）を追従表示。ナビは「サービス」を外し「選ばれる理由」（#why）を追加。旧 `.flowtree/.ft*` CSS は削除。
+- 同日追加：「買取・引取の対象」の強化買取9タイルを線画アイコンから実写に。Gemini で 3×3 コラージュを1枚生成し（`images/target/lineup-3x3.jpg` 原本）、白い区切りを検出して9マスに切り分け `images/target/t-*.webp`。スマホでは9枚目（パーツ類）を2列分に広げる。プロンプトは `docs/gemini-prompts-target-2026-09-24.md`。旧アイコン `images/icons/ic-*.webp` は未使用のまま保管。
 
 ---
 
