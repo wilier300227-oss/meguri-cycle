@@ -354,16 +354,6 @@ h1, h2, h3 {
 .svccard--take .svccard__price { color: var(--ink); }
 .svccard__note { font-size: 0.82rem; color: var(--ink-40); }
 
-/* 選ばれる理由：アイコンバッジ付きカードのグリッド */
-.whygrid { display: grid; gap: 14px; grid-template-columns: 1fr; }
-@media (min-width: 640px) { .whygrid { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 960px) { .whygrid { grid-template-columns: repeat(3, 1fr); } }
-.whycard { background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius-sm); padding: clamp(20px,2.6vw,26px); box-shadow: 0 12px 32px -22px rgba(25,28,26,0.26); display: flex; flex-direction: column; gap: 8px; transition: transform .25s ease, box-shadow .25s ease; }
-.whycard:hover { transform: translateY(-3px); box-shadow: 0 20px 42px -24px rgba(25,28,26,0.32); }
-.whycard__mark { display: block; width: 36px; height: 3px; border-radius: 99px; background: var(--rainbow); margin-bottom: 14px; }
-.whycard__h { font-weight: 700; color: var(--ink); font-size: 1.02rem; line-height: 1.45; }
-.whycard__p { color: var(--ink-70); font-size: 0.9rem; line-height: 1.6; }
-
 /* 脱・カードグリッド：連絡先は罫線＋アイコンの一覧 */
 .contact-list { display: grid; }
 .contact-row { display: grid; grid-template-columns: 44px 1fr auto; gap: 18px; align-items: center; padding: 20px 2px; border-top: 1px solid var(--line-hair); text-decoration: none; color: inherit; transition: background .2s; }
@@ -599,13 +589,54 @@ h1, h2, h3 {
 .cmp thead th.cmp-self { color: var(--accent-d); border-bottom: 2px solid var(--accent); }
 .cmp tbody td.cmp-self { color: var(--ink); font-weight: 600; }
 
-/* §4-4 選ばれる理由: 罫線区切りの縦積み＋線画SVGアイコン（カードグリッド廃止） */
-.whylist { border-top: 1px solid var(--line-hair); max-width: 820px; }
-.whyrow { display: grid; grid-template-columns: 44px 1fr; gap: clamp(16px,3vw,24px); align-items: start; padding: clamp(20px,3vw,26px) 0; border-bottom: 1px solid var(--line-hair); }
-.whyrow__ic { color: var(--accent); display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 8%, transparent); }
-.whyrow__h { font-size: 1.08rem; font-weight: 700; margin-bottom: 5px; color: var(--ink); line-height: 1.45; }
-.whyrow__p { color: var(--ink-70); font-size: 0.93rem; line-height: 1.75; margin: 0; }
+/* §5.5 比較: 写真付き列見出し＋◎○△×記号（2026-09-24）。画像に文字なし、列名はfigcaption */
+.vh { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.cmp--photo { min-width: 0; table-layout: fixed; }
+.cmp--photo thead th { vertical-align: bottom; padding: 0 8px 12px; border-bottom: 2px solid var(--line-hair); }
+.cmp--photo thead th:first-child { width: 21%; }
+.cmp-head { margin: 0; position: relative; }
+.cmp-head img { width: 100%; aspect-ratio: 1264 / 848; object-fit: cover; display: block; border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); }
+.cmp-head--self img { outline: 3px solid var(--accent); outline-offset: -3px; }
+.cmp-head figcaption { margin-top: 9px; font-weight: 700; color: var(--ink); font-size: 0.95rem; line-height: 1.3; }
+.cmp-head--self figcaption { color: var(--accent-d); }
+.cmp-head__sub { display: block; font-size: 0.76rem; font-weight: 500; color: var(--ink-55); margin-top: 1px; }
+.cmp-badge { position: absolute; left: 8px; top: 8px; background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.02em; }
+.cmp--photo tbody th { white-space: normal; font-size: 0.86rem; line-height: 1.45; padding: 14px 10px 14px 0; }
+.cmp--photo tbody td { text-align: center; padding: 12px 8px; }
+.mk { display: block; font-size: 1.55rem; line-height: 1; font-weight: 700; }
+.mk--best { color: var(--accent); }
+.mk--ok { color: color-mix(in srgb, var(--accent) 70%, #fff); }
+.mk--so { color: #B7791F; }
+.mk--x { color: #B23B3B; }
+.mk--none { color: var(--ink-40); font-weight: 400; }
+.mk-t { display: block; font-size: 0.78rem; color: var(--ink-55); line-height: 1.5; margin-top: 5px; }
+.cmp--photo td.cmp-self .mk-t { color: var(--ink); font-weight: 600; }
+@media (max-width: 600px) {
+  .cmp--photo { font-size: 0.8rem; }
+  .cmp--photo thead th { padding: 0 3px 8px; }
+  .cmp--photo thead th:first-child { width: 19%; }
+  .cmp-head figcaption { font-size: 0.74rem; margin-top: 6px; }
+  .cmp-head__sub { font-size: 0.64rem; }
+  .cmp-badge { font-size: 0.6rem; padding: 2px 7px; left: 4px; top: 4px; }
+  .cmp--photo tbody th { font-size: 0.72rem; padding: 10px 4px 10px 0; }
+  .cmp--photo tbody td { padding: 10px 3px; }
+  .mk { font-size: 1.3rem; }
+  .mk-t { font-size: 0.66rem; margin-top: 3px; }
+}
 
+/* §4-4 選ばれる理由: 見出し入り実写フォトカード4枚＋比較表（2026-09-24、罫線リストから戻し、旧 #compare を統合）
+   見出しは画像内に焼き込み済み。h3 は読み上げ・SEO 用に視覚的に隠す */
+.why-compare { margin-top: clamp(40px,6vw,64px); scroll-margin-top: 90px; }
+.why-sub { font-size: clamp(1.2rem,3.2vw,1.5rem); font-weight: 700; color: var(--ink); margin: 0 0 8px; padding-left: 14px; border-left: 4px solid var(--accent); line-height: 1.3; }
+.whygrid { display: grid; gap: clamp(14px,2.5vw,22px); }
+.whycard { margin: 0; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); overflow: hidden; box-shadow: 0 16px 40px -26px rgba(22,24,29,0.35); display: flex; flex-direction: column; }
+.whycard__img { width: 100%; height: auto; aspect-ratio: 1264 / 848; object-fit: cover; display: block; }
+.whycard__cap { padding: 16px 18px 18px; }
+.whycard__h { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.whycard__p { color: var(--ink-70); font-size: 0.93rem; line-height: 1.75; margin: 0; }
+@media (min-width: 720px) {
+  .whygrid { grid-template-columns: 1fr 1fr; }
+}
 
 /* §5.4 引取できないもの: ×アイコン付きリスト */
 .xlist { list-style: none; padding: 0; margin: 0; }
@@ -629,9 +660,8 @@ h1, h2, h3 {
 /* 実績カード: 前向きな注記（金額の文脈補足） */
 .wfeat__note { font-size: 0.8rem; color: var(--ink-55); line-height: 1.5; }
 
-/* 生成アイコン画像（#target 車種／#why 概念）。透過webp・ネイビー線画 */
+/* 生成アイコン画像（#target 車種）。透過webp・ネイビー線画 */
 .genre__img { width: 66px; height: 66px; object-fit: contain; }
-.whyrow__img { width: 34px; height: 34px; object-fit: contain; }
 
 /* コラム一覧（/column/）: 番号＋左罫線のエディトリアル行 */
 .collist { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-hair); }
