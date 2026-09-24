@@ -149,7 +149,7 @@ h1, h2, h3 {
     linear-gradient(90deg, rgba(10,18,32,0.88) 0%, rgba(10,18,32,0.58) 48%, rgba(10,18,32,0.22) 100%),
     linear-gradient(0deg, rgba(10,18,32,0.58) 0%, rgba(10,18,32,0) 42%);
 }
-.hero__inner { position: relative; z-index: 2; padding: clamp(96px, 15vh, 160px) 0 clamp(56px, 9vh, 96px); }
+.hero__inner { position: relative; z-index: 2; padding-top: clamp(96px, 15vh, 160px); padding-bottom: clamp(56px, 9vh, 96px); } /* 左右は .wrap の 24px を活かす（一括指定で 0 に潰していた不具合を 2026-09-24 修正） */
 .hero__copy { max-width: 660px; }
 .hero h1 { font-size: clamp(2.1rem, 6vw, 3.6rem); line-height: 1.2; color: #fff; }
 .hero h1 em { font-style: normal; position: relative; }
@@ -168,6 +168,18 @@ h1, h2, h3 {
 .badge b { width: 7px; height: 7px; border-radius: 50%; }
 /* 明るい背景のセクションで使うバッジ（白つぶれ防止・文字は濃色） */
 .badge--on-light { background: var(--card); border-color: var(--line-hair); color: var(--ink-70); }
+
+/* ヒーローの安心ポイント（2026-09-24）：囲みピルをやめ、屋号 RAINBOW の虹色ドット＋細い罫の「約束の一行」に。
+   他ページの .badge / .badge--on-light は従来どおり（.hero 配下だけ上書き） */
+.hero .badges { gap: 8px 24px; margin-top: 4px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.22); max-width: 600px; }
+.hero .badge { padding: 0; border: 0; border-radius: 0; background: none; gap: 10px; font-size: 0.86rem; font-weight: 500; color: rgba(255,255,255,0.94); letter-spacing: 0.01em; line-height: 1.4; }
+.hero .badge::before { content: ""; flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%; background: var(--dot, #fff); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot, #fff) 28%, transparent); }
+.hero .badge:nth-child(1) { --dot: #E53935; }
+.hero .badge:nth-child(2) { --dot: #FB8C00; }
+.hero .badge:nth-child(3) { --dot: #FDD835; }
+.hero .badge:nth-child(4) { --dot: #43A047; }
+.hero .badge:nth-child(5) { --dot: #1E88E5; }
+@media (max-width: 480px) { .hero .badges { gap: 7px 18px; } .hero .badge { font-size: 0.8rem; } }
 
 /* ---------- カード ---------- */
 .card { background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); padding: 1.7rem 1.8rem; box-shadow: var(--shadow-sm); }
