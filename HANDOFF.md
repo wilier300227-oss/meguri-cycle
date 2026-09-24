@@ -149,6 +149,7 @@ C:/Users/user/meguri-cycle/
 - プロンプトは `docs/gemini-prompts-why-2026-09-24.md` / `docs/gemini-prompts-compare-2026-09-24.md`。
 - CSS：`.whygrid/.whycard`（旧カード時代の同名定義は削除）、`.cmp--photo/.cmp-head/.mk*`、`.why-sub`。旧 `.whyrow*` は削除。
 - 同日追加：トップ「2つのサービス」（#choice 分岐図）と「ご利用の流れ」（#flow）を `#flow` 1本に統合。ステップ2の直下に買取（塗り）／引取（枠）の二股 `.fork`（`id="choice"` をアンカー互換で付与）、右列に `why-2.webp`（金額は訪問前に確定）を追従表示。ナビは「サービス」を外し「選ばれる理由」（#why）を追加。旧 `.flowtree/.ft*` CSS は削除。
+- 同日追加：**市町ページ26件を再設計**（24件の共通雛形＋かほく・金沢）。ヒーローは写真背景（`images/compare/cmp-meguri.webp`）＋虹色ドットの約束4つ、「手放す方法」は選び方カード（査定に出す＝黄色で強調 `.opt--best`）、「買い取っている自転車」は写真タイル4枚（`.genres--4`）、電動の節の買取例に bikke 写真、「LINEでのやりとり」→「ご利用の流れ」の縦レール（`.timeline`）、地域コラムは3列（`.local-grid`）、FAQ は折りたたみ（`.faq-acc`）。ヒーローの2段落目（地域の距離説明）は出張費の節へ移動。変換スクリプトは scratchpad の city_redesign.py（使い捨て。再実行は hero--city 検出でスキップ）。
 - 同日追加：`/works/` 実績一覧ページを新設（11件：9月6件・8月5件、月ごとの見出し、PC3列）。写真は Drive「自転車写真」から Chrome で Downloads にダウンロード（Drive連携ツールの base64 は容量的に不可）→ 3:2 に切り出し `images/works/work-*.webp`。トップの実績下に「実績をすべて見る（11件）」ボタン、sitemap に /works/ 追加。LINE 経路は既存の /line/top/ を流用（新ルート追加は GAS 側の ROUTE_IDS 変更が必要なため見送り）。
 - 同日追加：スマホの縦長対策。実績カードは〜719px で2列（写真4:3、状態・注記・引取の金額補足は非表示、ラベルは車種名の上）、対象タイルは〜640px で3列。実績の別ページ化は件数が増えてから。
 - 同日追加：実績カードを4枚に（bikke ¥45,000／LEADER 721 ¥20,000／ビビ TX ¥10,000／シティ 引取）。写真は実物（Drive「自転車写真」→Downloads）を 3:2 に切り出し `images/works/work-*.webp`。カード画像比率を 1100/505 → 3/2 に変更。旧 ¥7,000 電動カードは外した（画像 work-ebike-batt50.webp は保管）。bikke の金額は金沢ページ（45,000円）と整合させた。

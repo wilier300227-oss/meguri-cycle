@@ -113,18 +113,29 @@ ctaUrl: "/line/kahoku/"
 
   {% include "nav-new.njk" %}
 
-  <!-- ヒーロー -->
-  <section class="section" style="padding-bottom: clamp(40px,6vw,64px);">
-    <div class="wrap" style="max-width:760px;">
-      <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">Kahoku, Ishikawa</p>
-      <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(2rem,5.5vw,3rem); line-height:1.24; margin-bottom:20px;">かほく市の自転車買取・処分</h1>
-      <p class="lead" style="margin-bottom:14px;">めぐり自転車は<strong>かほく市が拠点</strong>です。乗らなくなった自転車を粗大ごみに出す前に、<strong>値段がつくかどうかを写真で確かめてみませんか。</strong>査定は無料で、LINEで写真を送るだけです。</p>
-      <p class="lead" style="margin-bottom:24px;">値段がつけば買取（出張費無料）。値段がつかない車体でも、部品として活かせるものは無償でお引き取りします。宇野気・七塚・高松、市内どこでも伺います。</p>
-      <span class="cta-underline">
-        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
-        <span class="rainbow-line" aria-hidden="true"></span>
-      </span>
-      <p style="font-size:0.8rem; color:var(--ink-40); margin-top:12px;">※お引き取りできない車体もあります → <a href="/terms/" style="color:var(--accent-d);">ご利用条件</a></p>
+  <!-- ヒーロー（2026-09-24 再設計：写真背景＋虹色ドットの約束） -->
+  <section class="hero hero--city">
+    <div class="hero__bg hero__bg--city" aria-hidden="true"></div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="wrap hero__inner">
+      <div class="stack reveal hero__copy">
+        <span class="eyebrow">Kahoku, Ishikawa</span>
+        <h1>かほく市の<br><em>自転車の出張買取・引取</em></h1>
+        <p class="lead">写真を送るだけで、伺う前に金額が決まります。かほく市へは出張でお引き取りに伺い、<strong>買取なら出張費も無料</strong>です。</p>
+        <p class="lead" style="font-size:0.98rem;">めぐり自転車の拠点です。市内は出張費のかからない範囲が広く、当日や翌日にお伺いできることもあります。</p>
+        <div class="badges" aria-label="安心のポイント">
+          <span class="badge">訪問前に金額を確定</span>
+          <span class="badge">買取なら出張費0円</span>
+          <span class="badge">玄関先で値下げ交渉なし</span>
+          <span class="badge">防犯登録抹消を代行</span>
+        </div>
+        <div class="hero__cta">
+          <span class="cta-underline">
+            <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+            <span class="rainbow-line" aria-hidden="true"></span>
+          </span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -202,7 +213,7 @@ ctaUrl: "/line/kahoku/"
         </div>
         <div class="card">
           <h3 style="font-size:1.1rem; margin-bottom:8px;">送っていただく写真</h3>
-          <p style="color:var(--ink-70); font-size:0.9rem;">車体全体、バッテリーまわり、残量表示の3枚があれば査定できます。ご来店やお持ち込みは不要で、かほく市まで伺います。買取なら出張費も無料です。</p>
+          <p style="color:var(--ink-70); font-size:0.9rem;">車体全体、バッテリーまわり、残量表示の3枚があれば査定できます。ご来店やお持ち込みは不要で、かほく市まで伺います。</p>
         </div>
       </div>
     </div>
@@ -259,13 +270,31 @@ ctaUrl: "/line/kahoku/"
   <section class="section section--alt">
     <div class="wrap" style="max-width:840px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">かほく市のお客様からよくいただくご質問</h2>
-      <div class="qa qa--2 reveal">
-        <div><p class="qa__q">かほく市で自転車を粗大ごみに出すにはどうすればいいですか。</p><p class="qa__a">粗大ごみ戸別収集受付センター（0120-538-557、9時〜17時）に電話で申し込み、処理券（1点につき1枚800円）を貼って、指定の収集日の当日8時までに玄関先に出します。クリーンセンターへ自分で持ち込む方法もあり、その場合は重さで料金が決まります（普通ごみは10kgまで100円）。</p></div>
-        <div><p class="qa__q">粗大ごみに出す前に、値段がつくか見てもらえますか。</p><p class="qa__a">はい。LINEで写真を送っていただければ無料で査定します。値段がつけば買取として代金をお支払いし、出張費もかかりません。値段がつかない車体でも、部品として活かせるものは無償でお引き取りします（出張費1,000円のみ）。</p></div>
-        <div><p class="qa__q">かほく市内の出張費はいくらですか。</p><p class="qa__a">買取のご依頼なら無料です。値段がつかない車体を引き取る場合は、かほく市内なら1,000円です（かほく市役所から片道10km以内の区分）。</p></div>
-        <div><p class="qa__q">電動アシスト自転車も見てもらえますか。</p><p class="qa__a">はい。バッテリーの状態も含めて査定します。バッテリーはかほく市の家庭ごみ・粗大ごみには出せないため、手放し方に迷ったらまずご相談ください。</p></div>
-        <div><p class="qa__q">防犯登録の抹消はどうなりますか。</p><p class="qa__a">買取・お引き取りの場合は、こちらで抹消手続きを代行します。費用はいただきません。</p></div>
-        <div><p class="qa__q">かほく市で電動アシスト自転車はいくらで売れますか。</p><p class="qa__a">年式とバッテリーの状態で決まります。金沢市では2020年式のブリヂストン bikke を45,000円、2018年式のパナソニック ビビ TX を10,000円で買い取りました。写真と残量表示を送っていただければ、伺う前に確定額をお伝えします。</p></div>
+      <div class="faq-acc reveal">
+        <details class="faq-item">
+          <summary>かほく市で自転車を粗大ごみに出すにはどうすればいいですか。</summary>
+          <div class="faq-item__a"><p>粗大ごみ戸別収集受付センター（0120-538-557、9時〜17時）に電話で申し込み、処理券（1点につき1枚800円）を貼って、指定の収集日の当日8時までに玄関先に出します。クリーンセンターへ自分で持ち込む方法もあり、その場合は重さで料金が決まります（普通ごみは10kgまで100円）。</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>粗大ごみに出す前に、値段がつくか見てもらえますか。</summary>
+          <div class="faq-item__a"><p>はい。LINEで写真を送っていただければ無料で査定します。値段がつけば買取として代金をお支払いし、出張費もかかりません。値段がつかない車体でも、部品として活かせるものは無償でお引き取りします（出張費1,000円のみ）。</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>かほく市内の出張費はいくらですか。</summary>
+          <div class="faq-item__a"><p>買取のご依頼なら無料です。値段がつかない車体を引き取る場合は、かほく市内なら1,000円です（かほく市役所から片道10km以内の区分）。</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>電動アシスト自転車も見てもらえますか。</summary>
+          <div class="faq-item__a"><p>はい。バッテリーの状態も含めて査定します。バッテリーはかほく市の家庭ごみ・粗大ごみには出せないため、手放し方に迷ったらまずご相談ください。</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>防犯登録の抹消はどうなりますか。</summary>
+          <div class="faq-item__a"><p>買取・お引き取りの場合は、こちらで抹消手続きを代行します。費用はいただきません。</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>かほく市で電動アシスト自転車はいくらで売れますか。</summary>
+          <div class="faq-item__a"><p>年式とバッテリーの状態で決まります。金沢市では2020年式のブリヂストン bikke を45,000円、2018年式のパナソニック ビビ TX を10,000円で買い取りました。写真と残量表示を送っていただければ、伺う前に確定額をお伝えします。</p></div>
+        </details>
       </div>
     </div>
   </section>
