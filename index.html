@@ -73,9 +73,9 @@ ctaUrl: "/line/top/"
         めぐり自転車
       </a>
       <nav class="nav__links" id="navLinks">
-        <a href="#choice">サービス</a>
-        <a href="#price">料金</a>
+                <a href="#price">料金</a>
         <a href="#flow">流れ</a>
+        <a href="#why">選ばれる理由</a>
         <a href="#faq">FAQ</a>
         <a href="#contact">お問い合わせ</a>
       </nav>
@@ -116,77 +116,68 @@ ctaUrl: "/line/top/"
     </div>
   </section>
 
-  <!-- 2. 2つのサービス（図解B: 査定の分岐図） -->
-  <section class="section section--alt" id="choice">
-    <div class="wrap" style="max-width:720px;">
-      <h2 class="reveal" style="font-size:clamp(1.9rem,5.5vw,2.9rem); margin-bottom:8px;">2つのサービス</h2>
-      <p class="lead reveal" style="margin-bottom:34px;">写真を送るだけ。査定の結果で「買取」か「引取（処分）」に分かれます。買取は査定もお引き取りも0円。引取（処分）は出張費のみ（¥1,000〜）いただきます。</p>
-      <div class="flowtree reveal" role="group" aria-label="査定の分岐（写真送付から買取または引取まで）">
-        <div class="ftnode ftnode--nav"><span class="ftnode__k">1</span>写真を LINE で送る</div>
-        <span class="ftline" aria-hidden="true"></span>
-        <div class="ftnode ftnode--nav"><span class="ftnode__k">2</span>整備士が査定し、確定額をご連絡</div>
-        <div class="ftsplit">
-          <span class="ftsplit__bar" aria-hidden="true"></span>
-          <div class="ftbranch">
-            <span class="ftbranch__line" aria-hidden="true"></span>
-            <div class="ftnode ftnode--lite">値段が<br>つきました</div>
-            <span class="ftarw" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m6 13 6 6 6-6"/></svg></span>
-            <div class="ftnode ftnode--nav ftnode--result"><strong>買取</strong><span class="ftnode__sub">出張費 0円／買取額をお支払い</span></div>
-          </div>
-          <div class="ftbranch">
-            <span class="ftbranch__line" aria-hidden="true"></span>
-            <div class="ftnode ftnode--lite">値段が<br>つきませんでした</div>
-            <span class="ftarw" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m6 13 6 6 6-6"/></svg></span>
-            <div class="ftnode ftnode--nav ftnode--result"><strong>引取（処分）</strong><span class="ftnode__sub">処分費 0円・出張費のみ <a href="#price">¥1,000〜</a></span></div>
-          </div>
-        </div>
-      </div>
-      <p class="ftclose reveal"><span class="ftclose__u">金額にご納得いただいてから、お伺いします。玄関先での価格交渉はありません。</span></p>
-    </div>
-  </section>
-
-  <!-- 3. ご利用の流れ（図解C: 縦タイムライン5ステップ） -->
+  <!-- 2. ご利用の流れ（2026-09-24 旧「2つのサービス」分岐図を吸収。1本のレールがステップ2で買取／引取に分かれ、3以降は共通） -->
   <section class="section" id="flow">
-    <div class="wrap" style="max-width:720px;">
-      <h2 class="reveal" style="font-size:clamp(1.6rem,4.5vw,2.3rem); margin-bottom:8px;">ご利用の流れ</h2>
-      <p class="lead reveal" style="margin-bottom:34px;">写真を送るだけ。金額に納得してから、お引き取りに伺います。</p>
-      <ol class="timeline reveal">
-        <li class="tl">
-          <span class="tl__n" aria-hidden="true">1</span>
-          <div class="tl__body">
-            <h3 class="tl__t">LINE で写真を送る</h3>
-            <p class="tl__d">まずは全体がわかる写真3枚から。あとはLINEの案内にそって、撮る場所を順番にお伝えします。お住まいの市町名もあわせて送ってください。ご来店やお持ち込みは不要です。</p>
-          </div>
-        </li>
-        <li class="tl">
-          <span class="tl__n" aria-hidden="true">2</span>
-          <div class="tl__body">
-            <h3 class="tl__t">確定額をご連絡</h3>
-            <p class="tl__d">整備士が査定し、原則48時間以内に確定額をお伝えします。幅ではなく一本の金額で、有効期限は7日間です。</p>
-          </div>
-        </li>
-        <li class="tl">
-          <span class="tl__n" aria-hidden="true">3</span>
-          <div class="tl__body">
-            <h3 class="tl__t">訪問日を調整</h3>
-            <p class="tl__d">金額にご納得いただけたら、お引き取りの日程を調整します。もちろんお断りいただいてもかまいません。</p>
-          </div>
-        </li>
-        <li class="tl">
-          <span class="tl__n" aria-hidden="true">4</span>
-          <div class="tl__body">
-            <h3 class="tl__t">お引き取り</h3>
-            <p class="tl__d">お約束の金額のまま、現物確認とお引き取り。防犯登録の抹消手続きもその場で代行します。本人確認書類をご提示ください。</p>
-          </div>
-        </li>
-        <li class="tl">
-          <span class="tl__n" aria-hidden="true">5</span>
-          <div class="tl__body">
-            <h3 class="tl__t">お支払い</h3>
-            <p class="tl__d">3万円以下は現金で、3万円を超える場合は銀行振込でお支払いします。</p>
-          </div>
-        </li>
-      </ol>
+    <div class="wrap" style="max-width:1000px;">
+      <div class="stack reveal" style="max-width:600px; margin-bottom:clamp(28px,4vw,40px);">
+        <h2 style="font-size:clamp(1.8rem,5vw,2.6rem)">ご利用の流れ</h2>
+        <p class="lead" style="margin-top:10px;">写真を送るだけ。査定の結果で「買取」か「引取（処分）」に分かれますが、その先の流れは同じです。</p>
+      </div>
+      <div class="flowgrid">
+        <ol class="timeline timeline--fork reveal">
+          <li class="tl">
+            <span class="tl__n" aria-hidden="true">1</span>
+            <div class="tl__body">
+              <h3 class="tl__t">LINE で写真を送る</h3>
+              <p class="tl__d">まずは全体がわかる写真3枚から。あとはLINEの案内にそって、撮る場所を順番にお伝えします。お住まいの市町名もあわせて送ってください。ご来店やお持ち込みは不要です。</p>
+            </div>
+          </li>
+          <li class="tl tl--fork">
+            <span class="tl__n" aria-hidden="true">2</span>
+            <div class="tl__body">
+              <h3 class="tl__t">確定額をご連絡</h3>
+              <p class="tl__d">整備士が査定し、原則48時間以内に確定額をお伝えします。幅ではなく一本の金額で、有効期限は7日間です。</p>
+              <div class="fork" id="choice" role="group" aria-label="査定の結果による分かれ道">
+                <div class="fork__lane fork__lane--buy">
+                  <span class="fork__if">値段がつきました</span>
+                  <strong class="fork__to">買取</strong>
+                  <span class="fork__note">出張費 0円・買取額をお支払い</span>
+                </div>
+                <div class="fork__lane fork__lane--take">
+                  <span class="fork__if">値段がつきませんでした</span>
+                  <strong class="fork__to">引取（処分）</strong>
+                  <span class="fork__note">処分費 0円・出張費のみ <a href="#price">¥1,000〜</a></span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="tl">
+            <span class="tl__n" aria-hidden="true">3</span>
+            <div class="tl__body">
+              <h3 class="tl__t">訪問日を調整</h3>
+              <p class="tl__d">金額にご納得いただけたら、お引き取りの日程を調整します。もちろんお断りいただいてもかまいません。</p>
+            </div>
+          </li>
+          <li class="tl">
+            <span class="tl__n" aria-hidden="true">4</span>
+            <div class="tl__body">
+              <h3 class="tl__t">お引き取り</h3>
+              <p class="tl__d">お約束の金額のまま、現物確認とお引き取り。防犯登録の抹消手続きもその場で代行します。本人確認書類をご提示ください。お伺いしたうえでお断りいただいた場合も、出張費はいただきません。</p>
+            </div>
+          </li>
+          <li class="tl">
+            <span class="tl__n" aria-hidden="true">5</span>
+            <div class="tl__body">
+              <h3 class="tl__t">お支払い</h3>
+              <p class="tl__d">買取は、3万円以下なら現金で、3万円を超える場合は銀行振込でお支払いします。引取は、出張費のみをお引き取りの際にいただきます。</p>
+            </div>
+          </li>
+        </ol>
+        <figure class="flowpromise reveal">
+          <img src="/images/why/why-2.webp" width="1264" height="848" loading="lazy" decoding="async" alt="金額は訪問前に確定">
+          <figcaption>玄関先での価格交渉はありません。金額にご納得いただいてから、お伺いします。</figcaption>
+        </figure>
+      </div>
     </div>
   </section>
 
