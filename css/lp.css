@@ -133,6 +133,20 @@ h1, h2, h3 {
 .opt__t { font-size: 1.05rem; margin-bottom: 8px; line-height: 1.4; }
 .opt__p { color: var(--ink-70); font-size: 0.9rem; margin-bottom: 8px; line-height: 1.7; }
 .opt__src { font-size: 0.78rem; color: var(--ink-40); line-height: 1.5; }
+/* 手放す方法（2026-09-24 重心変更）：査定＝横いっぱいの黄色カード、市の処分方法＝小さめの2枚（手間を併記） */
+.tb-best { position: relative; display: grid; gap: 14px 28px; background: #FFF3C4; border: 2px solid #E9A400; border-radius: var(--radius); padding: clamp(18px,3vw,26px) clamp(18px,3vw,28px); margin-bottom: clamp(22px,3.5vw,32px); }
+@media (min-width: 860px) { .tb-best { grid-template-columns: minmax(0,1.1fr) minmax(0,0.9fr); align-items: center; } }
+.tb-best__tag { position: absolute; right: 14px; top: 14px; margin: 0; }
+.tb-best h3 { font-size: clamp(1.15rem,2.6vw,1.4rem); margin-bottom: 8px; line-height: 1.35; }
+.tb-best p { color: var(--ink-70); font-size: 0.92rem; line-height: 1.75; margin: 0; }
+.tb-best__pts { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.tb-best__pts li { position: relative; padding-left: 1.6em; font-size: 0.9rem; font-weight: 600; color: var(--ink); line-height: 1.5; }
+.tb-best__pts li::before { content: ""; position: absolute; left: 0; top: 0.35em; width: 0.95em; height: 0.95em; border-radius: 50%; background: var(--accent); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/70% no-repeat, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center/70% no-repeat, linear-gradient(#000 0 0); mask-composite: exclude; }
+.tb-sub { font-size: 1.05rem; color: var(--ink-70); margin: 0 0 12px; }
+.opts--self .opt { padding: 1.2rem 1.3rem 1.1rem; }
+.opts--self .opt__t { font-size: 0.98rem; }
+.opts--self .opt__p { font-size: 0.86rem; }
+.opt__work { font-size: 0.82rem; color: var(--ink-70); margin: 0 0 6px; padding: 8px 10px; background: var(--paper-2); border-radius: 8px; line-height: 1.55; }
 /* 買い取っている自転車：写真タイル4枚 */
 .genres.genres--4 { grid-template-columns: repeat(4, 1fr); } /* 後段の .genres（3列）より優先 */
 @media (max-width: 640px) { .genres.genres--4 { grid-template-columns: repeat(2, 1fr); } .genres--4 .genre__jp { font-size: 0.8rem; } }
