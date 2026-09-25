@@ -803,6 +803,7 @@ h1, h2, h3 {
 /* ---------- 金沢ページのレビュー対応（2026-09-25） ---------- */
 /* B1: iPhone幅で H1 が「自転｜車・」と割れるのを防ぐ（.nw で語を固定し、幅に応じて字を少し縮める） */
 @media (max-width: 430px) { .hero--fit h1 { font-size: min(2.1rem, calc((100vw - 48px) / 10.4)); } }
+@media (max-width: 430px) { .hero--fit11 h1 { font-size: min(2.1rem, calc((100vw - 48px) / 11.6)); } } /* 2行目が11文字（小矢部「自転車の出張買取・引取」）のページ用 */
 .wfeat__t .nw { white-space: nowrap; }
 @media (min-width: 720px) { .works-feature--3 { grid-template-columns: repeat(3, 1fr); gap: 18px; } .works-feature--3 .wfeat__t { font-size: 1rem; } } /* 実例3枚はPCで3列（スマホは2列＋1枚） */
 /* B2: 実例カードの年式・状態をスマホでも出す（トップの縦長対策 display:none を金沢ページだけ解除） */
@@ -812,7 +813,8 @@ h1, h2, h3 {
 /* B9: 出張費の表で、その市に当たる段を強調（fee-table.njk の feeHighlight） */
 .rate tr.is-hi td { background: #FFF3C4; }
 .rate tr.is-hi td:first-child { font-weight: 700; }
-.rate td.num { white-space: nowrap; } /* 「20,000円〜」がスマホの狭いカードで折れないように */
+.rate td.num { white-space: nowrap; }
+.rate th:last-child { text-align: right; } /* 見出しを数字の右寄せにそろえる（2026-09-25） */ /* 「20,000円〜」がスマホの狭いカードで折れないように */
 @media (min-width: 860px) { .pts--4 { grid-template-columns: repeat(2, 1fr); } } /* 「違い」4枚は PC で 2×2 */
 /* 実例・流れの直後のボタン行（B7） */
 .cta-row { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; margin-top: 20px; }
