@@ -1,4 +1,5 @@
-  <!-- 新デザイン 共通ナビ（下層ページ用）。2026-09-24 トップと同じ項目・順番に統一（出張費と FAQ は専用ページへ） -->
+  <!-- 新デザイン 共通ナビ（下層ページ用）。2026-09-24 トップと同じ項目・順番に統一（出張費と FAQ は専用ページへ）。
+       2026-09-25：front matter に navLocal: true があるページ（市町ページ）は「流れ」「お問い合わせ」をページ内アンカーへ（経路計測を外さない） -->
   <header class="nav">
     <div class="wrap nav__in">
       <a class="nav__brand" href="/">
@@ -6,12 +7,12 @@
         めぐり自転車
       </a>
       <nav class="nav__links" id="navLinks">
-      <a href="/#flow">流れ</a>
+      <a href="{{ '#flow' if navLocal else '/#flow' }}">流れ</a>
       <a href="/#why">選ばれる理由</a>
       <a href="/about/">めぐり自転車について</a>
       <a href="/price/">出張費（買取は無料）</a>
       <a href="/faq/">FAQ</a>
-      <a href="/#contact">お問い合わせ</a>
+      <a href="{{ '#contact' if navLocal else '/#contact' }}">お問い合わせ</a>
     </nav>
       <button class="nav__toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="navLinks">☰</button>
     </div>

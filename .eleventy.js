@@ -31,6 +31,35 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("line-richmenu-final.png");
   eleventyConfig.addPassthroughCopy("line-richmenu-b-final.png");
 
+  // 2026-09-25 BudouX：見出し・リード・箇条書き・FAQ の質問・タイルのラベルを文節で区切り <wbr> を入れる
+  // （語中改行「買い取／っている」対策。CSS 側の word-break: keep-all とセット。JSON-LD には触れない）
+  const { loadDefaultJapaneseParser } = require("budoux");
+  const budoux = loadDefaultJapaneseParser();
+  const JA = /[぀-ヿ㐀-鿿]/;
+  const segText = (text) =>
+    text.split(/(&[a-zA-Z#0-9]+;)/).map((part, i) => {
+      if (i % 2 === 1 || !JA.test(part) || part.includes("<wbr>")) return part;
+      const segs = [];
+      for (const seg of budoux.parse(part)) {
+        // 1文字だけの断片（「か｜ほく」「子ども｜用」など）は隣とつなげる
+        if (segs.length && (segs[segs.length - 1].length === 1 || seg.length === 1)) segs[segs.length - 1] += seg;
+        else segs.push(seg);
+      }
+      return segs.join("<wbr>")
+        .replace(/か<wbr>ほく/g, "かほく") // 地名「かほく」は割らない
+        .replace(/・(?!<wbr>)(?=\S)/g, "・<wbr>"); // 「ロード・クロス・MTB」などは中黒の後で折り返せるように
+    }).join("");
+  const segInner = (inner) => inner.split(/(<[^>]+>)/).map((piece, i) => (i % 2 === 1 ? piece : segText(piece))).join("");
+  const RE_TAG = /<(h1|h2|h3|h4|summary|li)(\s[^>]*)?>([\s\S]*?)<\/\1>/g;
+  const RE_CLS = /<(p|span)(\s[^>]*class="[^"]*\b(?:lead|genre__jp|wfeat__t|badge)\b[^"]*"[^>]*)>([\s\S]*?)<\/\1>/g;
+  eleventyConfig.addTransform("budoux", function (content) {
+    const out = this.page && this.page.outputPath;
+    if (!out || !out.endsWith(".html")) return content;
+    return content
+      .replace(RE_TAG, (m, tag, attrs, inner) => `<${tag}${attrs || ""}>${segInner(inner)}</${tag}>`)
+      .replace(RE_CLS, (m, tag, attrs, inner) => `<${tag}${attrs}>${segInner(inner)}</${tag}>`);
+  });
+
   return {
     dir: { input: ".", output: "_site", includes: "_includes" },
     templateFormats: ["html"], // .md や .py は出力しない（＝ソースは公開されない）

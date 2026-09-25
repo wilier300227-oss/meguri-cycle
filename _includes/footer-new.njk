@@ -56,9 +56,15 @@
   </footer>
 
   <!-- スマホ固定CTA。ページ側 front matter の ctaUrl（そのページの経路計測URL）を使う。
-       未指定ページは共通の友だち追加URL。文言は全ページ統一。 -->
-  <div class="dock">
-    <a class="btn btn--primary" href="{{ ctaUrl or 'https://line.me/R/ti/p/@136bpsyc' }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+       未指定ページは共通の友だち追加URL。文言は全ページ統一。
+       2026-09-25：index の追従バー（§6）を共通化。ヒーローのあるページでは通過後に出現し、CTA節・フッター表示中は退避（PC も表示） -->
+  <div class="dock" id="dock">
+    <div class="dock__in">
+      <a class="btn btn--primary" href="{{ ctaUrl or 'https://line.me/R/ti/p/@136bpsyc' }}" target="_blank" rel="noopener noreferrer">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="10.8" rx="10.8" ry="8.4" fill="#fff"/><path fill="#fff" d="M6.6 17.4 5.2 22l5.4-2.8z"/></svg>
+        LINE無料査定（写真を送るだけ）
+      </a>
+    </div>
   </div>
 
   <script>
@@ -81,6 +87,25 @@
       if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
       var io = new IntersectionObserver(function (entries) { entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }); }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
       els.forEach(function (el) { io.observe(el); });
+
+      // 追従CTAバー：ヒーローを過ぎたら表示、CTA節・フッター表示中は退避（index の §6 を全ページ共通化 2026-09-25）
+      var dock = document.getElementById('dock');
+      var hero = document.querySelector('#hero, .hero');
+      if (dock && hero) {
+        dock.classList.add('dock--auto');
+        var tail = [document.querySelector('#contact, .cta'), document.querySelector('footer')].filter(Boolean);
+        var vis = new WeakMap();
+        var refresh = function () {
+          var heroOut = !vis.get(hero);
+          var tailIn = tail.some(function (el) { return vis.get(el); });
+          dock.classList.toggle('dock--show', heroOut && !tailIn);
+        };
+        var dio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) { vis.set(en.target, en.isIntersecting); });
+          refresh();
+        }, { threshold: 0 });
+        [hero].concat(tail).forEach(function (el) { dio.observe(el); });
+      }
     });
   </script>
   <!-- Cloudflare Web Analytics -->

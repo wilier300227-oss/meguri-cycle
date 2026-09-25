@@ -1,6 +1,7 @@
 ---
 permalink: /takaoka/
 ctaUrl: "/line/takaoka/"
+navLocal: true
 ---
 {%- set tk = fees.cities.takaoka -%}
 <!DOCTYPE html>
@@ -120,7 +121,7 @@ ctaUrl: "/line/takaoka/"
         <div class="badges" aria-label="安心のポイント">
           <span class="badge">訪問前に金額を確定</span>
           <span class="badge">買取なら出張費0円</span>
-          <span class="badge">玄関先で値下げ交渉なし</span>
+          <span class="badge">写真どおりなら当日の減額なし</span>
           <span class="badge">整備士が年式を問わず査定</span>
         </div>
         <div class="hero__cta">
@@ -215,7 +216,7 @@ ctaUrl: "/line/takaoka/"
   </section>
 
   <!-- ご利用の流れ（担当者・速さ・支払いを明記） -->
-  <section class="section">
+  <section class="section" id="flow">
     <div class="wrap" style="max-width:900px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">ご利用の流れ</h2>
       <ol class="timeline reveal">
@@ -398,7 +399,7 @@ ctaUrl: "/line/takaoka/"
   </section>
 
   <!-- CTA -->
-  <section class="section cta">
+  <section class="section cta" id="contact">
     <div class="wrap stack reveal" style="max-width:620px;">
       <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">高岡市の査定・引き取りのご相談</h2>
       <p class="lead">写真とお住まいの町名をお送りいただければ、確定額をお返事します（値段がつかない場合は出張費も）。</p>
