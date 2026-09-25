@@ -804,6 +804,7 @@ h1, h2, h3 {
 /* B1: iPhone幅で H1 が「自転｜車・」と割れるのを防ぐ（.nw で語を固定し、幅に応じて字を少し縮める） */
 @media (max-width: 430px) { .hero--fit h1 { font-size: min(2.1rem, calc((100vw - 48px) / 10.4)); } }
 .wfeat__t .nw { white-space: nowrap; }
+@media (min-width: 720px) { .works-feature--3 { grid-template-columns: repeat(3, 1fr); gap: 18px; } .works-feature--3 .wfeat__t { font-size: 1rem; } } /* 実例3枚はPCで3列（スマホは2列＋1枚） */
 /* B2: 実例カードの年式・状態をスマホでも出す（トップの縦長対策 display:none を金沢ページだけ解除） */
 @media (max-width: 719px) { .works-feature--detail .wfeat__meta { display: block; font-size: .74rem; line-height: 1.45; } }
 /* B4: 地区の4列で1列目だけ長い → 1つ目を全幅、残り3つを3列に */
@@ -812,6 +813,7 @@ h1, h2, h3 {
 .rate tr.is-hi td { background: #FFF3C4; }
 .rate tr.is-hi td:first-child { font-weight: 700; }
 .rate td.num { white-space: nowrap; } /* 「20,000円〜」がスマホの狭いカードで折れないように */
+@media (min-width: 860px) { .pts--4 { grid-template-columns: repeat(2, 1fr); } } /* 「違い」4枚は PC で 2×2 */
 /* 実例・流れの直後のボタン行（B7） */
 .cta-row { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; margin-top: 20px; }
 .cta-row__more { font-weight: 600; color: var(--accent-d); }
