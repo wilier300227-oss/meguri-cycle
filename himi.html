@@ -2,18 +2,19 @@
 permalink: /himi/
 ctaUrl: "/line/himi/"
 ---
+{%- set hm = fees.cities.himi -%}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>氷見市の自転車買取・処分｜出張査定・無料引取 めぐり自転車</title>
-  <meta name="description" content="氷見市の自転車出張買取と処分のご案内。年2回収集するごみに出す前に、かほく市の整備士がLINEで写真査定し、確定額をお伝えしてからお引き取りに伺います。買取なら出張費無料。値段がつかない車体の無償引取にも対応。">
+  <title>氷見市の自転車買取・処分｜写真で確定額・買取は出張費0円 めぐり自転車</title>
+  <meta name="description" content="氷見市の自転車の出張買取と処分のご案内。年2回収集するごみに出す前に、かほく市の整備士がLINEの写真で確定額をお伝えし、ご納得いただけたらお引き取りに伺います。買取なら出張費0円。値段がつかない車体も処分費0円で引取（出張費は市内のほとんどで{{ hm.range }}）。">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://meguri-cycle.com/himi/">
   <link rel="icon" type="image/png" href="/logo/favicon.png">
-  <meta property="og:title" content="氷見市の自転車買取・処分｜出張査定・無料引取 めぐり自転車">
-  <meta property="og:description" content="氷見市の自転車出張買取と処分のご案内。年2回収集するごみに出す前に、かほく市の整備士がLINEで写真査定し、確定額をお伝えしてからお引き取りに伺います。買取なら出張費無料。値段がつかない車体の無償引取にも対応。">
+  <meta property="og:title" content="氷見市の自転車買取・処分｜写真で確定額・買取は出張費0円 めぐり自転車">
+  <meta property="og:description" content="氷見市の自転車の出張買取と処分のご案内。年2回収集するごみに出す前に、かほく市の整備士がLINEの写真で確定額をお伝えし、ご納得いただけたらお引き取りに伺います。買取なら出張費0円。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://meguri-cycle.com/himi/">
 
@@ -49,62 +50,49 @@ ctaUrl: "/line/himi/"
   }
   </script>
 
+  {# FAQ の JSON-LD。本文の FAQ（下の .faq-acc）と同じ文にそろえること #}
   <script type="application/ld+json">
   {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {"@type": "Question", "name": "氷見市で自転車を捨てるにはどうすればいいですか。", "acceptedAnswer": {"@type": "Answer", "text": "氷見市では、自転車は「年2回収集するごみ」です。地区ごとに決まった年2回の収集日の午前6時から8時までに、地区で指定された集積場へ出します。収集日は市のごみ収集計画表や広報で確認できます。次の収集日を待つ前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。"}},
-    {
-      "@type": "Question",
-      "name": "富山県の氷見市まで来てもらえますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "はい、伺っています。かほく市役所から氷見市役所まで能越自動車道経由でおよそ49kmです。"
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "氷見市で自転車を捨てるにはどうすればいいですか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "氷見市では、自転車は「年2回収集するごみ」です。収集は春と秋の年2回で、地区ごとに決まった収集日の朝（午前6時から8時まで）に、地区で指定された集積場へ出します。日にちは市のごみ収集計画表・市公式LINE・広報で確認できます。次の収集日を待つ前に写真を送っていただければ、値段がつくかどうかを無料でお調べし、ご自宅まで伺います。" }
+      },
+      {
+        "@type": "Question",
+        "name": "富山県の氷見市まで来てもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "はい、市内全域に伺います。かほく市役所から氷見市役所まで、一般道でおよそ45km（能越自動車道を使うと約49km）です。買取なら出張費はかかりません。値段がつかない場合の出張費は、町名をお知らせいただければ伺う前にお伝えします。富山県では高岡市・砺波市でも買取・引取の実績があります。" }
+      },
+      {
+        "@type": "Question",
+        "name": "氷見市の出張費はいくらですか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "買取なら無料です。出張費がかかるのは、値段がつかない車体の引取（処分）でお伺いする場合のみで、市内のほとんどは{{ hm.range }}です（市役所のある鞍川や中心街は3,000円、床鍋・熊無など県境寄りは2,500円）。大境など北端の一部は片道50kmを超えるため、町名をお知らせいただければ伺う前に金額をお伝えします。" }
+      },
+      {
+        "@type": "Question",
+        "name": "買取をお願いする場合も出張費はかかりますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "かかりません。買取のご依頼であれば、オンライン査定もお引き取りに伺う出張費も無料です。現物を見たうえでお断りいただいた場合も、費用はいただきません。" }
+      },
+      {
+        "@type": "Question",
+        "name": "値段がつかない自転車でも引き取ってもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "部品として活かせるものは処分費0円でお引き取りします（出張費のみいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。" }
+      },
+      {
+        "@type": "Question",
+        "name": "電動アシスト自転車も査定してもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "はい。年式は問いません。パナソニック・ヤマハ・ブリヂストンは、残量ボタンを長押しするとバッテリーの実容量（劣化の度合い）が表示されます。その様子を動画で送っていただくと、実容量を反映した確定額をお伝えできます。難しければ、残量ランプの写真だけでも査定します。バッテリー単体も買取の対象です。" }
+      },
+      {
+        "@type": "Question",
+        "name": "防犯登録の抹消はどうなりますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "富山県で登録された自転車は、委任状をいただければ、お引き取りのあと当方が富山県内の警察署で抹消します。費用はいただきません。防犯登録カードがない場合は、自転車本体を持って手続きします。" }
       }
-    },
-    {
-      "@type": "Question",
-      "name": "氷見市の出張費はいくらですか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "地区によって距離が変わります。町名をお知らせいただければ計算してご案内します。買取なら出張費は無料です。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "買取をお願いする場合も出張費はかかりますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "かかりません。買取のご依頼であれば、オンライン査定もお引き取りに伺う出張費も無料です。現物を見たうえでお断りいただいた場合も、費用はいただきません。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "値段がつかない自転車でも引き取ってもらえますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "部品として活かせるものは無償でお引き取りします。処分費はいただきません。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "電動アシスト自転車も査定してもらえますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "はい。バッテリー残量ランプの点灯数など、写真で分かる状態を確認して査定します。査定の際はランプの点灯数もあわせてお知らせください。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "防犯登録の抹消はどうなりますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "富山県で登録された自転車は、委任状をいただければ、お引き取りのあと当方が富山県内の警察署で抹消します。費用はいただきません。防犯登録カードがない場合は、自転車本体を持って手続きします。"
-      }
-    }
-  ]
-}
+    ]
+  }
   </script>
 
   {% include "head-new.njk" %}
@@ -113,20 +101,21 @@ ctaUrl: "/line/himi/"
 
   {% include "nav-new.njk" %}
 
-  <!-- ヒーロー（2026-09-24 再設計：写真背景＋虹色ドットの約束。地域の距離の説明は出張費の節へ移動） -->
-  <section class="hero hero--city">
+  <!-- ヒーロー（2026-09-24 再設計：写真背景＋虹色ドットの約束。09-25 レビュー対応でリードを「かほく市から市内全域へ」、バッジを整備士・年式に） -->
+  <section class="hero hero--city hero--fit11">
     <div class="hero__bg hero__bg--city" aria-hidden="true"></div>
     <div class="hero__scrim" aria-hidden="true"></div>
     <div class="wrap hero__inner">
       <div class="stack reveal hero__copy">
         <span class="eyebrow">Himi, Toyama</span>
-        <h1>氷見市の<br><em>自転車の出張買取・引取</em></h1>
-        <p class="lead">写真を送るだけで、伺う前に金額が決まります。氷見市へは出張でお引き取りに伺い、<strong>買取なら出張費も無料</strong>です。</p>
+        <h1>氷見市の<br><em><span class="nw">自転車の出張買取・引取</span></em></h1>
+        <p class="lead">石川県かほく市から、氷見市内全域に伺います。写真を送るだけで伺う前に金額が決まり、<strong>買取なら出張費0円</strong>です。</p>
+        <p class="lead" style="font-size:0.98rem;">年式は問いません。電動アシストはバッテリーの実容量まで見て、1つの金額でお伝えします。</p>
         <div class="badges" aria-label="安心のポイント">
           <span class="badge">訪問前に金額を確定</span>
           <span class="badge">買取なら出張費0円</span>
           <span class="badge">玄関先で値下げ交渉なし</span>
-          <span class="badge">防犯登録抹消を代行</span>
+          <span class="badge">整備士が年式を問わず査定</span>
         </div>
         <div class="hero__cta">
           <span class="cta-underline">
@@ -138,69 +127,118 @@ ctaUrl: "/line/himi/"
     </div>
   </section>
 
+  <!-- 手放す方法：年2回収集との比較を正直に書き、買取例3枚を直下に -->
   <section class="section section--alt">
     <div class="wrap" style="max-width:900px;">
     <div id="tebanasu" style="margin-bottom:56px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:10px;">氷見市で自転車を手放す方法</h2>
-      <p class="reveal" style="color:var(--ink-70); margin-bottom:24px;">氷見市では、自転車は<strong>「年2回収集するごみ」</strong>です。年2回の収集日に、地区で指定された集積場へ無料で出せます。</p>
+      <p class="reveal" style="color:var(--ink-70); margin-bottom:24px;">氷見市では、自転車は<strong>「年2回収集するごみ」</strong>です。収集は春（4〜6月）と秋（9〜11月）の年2回で、地区ごとに決まった日の朝に、指定の集積場へ無料で出せます。</p>
       <div class="tb-best reveal">
         <span class="cmp-badge tb-best__tag">おすすめ</span>
         <div>
           <h3>まず、写真で査定に出す</h3>
-          <p>収集は年2回なので、次の収集日まで半年近く待つこともあります。その前に、値段がつくかを確かめてみてください。値段がつけば買取（出張費無料）、つかなくても部品として活かせるものは無償でお引き取りします。出張費は町名を伺ってご案内します。</p>
+          <p>秋の収集（今年は大雨で延期した9月分を含め、10〜11月）を逃すと、次は翌春です。その前に、値段がつくかを写真で確かめてみてください。値段がつけば、運ぶ手間なしでお金になります（査定も出張費も0円）。つかなかった場合の引き取りは、処分費0円・出張費のみ（氷見市は市内のほとんどで{{ hm.range }}）です。</p>
         </div>
         <ul class="tb-best__pts">
           <li>値段がつけば買取。査定も出張費も0円</li>
           <li>つかなくても処分費0円で引取（出張費のみ）</li>
-          <li>防犯登録の抹消はこちらで代行</li>
+          <li>防犯登録の抹消はこちらで代行（委任状をいただきます）</li>
           <li>運ぶ・待つ・バッテリーを外す手間なし。ご自宅で完結</li>
         </ul>
       </div>
-      <h3 class="tb-sub reveal">値段がつかなかった場合に、ご自分で処分する方法</h3>
+
+      <h3 class="tb-sub reveal">近くの買取例</h3>
+      <div class="works-feature works-feature--detail works-feature--3 reveal">
+        <figure class="wfeat">
+          <img src="/images/works/work-dbike-2000.webp" width="1200" height="800" loading="lazy" alt="買い取った d-bike の幼児用自転車（黒×緑・サビ、傷、使用感あり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">d-bike（幼児用）</span></span>
+            <span class="wfeat__meta">サビ・傷・使用感が多め</span>
+            <span class="wfeat__price">買取 ¥2,000</span>
+            <span class="wfeat__note">※ 富山県の砺波市で買い取りました</span>
+            <span class="wfeat__area">砺波市</span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" alt="買い取ったブリヂストン bikke（2020年式・グレー・チャイルドシート2つ）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">ブリヂストン <span class="nw">bikke</span></span></span>
+            <span class="wfeat__meta">2020年式・サビ・ブレーキ不良・長押し診断でランプ5つ</span>
+            <span class="wfeat__price">買取 ¥45,000</span>
+            <span class="wfeat__note">※ ベルの破損・サビ・ブレーキ不良があっても、この金額でした</span>
+            <span class="wfeat__area">金沢市</span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-vivi-10000.webp" width="1200" height="800" loading="lazy" alt="買い取ったパナソニック ビビ TX（2018年式・サビあり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">パナソニック <span class="nw">ビビ TX</span></span></span>
+            <span class="wfeat__meta">2018年式・サビ多め・実容量 約70%</span>
+            <span class="wfeat__price">買取 ¥10,000</span>
+            <span class="wfeat__note">※ サビが多くても値がつきました</span>
+            <span class="wfeat__area">金沢市</span>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:14px;">※ 氷見市の事例ではありません。金額は1台ごとの状態で決まり、同じ車種でも同じ金額になるとは限りません。富山県では高岡市・砺波市でお引き取りしています。</p>
+      <div class="cta-row reveal">
+        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+        <a class="cta-row__more" href="/works/">実績をすべて見る（11件）→</a>
+      </div>
+
+      <h3 class="tb-sub reveal" style="margin-top:clamp(32px,5vw,48px);">値段がつかなかった場合に、ご自分で処分する方法</h3>
       <div class="opts opts--self reveal">
         <div class="opt">
           <span class="opt__n num" aria-hidden="true">1</span>
-          <h3 class="opt__t">年2回の収集日に出す</h3>
-          <p class="opt__p">収集は<strong>年2回</strong>で、日にちは地区ごとに違います（市のごみ収集計画表や、市広報・地区の回覧板に載っています）。当日の<strong>午前6時から8時まで</strong>に、地区で指定された集積場へ出し、種類ごとに分けて置きます。</p>
-          <p class="opt__work">ご自分で行うこと：防犯登録の抹消・集積所まで運ぶ・収集日を待つ（電動はバッテリーを外して別途回収へ）</p>
-          <p class="opt__src">出典：<a href="https://www.city.himi.toyama.jp/gyosei/benri_service/gomi_kensaku/50_gomi/2227.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">氷見市「50音別ごみの出し方検索」</a>・<a href="https://www.city.himi.toyama.jp/gyosei/kurashi/gomi_kankyo/1/3098.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">家庭ごみの分け方と出し方</a>（2026年9月19日確認）</p>
+          <h4 class="opt__t">年2回の収集日に出す</h4>
+          <p class="opt__p">収集は<strong>年2回</strong>（春と秋）で、日にちは地区ごとに違います。当日の<strong>午前6時から8時まで</strong>に、地区で指定された集積場へ出し、種類ごとに分けて置きます。<strong>今年の秋は、8月27日からの大雨で9月分が延期され、10月収集分から再開</strong>です（延期分の代替日は市の改訂版の収集日表に載っています）。</p>
+          <p class="opt__work">ご自分で行うこと：防犯登録の抹消（警察署・交番で・無料）・集積場まで運ぶ・収集日を待つ・電動はバッテリーを外す</p>
+          <p class="opt__src">出典：<a href="https://www.city.himi.toyama.jp/gyosei/soshiki/kankyo/1/1/1931.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">氷見市「家庭ごみの分け方と出し方及びごみ収集計画表」</a>・<a href="https://www.city.himi.toyama.jp/gyosei/soshiki/kankyo/1/1/9945.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">「年2回収集するごみの代替日のお知らせ」</a>（2026年9月25日確認）</p>
+        </div>
+        <div class="opt">
+          <span class="opt__n num" aria-hidden="true">2</span>
+          <h4 class="opt__t">不燃物処理センターへ持ち込む</h4>
+          <p class="opt__p">市の不燃物処理センター（床鍋28番地、0766-76-1153）へ、平日の9時〜15時に持ち込めます（家庭のごみは<strong>50kgまで250円</strong>）。事前の問い合わせが必要です。自転車を受け入れるかは市のページに書かれていないため、持ち込む前に市へご確認ください。</p>
+          <p class="opt__work">ご自分で行うこと：防犯登録の抹消（警察署・交番で・無料）・市への事前確認・車で運ぶ・平日日中の持ち込み・電動はバッテリーを外す</p>
+          <p class="opt__src">出典：<a href="https://www.city.himi.toyama.jp/gyosei/soshiki/kankyo/1/1/1934.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">氷見市「燃やせない持込みごみの搬入方法について」</a>（2026年9月25日確認）</p>
         </div>
       </div>
-      
+      <p class="reveal" style="font-size:0.84rem; color:var(--ink-55); margin-top:18px;">※ 電動のバッテリーは自転車と別に処分します。氷見市では、小型充電式電池は「JBRC登録のリサイクル協力店（電器店・ホームセンターなど）」「氷見市リサイクルプラザ（新保）」「市役所本庁舎1階の総合案内」に持ち込みますが、電動自転車用の大きなバッテリーについては市のページに記載がないため、出す前に市へご確認ください。容量が残っていれば、バッテリーだけでも買取の対象です。出典：<a href="https://www.city.himi.toyama.jp/gyosei/soshiki/kankyo/1/1/14512.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">氷見市「リチウムイオン電池などの小型充電式電池の処分方法」</a>（2026年9月25日確認）。市のルールは変わることがあります。出す前に氷見市の公式サイトや市公式LINEもご確認ください。</p>
     </div>
     </div>
   </section>
 
+  <!-- ご利用の流れ（担当者・速さ・支払いを明記） -->
   <section class="section">
-    <div class="wrap" style="max-width:820px;">
+    <div class="wrap" style="max-width:900px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">ご利用の流れ</h2>
       <ol class="timeline reveal">
         <li class="tl">
           <span class="tl__n" aria-hidden="true">1</span>
           <div class="tl__body">
             <h3 class="tl__t">LINEで写真を送る</h3>
-            <p class="tl__d">自転車全体、タイヤとチェーンまわり、メーカー名の部分あたりからで大丈夫です。ピントが甘くても、型番が分からなくても構いません。足りない部分はこちらからご案内します。あわせてお住まいの町名をお知らせください。</p>
+            <p class="tl__d">自転車全体、タイヤとチェーンまわり、メーカー名の部分あたりからで大丈夫です。ピントが甘くても、型番が分からなくても構いません。足りない部分はこちらからご案内します。あわせてお住まいの町名をお知らせください。氷見市は往復90kmほどになるため、写真（電動なら長押し診断の動画も）をそろえていただくと、当日の確認がスムーズで、お伝えした金額のままお引き取りできます。</p>
           </div>
         </li>
         <li class="tl">
           <span class="tl__n" aria-hidden="true">2</span>
           <div class="tl__body">
-            <h3 class="tl__t">金額を決めてご返信します</h3>
-            <p class="tl__d">幅ではなく確定した金額でお伝えします。値段がつかない場合は、無償引取になる旨と出張費の金額をあわせてご案内します。</p>
+            <h3 class="tl__t">確定した金額をご返信します</h3>
+            <p class="tl__d">整備士が査定し、原則48時間以内に確定額をお伝えします（最短30分でお伝えした実績もあります）。「◯円〜◯円」の幅ではなく1つの金額で、有効期限は7日間。写真・情報と現物が一致していれば、金額は変わりません。値段がつかない場合は、処分費0円の引取と出張費の金額をご案内します。</p>
           </div>
         </li>
         <li class="tl">
           <span class="tl__n" aria-hidden="true">3</span>
           <div class="tl__body">
             <h3 class="tl__t">ご納得いただけたら、訪問日を決めます</h3>
-            <p class="tl__d">金額にご納得いただいてから、はじめて日程のご相談に入ります。お断りいただいても費用はかかりません。</p>
+            <p class="tl__d">金額にご納得いただいてから、はじめて日程のご相談に入ります。お断りいただいても費用はかかりません。お伺いするのは、お引き取りの一度だけです。</p>
           </div>
         </li>
         <li class="tl">
           <span class="tl__n" aria-hidden="true">4</span>
           <div class="tl__body">
             <h3 class="tl__t">お引き取り・書類・お支払い</h3>
-            <p class="tl__d">ご自宅までお引き取りに伺います。防犯登録の抹消手続きは当方で代行します。お支払いは現金、¥30,000を超える場合は銀行振込です。</p>
+            <p class="tl__d">当日は、自転車安全整備士の資格を持つ代表が一人で伺います（<a href="/about/" style="color:var(--accent-d);">顔写真と経歴</a>）。玄関先で10〜15分ほどで、お家に上がることはありません。運転免許証などの本人確認書類をご用意ください。防犯登録の抹消は、委任状をいただいて当方が富山県内の警察署で代行します（無料）。お支払いは現金、¥30,000を超える場合は銀行振込で、当日中にお振り込みします（<a href="/terms/" style="color:var(--accent-d);">ご利用条件</a>）。古物商許可 石川県公安委員会 第511090015059号。</p>
           </div>
         </li>
       </ol>
@@ -209,92 +247,106 @@ ctaUrl: "/line/himi/"
 
   <section class="section section--alt">
     <div class="wrap" style="max-width:900px;">
-      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">氷見市で買い取っている自転車</h2>
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">氷見市で買取・引取している自転車</h2>
       <div class="genres genres--4 reveal">
         <div class="genre genre--photo"><img class="genre__photo" src="/images/target/t-road.webp" width="330" height="330" loading="lazy" decoding="async" alt=""><span class="genre__jp">ロード・クロス・MTB</span></div>
         <div class="genre genre--photo"><img class="genre__photo" src="/images/target/t-ebike.webp" width="330" height="330" loading="lazy" decoding="async" alt=""><span class="genre__jp">電動アシスト</span></div>
         <div class="genre genre--photo"><img class="genre__photo" src="/images/target/t-folding.webp" width="330" height="330" loading="lazy" decoding="async" alt=""><span class="genre__jp">ミニベロ・折りたたみ</span></div>
-        <div class="genre genre--photo"><img class="genre__photo" src="/images/works/work-city-fudousha.webp" width="1100" height="505" loading="lazy" decoding="async" alt=""><span class="genre__jp">シティ車・値段がつかない車体</span></div>
+        <div class="genre genre--photo"><img class="genre__photo" src="/images/works/work-city-fudousha.webp" width="1100" height="505" loading="lazy" decoding="async" alt=""><span class="genre__jp">シティ車・子ども用</span></div>
       </div>
       <p class="reveal" style="color:var(--ink-70); font-size:0.92rem; margin-top:16px; max-width:720px;">年式が古くても、コンポーネントが生きていれば値段がつくことがあります。電動アシストはバッテリーの状態、折りたたみはヒンジのガタつきを確認します。値段がつかない車体も、部品として活かせるものは処分費0円でお引き取りします。</p>
     </div>
   </section>
 
-  <!-- 買取価格と出張費（2026-09-24 再設計：上にポイント3つ、下に本文＋料金表） -->
-  <section class="section">
-    <div class="wrap" style="max-width:980px;">
-      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">氷見市の買取価格と出張費</h2>
-      <div class="pts reveal">
-        <div class="pt"><span class="pt__k">幅ではなく1つの金額</span><p>LINEで写真を拝見してから、同型車の直近の相場を基準に状態を確認して算出します。「◯円〜◯円」という出し方はしません。</p></div>
-        <div class="pt"><span class="pt__k">金額は7日間有効</span><p>写真・情報と現物が一致していれば、お伝えした金額は変わりません。</p></div>
-        <div class="pt"><span class="pt__k">訪問はご納得のあとだけ</span><p>査定のためだけに伺うことはありません。お支払いは現金、¥30,000を超える場合は銀行振込です（<a href="/terms/" style="color:var(--accent-d);">ご利用条件</a>）。</p></div>
+  <!-- 電動アシスト自転車（2026-09-25 追加：高岡・小矢部ページの節を流用し、年式不問・実容量・バッテリー単体を明記） -->
+  <section class="section" id="dendo">
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:12px;">氷見市で電動アシスト自転車を売るなら</h2>
+      <p class="reveal" style="color:var(--ink-70); font-size:0.94rem; margin-bottom:24px; max-width:640px;">年式は問いません。バッテリー単体も買取の対象です。残量ボタンを長押しした動画を送っていただければ、バッテリーの実容量を反映した確定額を、氷見市へ伺う前にお伝えします。</p>
+      <div class="card card--wide reveal">
+        <img class="card__img" src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" decoding="async" alt="買い取ったブリヂストン bikke">
+        <div class="card__body">
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">買取例（金沢市）</h3>
+          <p style="color:var(--ink-70); font-size:0.9rem;">ブリヂストン bikke 2020年式（長押し診断でランプ5つ・サビ・ブレーキ不良）を <strong>¥45,000</strong>、パナソニック ビビ TX 2018年式（サビ多め・実容量約70%）を <strong>¥10,000</strong> で買い取りました。<a href="/kanazawa/" style="color:var(--accent-d);">金沢市の買取事例</a>に写真を載せています。金額は1台ごとの状態で決まります。</p>
+        </div>
       </div>
+      <div class="cols3 reveal">
+        <div class="card">
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">金額の決まり方</h3>
+          <p style="color:var(--ink-70); font-size:0.9rem;">年式、バッテリーの実容量、鍵・充電器・チャイルドシートの有無を見ます。年式は問いません。古くても実容量が残っていれば値がつくことがあります。</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">バッテリーが弱っていても</h3>
+          <p style="color:var(--ink-70); font-size:0.9rem;">実容量を織り込んで査定するので、弱っていても値がつくことがあります。診断のやり方は<a href="/dendo/" style="color:var(--accent-d);">電動アシスト自転車の買取</a>をご覧ください。処分する場合のバッテリーの出し方は、上の「手放す方法」の注記をご覧ください。</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">送っていただく写真</h3>
+          <p style="color:var(--ink-70); font-size:0.9rem;">車体全体、バッテリーまわり、残量表示の3枚があれば、まずは査定できます。長押し診断の動画があれば実容量を反映できます。お持ち込みは不要で、氷見市まで伺います。</p>
+        </div>
+      </div>
+      <div class="cta-row reveal">
+        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 買取価格と出張費（09-25：重複カード3枚は流れに一本化、出張費を金額で） -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">氷見市の買取価格と出張費</h2>
       <div class="fee reveal">
         <div>
           <h3>氷見市への出張費と引き取り</h3>
-          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体を引き取る場合のみです。</p>
-          <h4>氷見市は町名を伺ってから金額を確定します</h4>
-          <p>氷見市は氷見市役所までおよそ49kmです。市（町）内でも地区によって距離が変わりますので、市全体で一律の金額は設けていません。町名をお知らせいただければ、こちらで距離を計算して金額を確定し、お伺いする前にお伝えします。出張費は訪問というお仕事に対する費用で、引き取る車体の台数や種類とは連動しません。</p>
+          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体の引き取り（処分）でお伺いする場合のみです。</p>
+          <p>かほく市役所から、市役所のある鞍川や中心街まで約45km（<strong>3,000円</strong>）、床鍋・熊無・仏生寺など県境寄りは約34〜37km（<strong>2,500円</strong>）で、市内のほとんどは<strong>{{ hm.range }}</strong>です。大境など北端の一部は片道50kmを超えるため、町名をお知らせいただければ、お伺いする前に金額をお伝えします。</p>
           <p class="fee__note">※ 出張費は訪問というお仕事に対する費用で、引き取る台数や種類とは連動しません。ガソリン代により改定する場合があります。</p>
         </div>
         <div class="card">
           <p style="font-size:0.85rem; color:var(--ink-55); margin-bottom:10px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
-          <table class="rate">
-              <thead><tr><th>片道距離</th><th>出張費の目安</th></tr></thead>
-              <tbody>
-                <tr><td>〜10km</td><td class="num">1,000円</td></tr>
-                <tr><td>10〜20km</td><td class="num">1,500円</td></tr>
-                <tr><td>20〜30km</td><td class="num">2,000円</td></tr>
-                <tr><td>30〜40km</td><td class="num">2,500円</td></tr>
-                <tr><td>40〜50km</td><td class="num">3,000円</td></tr>
-                <tr><td>50km超</td><td class="num" style="color:var(--ink-40)">応相談</td></tr>
-              </tbody>
-            </table>
+          {% set feeTableHead = "片道距離" %}{% set feeHighlight = ["2,500円", "3,000円"] %}{% include "fee-table.njk" %}
+          <p class="fee__note">黄色の段が氷見市の大半に当たる距離です。全体の料金は <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> をご覧ください。</p>
         </div>
       </div>
     </div>
   </section>
 
-
-  <!-- 地域のお客様へ -->
-  <section class="section section--alt">
-    <div class="wrap split">
-      <div class="stack reveal split__head">
-        <h2 style="font-size:clamp(1.6rem,4vw,2.2rem)">氷見市にお住まいの方へ</h2>
-      </div>
+  <!-- 地域のお客様へ（09-25：観光案内をやめ、事実とお客さまの得だけに） -->
+  <section class="section">
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.6rem,4vw,2.2rem); margin-bottom:24px;">氷見市にお住まいの方へ</h2>
       <div class="reveal local-grid">
         <div>
-          <h3 style="font-size:1.1rem; margin-bottom:8px;">富山湾を望む漁業の街</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem;">氷見市は富山湾の西に面した漁業の街で、ブリの水揚げで全国に知られています。能越自動車道で石川側と直結しており、かほく市からのアクセスが比較的便利です。漁師さんや農家の方を含め、地元にお住まいの方からの買取・引き取りに対応しています。</p>
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">石川の業者でも、氷見まで伺います</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">かほく市から、灘浦の海沿いから余川・熊無の山あいまで、市内全域に伺います。富山県では高岡市・砺波市でもお引き取りしています（<a href="/works/" style="color:var(--accent-d);">実績一覧</a>）。</p>
         </div>
         <div>
-          <h3 style="font-size:1.1rem; margin-bottom:8px;">忍者ハットリくんのまち</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem;">氷見市は漫画家の藤子不二雄Ａ氏の出身地で、ハットリくんのブロンズ像が市内に点在するユニークな街でもあります。市街地の住宅地から灘浦・余川の農村地区まで幅広くお伺いしています。</p>
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">富山県の防犯登録も手続きします</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">富山県で登録された自転車は、委任状にご署名いただければ、抹消の手続きは当方が富山県内の警察署で行います（無料）。登録カード（控え）があればご用意ください。見当たらない場合は、自転車本体を持って手続きします。</p>
         </div>
         <div>
-          <h3 style="font-size:1.1rem; margin-bottom:8px;">石川県境に近い立地</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem;">氷見市の一部は石川県能登地域と隣接しています。石川と富山の県境周辺にお住まいで、石川側の業者に依頼できるか迷っていた方も遠慮なくご相談ください。</p>
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">ご家族の分もまとめて1回で</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">出張費は台数で変わりません。ご実家やご家族の自転車も、1回の訪問でまとめてお引き取りできます。写真はご家族のLINEから送っていただいても大丈夫です（お引き取りの日は、持ち主さまの立ち会いと本人確認をお願いします）。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section class="section">
-    <div class="wrap" style="max-width:840px;">
-      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">氷見市のお客様からよくいただくご質問</h2>
+  <!-- FAQ（JSON-LD と同じ文にそろえる） -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">氷見市の方からのよくあるご質問</h2>
       <div class="faq-acc reveal">
         <details class="faq-item">
           <summary>氷見市で自転車を捨てるにはどうすればいいですか。</summary>
-          <div class="faq-item__a"><p>氷見市では、自転車は「年2回収集するごみ」です。地区ごとに決まった年2回の収集日の午前6時から8時までに、地区で指定された集積場へ出します。収集日は市のごみ収集計画表や広報で確認できます。次の収集日を待つ前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。</p></div>
+          <div class="faq-item__a"><p>氷見市では、自転車は「年2回収集するごみ」です。収集は春と秋の年2回で、地区ごとに決まった収集日の朝（午前6時から8時まで）に、地区で指定された集積場へ出します。日にちは市のごみ収集計画表・市公式LINE・広報で確認できます。次の収集日を待つ前に写真を送っていただければ、値段がつくかどうかを無料でお調べし、ご自宅まで伺います。</p></div>
         </details>
         <details class="faq-item">
           <summary>富山県の氷見市まで来てもらえますか。</summary>
-          <div class="faq-item__a"><p>はい、伺っています。かほく市役所から氷見市役所まで能越自動車道経由でおよそ49kmです。</p></div>
+          <div class="faq-item__a"><p>はい、市内全域に伺います。かほく市役所から氷見市役所まで、一般道でおよそ45km（能越自動車道を使うと約49km）です。買取なら出張費はかかりません。値段がつかない場合の出張費は、町名をお知らせいただければ伺う前にお伝えします。富山県では高岡市・砺波市でも買取・引取の実績があります。</p></div>
         </details>
         <details class="faq-item">
           <summary>氷見市の出張費はいくらですか。</summary>
-          <div class="faq-item__a"><p>地区によって距離が変わります。町名をお知らせいただければ計算してご案内します。買取なら出張費は無料です。</p></div>
+          <div class="faq-item__a"><p>買取なら無料です。出張費がかかるのは、値段がつかない車体の引取（処分）でお伺いする場合のみで、市内のほとんどは{{ hm.range }}です（市役所のある鞍川や中心街は3,000円、床鍋・熊無など県境寄りは2,500円）。大境など北端の一部は片道50kmを超えるため、町名をお知らせいただければ伺う前に金額をお伝えします。</p></div>
         </details>
         <details class="faq-item">
           <summary>買取をお願いする場合も出張費はかかりますか。</summary>
@@ -302,11 +354,11 @@ ctaUrl: "/line/himi/"
         </details>
         <details class="faq-item">
           <summary>値段がつかない自転車でも引き取ってもらえますか。</summary>
-          <div class="faq-item__a"><p>部品として活かせるものは無償でお引き取りします。処分費はいただきません。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。</p></div>
+          <div class="faq-item__a"><p>部品として活かせるものは処分費0円でお引き取りします（出張費のみいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準は<a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a>のページに記載しています。</p></div>
         </details>
         <details class="faq-item">
           <summary>電動アシスト自転車も査定してもらえますか。</summary>
-          <div class="faq-item__a"><p>はい。バッテリー残量ランプの点灯数など、写真で分かる状態を確認して査定します。査定の際はランプの点灯数もあわせてお知らせください。</p></div>
+          <div class="faq-item__a"><p>はい。年式は問いません。パナソニック・ヤマハ・ブリヂストンは、残量ボタンを長押しするとバッテリーの実容量（劣化の度合い）が表示されます。その様子を<a href="/column/battery-check/" style="color:var(--accent-d);">動画</a>で送っていただくと、実容量を反映した確定額をお伝えできます。難しければ、残量ランプの写真だけでも査定します。バッテリー単体も買取の対象です。</p></div>
         </details>
         <details class="faq-item">
           <summary>防犯登録の抹消はどうなりますか。</summary>
@@ -320,18 +372,19 @@ ctaUrl: "/line/himi/"
   <section class="section cta">
     <div class="wrap stack reveal" style="max-width:620px;">
       <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">氷見市の査定・引き取りのご相談</h2>
-      <p class="lead">写真とお住まいの町名をお送りいただければ、確定額と出張費をあわせてお返事します。</p>
+      <p class="lead">写真とお住まいの町名をお送りいただければ、確定額をお返事します（値段がつかない場合は出張費も）。</p>
       <div style="display:flex; justify-content:center;">
         <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
       </div>
-      <p style="font-size:0.8rem; color:var(--ink-40);">※お引き取りできない車体もあります → <a href="/terms/" style="color:var(--accent-d);">ご利用条件</a></p>
+      <p style="font-size:0.88rem; color:var(--ink-70);">タップするとLINEが開き、メッセージが入力済みです。写真を添えて送るだけ。査定だけ・お断りも無料です。LINEを使っていない方は、メール（<a href="mailto:info@meguri-cycle.com" style="color:var(--accent-d);">info@meguri-cycle.com</a>）でもご相談いただけます。</p>
+      <p style="font-size:0.8rem; color:var(--ink-40);">※お引き取りできない車体もあります → <a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a></p>
     </div>
   </section>
 
   <!-- 関連ページ（内部リンク） -->
   <section class="section" style="padding-top:0;">
-    <div class="wrap" style="max-width:620px;">
-      <p style="font-size:0.88rem; color:var(--ink-55);">関連：<a href="/price/" style="color:var(--accent-d);">料金・出張費</a> ／ <a href="/brands/" style="color:var(--accent-d);">買取強化ブランド一覧</a> ／ <a href="/hikitori/" style="color:var(--accent-d);">無料引き取り</a> ／ <a href="/area/" style="color:var(--accent-d);">対応エリア一覧</a></p>
+    <div class="wrap" style="max-width:900px;">
+      <p style="font-size:0.88rem; color:var(--ink-55);">関連：<a href="/works/" style="color:var(--accent-d);">買取・引取の実績</a> ／ <a href="/souba/" style="color:var(--accent-d);">買取相場</a> ／ <a href="/dendo/" style="color:var(--accent-d);">電動アシスト自転車の買取</a> ／ <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> ／ <a href="/brands/" style="color:var(--accent-d);">買取強化ブランド一覧</a> ／ <a href="/hikitori/" style="color:var(--accent-d);">無料引き取り</a> ／ <a href="/takaoka/" style="color:var(--accent-d);">高岡市</a> ／ <a href="/nanao/" style="color:var(--accent-d);">七尾市</a> ／ <a href="/area/" style="color:var(--accent-d);">対応エリア一覧</a></p>
     </div>
   </section>
 
