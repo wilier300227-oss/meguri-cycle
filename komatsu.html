@@ -3,18 +3,19 @@ permalink: /komatsu/
 ctaUrl: "/line/komatsu/"
 navLocal: true
 ---
+{%- set km = fees.cities.komatsu -%}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>小松市の自転車買取・処分｜写真で確定額・買取は出張費0円 めぐり自転車</title>
-  <meta name="description" content="小松市の自転車出張買取と処分のご案内。大型ごみに出す前に、かほく市の整備士がLINEで写真査定し、確定額をお伝えしてからお引き取りに伺います。買取なら出張費無料。値段がつかない車体も処分費0円で引取（出張費のみ）。">
+  <meta name="description" content="小松市の自転車の出張買取と処分のご案内。大型ごみに出す前に、かほく市の整備士がLINEの写真で確定額をお伝えし、ご納得いただけたらお引き取りに伺います。年式は問いません。小松市でもピストバイクを20,000円で買い取りました。買取なら出張費0円。値段がつかない車体も処分費0円で引取（出張費のみ）。">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://meguri-cycle.com/komatsu/">
   <link rel="icon" type="image/png" href="/logo/favicon.png">
   <meta property="og:title" content="小松市の自転車買取・処分｜写真で確定額・買取は出張費0円 めぐり自転車">
-  <meta property="og:description" content="小松市の自転車出張買取と処分のご案内。大型ごみに出す前に、かほく市の整備士がLINEで写真査定し、確定額をお伝えしてからお引き取りに伺います。買取なら出張費無料。値段がつかない車体も処分費0円で引取（出張費のみ）。">
+  <meta property="og:description" content="小松市の自転車の出張買取と処分のご案内。大型ごみに出す前に、かほく市の整備士がLINEの写真で確定額をお伝えし、ご納得いただけたらお引き取りに伺います。買取なら出張費0円。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://meguri-cycle.com/komatsu/">
 
@@ -50,77 +51,54 @@ navLocal: true
   }
   </script>
 
+  {# FAQ の JSON-LD。本文の FAQ（下の .faq-acc）と同じ文にそろえること #}
   <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "小松市で自転車を捨てるにはどうすればいいですか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "小松市では、自転車は大きさに関係なく「大型ごみ」で、集積所には出せません。エコロジーパークこまつ（0761-41-1600）に予約して大型ごみ処理券（500円）を貼って出すか、エコロジーパークこまつへ持ち込みます（50kgまで500円）。予約から収集まで1週間〜1か月かかるため、その前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。"
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "小松市で自転車を捨てるにはどうすればいいですか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "小松市では、自転車は大きさに関係なく「大型ごみ」で、集積所には出せません。エコロジーパークこまつ（0761-41-1600）に予約して大型ごみ処理券（500円）を貼って家の前に出すか、エコロジーパークこまつへ持ち込みます（50kgまで500円）。予約から収集まで1週間〜1か月かかるため、その前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。" }
+      },
+      {
+        "@type": "Question",
+        "name": "小松市まで来てもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "はい、市内全域に伺います。小松市でもピストバイクを買い取っています。かほく市役所から小松駅周辺までおよそ48kmです。買取なら出張費はかかりません。" }
+      },
+      {
+        "@type": "Question",
+        "name": "小松市の出張費はいくらですか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "買取なら無料です。買取と一緒なら、値段がつかない車体も出張費0円でお引き取りします。出張費がかかるのは、値段がつかない車体の引取（処分）だけで伺う場合のみで、小松駅周辺・安宅・小松空港周辺などは3,000円、木場・粟津・那谷など片道50kmを超える南部は応相談です。町名をお知らせいただければ、伺う前に金額をお伝えします。" }
+      },
+      {
+        "@type": "Question",
+        "name": "買取をお願いする場合も出張費はかかりますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "かかりません。買取のご依頼であれば、オンライン査定もお引き取りに伺う出張費も無料です。現物を見たうえでお断りいただいた場合も、費用はいただきません。" }
+      },
+      {
+        "@type": "Question",
+        "name": "値段がつかない自転車でも引き取ってもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "部品として活かせるものは処分費0円でお引き取りします（引取だけの場合は出張費をいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。" }
+      },
+      {
+        "@type": "Question",
+        "name": "古い自転車でも売れますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "年式だけでお断りはしていません。電動アシストはバッテリーの実容量、スポーツ車は部品の状態で値段がつくことがあります。写真を送っていただければ、値段がつくかどうかを無料でお調べします。" }
+      },
+      {
+        "@type": "Question",
+        "name": "電動アシスト自転車も査定してもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "はい。年式は問いません。パナソニック・ヤマハ・ブリヂストンは、残量ボタンを長押しするとバッテリーの実容量（劣化の度合い）が表示されます。その様子を動画で送っていただくと、実容量を反映した確定額をお伝えできます。難しければ、残量ランプの写真だけでも査定します。バッテリー単体も買取の対象です。" }
+      },
+      {
+        "@type": "Question",
+        "name": "防犯登録の抹消はどうなりますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "こちらで代行します。費用はいただきません。登録カードが見当たらない場合も、まずは状況をお知らせください。登録協会に確認して進め方をご案内します。" }
       }
-    },
-    {
-      "@type": "Question",
-      "name": "小松市まで来てもらえますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "はい、伺います。かほく市役所から小松駅周辺までおよそ45kmです。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "小松市の出張費はいくらですか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "小松市は地区によって距離が異なるため、町名をお知らせいただければ計算してご案内します。買取なら出張費は無料です。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "買取をお願いする場合も出張費はかかりますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "かかりません。買取のご依頼であれば、オンライン査定もお引き取りに伺う出張費も無料です。現物を見たうえでお断りいただいた場合も、費用はいただきません。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "値段がつかない自転車でも引き取ってもらえますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "部品として活かせるものは処分費0円でお引き取りします（出張費のみいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "電動アシスト自転車も査定してもらえますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "はい。年式は問いません。パナソニック・ヤマハ・ブリヂストンは、残量ボタンを長押しするとバッテリーの実容量（劣化の度合い）が表示されます。その様子を動画で送っていただくと、実容量を反映した確定額をお伝えできます。難しければ、残量ランプの写真だけでも査定します。バッテリー単体も買取の対象です。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "防犯登録の抹消はどうなりますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "こちらで代行します。費用はいただきません。防犯登録カードが手元になくても対応できることが多いので、まずは状況をお知らせください。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "小松市で電動アシスト自転車はいくらで売れますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "年式とバッテリーの状態で決まります。金沢市では2020年式のブリヂストン bikke を45,000円、2018年式のパナソニック ビビ TX を10,000円で買い取りました。写真と残量表示を送っていただければ、伺う前に確定額をお伝えします。"
-      }
-    }
-  ]
-}
+    ]
+  }
   </script>
 
   {% include "head-new.njk" %}
@@ -129,7 +107,7 @@ navLocal: true
 
   {% include "nav-new.njk" %}
 
-  <!-- ヒーロー（2026-09-24 再設計：写真背景＋虹色ドットの約束。地域の距離の説明は出張費の節へ移動） -->
+  <!-- ヒーロー（2026-09-24 再設計：写真背景＋虹色ドットの約束。09-25 レビュー対応で48時間・小松の実績・整備士を前に） -->
   <section class="hero hero--city hero--fit11">
     <div class="hero__bg hero__bg--city" aria-hidden="true"></div>
     <span class="hero__imgnote">写真はイメージです</span>
@@ -138,10 +116,11 @@ navLocal: true
       <div class="stack reveal hero__copy">
         <span class="eyebrow">Komatsu, Ishikawa</span>
         <h1>小松市の<br><em><span class="nw">自転車の出張買取・引取</span></em></h1>
-        <p class="lead">写真を送るだけで、伺う前に金額が決まります。小松市へは出張でお引き取りに伺い、<strong>買取なら出張費も無料</strong>です。</p>
+        <p class="lead">写真を送るだけで、伺う前に金額が決まります（返信は原則48時間以内）。小松市でもピストバイクを20,000円で買い取りました。<strong class="nw">買取なら出張費0円</strong>です。</p>
+        <p class="lead" style="font-size:0.98rem;">年式は問いません。電動アシストはバッテリーの実容量まで見て、1つの金額でお伝えします。</p>
         <div class="badges" aria-label="安心のポイント">
+          <span class="badge">整備士が年式を問わず査定</span>
           <span class="badge">訪問前に金額を確定</span>
-          <span class="badge">買取なら出張費0円</span>
           <span class="badge">写真どおりなら当日の減額なし</span>
           <span class="badge">防犯登録抹消を代行</span>
         </div>
@@ -155,48 +134,90 @@ navLocal: true
     </div>
   </section>
 
+  <!-- 手放す方法（09-25：小松の実績（LEADER）を直下に。値段がつかなければ市の大型ごみでも可、と正直に） -->
   <section class="section section--alt">
     <div class="wrap" style="max-width:900px;">
     <div id="tebanasu">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:10px;">小松市で自転車を手放す方法</h2>
-      <p class="reveal" style="color:var(--ink-70); margin-bottom:24px;">小松市では、自転車は大きさに関係なく<strong>「大型ごみ」</strong>です。集積所には出せず、解体しても出せません。</p>
+      <p class="reveal" style="color:var(--ink-70); margin-bottom:24px;">小松市では、自転車は大きさに関係なく<strong>「大型ごみ」</strong>で、集積所には出せません。予約して家の前に出す個別収集（処理券500円）か、エコロジーパークこまつへの持ち込みになります。</p>
       <div class="tb-best reveal">
         <span class="cmp-badge tb-best__tag">おすすめ</span>
         <div>
-          <h3>まず、写真で査定に出す</h3>
-          <p>収集まで最大1か月待つ前に、値段がつくかを確かめてみてください。値段がつけば買取（出張費無料）、つかなくても部品として活かせるものは処分費0円でお引き取りします。出張費は地区によって決まります。</p>
+          <h3>出す前に、写真で値段を確かめる</h3>
+          <p>小松市も大型ごみの案内で「処分する前にリユースを検討しましょう」と呼びかけています。電動アシストやスポーツ車、子ども用の人気モデルは、古くても値段がつくことがあります。値段がつくかの確認までは無料です。値段がつけば、収集を待たずに出張費0円で伺います。つかなければ、そのまま市の大型ごみに出していただいても構いません（引き取りをご希望なら、処分費0円・出張費のみ）。</p>
         </div>
         <ul class="tb-best__pts">
           <li>値段がつけば買取。査定も出張費も0円</li>
-          <li>つかなくても処分費0円で引取（出張費のみ）</li>
+          <li>買取と一緒なら、値段がつかない車体も出張費0円で引取</li>
           <li>防犯登録の抹消はこちらで代行</li>
-          <li>運ぶ・待つ・バッテリーを外す手間なし。ご自宅で完結</li>
+          <li>予約・処理券・収集待ちの手間なし。ご自宅で完結</li>
         </ul>
       </div>
-      <h3 class="tb-sub reveal">値段がつかなかった場合に、ご自分で処分する方法</h3>
+
+      <h3 class="tb-sub reveal">小松市と石川県内の買取例</h3>
+      <div class="works-feature works-feature--detail works-feature--3 reveal">
+        <figure class="wfeat">
+          <img src="/images/works/work-leader-20000.webp" width="1200" height="800" loading="lazy" alt="買い取った LEADER 721 のピストバイク（2020年式・赤・要部品交換）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">LEADER <span class="nw">721</span></span></span>
+            <span class="wfeat__meta">2020年式・パンクなど要部品交換が多数</span>
+            <span class="wfeat__price">買取 20,000円</span>
+            <span class="wfeat__note">※ 小松市で買い取りました（2026年9月）。修理が必要でも、スポーツ車は相場から値がつきます</span>
+            <span class="wfeat__area">小松市</span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" alt="買い取ったブリヂストン bikke（2020年式・グレー・チャイルドシート2つ）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">ブリヂストン <span class="nw">bikke</span></span></span>
+            <span class="wfeat__meta">2020年式・サビ・ブレーキ不良・長押し診断でランプ5つ</span>
+            <span class="wfeat__price">買取 45,000円</span>
+            <span class="wfeat__note">※ ベルの破損・サビ・ブレーキ不良があっても、この金額でした</span>
+            <span class="wfeat__area">金沢市</span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-vivi-10000.webp" width="1200" height="800" loading="lazy" alt="買い取ったパナソニック ビビ TX（2018年式・サビあり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">パナソニック <span class="nw">ビビ TX</span></span></span>
+            <span class="wfeat__meta">2018年式・サビ多め・実容量 約70%</span>
+            <span class="wfeat__price">買取 10,000円</span>
+            <span class="wfeat__note">※ サビが多くても値がつきました</span>
+            <span class="wfeat__area">金沢市</span>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:14px;">※ 金額は1台ごとの状態で決まり、同じ車種でも同じ金額になるとは限りません。</p>
+      <div class="cta-row reveal">
+        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+        <a class="cta-row__more" href="/works/">実績をすべて見る（11件）→</a>
+      </div>
+
+      <h3 class="tb-sub reveal" style="margin-top:clamp(32px,5vw,48px);">値段がつかなかった場合に、ご自分で処分する方法</h3>
       <div class="opts opts--self reveal">
         <div class="opt">
           <span class="opt__n num" aria-hidden="true">1</span>
-          <h3 class="opt__t">大型ごみの個別収集を予約する</h3>
-          <p class="opt__p">エコロジーパークこまつ（<strong>0761-41-1600</strong>、平日8時30分〜17時）に予約し、<strong>大型ごみ処理券500円</strong>（コンビニ・スーパーなどで販売）を貼って、予約日に家の前へ出します。<strong>予約から収集まで1週間〜1か月</strong>ほどかかります。</p>
-          <p class="opt__work">ご自分で行うこと：防犯登録の抹消・集積所まで運ぶ・処理券などの購入・事前の申し込み・収集日を待つ（電動はバッテリーを外して別途回収へ）</p>
-          <p class="opt__src">出典：<a href="https://www.city.komatsu.lg.jp/soshiki/1021/gomi_risaikuru/4/2043.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">小松市「大型ごみの出し方」</a>（2026年9月19日確認）</p>
+          <h4 class="opt__t">大型ごみの個別収集を予約する</h4>
+          <p class="opt__p">エコロジーパークこまつ（<strong>0761-41-1600</strong>、平日8時30分〜17時）に電話かFAXで予約し、<strong>大型ごみ処理券500円</strong>（コンビニ・スーパーなどで販売）を貼って、予約日に家の前へ出します（立ち会い不要）。<strong>予約から収集まで1週間〜1か月</strong>ほどかかります。</p>
+          <p class="opt__work">ご自分で行うこと：電話かFAXで予約・処理券（500円）を買って貼る・予約日に家の前へ出す（電動はバッテリーを外し、JBRC協力店の回収ボックスへ）</p>
+          <p class="opt__src">出典：<a href="https://www.city.komatsu.lg.jp/soshiki/1021/gomi_risaikuru/4/2043.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">小松市「大型ごみ（指定品目）の出し方」</a>・<a href="https://www.city.komatsu.lg.jp/material/files/group/17/oogatagomi_ichiranhyo.pdf" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">大型ごみ指定品目一覧</a>（2026年9月25日確認）</p>
         </div>
         <div class="opt">
           <span class="opt__n num" aria-hidden="true">2</span>
-          <h3 class="opt__t">エコロジーパークこまつへ持ち込む</h3>
-          <p class="opt__p">エコロジーパークこまつ（小松市大野町信三郎谷1）へ自分で持ち込むこともできます。月〜土の8時30分〜16時30分。料金は<strong>50kgまで500円</strong>で、処理券はいりません。搬入申請書を書いて受け付けます。</p>
-          <p class="opt__work">ご自分で行うこと：防犯登録の抹消・車で運ぶ・受付時間内の持ち込み（電動はバッテリーを外して別途回収へ）</p>
-          <p class="opt__src">出典：<a href="https://www.city.komatsu.lg.jp/soshiki/1021/gomi_risaikuru/2/2/1995.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">小松市「ごみの持ち込み」</a>（2026年9月19日確認）</p>
+          <h4 class="opt__t">エコロジーパークこまつへ持ち込む</h4>
+          <p class="opt__p">エコロジーパークこまつ（小松市大野町信三郎谷1）へ自分で持ち込むこともできます。月〜土の8時30分〜16時30分。料金は<strong>50kgまで500円</strong>で、処理券はいりません。搬入申請書を書いて受け付け、荷降ろしはご自分で行います。小松市内で出たごみに限ります。</p>
+          <p class="opt__work">ご自分で行うこと：搬入申請書を用意・車で運ぶ・月〜土8:30〜16:30に持ち込む（電動はバッテリーを外し、JBRC協力店の回収ボックスへ）</p>
+          <p class="opt__src">出典：<a href="https://www.city.komatsu.lg.jp/soshiki/1021/gomi_risaikuru/2/2/1995.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">小松市「エコロジーパークこまつへのごみの持ち込み」</a>（2026年9月25日確認）</p>
         </div>
       </div>
-      
+      <p class="reveal" style="font-size:0.84rem; color:var(--ink-55); margin-top:18px;">※ 電動のバッテリーは自転車と別に処分します。小松市は、リサイクルマークのある小型充電式電池はJBRC協力店（回収ボックス設置店）での回収を案内しています。膨張・変形したものは、ほかの有害ごみと分けて保管・廃棄します。容量が残っていれば、バッテリーだけでも買取の対象です。出典：<a href="https://www.city.komatsu.lg.jp/soshiki/1021/gomi_risaikuru/14274.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">小松市「使用済み小型充電式電池・ボタン電池のリサイクル」</a>（2026年9月25日確認）。市のルールは変わることがあります。出す前に小松市の公式サイトもご確認ください。</p>
     </div>
     </div>
   </section>
 
+  <!-- ご利用の流れ（担当者・速さ・支払いを明記） -->
   <section class="section" id="flow">
-    <div class="wrap" style="max-width:820px;">
+    <div class="wrap" style="max-width:900px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">ご利用の流れ</h2>
       <ol class="timeline reveal">
         <li class="tl">
@@ -209,22 +230,22 @@ navLocal: true
         <li class="tl">
           <span class="tl__n" aria-hidden="true">2</span>
           <div class="tl__body">
-            <h3 class="tl__t">金額を決めてご返信します</h3>
-            <p class="tl__d">幅ではなく確定した金額でお伝えします。値段がつかない場合は、処分費0円の引取と出張費の金額をご案内します。</p>
+            <h3 class="tl__t">確定した金額をご返信します</h3>
+            <p class="tl__d">整備士が査定し、原則48時間以内に確定額をお伝えします（最短30分でお伝えした実績もあります）。「◯円〜◯円」の幅ではなく1つの金額で、有効期限は7日間。写真・情報と現物が一致していれば、金額は変わりません。値段がつかない場合は、処分費0円の引取と出張費の金額をご案内します。</p>
           </div>
         </li>
         <li class="tl">
           <span class="tl__n" aria-hidden="true">3</span>
           <div class="tl__body">
             <h3 class="tl__t">ご納得いただけたら、訪問日を決めます</h3>
-            <p class="tl__d">金額にご納得いただいてから、はじめて日程のご相談に入ります。お断りいただいても費用はかかりません。</p>
+            <p class="tl__d">金額にご納得いただいてから、はじめて日程のご相談に入ります。お断りいただいても費用はかかりません。お伺いするのは、お引き取りの一度だけです。</p>
           </div>
         </li>
         <li class="tl">
           <span class="tl__n" aria-hidden="true">4</span>
           <div class="tl__body">
             <h3 class="tl__t">お引き取り・書類・お支払い</h3>
-            <p class="tl__d">ご自宅までお引き取りに伺います。防犯登録の抹消手続きは当方で代行します。お支払いは現金、30,000円を超える場合は銀行振込です。</p>
+            <p class="tl__d">当日は、自転車安全整備士の資格を持つ代表が一人で伺います（<a href="/about/" style="color:var(--accent-d);">顔写真と経歴</a>）。玄関先で10〜15分ほどで、お家に上がることはありません。運転免許証などの本人確認書類をご用意ください。防犯登録の抹消は当方で代行します（無料）。お支払いは現金、30,000円を超える場合は銀行振込で、当日中にお振り込みします（<a href="/terms/" style="color:var(--accent-d);">ご利用条件</a>）。古物商許可 石川県公安委員会 第511090015059号。</p>
           </div>
         </li>
       </ol>
@@ -238,116 +259,120 @@ navLocal: true
         <div class="genre genre--photo"><img class="genre__photo" src="/images/target/t-road.webp" width="330" height="330" loading="lazy" decoding="async" alt=""><span class="genre__jp">ロード・クロス・MTB</span></div>
         <div class="genre genre--photo"><img class="genre__photo" src="/images/target/t-ebike.webp" width="330" height="330" loading="lazy" decoding="async" alt=""><span class="genre__jp">電動アシスト</span></div>
         <div class="genre genre--photo"><img class="genre__photo" src="/images/target/t-folding.webp" width="330" height="330" loading="lazy" decoding="async" alt=""><span class="genre__jp">ミニベロ・折りたたみ</span></div>
-        <div class="genre genre--photo"><img class="genre__photo" src="/images/works/work-city-fudousha.webp" width="1100" height="505" loading="lazy" decoding="async" alt=""><span class="genre__jp">シティ車・子ども用</span></div>
+        <div class="genre genre--photo"><img class="genre__photo" src="/images/works/work-dbike-2000.webp" width="1200" height="800" loading="lazy" decoding="async" alt=""><span class="genre__jp">子ども用・シティ車</span></div>
       </div>
-      <p class="reveal" style="color:var(--ink-70); font-size:0.92rem; margin-top:16px; max-width:720px;">年式が古くても、コンポーネントが生きていれば値段がつくことがあります。電動アシストはバッテリーの状態、折りたたみはヒンジのガタつきを確認します。値段がつかない車体も、部品として活かせるものは処分費0円でお引き取りします。</p>
+      <p class="reveal" style="color:var(--ink-70); font-size:0.92rem; margin-top:16px; max-width:720px;">年式が古くても、コンポーネントが生きていれば値段がつくことがあります。電動アシストはバッテリーの実容量、折りたたみはヒンジのガタつきを確認します。値段がつかない車体も、部品として活かせるものは処分費0円でお引き取りします（引取だけの場合は出張費のみ）。</p>
     </div>
   </section>
 
-  <!-- 電動アシスト自転車（2026-09-24 追加：地名×電動の節。実績は金沢市の2件を参照） -->
+  <!-- 電動アシスト自転車（09-25：長押し診断に統一、年式不問・バッテリー単体） -->
   <section class="section" id="dendo">
     <div class="wrap" style="max-width:900px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:12px;">小松市で電動アシスト自転車を売るなら</h2>
-      <p class="reveal" style="color:var(--ink-70); font-size:0.94rem; margin-bottom:24px; max-width:640px;">電動アシスト自転車の金額は、年式とバッテリーの状態でほぼ決まります。写真と残量表示（残量ボタン長押しの数値、または残量ランプの点灯数）を送っていただければ、小松市へ伺う前に確定額をお伝えします。</p>
+      <p class="reveal" style="color:var(--ink-70); font-size:0.94rem; margin-bottom:24px; max-width:640px;">年式は問いません。バッテリー単体も買取の対象です。残量ボタンを長押しした動画を送っていただければ、バッテリーの実容量を反映した確定額を、小松市へ伺う前にお伝えします。お持ち込みは不要です。</p>
       <div class="card card--wide reveal">
         <img class="card__img" src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" decoding="async" alt="買い取ったブリヂストン bikke">
         <div class="card__body">
           <h3 style="font-size:1.1rem; margin-bottom:8px;">買取例（金沢市）</h3>
-          <p style="color:var(--ink-70); font-size:0.9rem;">ブリヂストン bikke 2020年式（残量ランプ5点灯・サビ・ブレーキ不良）を <strong>45,000円</strong>、パナソニック ビビ TX 2018年式（サビ多め・実容量約70%）を <strong>10,000円</strong> で買い取りました。<a href="/kanazawa/" style="color:var(--accent-d);">金沢市の買取事例</a>に写真を載せています。金額は1台ごとの状態で決まります。</p>
+          <p style="color:var(--ink-70); font-size:0.9rem;">ブリヂストン bikke 2020年式（長押し診断でランプ5つ・サビ・ブレーキ不良）を <strong>45,000円</strong>、パナソニック ビビ TX 2018年式（サビ多め・実容量約70%）を <strong>10,000円</strong> で買い取りました。<a href="/kanazawa/" style="color:var(--accent-d);">金沢市の買取事例</a>に写真を載せています。金額は1台ごとの状態で決まります。</p>
         </div>
       </div>
       <div class="cols3 reveal">
         <div class="card">
           <h3 style="font-size:1.1rem; margin-bottom:8px;">金額の決まり方</h3>
-          <p style="color:var(--ink-70); font-size:0.9rem;">年式、バッテリーの実容量、鍵・充電器・チャイルドシートの有無を見ます。サビやブレーキの不具合があっても、年式が新しければ値がつきます。</p>
+          <p style="color:var(--ink-70); font-size:0.9rem;">年式、バッテリーの実容量、鍵・充電器・チャイルドシートの有無を見ます。年式は問いません。古くても実容量が残っていれば値がつくことがあります。</p>
         </div>
         <div class="card">
           <h3 style="font-size:1.1rem; margin-bottom:8px;">バッテリーが弱っていても</h3>
-          <p style="color:var(--ink-70); font-size:0.9rem;">実容量を織り込んで査定するので、弱っていても値がつくことがあります。診断のやり方は<a href="/dendo/" style="color:var(--accent-d);">電動アシスト自転車の買取</a>をご覧ください。処分する場合は<a href="/column/battery-disposal/" style="color:var(--accent-d);">電動自転車のバッテリー処分方法【石川版】</a>をご覧ください。</p>
+          <p style="color:var(--ink-70); font-size:0.9rem;">実容量を織り込んで査定するので、弱っていても値がつくことがあります。診断のやり方は<a href="/column/battery-check/" style="color:var(--accent-d);">動画で紹介しています</a>。水につかったバッテリーも、動作すれば査定します（膨張・液漏れ・破損したものは安全上お受けできません）。</p>
         </div>
         <div class="card">
           <h3 style="font-size:1.1rem; margin-bottom:8px;">送っていただく写真</h3>
-          <p style="color:var(--ink-70); font-size:0.9rem;">車体全体、バッテリーまわり、残量表示の3枚があれば査定できます。ご来店やお持ち込みは不要で、小松市まで伺います。</p>
+          <p style="color:var(--ink-70); font-size:0.9rem;">車体全体、バッテリーまわり、残量表示の3枚があれば、まずは査定できます。長押し診断の動画があれば実容量を反映できます。お持ち込みは不要で、小松市まで伺います。</p>
         </div>
+      </div>
+      <div class="cta-row reveal">
+        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
       </div>
     </div>
   </section>
 
-  <!-- 買取価格と出張費（2026-09-24 再設計：上にポイント3つ、下に本文＋料金表） -->
+  <!-- 金額の決まり方と出張費（09-25：目安5行を追加、重複カード3枚は流れに一本化、出張費は地区別） -->
   <section class="section section--alt">
-    <div class="wrap" style="max-width:980px;">
-      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">小松市の買取価格と出張費</h2>
-      <div class="pts reveal">
-        <div class="pt"><span class="pt__k">幅ではなく1つの金額</span><p>LINEで写真を拝見してから、同型車の直近の相場を基準に状態を確認して算出します。「◯円〜◯円」という出し方はしません。</p></div>
-        <div class="pt"><span class="pt__k">金額は7日間有効</span><p>写真・情報と現物が一致していれば、お伝えした金額は変わりません。</p></div>
-        <div class="pt"><span class="pt__k">訪問はご納得のあとだけ</span><p>査定のためだけに伺うことはありません。お支払いは現金、30,000円を超える場合は銀行振込です（<a href="/terms/" style="color:var(--accent-d);">ご利用条件</a>）。</p></div>
-      </div>
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">小松市での金額の決まり方と出張費</h2>
       <div class="fee reveal">
         <div>
-          <h3>小松市への出張費と引き取り</h3>
-          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体を引き取る場合のみです。</p>
-          <h4>小松市の出張費（値段がつかない場合のみ）</h4>
-          <p>かほく市役所から小松市の小松駅周辺でおよそ45km、市の南部・山間部はさらに遠くなります。地区によって距離が変わるため、町名をお知らせいただければ、お伺いする前に出張費をお伝えします。</p>
+          <h3>買取価格の目安</h3>
+          <p>目安は下限です。確定額は写真を拝見して、1台ずつお出しします。電動アシストは、バッテリーの実容量で金額が大きく変わります。「◯円〜◯円」の幅ではなく1つの金額でお伝えし、7日間有効です。</p>
+        </div>
+        <div class="card">
+          <table class="rate">
+            <thead><tr><th>車種・状態</th><th>買取価格の目安</th></tr></thead>
+            <tbody>
+              <tr><td>電動アシスト（バッテリー良好）</td><td class="num">20,000円〜</td></tr>
+              <tr><td>電動アシスト（劣化あり）・バッテリー単体</td><td class="num">3,000円〜</td></tr>
+              <tr><td>ロードバイク（105・Tiagra など）</td><td class="num">30,000円〜</td></tr>
+              <tr><td>クロスバイク（人気ブランド・美品）</td><td class="num">10,000円〜</td></tr>
+              <tr><td>ママチャリ（美品）</td><td class="num">1,000円〜</td></tr>
+            </tbody>
+          </table>
+          <p class="fee__note">車種ごとの詳しい目安は <a href="/souba/" style="color:var(--accent-d);">買取相場</a> をご覧ください。</p>
+        </div>
+      </div>
+      <div class="fee reveal" style="margin-top:clamp(28px,4vw,40px);">
+        <div>
+          <h3>小松市の出張費（値段がつかない場合のみ）</h3>
+          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>買取と一緒なら、値段がつかない車体も出張費0円でお引き取りします。現物を見たうえでお断りいただいた場合も、費用はいただきません。</p>
+          <p>かほく市役所から小松駅周辺までおよそ48kmで、小松駅周辺・安宅・小松空港周辺などは<strong>{{ km.range }}</strong>です。木場・符津・粟津・那谷・尾小屋など南部は片道50kmを超えるため応相談です。町名をお知らせいただければ、お伺いする前に金額をお伝えします。</p>
           <p class="fee__note">※ 出張費は訪問というお仕事に対する費用で、引き取る台数や種類とは連動しません。ガソリン代により改定する場合があります。</p>
         </div>
         <div class="card">
           <p style="font-size:0.85rem; color:var(--ink-55); margin-bottom:10px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
-          <table class="rate">
-              <thead><tr><th>片道距離</th><th>出張費の目安</th></tr></thead>
-              <tbody>
-                <tr><td>〜10km</td><td class="num">1,000円</td></tr>
-                <tr><td>10〜20km</td><td class="num">1,500円</td></tr>
-                <tr><td>20〜30km</td><td class="num">2,000円</td></tr>
-                <tr><td>30〜40km</td><td class="num">2,500円</td></tr>
-                <tr><td>40〜50km</td><td class="num">3,000円</td></tr>
-                <tr><td>50km超</td><td class="num" style="color:var(--ink-40)">応相談</td></tr>
-              </tbody>
-            </table>
+          {% set feeTableHead = "片道距離" %}{% set feeHighlight = ["3,000円"] %}{% include "fee-table.njk" %}
+          <p class="fee__note">黄色の段が小松市の市街地に当たる距離です（南部は50km超）。全体の料金は <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> をご覧ください。</p>
         </div>
       </div>
     </div>
   </section>
 
-
-  <!-- 地域のお客様へ -->
+  <!-- 地域のお客様へ（09-25：転勤需要・空港・木場潟の推測を、小松市の人の役に立つ事実に） -->
   <section class="section">
-    <div class="wrap split">
-      <div class="stack reveal split__head">
-        <h2 style="font-size:clamp(1.6rem,4vw,2.2rem)">小松市にお住まいの方へ</h2>
-      </div>
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.6rem,4vw,2.2rem); margin-bottom:24px;">小松市にお住まいの方へ</h2>
       <div class="reveal local-grid">
         <div>
-          <h3 style="font-size:1.1rem; margin-bottom:8px;">コマツ発祥・工業都市の転勤需要</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem;">小松市はコマツ（建設機械）の創業地として知られる工業都市です。大手工場関連の単身赴任や転勤者が多く住む地域で、赴任の終わりや引越しのタイミングで自転車を手放したいというご相談が寄せられます。</p>
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">小松市の買取例</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">2026年9月、小松市でピストバイク（LEADER 721・2020年式・パンクなど要部品交換）を 20,000円で買い取りました。修理が必要な状態でも、スポーツ車は相場から値がつきます。<a href="/works/" style="color:var(--accent-d);">実績一覧</a>に写真を載せています。</p>
         </div>
         <div>
-          <h3 style="font-size:1.1rem; margin-bottom:8px;">小松空港周辺の住宅地</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem;">小松空港の周辺には住宅地が広がっています。転勤が多い地域柄、引越し時に自転車を持って行けないというケースが多く、スポーツ自転車から電動アシスト自転車まで幅広く査定しています。</p>
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">地区別の出張費（引取だけの場合）</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">かほく市役所から、小松駅周辺・安宅・小松空港周辺で約47〜50km（3,000円）、木場・符津・粟津・那谷・尾小屋など南部は50kmを超えます（応相談）。買取なら、距離にかかわらず出張費は0円です。</p>
         </div>
         <div>
-          <h3 style="font-size:1.1rem; margin-bottom:8px;">木場潟・那谷寺周辺の環境</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem;">木場潟公園のサイクリングロード近くに住む方からスポーツ自転車の査定依頼をいただくこともあります。使わなくなったロードバイクやクロスバイクの買取をご検討の方もお気軽にどうぞ。</p>
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">バッテリーだけ処分したいとき</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">集積所には出せません。小松市はJBRC協力店（回収ボックス設置店）での回収を案内しています。膨張・変形したものは、ほかの有害ごみと分けて保管・廃棄します。容量が残っていれば、バッテリー単体でも買取の対象です。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FAQ -->
+  <!-- FAQ（JSON-LD と同じ文にそろえる） -->
   <section class="section section--alt">
-    <div class="wrap" style="max-width:840px;">
+    <div class="wrap" style="max-width:900px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">小松市の方からのよくあるご質問</h2>
       <div class="faq-acc reveal">
         <details class="faq-item">
           <summary>小松市で自転車を捨てるにはどうすればいいですか。</summary>
-          <div class="faq-item__a"><p>小松市では、自転車は大きさに関係なく「大型ごみ」で、集積所には出せません。エコロジーパークこまつ（0761-41-1600）に予約して大型ごみ処理券（500円）を貼って出すか、エコロジーパークこまつへ持ち込みます（50kgまで500円）。予約から収集まで1週間〜1か月かかるため、その前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。</p></div>
+          <div class="faq-item__a"><p>小松市では、自転車は大きさに関係なく「大型ごみ」で、集積所には出せません。エコロジーパークこまつ（0761-41-1600）に予約して大型ごみ処理券（500円）を貼って家の前に出すか、エコロジーパークこまつへ持ち込みます（50kgまで500円）。予約から収集まで1週間〜1か月かかるため、その前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。</p></div>
         </details>
         <details class="faq-item">
           <summary>小松市まで来てもらえますか。</summary>
-          <div class="faq-item__a"><p>はい、伺います。かほく市役所から小松駅周辺までおよそ45kmです。</p></div>
+          <div class="faq-item__a"><p>はい、市内全域に伺います。小松市でもピストバイクを買い取っています。かほく市役所から小松駅周辺までおよそ48kmです。買取なら出張費はかかりません。</p></div>
         </details>
         <details class="faq-item">
           <summary>小松市の出張費はいくらですか。</summary>
-          <div class="faq-item__a"><p>小松市は地区によって距離が異なるため、町名をお知らせいただければ計算してご案内します。買取なら出張費は無料です。</p></div>
+          <div class="faq-item__a"><p>買取なら無料です。買取と一緒なら、値段がつかない車体も出張費0円でお引き取りします。出張費がかかるのは、値段がつかない車体の引取（処分）だけで伺う場合のみで、小松駅周辺・安宅・小松空港周辺などは3,000円、木場・粟津・那谷など片道50kmを超える南部は応相談です。町名をお知らせいただければ、伺う前に金額をお伝えします。</p></div>
         </details>
         <details class="faq-item">
           <summary>買取をお願いする場合も出張費はかかりますか。</summary>
@@ -355,7 +380,11 @@ navLocal: true
         </details>
         <details class="faq-item">
           <summary>値段がつかない自転車でも引き取ってもらえますか。</summary>
-          <div class="faq-item__a"><p>部品として活かせるものは処分費0円でお引き取りします（出張費のみいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。</p></div>
+          <div class="faq-item__a"><p>部品として活かせるものは処分費0円でお引き取りします（引取だけの場合は出張費をいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準は<a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a>のページに記載しています。</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>古い自転車でも売れますか。</summary>
+          <div class="faq-item__a"><p>年式だけでお断りはしていません。電動アシストはバッテリーの実容量、スポーツ車は部品の状態で値段がつくことがあります。写真を送っていただければ、値段がつくかどうかを無料でお調べします。</p></div>
         </details>
         <details class="faq-item">
           <summary>電動アシスト自転車も査定してもらえますか。</summary>
@@ -363,11 +392,7 @@ navLocal: true
         </details>
         <details class="faq-item">
           <summary>防犯登録の抹消はどうなりますか。</summary>
-          <div class="faq-item__a"><p>こちらで代行します。費用はいただきません。防犯登録カードが手元になくても対応できることが多いので、まずは状況をお知らせください。</p></div>
-        </details>
-        <details class="faq-item">
-          <summary>小松市で電動アシスト自転車はいくらで売れますか。</summary>
-          <div class="faq-item__a"><p>年式とバッテリーの状態で決まります。金沢市では2020年式のブリヂストン bikke を45,000円、2018年式のパナソニック ビビ TX を10,000円で買い取りました。写真と残量表示を送っていただければ、伺う前に確定額をお伝えします。</p></div>
+          <div class="faq-item__a"><p>こちらで代行します。費用はいただきません。登録カードが見当たらない場合も、まずは状況をお知らせください。登録協会に確認して進め方をご案内します。</p></div>
         </details>
       </div>
     </div>
@@ -377,18 +402,19 @@ navLocal: true
   <section class="section cta" id="contact">
     <div class="wrap stack reveal" style="max-width:620px;">
       <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">小松市の査定・引き取りのご相談</h2>
-      <p class="lead">写真とお住まいの町名をお送りいただければ、確定額と出張費をあわせてお返事します。</p>
+      <p class="lead">写真とお住まいの町名をお送りいただければ、確定額をお返事します（値段がつかない場合は出張費も）。</p>
       <div style="display:flex; justify-content:center;">
         <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
       </div>
-      <p style="font-size:0.8rem; color:var(--ink-40);">※お引き取りできない車体もあります → <a href="/terms/" style="color:var(--accent-d);">ご利用条件</a></p>
+      <p style="font-size:0.88rem; color:var(--ink-70);">タップするとLINEが開き、メッセージが入力済みです。写真を添えて送るだけ。査定だけ・お断りも無料です。LINEを使っていない方は、メール（<a href="mailto:info@meguri-cycle.com" style="color:var(--accent-d);">info@meguri-cycle.com</a>）でもご相談いただけます。</p>
+      <p style="font-size:0.8rem; color:var(--ink-40);">※お引き取りできない車体もあります → <a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a></p>
     </div>
   </section>
 
   <!-- 関連ページ（内部リンク） -->
   <section class="section" style="padding-top:0;">
-    <div class="wrap" style="max-width:620px;">
-      <p style="font-size:0.88rem; color:var(--ink-55);">関連：<a href="/price/" style="color:var(--accent-d);">料金・出張費</a> ／ <a href="/brands/" style="color:var(--accent-d);">買取強化ブランド一覧</a> ／ <a href="/hikitori/" style="color:var(--accent-d);">出張引き取り（処分費0円）</a> ／ <a href="/area/" style="color:var(--accent-d);">対応エリア一覧</a></p>
+    <div class="wrap" style="max-width:900px;">
+      <p style="font-size:0.88rem; color:var(--ink-55);">関連：<a href="/works/" style="color:var(--accent-d);">買取・引取の実績</a> ／ <a href="/souba/" style="color:var(--accent-d);">買取相場</a> ／ <a href="/dendo/" style="color:var(--accent-d);">電動アシスト自転車の買取</a> ／ <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> ／ <a href="/hikitori/" style="color:var(--accent-d);">出張引き取り（処分費0円）</a> ／ <a href="/nomi/" style="color:var(--accent-d);">能美市</a> ／ <a href="/kaga/" style="color:var(--accent-d);">加賀市</a> ／ <a href="/area/" style="color:var(--accent-d);">対応エリア一覧</a></p>
     </div>
   </section>
 
