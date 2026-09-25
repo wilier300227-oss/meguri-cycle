@@ -69,7 +69,7 @@ navLocal: true
       {
         "@type": "Question",
         "name": "富山市の出張費はいくらですか。",
-        "acceptedAnswer": { "@type": "Answer", "text": "買取なら無料です。値段がつかない車体のお引き取りは、富山市では行っていません（全域が片道50kmを超え、出張費が市の無料収集より高くなるため）。その場合は、市の燃やせないごみの出し方をご案内します。" }
+        "acceptedAnswer": { "@type": "Answer", "text": "富山市は広い市域のため地区によって距離が大きく変わります。町名をお知らせいただければ計算してご案内します。買取なら出張費は無料です。" }
       },
       {
         "@type": "Question",
@@ -78,8 +78,8 @@ navLocal: true
       },
       {
         "@type": "Question",
-        "name": "値段がつかなかったら、いちばん安く手放す方法は何ですか。",
-        "acceptedAnswer": { "@type": "Answer", "text": "富山市の燃やせないごみです。「ごみ・不要」と貼って月2回の収集日の朝8時までに集積場へ出せば無料です。防犯登録の抹消は警察署か自転車店で済ませてください。当方では、富山市の値段がつかない車体のお引き取りは行っていません。" }
+        "name": "値段がつかない自転車でも引き取ってもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "部品として活かせるものは無償でお引き取りします。処分費はいただきません。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。" }
       },
       {
         "@type": "Question",
@@ -148,7 +148,7 @@ navLocal: true
         <span class="cmp-badge tb-best__tag">おすすめ</span>
         <div>
           <h3>捨てる前に、写真で値段を確かめる</h3>
-          <p>写真を送っていただければ、整備士が原則48時間以内に確定額をお返事します。値段がつけば、運ぶ手間なしでお金になり、出張費も0円です。富山県では処分する自転車も防犯登録の抹消が必要ですが、お引き取りの場合は委任状をいただいてこちらで済ませます。値段がつかない車体のお引き取りは、富山市では行っていません（往復130kmの出張費が、市の無料収集より高くなるため）。その場合は、市の燃やせないごみの出し方をご案内します。</p>
+          <p>写真を送っていただければ、整備士が原則48時間以内に確定額をお返事します。値段がつけば、運ぶ手間なしでお金になり、出張費も0円です。富山県では処分する自転車も防犯登録の抹消が必要ですが、お引き取りの場合は委任状をいただいてこちらで済ませます。値段がつかない場合は、町名を伺ってから引取の出張費をお伝えします。市の燃やせないごみ（無料）に出す方法もあわせてご案内します。</p>
         </div>
         <ul class="tb-best__pts">
           <li>値段がつけば買取。査定も出張費も0円</li>
@@ -326,20 +326,25 @@ navLocal: true
       </div>
       <div class="fee reveal" style="margin-top:clamp(28px,4vw,40px);">
         <div>
-          <h3>富山市の出張費</h3>
-          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。かほく市役所から富山駅周辺までおよそ66kmですが、買取なら距離にかかわらず出張費は0円です。</p>
-          <p>値段がつかない車体のお引き取りは、富山市では行っていません。全域が片道50kmを超え、出張費が市の燃やせないごみ（無料）や戸別有料収集（30kgまで2,090円）より高くなるためです。その場合は、市の出し方をご案内します（上の「ご自分で処分する方法」）。</p>
-          <p class="fee__note">※ 石川県内と富山県西部の出張費は <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> をご覧ください。</p>
+          <h3>富山市への出張費と引き取り</h3>
+          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体を引き取る場合のみです。</p>
+          <h4>富山市は町名を伺ってから金額を確定します</h4>
+          <p>富山市は富山駅周辺でおよそ66km、南部・山間部はさらに遠くなります。市（町）内でも地区によって距離が変わりますので、市全体で一律の金額は設けていません。町名をお知らせいただければ、こちらで距離を計算して金額を確定し、お伺いする前にお伝えします。出張費は訪問というお仕事に対する費用で、引き取る車体の台数や種類とは連動しません。</p>
+          <p class="fee__note">※ 出張費は訪問というお仕事に対する費用で、引き取る台数や種類とは連動しません。ガソリン代により改定する場合があります。</p>
         </div>
         <div class="card">
+          <p style="font-size:0.85rem; color:var(--ink-55); margin-bottom:10px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
           <table class="rate">
-            <thead><tr><th>富山市での対応</th><th>費用</th></tr></thead>
-            <tbody>
-              <tr class="is-hi"><td>値段がつく車体（買取）</td><td class="num">出張費0円</td></tr>
-              <tr><td>値段がつかない車体</td><td class="num" style="color:var(--ink-40)">市の収集をご案内</td></tr>
-            </tbody>
-          </table>
-          <p class="fee__note">写真を送っていただければ、どちらになるかを無料でお調べします。</p>
+              <thead><tr><th>片道距離</th><th>出張費の目安</th></tr></thead>
+              <tbody>
+                <tr><td>〜10km</td><td class="num">1,000円</td></tr>
+                <tr><td>10〜20km</td><td class="num">1,500円</td></tr>
+                <tr><td>20〜30km</td><td class="num">2,000円</td></tr>
+                <tr><td>30〜40km</td><td class="num">2,500円</td></tr>
+                <tr><td>40〜50km</td><td class="num">3,000円</td></tr>
+                <tr><td>50km超</td><td class="num" style="color:var(--ink-40)">応相談</td></tr>
+              </tbody>
+            </table>
         </div>
       </div>
     </div>
@@ -381,15 +386,15 @@ navLocal: true
         </details>
         <details class="faq-item">
           <summary>富山市の出張費はいくらですか。</summary>
-          <div class="faq-item__a"><p>買取なら無料です。値段がつかない車体のお引き取りは、富山市では行っていません（全域が片道50kmを超え、出張費が市の無料収集より高くなるため）。その場合は、市の燃やせないごみの出し方をご案内します。</p></div>
+          <div class="faq-item__a"><p>富山市は広い市域のため地区によって距離が大きく変わります。町名をお知らせいただければ計算してご案内します。買取なら出張費は無料です。</p></div>
         </details>
         <details class="faq-item">
           <summary>買取をお願いする場合も出張費はかかりますか。</summary>
           <div class="faq-item__a"><p>かかりません。買取のご依頼であれば、オンライン査定もお引き取りに伺う出張費も無料です。現物を見たうえでお断りいただいた場合も、費用はいただきません。</p></div>
         </details>
         <details class="faq-item">
-          <summary>値段がつかなかったら、いちばん安く手放す方法は何ですか。</summary>
-          <div class="faq-item__a"><p>富山市の燃やせないごみです。「ごみ・不要」と貼って月2回の収集日の朝8時までに集積場へ出せば無料です。防犯登録の抹消は警察署か自転車店で済ませてください。当方では、富山市の値段がつかない車体のお引き取りは行っていません。</p></div>
+          <summary>値段がつかない自転車でも引き取ってもらえますか。</summary>
+          <div class="faq-item__a"><p>部品として活かせるものは無償でお引き取りします。処分費はいただきません。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準は<a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a>のページに記載しています。</p></div>
         </details>
         <details class="faq-item">
           <summary>古い自転車でも売れますか。</summary>
@@ -420,7 +425,6 @@ navLocal: true
         <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
       </div>
       <p style="font-size:0.88rem; color:var(--ink-70);">タップするとLINEが開き、メッセージが入力済みです。写真を添えて送るだけ。査定だけ・お断りも無料です。LINEを使っていない方は、メール（<a href="mailto:info@meguri-cycle.com" style="color:var(--accent-d);">info@meguri-cycle.com</a>）でもご相談いただけます。</p>
-      <p style="font-size:0.8rem; color:var(--ink-40);">※値段がつかない車体のお引き取りは富山市では行っていません → <a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a></p>
     </div>
   </section>
 
