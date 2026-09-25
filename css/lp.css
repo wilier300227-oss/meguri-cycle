@@ -159,6 +159,7 @@ h1, h2, h3 {
 @media (min-width: 860px) { .local-grid { grid-template-columns: repeat(3, 1fr); } }
 .local-grid h3 { font-size: 1rem; margin-bottom: 6px; }
 @media (min-width: 860px) { .local-grid--4 { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 860px) { .local-grid--two { grid-template-columns: repeat(2, 1fr); } } /* 地域欄が2段のページ（珠洲、2026-09-25） */
 .local-grid ul { color: var(--ink-70); font-size: 0.88rem; line-height: 1.7; padding-left: 1.1em; margin: 0 0 8px; }
 .local-grid p { font-size: 0.9rem !important; }
 /* 電動の節：買取例は横長カード（写真左・文右）を上に、残り3枚を横並び */
