@@ -140,6 +140,8 @@ h1, h2, h3 {
 @media (min-width: 860px) { .tb-best { grid-template-columns: minmax(0,1.1fr) minmax(0,0.9fr); align-items: center; } }
 .tb-best__tag { position: absolute; right: 14px; top: 14px; margin: 0; }
 .tb-best h3 { font-size: clamp(1.15rem,2.6vw,1.4rem); margin-bottom: 8px; line-height: 1.35; }
+.tb-best h3 { padding-right: 5.5rem; } /* 「おすすめ」タグが見出しに重ならないように（320px、2026-09-25 射水レビュー B2） */
+@media (min-width: 860px) { .tb-best h3 { padding-right: 0; } .tb-best__pts { padding-top: 1.9rem; } } /* 860px ではタグが右列1行目に重なるため */
 .tb-best p { color: var(--ink-70); font-size: 0.92rem; line-height: 1.75; margin: 0; }
 .tb-best__pts { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .tb-best__pts li { position: relative; padding-left: 1.6em; font-size: 0.9rem; font-weight: 600; color: var(--ink); line-height: 1.5; }
