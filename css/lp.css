@@ -120,6 +120,8 @@ h1, h2, h3 {
 /* ---------- 地域ページ（2026-09-24 再設計：トップと同じ部品で） ---------- */
 .hero--city { min-height: 0; }
 .hero--city .hero__inner { padding-top: clamp(64px, 9vw, 104px); padding-bottom: clamp(44px, 6vw, 72px); }
+/* 2026-09-25 オーナー決定：市町ページのヒーロー写真（Gemini 生成）に「写真はイメージです」を付ける */
+.hero__imgnote { position: absolute; right: 12px; bottom: 8px; z-index: 2; font-size: 0.68rem; letter-spacing: 0.04em; color: rgba(255,255,255,0.62); pointer-events: none; }
 .hero__bg--city { position: absolute; inset: 0; z-index: 0; background: url('/images/compare/cmp-meguri.webp') center 45% / cover no-repeat; }
 .hero--city h1 { font-size: clamp(1.9rem, 5vw, 3rem); }
 /* 手放す方法：3つの選び方（査定に出す＝黄色で強調、比較表と同じ色） */
