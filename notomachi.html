@@ -69,7 +69,7 @@ navLocal: true
       {
         "@type": "Question",
         "name": "能登町の出張費はいくらですか。",
-        "acceptedAnswer": { "@type": "Answer", "text": "買取なら無料です。出張費がかかるのは、値段がつかない車体の引取（処分）だけで伺う場合のみです。能登町は全域が片道50kmを超えるため、地区名（宇出津・小木・松波・柳田など）を伺ってから、伺う前に金額をお伝えします。買取と一緒なら、値段がつかない車体も出張費0円でお引き取りします。" }
+        "acceptedAnswer": { "@type": "Answer", "text": "地区によって距離が異なります。町名をお知らせいただければ計算してご案内します。買取なら出張費は無料です。" }
       },
       {
         "@type": "Question",
@@ -142,7 +142,7 @@ navLocal: true
         </div>
         <ul class="tb-best__pts">
           <li>値段がつけば買取。査定も出張費も0円</li>
-          <li>買取と一緒なら、値段がつかない車体も出張費0円で引取</li>
+          <li>つかなくても処分費0円で引取（出張費のみ）</li>
           <li>防犯登録の抹消はこちらで代行</li>
           <li>電動はバッテリーごと。容量が残っていれば値がつきます</li>
           <li>運ぶ・電話で申し込む手間なし。ご自宅で完結</li>
@@ -199,7 +199,7 @@ navLocal: true
           </tbody>
         </table>
       </div>
-      <p class="reveal" style="font-size:0.84rem; color:var(--ink-55); margin-top:12px;">能登町では、値段がつかない車体を引き取るだけの出張費は、持ち込みより高くなるのがふつうです。車で運べる方は、持ち込みがいちばん安く済みます。買取と一緒なら、値段がつかない車体も出張費0円でお引き取りします。</p>
+      <p class="reveal" style="font-size:0.84rem; color:var(--ink-55); margin-top:12px;">能登町では、値段がつかない車体を引き取るだけの出張費は、持ち込みより高くなるのがふつうです。車で運べる方は、持ち込みがいちばん安く済みます。</p>
 
       <h3 class="tb-sub reveal" style="margin-top:clamp(32px,5vw,48px);">値段がつかなかった場合に、ご自分で処分する方法</h3>
       <div class="opts opts--self reveal">
@@ -295,21 +295,25 @@ navLocal: true
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">能登町の出張費</h2>
       <div class="fee reveal">
         <div>
-          <h3>引取の出張費は、地区名を伺ってからお伝えします</h3>
-          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。</p>
-          <p>かほく市役所から宇出津まで約105km、町内はおよそ95〜115kmです（片道）。町内全域が料金表の「50km超」にあたるため、値段がつかない車体の引取だけの場合の出張費は、地区名（宇出津・小木・松波・柳田など）を伺ってから、伺う前にお伝えします。買取と一緒なら、値段がつかない車体も出張費0円でお引き取りします。</p>
+          <h3>能登町への出張費と引き取り</h3>
+          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体を引き取る場合のみです。</p>
+          <h4>能登町は町名を伺ってから金額を確定します</h4>
+          <p>能登町は宇出津地区でおよそ105kmです。市（町）内でも地区によって距離が変わりますので、市全体で一律の金額は設けていません。町名をお知らせいただければ、こちらで距離を計算して金額を確定し、お伺いする前にお伝えします。出張費は訪問というお仕事に対する費用で、引き取る車体の台数や種類とは連動しません。</p>
           <p class="fee__note">※ 出張費は訪問というお仕事に対する費用で、引き取る台数や種類とは連動しません。ガソリン代により改定する場合があります。</p>
         </div>
         <div class="card">
+          <p style="font-size:0.85rem; color:var(--ink-55); margin-bottom:10px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
           <table class="rate">
-            <thead><tr><th>能登町（約95〜115km）</th><th>出張費</th></tr></thead>
-            <tbody>
-              <tr class="is-hi"><td>買取</td><td class="num">0円</td></tr>
-              <tr><td>買取と一緒に引取</td><td class="num">0円</td></tr>
-              <tr><td>引取だけ（値段がつかない車体）</td><td class="num">応相談</td></tr>
-            </tbody>
-          </table>
-          <p class="fee__note">ほかの市町の出張費は <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> をご覧ください。</p>
+              <thead><tr><th>片道距離</th><th>出張費の目安</th></tr></thead>
+              <tbody>
+                <tr><td>〜10km</td><td class="num">1,000円</td></tr>
+                <tr><td>10〜20km</td><td class="num">1,500円</td></tr>
+                <tr><td>20〜30km</td><td class="num">2,000円</td></tr>
+                <tr><td>30〜40km</td><td class="num">2,500円</td></tr>
+                <tr><td>40〜50km</td><td class="num">3,000円</td></tr>
+                <tr><td>50km超</td><td class="num" style="color:var(--ink-40)">応相談</td></tr>
+              </tbody>
+            </table>
         </div>
       </div>
     </div>
@@ -351,7 +355,7 @@ navLocal: true
         </details>
         <details class="faq-item">
           <summary>能登町の出張費はいくらですか。</summary>
-          <div class="faq-item__a"><p>買取なら無料です。出張費がかかるのは、値段がつかない車体の引取（処分）だけで伺う場合のみです。能登町は全域が片道50kmを超えるため、地区名（宇出津・小木・松波・柳田など）を伺ってから、伺う前に金額をお伝えします。買取と一緒なら、値段がつかない車体も出張費0円でお引き取りします。</p></div>
+          <div class="faq-item__a"><p>地区によって距離が異なります。町名をお知らせいただければ計算してご案内します。買取なら出張費は無料です。</p></div>
         </details>
         <details class="faq-item">
           <summary>買取をお願いする場合も出張費はかかりますか。</summary>

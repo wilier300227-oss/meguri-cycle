@@ -64,12 +64,12 @@ navLocal: true
       {
         "@type": "Question",
         "name": "粗大ごみに出す前に、値段がつくか見てもらえますか。",
-        "acceptedAnswer": { "@type": "Answer", "text": "はい。LINEで写真を送っていただければ無料で査定します。値段がつけば買取として代金をお支払いし、出張費もかかりません。値段がつかない車体でも、部品として活かせるものは処分費0円でお引き取りします（出張費1,000円のみ。買取と一緒なら出張費も0円）。" }
+        "acceptedAnswer": { "@type": "Answer", "text": "はい。LINEで写真を送っていただければ無料で査定します。値段がつけば買取として代金をお支払いし、出張費もかかりません。値段がつかない車体でも、部品として活かせるものは処分費0円でお引き取りします（出張費1,000円のみ）。" }
       },
       {
         "@type": "Question",
         "name": "かほく市内の出張費はいくらですか。",
-        "acceptedAnswer": { "@type": "Answer", "text": "買取のご依頼なら無料です。値段がつかない車体を引き取るだけの場合は、かほく市内は一律1,000円です（宇ノ気・七塚・高松、どの地区でも同じです）。" }
+        "acceptedAnswer": { "@type": "Answer", "text": "買取のご依頼なら無料です。値段がつかない車体を引き取る場合は、かほく市内なら1,000円です（かほく市役所から片道10km以内の区分）。" }
       },
       {
         "@type": "Question",
@@ -313,14 +313,23 @@ navLocal: true
       <div class="fee reveal">
         <div>
           <h3>かほく市内の出張費</h3>
-          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>1台でも値段がつけば、値段がつかない車体も出張費0円で一緒にお引き取りします。金額を見てお断りいただいても、費用はかかりません。</p>
-          <p>値段がつかない車体を引き取るだけの場合のみ、出張費がかかります。<strong>かほく市内は一律1,000円</strong>です（宇ノ気・七塚・高松、どの地区でも同じです）。</p>
+          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>金額を見てお断りいただいても、費用はかかりません。</p>
+          <p>値段がつかない車体を引き取る場合のみ、出張費がかかります。<strong>かほく市内は1,000円</strong>です（かほく市役所から片道10km以内の区分）。</p>
           <p class="fee__note">※ ほかの市町の出張費は<a href="/price/" style="color:var(--accent-d);">料金・出張費</a>をご覧ください。出張費は訪問というお仕事に対する費用で、引き取る台数や種類とは連動しません。</p>
         </div>
         <div class="card">
           <p style="font-size:0.85rem; color:var(--ink-55); margin-bottom:10px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
-          {% set feeTableHead = "片道距離" %}{% set feeHighlight = ["1,000円"] %}{% include "fee-table.njk" %}
-          <p class="fee__note">黄色の段がかほく市内です。全体の料金は <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> をご覧ください。</p>
+          <table class="rate">
+            <thead><tr><th>片道距離</th><th>出張費の目安</th></tr></thead>
+            <tbody>
+              <tr><td>〜10km（かほく市内）</td><td class="num">1,000円</td></tr>
+              <tr><td>10〜20km</td><td class="num">1,500円</td></tr>
+              <tr><td>20〜30km</td><td class="num">2,000円</td></tr>
+              <tr><td>30〜40km</td><td class="num">2,500円</td></tr>
+              <tr><td>40〜50km</td><td class="num">3,000円</td></tr>
+              <tr><td>50km超</td><td class="num" style="color:var(--ink-40)">応相談</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -358,11 +367,11 @@ navLocal: true
         </details>
         <details class="faq-item">
           <summary>粗大ごみに出す前に、値段がつくか見てもらえますか。</summary>
-          <div class="faq-item__a"><p>はい。LINEで写真を送っていただければ無料で査定します。値段がつけば買取として代金をお支払いし、出張費もかかりません。値段がつかない車体でも、部品として活かせるものは処分費0円でお引き取りします（出張費1,000円のみ。買取と一緒なら出張費も0円）。</p></div>
+          <div class="faq-item__a"><p>はい。LINEで写真を送っていただければ無料で査定します。値段がつけば買取として代金をお支払いし、出張費もかかりません。値段がつかない車体でも、部品として活かせるものは処分費0円でお引き取りします（出張費1,000円のみ）。</p></div>
         </details>
         <details class="faq-item">
           <summary>かほく市内の出張費はいくらですか。</summary>
-          <div class="faq-item__a"><p>買取のご依頼なら無料です。値段がつかない車体を引き取るだけの場合は、かほく市内は一律1,000円です（宇ノ気・七塚・高松、どの地区でも同じです）。</p></div>
+          <div class="faq-item__a"><p>買取のご依頼なら無料です。値段がつかない車体を引き取る場合は、かほく市内なら1,000円です（かほく市役所から片道10km以内の区分）。</p></div>
         </details>
         <details class="faq-item">
           <summary>電動アシスト自転車も見てもらえますか。</summary>
