@@ -68,7 +68,7 @@ ctaUrl: "/line/toyama/"
       {
         "@type": "Question",
         "name": "富山市の出張費はいくらですか。",
-        "acceptedAnswer": { "@type": "Answer", "text": "買取なら無料です。値段がつかない車体の引取（処分）だけは出張費がかかり、富山市は全域が片道50kmを超えるため応相談です。市の燃やせないごみなら無料で出せるので、値段がつかない車体の引取は無理にはおすすめしません。" }
+        "acceptedAnswer": { "@type": "Answer", "text": "買取なら無料です。値段がつかない車体のお引き取りは、富山市では行っていません（全域が片道50kmを超え、出張費が市の無料収集より高くなるため）。その場合は、市の燃やせないごみの出し方をご案内します。" }
       },
       {
         "@type": "Question",
@@ -78,7 +78,7 @@ ctaUrl: "/line/toyama/"
       {
         "@type": "Question",
         "name": "値段がつかなかったら、いちばん安く手放す方法は何ですか。",
-        "acceptedAnswer": { "@type": "Answer", "text": "富山市の燃やせないごみです。「ごみ・不要」と貼って月2回の収集日の朝8時までに集積場へ出せば無料です。防犯登録の抹消は警察署か自転車店で済ませてください。当方の引取は富山市だと出張費がかかるため、無理にはおすすめしません。" }
+        "acceptedAnswer": { "@type": "Answer", "text": "富山市の燃やせないごみです。「ごみ・不要」と貼って月2回の収集日の朝8時までに集積場へ出せば無料です。防犯登録の抹消は警察署か自転車店で済ませてください。当方では、富山市の値段がつかない車体のお引き取りは行っていません。" }
       },
       {
         "@type": "Question",
@@ -111,13 +111,14 @@ ctaUrl: "/line/toyama/"
   {% include "nav-new.njk" %}
 
   <!-- ヒーロー（2026-09-24 再設計：写真背景＋虹色ドットの約束。09-25 レビュー対応で48時間・富山県の実績・整備士を前に） -->
-  <section class="hero hero--city hero--fit11">
+  <section class="hero hero--city hero--fit">
     <div class="hero__bg hero__bg--city" aria-hidden="true"></div>
+    <span class="hero__imgnote">写真はイメージです</span>
     <div class="hero__scrim" aria-hidden="true"></div>
     <div class="wrap hero__inner">
       <div class="stack reveal hero__copy">
         <span class="eyebrow">Toyama City, Toyama</span>
-        <h1>富山市の<br><em><span class="nw">自転車の出張買取・引取</span></em></h1>
+        <h1>富山市の<br><em><span class="nw">自転車の出張買取</span></em></h1>
         <p class="lead">写真を送るだけで、伺う前に金額が決まります（返信は原則48時間以内）。富山県内でも砺波市・高岡市に伺いました。<strong>買取なら出張費0円</strong>です。</p>
         <p class="lead" style="font-size:0.98rem;">年式は問いません。電動アシストはバッテリーの実容量まで見て、1つの金額でお伝えします。</p>
         <div class="badges" aria-label="安心のポイント">
@@ -136,7 +137,7 @@ ctaUrl: "/line/toyama/"
     </div>
   </section>
 
-  <!-- 手放す方法（09-25：富山市は市の収集が無料で当方の引取は応相談なので、「捨てる前に値段がつくかだけ確認」の正直な構成に。富山の実例を直下に） -->
+  <!-- 手放す方法（09-25：富山市は市の収集が無料で、当方は買取のみ（オーナー決定 a）なので、「捨てる前に値段がつくかだけ確認」の正直な構成に。富山の実例を直下に） -->
   <section class="section section--alt">
     <div class="wrap" style="max-width:900px;">
     <div id="tebanasu">
@@ -146,7 +147,7 @@ ctaUrl: "/line/toyama/"
         <span class="cmp-badge tb-best__tag">おすすめ</span>
         <div>
           <h3>捨てる前に、写真で値段を確かめる</h3>
-          <p>写真を送っていただければ、整備士が原則48時間以内に確定額をお返事します。値段がつけば、運ぶ手間なしでお金になり、出張費も0円です。富山県では処分する自転車も防犯登録の抹消が必要ですが、お引き取りの場合は委任状をいただいてこちらで済ませます。値段がつかなければ、そのまま市の燃やせないごみに出していただいて構いません（当方の引取は富山市だと出張費がかかるため、無理にはおすすめしません）。</p>
+          <p>写真を送っていただければ、整備士が原則48時間以内に確定額をお返事します。値段がつけば、運ぶ手間なしでお金になり、出張費も0円です。富山県では処分する自転車も防犯登録の抹消が必要ですが、お引き取りの場合は委任状をいただいてこちらで済ませます。値段がつかない車体のお引き取りは、富山市では行っていません（往復130kmの出張費が、市の無料収集より高くなるため）。その場合は、市の燃やせないごみの出し方をご案内します。</p>
         </div>
         <ul class="tb-best__pts">
           <li>値段がつけば買取。査定も出張費も0円</li>
@@ -299,7 +300,7 @@ ctaUrl: "/line/toyama/"
     </div>
   </section>
 
-  <!-- 金額の決まり方と出張費（09-25：目安5行を追加、重複カード3枚は流れに一本化、出張費は「全域50km超・応相談」を正直に） -->
+  <!-- 金額の決まり方と出張費（09-25：目安5行を追加、重複カード3枚は流れに一本化、オーナー決定：富山市は買取のみ、値段がつかない車体は市の収集を案内） -->
   <section class="section section--alt">
     <div class="wrap" style="max-width:900px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">富山市での金額の決まり方と出張費</h2>
@@ -324,15 +325,20 @@ ctaUrl: "/line/toyama/"
       </div>
       <div class="fee reveal" style="margin-top:clamp(28px,4vw,40px);">
         <div>
-          <h3>富山市の出張費（値段がつかない場合のみ）</h3>
-          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体の引き取り（処分）でお伺いする場合のみです。</p>
-          <p>富山市は全域が片道50kmを超えます（かほく市役所から富山駅周辺までおよそ66km）。値段がつかない車体の引き取りは<strong>応相談</strong>で、町名を伺って出張費をお見積もりします。市の燃やせないごみなら無料で出せるので、値段がつかない車体の引き取りは無理にはおすすめしません。</p>
-          <p class="fee__note">※ 出張費は訪問というお仕事に対する費用で、引き取る台数や種類とは連動しません。ガソリン代により改定する場合があります。</p>
+          <h3>富山市の出張費</h3>
+          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。かほく市役所から富山駅周辺までおよそ66kmですが、買取なら距離にかかわらず出張費は0円です。</p>
+          <p>値段がつかない車体のお引き取りは、富山市では行っていません。全域が片道50kmを超え、出張費が市の燃やせないごみ（無料）や戸別有料収集（30kgまで2,090円）より高くなるためです。その場合は、市の出し方をご案内します（上の「ご自分で処分する方法」）。</p>
+          <p class="fee__note">※ 石川県内と富山県西部の出張費は <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> をご覧ください。</p>
         </div>
         <div class="card">
-          <p style="font-size:0.85rem; color:var(--ink-55); margin-bottom:10px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
-          {% set feeTableHead = "片道距離" %}{% set feeHighlight = ["応相談"] %}{% include "fee-table.njk" %}
-          <p class="fee__note">黄色の段が富山市に当たる距離です。全体の料金は <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> をご覧ください。</p>
+          <table class="rate">
+            <thead><tr><th>富山市での対応</th><th>費用</th></tr></thead>
+            <tbody>
+              <tr class="is-hi"><td>値段がつく車体（買取）</td><td class="num">出張費0円</td></tr>
+              <tr><td>値段がつかない車体</td><td class="num" style="color:var(--ink-40)">市の収集をご案内</td></tr>
+            </tbody>
+          </table>
+          <p class="fee__note">写真を送っていただければ、どちらになるかを無料でお調べします。</p>
         </div>
       </div>
     </div>
@@ -374,7 +380,7 @@ ctaUrl: "/line/toyama/"
         </details>
         <details class="faq-item">
           <summary>富山市の出張費はいくらですか。</summary>
-          <div class="faq-item__a"><p>買取なら無料です。値段がつかない車体の引取（処分）だけは出張費がかかり、富山市は全域が片道50kmを超えるため応相談です。市の燃やせないごみなら無料で出せるので、値段がつかない車体の引取は無理にはおすすめしません。</p></div>
+          <div class="faq-item__a"><p>買取なら無料です。値段がつかない車体のお引き取りは、富山市では行っていません（全域が片道50kmを超え、出張費が市の無料収集より高くなるため）。その場合は、市の燃やせないごみの出し方をご案内します。</p></div>
         </details>
         <details class="faq-item">
           <summary>買取をお願いする場合も出張費はかかりますか。</summary>
@@ -382,7 +388,7 @@ ctaUrl: "/line/toyama/"
         </details>
         <details class="faq-item">
           <summary>値段がつかなかったら、いちばん安く手放す方法は何ですか。</summary>
-          <div class="faq-item__a"><p>富山市の燃やせないごみです。「ごみ・不要」と貼って月2回の収集日の朝8時までに集積場へ出せば無料です。防犯登録の抹消は警察署か自転車店で済ませてください。当方の引取は富山市だと出張費がかかるため、無理にはおすすめしません。</p></div>
+          <div class="faq-item__a"><p>富山市の燃やせないごみです。「ごみ・不要」と貼って月2回の収集日の朝8時までに集積場へ出せば無料です。防犯登録の抹消は警察署か自転車店で済ませてください。当方では、富山市の値段がつかない車体のお引き取りは行っていません。</p></div>
         </details>
         <details class="faq-item">
           <summary>古い自転車でも売れますか。</summary>
@@ -413,7 +419,7 @@ ctaUrl: "/line/toyama/"
         <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
       </div>
       <p style="font-size:0.88rem; color:var(--ink-70);">タップするとLINEが開き、メッセージが入力済みです。写真を添えて送るだけ。査定だけ・お断りも無料です。LINEを使っていない方は、メール（<a href="mailto:info@meguri-cycle.com" style="color:var(--accent-d);">info@meguri-cycle.com</a>）でもご相談いただけます。</p>
-      <p style="font-size:0.8rem; color:var(--ink-40);">※お引き取りできない車体もあります → <a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a></p>
+      <p style="font-size:0.8rem; color:var(--ink-40);">※値段がつかない車体のお引き取りは富山市では行っていません → <a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a></p>
     </div>
   </section>
 
