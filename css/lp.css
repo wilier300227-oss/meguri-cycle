@@ -817,3 +817,13 @@ h1, h2, h3 {
 /* 実例・流れの直後のボタン行（B7） */
 .cta-row { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; margin-top: 20px; }
 .cta-row__more { font-weight: 600; color: var(--accent-d); }
+
+/* ---------- /about/ 代表の顔写真（2026-09-25） ---------- */
+.about-hero { display: grid; gap: 22px; align-items: center; }
+.about-hero__fig { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.about-hero__fig img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; object-position: 62% 40%; box-shadow: 0 14px 34px -18px rgba(22,24,29,0.45); border: 4px solid var(--card); }
+.about-hero__fig figcaption { font-size: 0.82rem; color: var(--ink-55); line-height: 1.5; text-align: center; }
+@media (min-width: 720px) {
+  .about-hero { grid-template-columns: minmax(0,1fr) 240px; gap: 32px; }
+  .about-hero__fig img { width: 240px; height: 240px; }
+}
