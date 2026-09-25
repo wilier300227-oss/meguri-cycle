@@ -123,7 +123,7 @@ h1, h2, h3 {
 /* 2026-09-25 オーナー決定：市町ページのヒーロー写真（Gemini 生成）に「写真はイメージです」を付ける */
 .hero__imgnote { position: absolute; right: 12px; bottom: 8px; z-index: 2; font-size: 0.68rem; letter-spacing: 0.04em; color: rgba(255,255,255,0.62); pointer-events: none; }
 .hero__bg--city { position: absolute; inset: 0; z-index: 0; background: url('/images/compare/cmp-meguri.webp') center 45% / cover no-repeat; }
-.hero--city h1 { font-size: clamp(1.9rem, 5vw, 3rem); }
+.hero.hero--city h1 { font-size: clamp(1.9rem, 5vw, 3rem); } /* 2026-09-25 志賀レビューB1：.hero h1 に負けていたので詳細度を上げた（意図どおり スマホ30.4px・PC48px） */
 /* 手放す方法：3つの選び方（査定に出す＝黄色で強調、比較表と同じ色） */
 .opts { display: grid; gap: clamp(12px, 2vw, 18px); }
 @media (min-width: 860px) { .opts { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); align-items: stretch; } } /* 2枚なら2列で埋める */
