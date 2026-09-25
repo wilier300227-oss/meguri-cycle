@@ -161,6 +161,8 @@ C:/Users/user/meguri-cycle/
 4. ヒーロー写真は **そのまま**。
 5. 実例3枚目に **小松の LEADER 721 ¥20,000** を掲載（PCは3列 `.works-feature--3`）。
 
+**同日：/about/ に代表の顔写真を掲載**（`images/about/portrait.webp` 692px＋360px、丸くトリミング、PCは本文の右・スマホは本文の下）。「顔写真は載せていません」の文言を「代表の顔・屋号・資格・許可番号はすべて公開」に修正、「当日のこと」に「上の写真のわたしが」を追加、JSON-LD Person に image、OGP はこの写真。/kanazawa/ の流れ④から /about/ へリンク。原本は Downloads/about_photo_square.png。
+
 **未対応**
 6. 出張費を「金沢市の地区別」表にする案（Googleマップで距離を確かめてから）。
 7. 全市町共通：見出しの語中改行（BudouX）、追従バーとヒーローのボタン重複（dock--auto の共通化）は未着手。
