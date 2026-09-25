@@ -1,10 +1,10 @@
 {# 出張費の目安表。値は _data/fees.js（2026-09-16）。見出し列の文言だけ呼び出し側で feeTableHead を指定できる。
-   feeHighlight（価格文字列の配列。例 ["1,500円","2,000円"]）を渡すと該当行を黄色で強調（2026-09-25） #}
+   feeHighlight（価格文字列の配列。例 ["1,500円","2,000円"]）を渡すと該当行を黄色で強調（2026-09-25）。「応相談」を強調したときは薄い灰色にしない（富山市ページ） #}
 <table class="rate">
   <thead><tr><th>{{ feeTableHead or "片道距離" }}</th><th>出張費の目安</th></tr></thead>
   <tbody>
     {%- for r in fees.rows %}
-    <tr{% if feeHighlight and (r.price in feeHighlight) %} class="is-hi"{% endif %}><td>{{ r.label }}</td><td class="num"{% if r.muted %} style="color:var(--ink-40)"{% endif %}>{{ r.price }}</td></tr>
+    <tr{% if feeHighlight and (r.price in feeHighlight) %} class="is-hi"{% endif %}><td>{{ r.label }}</td><td class="num"{% if r.muted and not (feeHighlight and (r.price in feeHighlight)) %} style="color:var(--ink-40)"{% endif %}>{{ r.price }}</td></tr>
     {%- endfor %}
   </tbody>
 </table>
