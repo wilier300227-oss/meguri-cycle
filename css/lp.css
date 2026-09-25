@@ -833,3 +833,14 @@ h1, h2, h3 {
   .about-hero { grid-template-columns: minmax(0,1fr) 240px; gap: 32px; }
   .about-hero__fig img { width: 240px; height: 240px; }
 }
+
+/* 2026-09-25 BudouX（.eleventy.js の transform が文節に <wbr> を入れる）：語中では折り返さない */
+h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li, .tl__t, .opt__t { word-break: keep-all; overflow-wrap: anywhere; line-break: strict; }
+.nw { white-space: nowrap; }
+/* 「おすすめ」札：PC では箇条書きの1行目に接触するため枠の上辺に載せる（B6） */
+@media (min-width: 860px) { .tb-best__tag { top: -13px; right: 18px; } }
+/* 出張費表の見出し「出張費の目安」を金額と同じ右寄せに（B4） */
+.rate th:last-child { text-align: right; }
+/* 手放し方の比較表（3列・文章）：金額用の右寄せ・数字フォントを外す（能登町 2026-09-25） */
+.rate--cmp th, .rate--cmp td, .rate--cmp td:last-child, .rate--cmp th:last-child { text-align: left; font-family: inherit; font-size: 0.86rem; font-weight: 400; vertical-align: top; }
+.rate--cmp td:first-child { min-width: 9em; }
