@@ -3,18 +3,19 @@ permalink: /hodatsushimizu/
 ctaUrl: "/line/hodatsushimizu/"
 navLocal: true
 ---
+{%- set hd = fees.cities.hodatsushimizu -%}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>宝達志水町の自転車買取・処分｜写真で確定額・買取は出張費0円 めぐり自転車</title>
-  <meta name="description" content="宝達志水町の自転車出張買取と処分のご案内。粗大ごみに出す前に、かほく市の整備士がLINEで写真査定し、確定額をお伝えしてから伺います。買取なら出張費無料。値段がつかない車体も処分費0円で引取（出張費のみ）。">
+  <meta name="description" content="宝達志水町の自転車の出張買取と処分のご案内。年3回の粗大ごみに出す前に、かほく市の整備士がLINEの写真で確定額をお伝えし、ご納得いただけたらお引き取りに伺います。年式は問いません。買取なら出張費0円。値段がつかない車体も処分費0円で引取（出張費は地区により{{ hd.range }}）。">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://meguri-cycle.com/hodatsushimizu/">
   <link rel="icon" type="image/png" href="/logo/favicon.png">
   <meta property="og:title" content="宝達志水町の自転車買取・処分｜写真で確定額・買取は出張費0円 めぐり自転車">
-  <meta property="og:description" content="宝達志水町の自転車出張買取と処分のご案内。粗大ごみに出す前に、かほく市の整備士がLINEで写真査定し、確定額をお伝えしてから伺います。買取なら出張費無料。値段がつかない車体も処分費0円で引取（出張費のみ）。">
+  <meta property="og:description" content="宝達志水町の自転車の出張買取と処分のご案内。年3回の粗大ごみに出す前に、かほく市の整備士がLINEの写真で確定額をお伝えし、ご納得いただけたらお引き取りに伺います。買取なら出張費0円。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://meguri-cycle.com/hodatsushimizu/">
 
@@ -50,62 +51,49 @@ navLocal: true
   }
   </script>
 
+  {# FAQ の JSON-LD。本文の FAQ（下の .faq-acc）と同じ文にそろえること #}
   <script type="application/ld+json">
   {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {"@type": "Question", "name": "宝達志水町で自転車を捨てるにはどうすればいいですか。", "acceptedAnswer": {"@type": "Answer", "text": "宝達志水町では、自転車は粗大ごみです。年3回の収集日に、地区の粗大ごみの指定排出場所へ、処理券なしでそのまま出します（午前7時まで）。クリンクルはくいへの持ち込みもできます（50kgまで550円）。捨てる前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。"}},
-    {
-      "@type": "Question",
-      "name": "宝達志水町まで来てもらえますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "はい、伺います。かほく市に隣接するエリアで、伺いやすい地域です。"
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "宝達志水町で自転車を捨てるにはどうすればいいですか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "宝達志水町では、自転車は粗大ごみです。収集は年3回だけで、当日の午前7時までに地区の「粗大ごみの指定排出場所」へ運びます（処理券は不要）。クリンクルはくいへの持ち込みもできます（予約不要、50kgまで550円）。捨てる前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。" }
+      },
+      {
+        "@type": "Question",
+        "name": "宝達志水町まで来てもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "はい、伺います。かほく市の北どなりで、町内全域が対応エリアです（かほく市役所から片道約12〜28km）。買取なら出張費はかかりません。" }
+      },
+      {
+        "@type": "Question",
+        "name": "宝達志水町の出張費はいくらですか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "買取なら無料です。買取と一緒なら、値段がつかない車体も出張費0円でお引き取りします。出張費がかかるのは、値段がつかない車体の引取（処分）だけで伺う場合のみで、地区により{{ hd.range }}です（免田・今浜・敷浪など南〜中部は1,500円、子浦・杉野屋など北部は2,000円）。町名をお知らせいただければ、伺う前に金額をお伝えします。" }
+      },
+      {
+        "@type": "Question",
+        "name": "買取をお願いする場合も出張費はかかりますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "かかりません。買取のご依頼であれば、オンライン査定もお引き取りに伺う出張費も無料です。現物を見たうえでお断りいただいた場合も、費用はいただきません。" }
+      },
+      {
+        "@type": "Question",
+        "name": "値段がつかない自転車でも引き取ってもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "部品として活かせるものは処分費0円でお引き取りします（引取だけの場合は出張費をいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。" }
+      },
+      {
+        "@type": "Question",
+        "name": "電動アシスト自転車も査定してもらえますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "はい。年式は問いません。パナソニック・ヤマハ・ブリヂストンは、残量ボタンを長押しするとバッテリーの実容量（劣化の度合い）が表示されます。その様子を動画で送っていただくと、実容量を反映した確定額をお伝えできます。難しければ、残量ランプの写真だけでも査定します。バッテリー単体も買取の対象です。" }
+      },
+      {
+        "@type": "Question",
+        "name": "防犯登録の抹消はどうなりますか。",
+        "acceptedAnswer": { "@type": "Answer", "text": "こちらで代行します。費用はいただきません。登録カードが見当たらない場合も、まずは状況をお知らせください。登録協会に確認して進め方をご案内します。" }
       }
-    },
-    {
-      "@type": "Question",
-      "name": "宝達志水町の出張費はいくらですか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "買取なら無料です。引取の場合は2,000円です。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "買取をお願いする場合も出張費はかかりますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "かかりません。買取のご依頼であれば、オンライン査定もお引き取りに伺う出張費も無料です。現物を見たうえでお断りいただいた場合も、費用はいただきません。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "値段がつかない自転車でも引き取ってもらえますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "部品として活かせるものは処分費0円でお引き取りします（出張費のみいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "電動アシスト自転車も査定してもらえますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "はい。年式は問いません。パナソニック・ヤマハ・ブリヂストンは、残量ボタンを長押しするとバッテリーの実容量（劣化の度合い）が表示されます。その様子を動画で送っていただくと、実容量を反映した確定額をお伝えできます。難しければ、残量ランプの写真だけでも査定します。バッテリー単体も買取の対象です。"
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "防犯登録の抹消はどうなりますか。",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "こちらで代行します。費用はいただきません。防犯登録カードが手元になくても対応できることが多いので、まずは状況をお知らせください。"
-      }
-    }
-  ]
-}
+    ]
+  }
   </script>
 
   {% include "head-new.njk" %}
@@ -114,7 +102,7 @@ navLocal: true
 
   {% include "nav-new.njk" %}
 
-  <!-- ヒーロー（2026-09-24 再設計：写真背景＋虹色ドットの約束。地域の距離の説明は出張費の節へ移動） -->
+  <!-- ヒーロー（2026-09-24 再設計：写真背景＋虹色ドットの約束。09-25 レビュー対応で48時間・整備士・年式を前に） -->
   <section class="hero hero--city hero--fit11">
     <div class="hero__bg hero__bg--city" aria-hidden="true"></div>
     <span class="hero__imgnote">写真はイメージです</span>
@@ -123,10 +111,11 @@ navLocal: true
       <div class="stack reveal hero__copy">
         <span class="eyebrow">Hodatsushimizu, Ishikawa</span>
         <h1>宝達志水町の<br><em><span class="nw">自転車の出張買取・引取</span></em></h1>
-        <p class="lead">写真を送るだけで、伺う前に金額が決まります。宝達志水町へは出張でお引き取りに伺い、<strong>買取なら出張費も無料</strong>です。</p>
+        <p class="lead">写真を送るだけで、伺う前に金額が決まります（返信は原則48時間以内）。<strong class="nw">買取なら出張費0円</strong>です。</p>
+        <p class="lead" style="font-size:0.98rem;">年式は問いません。電動アシストはバッテリーの実容量まで見て、1つの金額でお伝えします。</p>
         <div class="badges" aria-label="安心のポイント">
+          <span class="badge">整備士が年式を問わず査定</span>
           <span class="badge">訪問前に金額を確定</span>
-          <span class="badge">買取なら出張費0円</span>
           <span class="badge">写真どおりなら当日の減額なし</span>
           <span class="badge">防犯登録抹消を代行</span>
         </div>
@@ -140,76 +129,117 @@ navLocal: true
     </div>
   </section>
 
+  <!-- 手放す方法（09-25：粗大ごみは年3回・処理券不要なので、値段がつく根拠＝買取例（隣のかほく市の4台）を直下に） -->
   <section class="section section--alt">
     <div class="wrap" style="max-width:900px;">
     <div id="tebanasu">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:10px;">宝達志水町で自転車を手放す方法</h2>
-      <p class="reveal" style="color:var(--ink-70); margin-bottom:24px;">宝達志水町では、自転車は<strong>粗大ごみ</strong>です。地区の指定排出場所に、年3回の収集日にそのまま出せます。</p>
+      <p class="reveal" style="color:var(--ink-70); margin-bottom:24px;">宝達志水町では、自転車は<strong>粗大ごみ</strong>です。収集は<strong>年3回</strong>だけで、当日の朝7時までに地区の指定排出場所へ運びます（処理券は不要）。</p>
       <div class="tb-best reveal">
         <span class="cmp-badge tb-best__tag">おすすめ</span>
         <div>
-          <h3>まず、写真で査定に出す</h3>
-          <p>年3回の収集日を待たずに手放せます。かほく市の隣町なので、日程も合わせやすい距離です。値段がつけば買取（出張費無料）、つかなくても部品として活かせるものは処分費0円でお引き取りします（出張費2,000円）。</p>
+          <h3>出す前に、写真で値段を確かめる</h3>
+          <p>電動アシストやスポーツ車、子ども用の人気モデルは、古くても値段がつくことがあります。値段がつけば、次の収集日を待たずに出張費0円で伺い、運ぶ手間なしでお金になります。つかなかった場合の引き取りは、処分費0円・出張費のみ（地区により{{ hd.range }}）です。</p>
         </div>
         <ul class="tb-best__pts">
           <li>値段がつけば買取。査定も出張費も0円</li>
-          <li>つかなくても処分費0円で引取（出張費のみ）</li>
+          <li>1台でも値段がつけば、値段がつかない車体も出張費0円で一緒に引取</li>
           <li>防犯登録の抹消はこちらで代行</li>
-          <li>運ぶ・待つ・バッテリーを外す手間なし。ご自宅で完結</li>
+          <li>運ぶ・収集日を待つ手間なし。ご自宅で完結</li>
         </ul>
       </div>
-      <h3 class="tb-sub reveal">値段がつかなかった場合に、ご自分で処分する方法</h3>
+
+      <h3 class="tb-sub reveal">隣のかほく市・石川県内の買取例</h3>
+      <div class="works-feature works-feature--detail works-feature--3 reveal">
+        <figure class="wfeat">
+          <img src="/images/works/work-coghorn-black-5000.webp" width="1200" height="800" loading="lazy" alt="買い取った COGHORN の子供用MTB（黒・カゴ付き）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">COGHORN 子供用MTB</span></span>
+            <span class="wfeat__meta">状態良好・カゴ付き・4台まとめてのご依頼</span>
+            <span class="wfeat__price">買取 5,000円 ×2台</span>
+            <span class="wfeat__note">※ 値段がつかなかったクロスバイク2台も、同じ日に処分費0円・出張費0円でお引き取りしました</span>
+            <span class="wfeat__area">かほく市</span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" alt="買い取ったブリヂストン bikke（2020年式・グレー・チャイルドシート2つ）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">ブリヂストン <span class="nw">bikke</span></span></span>
+            <span class="wfeat__meta">2020年式・サビ・ブレーキ不良・長押し診断でランプ5つ</span>
+            <span class="wfeat__price">買取 45,000円</span>
+            <span class="wfeat__note">※ ベルの破損・サビ・ブレーキ不良があっても、この金額でした</span>
+            <span class="wfeat__area">金沢市</span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-vivi-10000.webp" width="1200" height="800" loading="lazy" alt="買い取ったパナソニック ビビ TX（2018年式・サビあり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">パナソニック <span class="nw">ビビ TX</span></span></span>
+            <span class="wfeat__meta">2018年式・サビ多め・実容量 約70%</span>
+            <span class="wfeat__price">買取 10,000円</span>
+            <span class="wfeat__note">※ サビが多くても値がつきました</span>
+            <span class="wfeat__area">金沢市</span>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:14px;">※ 宝達志水町での例ではありません。金額は1台ごとの状態で決まり、同じ車種でも同じ金額になるとは限りません。</p>
+      <div class="cta-row reveal">
+        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+        <a class="cta-row__more" href="/works/">実績をすべて見る（11件）→</a>
+      </div>
+
+      <h3 class="tb-sub reveal" style="margin-top:clamp(32px,5vw,48px);">値段がつかなかった場合に、ご自分で処分する方法</h3>
       <div class="opts opts--self reveal">
         <div class="opt">
           <span class="opt__n num" aria-hidden="true">1</span>
-          <h3 class="opt__t">粗大ごみの収集日に出す</h3>
-          <p class="opt__p">粗大ごみの収集は<strong>年3回</strong>。処理券やシールはいらず、地区ごとの「粗大ごみの指定排出場所」にそのまま出します。出す時間は<strong>午前6時頃から7時まで</strong>。日にちと場所は町のごみカレンダーに載っています。</p>
-          <p class="opt__work">ご自分で行うこと：防犯登録の抹消・集積所まで運ぶ・収集日を待つ（電動はバッテリーを外して別途回収へ）</p>
-          <p class="opt__src">出典：<a href="https://www.hodatsushimizu.jp/gyosei/kurashi_tetsuzuki/2/4/4861.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">宝達志水町「令和8年度ごみ出しスケジュール」</a>・<a href="https://www.hodatsushimizu.jp/gyosei/kurashi_tetsuzuki/2/4/1797.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">家庭ごみの分け方・出し方</a>（2026年9月19日確認）</p>
+          <h4 class="opt__t">粗大ごみの収集日に出す</h4>
+          <p class="opt__p">粗大ごみの収集は<strong>年3回</strong>（令和8年度は5月・8月・12月）。処理券やシールはいらず、地区ごとの「粗大ごみの指定排出場所」にそのまま出します。出す時間は<strong>午前6時頃から7時まで</strong>。日にちと場所は町のごみカレンダーに載っています。</p>
+          <p class="opt__work">ご自分で行うこと：指定排出場所まで運ぶ・収集日（年3回）を待つ（電動はバッテリーを外します。バッテリーは購入店などの回収へ）</p>
+          <p class="opt__src">出典：<a href="https://www.hodatsushimizu.jp/gyosei/kurashi_tetsuzuki/2/4/4861.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">宝達志水町「令和8年度ごみ出しスケジュール」</a>・<a href="https://www.hodatsushimizu.jp/material/files/group/24/20250204.pdf" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">ごみ収集カレンダー</a>・<a href="https://www.hodatsushimizu.jp/gyosei/kurashi_tetsuzuki/2/4/1797.html" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">家庭ごみの分け方・出し方</a>（2026年9月25日確認）</p>
         </div>
         <div class="opt">
           <span class="opt__n num" aria-hidden="true">2</span>
-          <h3 class="opt__t">クリンクルはくいへ持ち込む</h3>
-          <p class="opt__p">羽咋郡市広域圏のリサイクルセンター「クリンクルはくい」（羽咋市滝谷町ヌ30、0767-27-1153）へ持ち込めます。<strong>予約不要</strong>で、料金は<strong>50kgまで550円</strong>、以降10kgごとに110円（税込）。平日8時30分〜16時30分（12時30分〜13時は受付休止）、土曜は正午まで。日曜・年末年始（12月31日〜1月3日）は休みで、祝日は受け付けています。羽咋郡市内で出たごみに限ります。</p>
-          <p class="opt__work">ご自分で行うこと：防犯登録の抹消・車で運ぶ・受付時間内の持ち込み（電動はバッテリーを外して別途回収へ）</p>
-          <p class="opt__src">出典：<a href="https://www.hakuikouiki.jp/kankyou/cleancle/kanrito.htm" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">羽咋郡市広域圏事務組合「クリンクルはくい」</a>・<a href="https://www.hakuikouiki.jp/kankyou/ryoukinhyo.pdf" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">施設使用料早見表</a>（2026年9月19日確認）</p>
+          <h4 class="opt__t">クリンクルはくいへ持ち込む</h4>
+          <p class="opt__p">羽咋郡市広域圏のリサイクルセンター「クリンクルはくい」（<span class="nw">羽咋市滝谷町ヌ30</span>、0767-27-1153）へ持ち込めます。<strong>予約不要</strong>で、料金は<strong>50kgまで550円</strong>、以降10kgごとに110円（税込）。平日8時30分〜16時30分（12時30分〜13時は受付休止）、土曜は正午まで。日曜・年末年始（12月31日〜1月3日）は休みで、祝日は受け付けています。羽咋郡市内で出たごみに限ります。</p>
+          <p class="opt__work">ご自分で行うこと：車で運ぶ・受付時間内の持ち込み（電動はバッテリーを外します）</p>
+          <p class="opt__src">出典：<a href="https://www.hakuikouiki.jp/kankyou/cleancle/kanrito.htm" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">羽咋郡市広域圏事務組合「クリンクルはくい」</a>・<a href="https://www.hakuikouiki.jp/kankyou/ryoukinhyo.pdf" target="_blank" rel="noopener noreferrer" style="color:var(--accent-d);">施設使用料早見表</a>（2026年9月25日確認）</p>
         </div>
       </div>
-      
     </div>
     </div>
   </section>
 
+  <!-- ご利用の流れ（担当者・速さ・支払いを明記） -->
   <section class="section" id="flow">
-    <div class="wrap" style="max-width:820px;">
+    <div class="wrap" style="max-width:900px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">ご利用の流れ</h2>
       <ol class="timeline reveal">
         <li class="tl">
           <span class="tl__n" aria-hidden="true">1</span>
           <div class="tl__body">
             <h3 class="tl__t">LINEで写真を送る</h3>
-            <p class="tl__d">自転車全体、タイヤとチェーンまわり、メーカー名の部分あたりからで大丈夫です。ピントが甘くても、型番が分からなくても構いません。足りない部分はこちらからご案内します。あわせてお住まいの町名をお知らせください。</p>
+            <p class="tl__d">自転車全体、タイヤとチェーンまわり、メーカー名の部分あたりからで大丈夫です。ピントが甘くても、型番が分からなくても構いません。足りない部分はこちらからご案内します。あわせてお住まいの町名をお知らせください。LINEが苦手な方は、ご家族が代わりに送っても大丈夫です。</p>
           </div>
         </li>
         <li class="tl">
           <span class="tl__n" aria-hidden="true">2</span>
           <div class="tl__body">
-            <h3 class="tl__t">金額を決めてご返信します</h3>
-            <p class="tl__d">幅ではなく確定した金額でお伝えします。値段がつかない場合は、処分費0円の引取と出張費の金額をご案内します。</p>
+            <h3 class="tl__t">確定した金額をご返信します</h3>
+            <p class="tl__d">整備士が査定し、原則48時間以内に確定額をお伝えします（最短30分でお伝えした実績もあります）。「◯円〜◯円」の幅ではなく1つの金額で、有効期限は7日間。写真・情報と現物が一致していれば、金額は変わりません。値段がつかない場合は、処分費0円の引取と出張費の金額をご案内します。</p>
           </div>
         </li>
         <li class="tl">
           <span class="tl__n" aria-hidden="true">3</span>
           <div class="tl__body">
             <h3 class="tl__t">ご納得いただけたら、訪問日を決めます</h3>
-            <p class="tl__d">金額にご納得いただいてから、はじめて日程のご相談に入ります。お断りいただいても費用はかかりません。</p>
+            <p class="tl__d">金額にご納得いただいてから、はじめて日程のご相談に入ります。お断りいただいても費用はかかりません。お伺いするのは、お引き取りの一度だけです。</p>
           </div>
         </li>
         <li class="tl">
           <span class="tl__n" aria-hidden="true">4</span>
           <div class="tl__body">
             <h3 class="tl__t">お引き取り・書類・お支払い</h3>
-            <p class="tl__d">ご自宅までお引き取りに伺います。防犯登録の抹消手続きは当方で代行します。お支払いは現金、30,000円を超える場合は銀行振込です。</p>
+            <p class="tl__d">当日は、自転車安全整備士の資格を持つ代表が一人で伺います（<a href="/about/" style="color:var(--accent-d);">顔写真と経歴</a>）。玄関先で10〜15分ほどで、お家に上がることはありません。運転免許証などの本人確認書類と、あれば防犯登録カード・鍵・充電器をご用意ください。防犯登録の抹消は当方で代行します（無料）。お支払いは現金、30,000円を超える場合は銀行振込で、当日中にお振り込みします（<a href="/terms/" style="color:var(--accent-d);">ご利用条件</a>）。古物商許可 石川県公安委員会 第511090015059号。</p>
           </div>
         </li>
       </ol>
@@ -218,91 +248,99 @@ navLocal: true
 
   <section class="section section--alt">
     <div class="wrap" style="max-width:900px;">
-      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">宝達志水町で買取・引取している自転車</h2>
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">買取・引取している自転車</h2>
       <div class="genres genres--4 reveal">
         <div class="genre genre--photo"><img class="genre__photo" src="/images/target/t-road.webp" width="330" height="330" loading="lazy" decoding="async" alt=""><span class="genre__jp">ロード・クロス・MTB</span></div>
         <div class="genre genre--photo"><img class="genre__photo" src="/images/target/t-ebike.webp" width="330" height="330" loading="lazy" decoding="async" alt=""><span class="genre__jp">電動アシスト</span></div>
         <div class="genre genre--photo"><img class="genre__photo" src="/images/target/t-folding.webp" width="330" height="330" loading="lazy" decoding="async" alt=""><span class="genre__jp">ミニベロ・折りたたみ</span></div>
-        <div class="genre genre--photo"><img class="genre__photo" src="/images/works/work-city-fudousha.webp" width="1100" height="505" loading="lazy" decoding="async" alt=""><span class="genre__jp">シティ車・子ども用</span></div>
+        <div class="genre genre--photo"><img class="genre__photo" src="/images/works/work-dbike-2000.webp" width="1200" height="800" loading="lazy" decoding="async" alt=""><span class="genre__jp">子ども用・シティ車</span></div>
       </div>
-      <p class="reveal" style="color:var(--ink-70); font-size:0.92rem; margin-top:16px; max-width:720px;">年式が古くても、コンポーネントが生きていれば値段がつくことがあります。電動アシストはバッテリーの状態、折りたたみはヒンジのガタつきを確認します。値段がつかない車体も、部品として活かせるものは処分費0円でお引き取りします。</p>
+      <p class="reveal" style="color:var(--ink-70); font-size:0.92rem; margin-top:16px; max-width:720px;">年式が古くても、コンポーネントが生きていれば値段がつくことがあります。電動アシストはバッテリーの実容量、折りたたみはヒンジのガタつきを確認します。値段がつかない車体も、部品として活かせるものは処分費0円でお引き取りします（引取だけの場合は出張費のみ）。</p>
     </div>
   </section>
 
-  <!-- 買取価格と出張費（2026-09-24 再設計：上にポイント3つ、下に本文＋料金表） -->
-  <section class="section">
-    <div class="wrap" style="max-width:980px;">
-      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">宝達志水町の買取価格と出張費</h2>
-      <div class="pts reveal">
-        <div class="pt"><span class="pt__k">幅ではなく1つの金額</span><p>LINEで写真を拝見してから、同型車の直近の相場を基準に状態を確認して算出します。「◯円〜◯円」という出し方はしません。</p></div>
-        <div class="pt"><span class="pt__k">金額は7日間有効</span><p>写真・情報と現物が一致していれば、お伝えした金額は変わりません。</p></div>
-        <div class="pt"><span class="pt__k">訪問はご納得のあとだけ</span><p>査定のためだけに伺うことはありません。お支払いは現金、30,000円を超える場合は銀行振込です（<a href="/terms/" style="color:var(--accent-d);">ご利用条件</a>）。</p></div>
+  <!-- 電動アシスト自転車（2026-09-25 追加：年式不問・実容量・バッテリー単体） -->
+  <section class="section" id="dendo">
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:12px;">電動アシスト自転車を売るなら</h2>
+      <p class="reveal" style="color:var(--ink-70); font-size:0.94rem; margin-bottom:24px; max-width:640px;">年式は問いません。バッテリー単体も買取の対象です。残量ボタンを長押しした動画を送っていただければ、バッテリーの実容量を反映した確定額を、宝達志水町へ伺う前にお伝えします。お持ち込みは不要です。</p>
+      <div class="cols3 reveal">
+        <div class="card">
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">金額の決まり方</h3>
+          <p style="color:var(--ink-70); font-size:0.9rem;">年式、バッテリーの実容量、鍵・充電器・チャイルドシートの有無を見ます。年式は問いません。2018年式のビビ TX（サビ多め・実容量約70%）も 10,000円で買い取りました。</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">バッテリーが弱っていても</h3>
+          <p style="color:var(--ink-70); font-size:0.9rem;">実容量を織り込んで査定するので、弱っていても値がつくことがあります。診断のやり方は<a href="/column/battery-check/" style="color:var(--accent-d);">動画で紹介しています</a>。水につかったバッテリーも、動作すれば査定します（膨張・液漏れ・破損したものは安全上お受けできません）。</p>
+        </div>
+        <div class="card">
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">送っていただく写真</h3>
+          <p style="color:var(--ink-70); font-size:0.9rem;">車体全体、バッテリーまわり、残量表示の3枚があれば、まずは査定できます。長押し診断の動画があれば実容量を反映できます。お持ち込みは不要で、宝達志水町まで伺います。</p>
+        </div>
       </div>
+      <div class="cta-row reveal">
+        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 出張費（09-25：一律2,000円を改め、地区別に1,500〜2,000円。表は該当の2段を強調） -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:20px;">宝達志水町の出張費</h2>
       <div class="fee reveal">
         <div>
-          <h3>宝達志水町への出張費と引き取り</h3>
-          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>現物を見たうえでお断りいただいた場合も、費用はいただきません。出張費がかかるのは、値段がつかない車体を引き取る場合のみです。</p>
-          <p>かほく市に隣接するエリアです。買取のご依頼なら出張費は無料です。</p>
+          <h3>出張費がかかるのは、値段がつかない場合だけ</h3>
+          <p class="fee__free"><strong>買取のご依頼なら、査定も出張費も無料です。</strong>1台でも値段がつけば、値段がつかない車体も出張費0円で一緒にお引き取りします。現物を見たうえでお断りいただいた場合も、費用はいただきません。</p>
+          <p>宝達志水町へは、かほく市役所から片道約12〜28kmです。値段がつかない車体の引取だけの場合の出張費は、免田・今浜・敷浪など南〜中部は<strong>1,500円</strong>、役場のある子浦や杉野屋など北部は<strong>2,000円</strong>です。所司原など東部の一部は30km前後になるため、町名をお知らせいただければ、お伺いする前に金額をお伝えします。</p>
           <p class="fee__note">※ 出張費は訪問というお仕事に対する費用で、引き取る台数や種類とは連動しません。ガソリン代により改定する場合があります。</p>
         </div>
         <div class="card">
           <p style="font-size:0.85rem; color:var(--ink-55); margin-bottom:10px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。</p>
-          <table class="rate">
-              <thead><tr><th>片道距離</th><th>出張費の目安</th></tr></thead>
-              <tbody>
-                <tr><td>〜10km</td><td class="num">1,000円</td></tr>
-                <tr><td>10〜20km</td><td class="num">1,500円</td></tr>
-                <tr><td>20〜30km</td><td class="num">2,000円</td></tr>
-                <tr><td>30〜40km</td><td class="num">2,500円</td></tr>
-                <tr><td>40〜50km</td><td class="num">3,000円</td></tr>
-                <tr><td>50km超</td><td class="num" style="color:var(--ink-40)">応相談</td></tr>
-              </tbody>
-            </table>
+          {% set feeTableHead = "片道距離" %}{% set feeHighlight = ["1,500円", "2,000円"] %}{% include "fee-table.njk" %}
+          <p class="fee__note">黄色の段が宝達志水町に当たる距離です。全体の料金は <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> をご覧ください。</p>
         </div>
       </div>
     </div>
   </section>
 
-
-  <!-- 地域のお客様へ -->
-  <section class="section section--alt">
-    <div class="wrap split">
-      <div class="stack reveal split__head">
-        <h2 style="font-size:clamp(1.6rem,4vw,2.2rem)">宝達志水町にお住まいの方へ</h2>
-      </div>
+  <!-- 地域のお客様へ（09-25：「大海」「移住者が増えている」など裏づけのない記述を事実に） -->
+  <section class="section">
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.6rem,4vw,2.2rem); margin-bottom:24px;">宝達志水町にお住まいの方へ</h2>
       <div class="reveal local-grid">
         <div>
-          <h3 style="font-size:1.1rem; margin-bottom:8px;">かほく市と隣接する海沿いの町</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem;">宝達志水町はかほく市の北側に隣接しており、県内でも特に近い対応エリアのひとつです。志雄・今浜・大海など、海岸沿いや宝達山麓に広がる集落から自転車の買取・引き取りのご相談をいただいています。</p>
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">かほく市の北どなり、町内全域へ</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">今浜・免田の海沿いから、子浦・敷浪、宝達山のふもとの集落まで、町内全域に伺います。かほく市役所から片道約12〜28kmで、買取なら出張費は0円です。</p>
         </div>
         <div>
-          <h3 style="font-size:1.1rem; margin-bottom:8px;">農業地帯での整理需要</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem;">水田と畑地が広がる農村地帯で、長年使わずに物置や納屋に置いたままになっている自転車をまとめて整理したい、というご依頼があります。台数が複数でも、写真を送っていただければ一度でご対応します。</p>
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">物置や納屋の自転車をまとめて</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">置いたままの自転車を、まとめて整理したいときもご相談ください。1台でも値段がつけば、値段がつかない車体も出張費0円で一緒に引き取ります。隣のかほく市では、子ども用MTB 2台の買取と、クロスバイク2台の引取を1回の訪問で行いました。</p>
         </div>
         <div>
-          <h3 style="font-size:1.1rem; margin-bottom:8px;">移住者の方からのご相談も</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem;">近年、金沢市郊外の静かな地域として移住者が増えています。前の住まいから持ってきたものの使わなくなった自転車を手放したい、というご相談もお気軽にどうぞ。</p>
+          <h3 style="font-size:1.1rem; margin-bottom:8px;">年3回の収集日を待てないとき</h3>
+          <p style="color:var(--ink-70); font-size:0.94rem;">粗大ごみの収集は年3回だけです。引っ越しや実家の片付けで次の収集日を待てないときは、写真を送ってください。金額を決めてから、ご都合の日にご自宅まで伺います。写真はご家族のLINEから送っていただいても大丈夫です（持ち主さまが離れてお住まいでも、持ち主さまのご了承があればお引き取りできます。当日はお立ち会いの方の本人確認をお願いします）。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section class="section">
-    <div class="wrap" style="max-width:840px;">
-      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">宝達志水町の方からのよくあるご質問</h2>
+  <!-- FAQ（JSON-LD と同じ文にそろえる） -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">宝達志水町でよくあるご質問</h2>
       <div class="faq-acc reveal">
         <details class="faq-item">
           <summary>宝達志水町で自転車を捨てるにはどうすればいいですか。</summary>
-          <div class="faq-item__a"><p>宝達志水町では、自転車は粗大ごみです。年3回の収集日に、地区の粗大ごみの指定排出場所へ、処理券なしでそのまま出します（午前7時まで）。クリンクルはくいへの持ち込みもできます（50kgまで550円）。捨てる前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。</p></div>
+          <div class="faq-item__a"><p>宝達志水町では、自転車は粗大ごみです。収集は年3回だけで、当日の午前7時までに地区の「粗大ごみの指定排出場所」へ運びます（処理券は不要）。クリンクルはくいへの持ち込みもできます（予約不要、50kgまで550円）。捨てる前に写真を送っていただければ、値段がつくかどうかを無料でお調べします。</p></div>
         </details>
         <details class="faq-item">
           <summary>宝達志水町まで来てもらえますか。</summary>
-          <div class="faq-item__a"><p>はい、伺います。かほく市に隣接するエリアで、伺いやすい地域です。</p></div>
+          <div class="faq-item__a"><p>はい、伺います。かほく市の北どなりで、町内全域が対応エリアです（かほく市役所から片道約12〜28km）。買取なら出張費はかかりません。</p></div>
         </details>
         <details class="faq-item">
           <summary>宝達志水町の出張費はいくらですか。</summary>
-          <div class="faq-item__a"><p>買取なら無料です。引取の場合は2,000円です。</p></div>
+          <div class="faq-item__a"><p>買取なら無料です。買取と一緒なら、値段がつかない車体も出張費0円でお引き取りします。出張費がかかるのは、値段がつかない車体の引取（処分）だけで伺う場合のみで、地区により{{ hd.range }}です（免田・今浜・敷浪など南〜中部は1,500円、子浦・杉野屋など北部は2,000円）。町名をお知らせいただければ、伺う前に金額をお伝えします。</p></div>
         </details>
         <details class="faq-item">
           <summary>買取をお願いする場合も出張費はかかりますか。</summary>
@@ -310,7 +348,7 @@ navLocal: true
         </details>
         <details class="faq-item">
           <summary>値段がつかない自転車でも引き取ってもらえますか。</summary>
-          <div class="faq-item__a"><p>部品として活かせるものは処分費0円でお引き取りします（出張費のみいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準はご利用条件のページに記載しています。</p></div>
+          <div class="faq-item__a"><p>部品として活かせるものは処分費0円でお引き取りします（引取だけの場合は出張費をいただきます）。ただし部品取りの価値もない車体はお断りする場合があります。判断の基準は<a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a>のページに記載しています。</p></div>
         </details>
         <details class="faq-item">
           <summary>電動アシスト自転車も査定してもらえますか。</summary>
@@ -318,7 +356,7 @@ navLocal: true
         </details>
         <details class="faq-item">
           <summary>防犯登録の抹消はどうなりますか。</summary>
-          <div class="faq-item__a"><p>こちらで代行します。費用はいただきません。防犯登録カードが手元になくても対応できることが多いので、まずは状況をお知らせください。</p></div>
+          <div class="faq-item__a"><p>こちらで代行します。費用はいただきません。登録カードが見当たらない場合も、まずは状況をお知らせください。登録協会に確認して進め方をご案内します。</p></div>
         </details>
       </div>
     </div>
@@ -327,19 +365,20 @@ navLocal: true
   <!-- CTA -->
   <section class="section cta" id="contact">
     <div class="wrap stack reveal" style="max-width:620px;">
-      <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">宝達志水町の査定・引き取りのご相談</h2>
-      <p class="lead">写真とお住まいの町名をお送りいただければ、確定額と出張費をあわせてお返事します。</p>
+      <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">査定・引き取りのご相談</h2>
+      <p class="lead">写真とお住まいの町名をお送りいただければ、確定額をお返事します（値段がつかない場合は出張費も）。</p>
       <div style="display:flex; justify-content:center;">
         <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
       </div>
-      <p style="font-size:0.8rem; color:var(--ink-40);">※お引き取りできない車体もあります → <a href="/terms/" style="color:var(--accent-d);">ご利用条件</a></p>
+      <p style="font-size:0.88rem; color:var(--ink-70);">タップするとLINEが開き、メッセージが入力済みです。写真を添えて送るだけ。査定だけ・お断りも無料です。LINEを使っていない方は、メール（<a href="mailto:info@meguri-cycle.com" style="color:var(--accent-d);">info@meguri-cycle.com</a>）でもご相談いただけます。</p>
+      <p style="font-size:0.8rem; color:var(--ink-40);">※お引き取りできない車体もあります → <a href="/terms/#hikitori" style="color:var(--accent-d);">ご利用条件</a></p>
     </div>
   </section>
 
   <!-- 関連ページ（内部リンク） -->
   <section class="section" style="padding-top:0;">
-    <div class="wrap" style="max-width:620px;">
-      <p style="font-size:0.88rem; color:var(--ink-55);">関連：<a href="/price/" style="color:var(--accent-d);">料金・出張費</a> ／ <a href="/brands/" style="color:var(--accent-d);">買取強化ブランド一覧</a> ／ <a href="/hikitori/" style="color:var(--accent-d);">出張引き取り（処分費0円）</a> ／ <a href="/area/" style="color:var(--accent-d);">対応エリア一覧</a></p>
+    <div class="wrap" style="max-width:900px;">
+      <p style="font-size:0.88rem; color:var(--ink-55);">関連：<a href="/works/" style="color:var(--accent-d);">買取・引取の実績</a> ／ <a href="/souba/" style="color:var(--accent-d);">買取相場</a> ／ <a href="/dendo/" style="color:var(--accent-d);">電動アシスト自転車の買取</a> ／ <a href="/price/" style="color:var(--accent-d);">料金・出張費</a> ／ <a href="/hikitori/" style="color:var(--accent-d);">出張引き取り（処分費0円）</a> ／ <a href="/kahoku/" style="color:var(--accent-d);">かほく市</a> ／ <a href="/hakui/" style="color:var(--accent-d);">羽咋市</a> ／ <a href="/area/" style="color:var(--accent-d);">対応エリア一覧</a></p>
     </div>
   </section>
 
