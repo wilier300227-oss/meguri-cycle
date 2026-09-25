@@ -799,3 +799,19 @@ h1, h2, h3 {
 .colrow__go { align-self: flex-start; font-size: 0.9rem; font-weight: 600; color: var(--accent); text-decoration: none; }
 .colrow__go:hover { text-decoration: underline; text-underline-offset: 4px; }
 @media (max-width: 520px) { .colrow { grid-template-columns: 40px 1fr; } .colrow__n { font-size: 1.3rem; } }
+
+/* ---------- 金沢ページのレビュー対応（2026-09-25） ---------- */
+/* B1: iPhone幅で H1 が「自転｜車・」と割れるのを防ぐ（.nw で語を固定し、幅に応じて字を少し縮める） */
+@media (max-width: 430px) { .hero--fit h1 { font-size: min(2.1rem, calc((100vw - 48px) / 10.4)); } }
+.wfeat__t .nw { white-space: nowrap; }
+/* B2: 実例カードの年式・状態をスマホでも出す（トップの縦長対策 display:none を金沢ページだけ解除） */
+@media (max-width: 719px) { .works-feature--detail .wfeat__meta { display: block; font-size: .74rem; line-height: 1.45; } }
+/* B4: 地区の4列で1列目だけ長い → 1つ目を全幅、残り3つを3列に */
+@media (min-width: 860px) { .local-grid--lead > :first-child { grid-column: 1 / -1; } }
+/* B9: 出張費の表で、その市に当たる段を強調（fee-table.njk の feeHighlight） */
+.rate tr.is-hi td { background: #FFF3C4; }
+.rate tr.is-hi td:first-child { font-weight: 700; }
+.rate td.num { white-space: nowrap; } /* 「20,000円〜」がスマホの狭いカードで折れないように */
+/* 実例・流れの直後のボタン行（B7） */
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; margin-top: 20px; }
+.cta-row__more { font-weight: 600; color: var(--accent-d); }
