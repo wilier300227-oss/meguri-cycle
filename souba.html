@@ -8,12 +8,12 @@ ctaUrl: "/line/souba/"
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>自転車の買取相場｜ロード・クロス・電動アシスト・ママチャリ めぐり自転車</title>
-  <meta name="description" content="石川県の自転車買取相場の目安。ロードバイク・クロスバイク・電動アシスト・ママチャリ・折りたたみの車種別に、買取価格の目安をまとめています。写真を送るだけで整備士が確定額を査定します。">
+  <meta name="description" content="自転車の買取価格は、同じ車種でも状態で大きく変わります。石川県・富山県で実際に買い取った金額（無料引取を含む）と、金額が変わる理由を車種別にまとめました。写真を送るだけで整備士が確定額を査定します。">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://meguri-cycle.com/souba/">
   <link rel="icon" type="image/png" href="/logo/favicon.png">
   <meta property="og:title" content="自転車の買取相場｜めぐり自転車">
-  <meta property="og:description" content="ロード・クロス・電動アシスト・ママチャリの車種別 買取相場の目安。写真を送るだけで整備士が確定額を査定します。">
+  <meta property="og:description" content="実際に買い取った金額と、金額が変わる理由。写真を送るだけで整備士が確定額を査定します。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://meguri-cycle.com/souba/">
 
@@ -34,74 +34,159 @@ ctaUrl: "/line/souba/"
 
   {% include "nav-new.njk" %}
 
+  <!-- ヒーロー（2026-09-28 作り直し。「〜円〜」の目安表をやめ、実際についた金額＋金額が変わる理由に。オーナー判断：相場の金額は状態で大きく変わる） -->
   <section class="section">
     <div class="wrap" style="max-width:900px;">
-      <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(1.9rem,5vw,2.7rem); margin-bottom:12px;">自転車の買取相場</h1>
-      <p class="lead" style="max-width:660px;">石川県での買取価格の目安です。年式・グレード・状態・相場で変動しますが、「自分の自転車はどのくらい？」の見当をつける参考にしてください。<strong>正確な金額は写真を送るだけで無料査定できます（確定額でご提示）。</strong></p>
-
-      <h2 style="font-size:clamp(1.4rem,3.5vw,1.9rem); margin:44px 0 14px;">ロードバイク</h2>
-      <div class="card">
-        <table class="rate">
-          <thead><tr><th>ブランド・グレードの目安</th><th>買取相場の目安</th></tr></thead>
-          <tbody>
-            <tr><td>エントリー（Claris / Sora 等）</td><td class="num">10,000円〜</td></tr>
-            <tr><td>ミドル（105 / Tiagra 等）</td><td class="num">30,000円〜</td></tr>
-            <tr><td>ハイエンド（Ultegra / DURA-ACE・カーボン）</td><td class="num">60,000円〜</td></tr>
-          </tbody>
-        </table>
+      <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">Price Guide</p>
+      <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(1.9rem,5vw,2.7rem); margin-bottom:14px;">自転車の買取相場</h1>
+      <p class="lead" style="max-width:680px;">自転車の買取価格は、<strong>同じ車種でも状態で大きく変わります。</strong>数万円になる車体もあれば、値段がつかない車体もあります。このページでは、実際に買い取った金額と、金額が変わる理由をまとめました。</p>
+      <p class="lead" style="max-width:680px; margin-top:10px;">お手持ちの1台がいくらになるかは、<strong>写真を送るだけで確定額をお伝えします</strong>（幅ではなく一本の金額）。</p>
+      <div class="soubanav" aria-label="車種">
+        <a href="#dendo">電動アシスト</a><a href="#sports">ロード・スポーツ</a><a href="#kids">子ども用</a><a href="#city">ママチャリ・クロス</a><a href="#reasons">金額が変わる理由</a>
       </div>
+    </div>
+  </section>
 
-      <h2 style="font-size:clamp(1.4rem,3.5vw,1.9rem); margin:44px 0 14px;">クロスバイク</h2>
-      <div class="card">
-        <table class="rate">
-          <thead><tr><th>状態の目安</th><th>買取相場の目安</th></tr></thead>
-          <tbody>
-            <tr><td>人気ブランド・美品</td><td class="num">10,000円〜</td></tr>
-            <tr><td>一般的な状態</td><td class="num">3,000円〜</td></tr>
-          </tbody>
-        </table>
+  <!-- 実際についた金額（写真・キャプションは works.html の実例をそのまま使う） -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:960px;">
+      <div class="stack reveal" style="max-width:640px; margin-bottom:clamp(24px,4vw,36px);">
+        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">実際についた金額</h2>
+        <p class="lead" style="margin-top:10px;">これまでの買取・引取の実例です。同じ車種でも、状態によってこれだけ変わります。</p>
       </div>
-
-      <h2 style="font-size:clamp(1.4rem,3.5vw,1.9rem); margin:44px 0 14px;">電動アシスト自転車</h2>
-      <div class="card">
-        <table class="rate">
-          <thead><tr><th>バッテリー状態の目安</th><th>買取相場の目安</th></tr></thead>
-          <tbody>
-            <tr><td>バッテリー良好（残量・容量あり）</td><td class="num">20,000円〜</td></tr>
-            <tr><td>バッテリー劣化あり</td><td class="num">3,000円〜</td></tr>
-            <tr><td>バッテリー単体（容量のあるもの）</td><td class="num">3,000円〜</td></tr>
-          </tbody>
-        </table>
-        <p style="font-size:0.8rem; color:var(--ink-40); margin-top:10px;">※ 電動アシストは事前にバッテリー診断査定を行います。詳しくは <a href="/dendo/" style="color:var(--accent-d);">電動アシストの買取</a> をご覧ください。</p>
+      <div style="display:grid; gap:clamp(40px,6vw,60px);">
+      <div class="soubacat reveal" id="dendo">
+        <h3 class="soubacat__h"><img src="/images/target/t-ebike.webp" width="64" height="64" loading="lazy" decoding="async" alt="">電動アシスト自転車</h3>
+        <p class="soubacat__lead">金額をいちばん左右するのはバッテリーです。同じ年式でも、容量が残っているかどうかで数万円変わります。</p>
+        <div class="works-feature">
+        <figure class="wfeat">
+          <img src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" alt="買い取ったブリヂストン bikke（2020年式・グレー・チャイルドシート2つ）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">ブリヂストン bikke（電動アシスト）</span></span>
+            <span class="wfeat__meta">2020年式・長押し診断でランプ5つ（容量良好）・サビ、ブレーキの効きが不良</span>
+            <span class="wfeat__price">買取 45,000円</span>
+            <span class="wfeat__note">※ ベルの破損・サビ・ブレーキ不良があっても、この金額でした</span>
+            <span class="wfeat__area"><a href="/kanazawa/">金沢市</a></span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-vivi-10000.webp" width="1200" height="800" loading="lazy" alt="買い取ったパナソニック ビビ TX（2018年式・サビあり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">パナソニック ビビ TX（電動アシスト）</span></span>
+            <span class="wfeat__meta">2018年式・サビ多め・バッテリー実容量 約70%</span>
+            <span class="wfeat__price">買取 10,000円</span>
+            <span class="wfeat__note">※ サビが多くても値がつきました</span>
+            <span class="wfeat__area"><a href="/kanazawa/">金沢市</a></span>
+          </figcaption>
+        </figure>
+        </div>
+        <p class="soubacat__more">くわしく：<a href="/dendo/">電動アシストの買取</a>・<a href="/column/battery-check/">バッテリーの長押し診断</a></p>
       </div>
-
-      <h2 style="font-size:clamp(1.4rem,3.5vw,1.9rem); margin:44px 0 14px;">ママチャリ・折りたたみ・その他</h2>
-      <div class="card">
-        <table class="rate">
-          <thead><tr><th>種類</th><th>買取相場の目安</th></tr></thead>
-          <tbody>
-            <tr><td>折りたたみ自転車（ブランド品など）</td><td class="num">15,000円〜</td></tr>
-            <tr><td>シティサイクル（ママチャリ）美品</td><td class="num">1,000円〜</td></tr>
-            <tr><td>値がつかない車体</td><td class="num" style="color:var(--ink-40)">無料引取（出張費のみ）</td></tr>
-          </tbody>
-        </table>
+      <div class="soubacat reveal" id="sports">
+        <h3 class="soubacat__h"><img src="/images/target/t-road.webp" width="64" height="64" loading="lazy" decoding="async" alt="">ロードバイク・スポーツ車</h3>
+        <p class="soubacat__lead">パーツのグレードと年式で決まります。修理が必要な状態でも、スポーツ車は値がつくことが多い車種です。</p>
+        <div class="works-feature">
+        <figure class="wfeat">
+          <img src="/images/works/work-leader-20000.webp" width="1200" height="800" loading="lazy" alt="買い取った LEADER 721 のピストバイク（2020年式・赤・要部品交換）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">LEADER 721（ピストバイク）</span></span>
+            <span class="wfeat__meta">2020年式・パンクなど要部品交換が多数</span>
+            <span class="wfeat__price">買取 20,000円</span>
+            <span class="wfeat__note">※ 修理が必要な状態でも、スポーツ車は相場から値がつきます</span>
+            <span class="wfeat__area"><a href="/komatsu/">小松市</a></span>
+          </figcaption>
+        </figure>
+        </div>
+        <p class="soubacat__more">くわしく：<a href="/brands/">買取強化ブランド</a></p>
       </div>
-
-      <div class="card" style="margin-top:40px;">
-        <h2 style="font-size:1.3rem; margin-bottom:10px;">相場より高くなる／安くなるポイント</h2>
-        <p style="color:var(--ink-70); font-size:0.94rem;">同型車の直近の相場をもとに<strong>確定額</strong>でご提示します（幅ではなく一本の金額）。次のものがそろっていると査定アップの対象になる場合があります。</p>
-        <ul class="list-plain" style="margin-top:10px;">
-          <li>購入レシート・保証書</li>
-          <li>鍵2本・充電器（電動アシスト）</li>
-          <li>目立つ傷・錆が少なく、整備が行き届いている</li>
-        </ul>
+      <div class="soubacat reveal" id="kids">
+        <h3 class="soubacat__h"><img src="/images/works/bike-kids.webp" width="64" height="64" loading="lazy" decoding="async" alt="">子ども用自転車</h3>
+        <p class="soubacat__lead">人気モデルは、使い込んだものでも値がつきます。サイズが合わなくなったらお早めに。</p>
+        <div class="works-feature">
+        <figure class="wfeat">
+          <img src="/images/works/work-coghorn-black-5000.webp" width="1200" height="800" loading="lazy" alt="買い取った COGHORN の子供用マウンテンバイク（黒）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">COGHORN 子供用MTB（黒）</span></span>
+            <span class="wfeat__meta">状態良好・カゴ付き</span>
+            <span class="wfeat__price">買取 5,000円</span>
+            <span class="wfeat__note">※ 4台まとめてのご依頼</span>
+            <span class="wfeat__area"><a href="/kahoku/">かほく市</a></span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-dbike-2000.webp" width="1200" height="800" loading="lazy" alt="買い取った d-bike の幼児用自転車（黒×緑・サビ、傷、使用感あり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">d-bike（幼児用自転車）</span></span>
+            <span class="wfeat__meta">サビ・傷・使用感が多め</span>
+            <span class="wfeat__price">買取 2,000円</span>
+            <span class="wfeat__note">※ 使い込んだ子供用でも、人気モデルは値がつきます</span>
+            <span class="wfeat__area"><a href="/tonami/">砺波市</a></span>
+          </figcaption>
+        </figure>
+        </div>
       </div>
+      <div class="soubacat reveal" id="city">
+        <h3 class="soubacat__h"><img src="/images/target/t-cross.webp" width="64" height="64" loading="lazy" decoding="async" alt="">ママチャリ・クロスバイク</h3>
+        <p class="soubacat__lead">サビや傷があると、値段がつかないことが多い車種です。その場合も処分費0円でお引き取りします（出張費のみ）。</p>
+        <div class="works-feature">
+        <figure class="wfeat">
+          <img src="/images/works/work-city-gold-take.webp" width="1200" height="800" loading="lazy" alt="引き取ったシャンパンゴールドのシティサイクル">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">シティサイクル（ママチャリ）</span></span>
+            <span class="wfeat__meta">値段がつかない車体</span>
+            <span class="wfeat__price">無料引取<span class="wfeat__price-sub">（処分費0円／出張費のみ）</span></span>
+            <span class="wfeat__area"><a href="/takaoka/">高岡市</a></span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-cross-white-take.webp" width="1200" height="800" loading="lazy" alt="引き取った白のクロスバイク（サビ・傷あり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">クロスバイク（白）</span></span>
+            <span class="wfeat__meta">サビ・傷あり</span>
+            <span class="wfeat__price">無料引取<span class="wfeat__price-sub">（処分費0円）</span></span>
+            <span class="wfeat__note">※ 4台まとめてのご依頼</span>
+            <span class="wfeat__area"><a href="/kahoku/">かほく市</a></span>
+          </figcaption>
+        </figure>
+        </div>
+        <p class="soubacat__more">くわしく：<a href="/hikitori/">出張引き取り</a></p>
+      </div>
+      </div>
+      <p class="reveal" style="font-size:0.88rem; margin-top:28px;"><a href="/works/" style="color:var(--accent-d);">買取・引取の実績をすべて見る →</a></p>
+    </div>
+  </section>
 
-      <div class="reveal" style="margin-top:40px; display:flex; gap:14px; flex-wrap:wrap;">
+  <!-- 金額が変わる理由 -->
+  <section class="section" id="reasons">
+    <div class="wrap" style="max-width:900px;">
+      <div class="stack reveal" style="max-width:640px; margin-bottom:clamp(22px,3vw,30px);">
+        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">金額が変わる理由</h2>
+        <p class="lead" style="margin-top:10px;">整備士は、次のところを写真で確認して金額を決めています。</p>
+      </div>
+      <div class="reasons reveal">
+        <div class="reason"><img src="/images/icons/ic-inspect.webp" width="48" height="48" loading="lazy" decoding="async" alt=""><div><h3>サビ・傷・不調</h3><p>同じ車種でも、いちばん差が出るところです。サビや傷が多い、パンクしている、変速やブレーキが効かない——こうした状態だと金額が下がり、値段がつかないこともあります。</p></div></div>
+        <div class="reason"><img src="/images/icons/ic-parts.webp" width="48" height="48" loading="lazy" decoding="async" alt=""><div><h3>パーツのグレード</h3><p>スポーツ車は、付いているパーツで大きく変わります。ロードバイクならシマノの Claris・Sora より 105、さらに Ultegra・DURA-ACE と、上のグレードほど高くなります。</p></div></div>
+        <div class="reason"><img src="/images/icons/ic-ebike.webp" width="48" height="48" loading="lazy" decoding="async" alt=""><div><h3>バッテリーの容量</h3><p>電動アシストは、バッテリーの実容量がそのまま金額に響きます。長押し診断のランプの数を写真や動画で送っていただくと、確定額を出せます。</p></div></div>
+        <div class="reason"><img src="/images/icons/ic-brand.webp" width="48" height="48" loading="lazy" decoding="async" alt=""><div><h3>ブランドと年式</h3><p>人気ブランドや、年式の新しいモデルほど中古の需要があります。古くても、ビンテージとして値がつくものもあります。</p></div></div>
+        <div class="reason"><img src="/images/icons/ic-clipboard.webp" width="48" height="48" loading="lazy" decoding="async" alt=""><div><h3>付属品</h3><p>鍵2本・充電器（電動）・購入レシート・保証書がそろっていると、査定アップの対象になる場合があります。</p></div></div>
+      </div>
+      <div class="card reveal" style="margin-top:clamp(28px,4vw,40px);">
+        <h3 style="font-size:1.1rem; margin-bottom:8px;">だから、金額は写真を見てから一本で</h3>
+        <p style="color:var(--ink-70); font-size:0.94rem; line-height:1.8;">同型車の直近の相場をもとに、写真で状態を確認して<strong>確定額</strong>をお伝えします。写真のとおりであれば、伺ったときに金額が変わることはありません。値段がつかなかった場合も、部品として活かせる車体は処分費0円でお引き取りします（出張費のみ）。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta section--alt">
+    <div class="wrap stack reveal" style="max-width:620px;">
+      <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">お手持ちの1台は、いくら？</h2>
+      <p class="lead">写真を送るだけで、整備士が確定額をお伝えします。</p>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center;">
         <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
         <a class="btn btn--ghost" href="/price/">料金・出張費</a>
       </div>
-      <p style="font-size:0.8rem; color:var(--ink-40); margin-top:16px;">※ 表示は相場の目安で、実際の買取額は車体の状態・年式・市場相場により変動します。同額を保証するものではありません。</p>
+      <p style="font-size:0.8rem; color:var(--ink-40);">※ 掲載の金額は過去の実例です。実際の買取額は車体の状態・年式・市場相場により変わり、同額を保証するものではありません。</p>
     </div>
   </section>
 

@@ -142,6 +142,20 @@ C:/Users/user/meguri-cycle/
 
 ---
 
+## 2026-09-28 /souba/ を作り直し（「〜円〜」の目安表をやめ、実際についた金額＋金額が変わる理由に）
+
+- **オーナー判断**：相場の金額は状態で大きく変わり、あってないようなもの。「〜円〜」は最低保証に読める（例：クロス「一般的な状態 3,000円〜」なのに実績のクロス2台は無料引取）→ 表を撤去。
+- 構成：車種ジャンプ → 「実際についた金額」（電動＝bikke/ビビ、ロード・スポーツ＝LEADER、子ども用＝COGHORN/d-bike、ママチャリ・クロス＝無料引取2台。カードは works.html の wfeat を画像名で抜き出してそのまま使う＝金額の二重管理なし）→ 「金額が変わる理由」5枚（サビ・傷・不調／パーツのグレード／バッテリー容量／ブランドと年式／付属品、アイコンは images/icons）→ 確定額の説明 → CTA。実例のない車種は数字を出さない。
+- title・H1「自転車の買取相場」は検索の入口なので維持。description/og は「実例と理由」に変更。変換は scratchpad の souba_build.py。
+- **同日、ほかのページも揃えた**：市町14ページの「買取価格の目安」表（電動3行版11件・5行版＝小松・高岡・富山）を「実例」の表に置き換え（bikke 45,000／ビビ 10,000／LEADER 20,000／COGHORN 5,000／クロス無料引取。富山市は買取のみの決定なので無料引取の行なし）。「目安は下限です」を削除。金沢の「バッテリー単体は3,000円〜」→「バッテリー単体でも買い取ります」。フッター・トップ・/price/ のリンク名「買取相場の目安」→「買取相場」。変換は scratchpad の city_price_build.py。トップ・/price/・/dendo/ には金額の表はなかった。
+- 同日：トップのブランドウォール（`#target` のマーキー）を文字から `images/brands/*.svg` の実ロゴ18社に（`.brand--logo`）。
+
+## 2026-09-28 /faq/ を改善（文字だけのページを分類・折りたたみ・写真つきに）
+
+- ヒーロー右に代表の実物写真（/about/ と同じ `images/about/portrait-360.webp`）、下に分類ボタン4つ（`.faqnav`、アイコンは未使用だった `images/icons/ic-clipboard|price|shield|calendar.webp`）。
+- 11問を「査定について／料金・お支払い／手続き・お申し込みの条件／日程・キャンセル」に分け、各見出しにアイコン（`.faqgrp`）。回答は折りたたみ（`.faq-acc`、/hikitori/ と同じ）。質問・回答の文面と JSON-LD は変更なし（並び順だけ分類に合わせた）。
+- 末尾に「ここにないご質問は、LINEでどうぞ」の CTA 節。変換は scratchpad の faq_build.py（11問すべて使われたかを assert で確認）。
+
 ## 2026-09-28 /brands/ を写真・ロゴ化（文字だけのページを改善）
 
 - ヒーロー直下に「主な買取強化ブランド」ロゴ18社（`.logowall`、`images/brands/*.svg`）。ロゴは **Wikimedia Commons のパブリックドメイン（PD-textlogo）の SVG**（Bianchi_logo / Specialized_wordmark / Trek_wordmark / Cannondale_Logo / Giant_bycicles_logo / Pinarello_wordmark / Colnago_logo_2021 / Wilier_logo / Cervelo_2019_logo / BMC_Switzerland_logo / CanyonBicycles / Scott_Sports_logo / Merida_2013_wordmark / Logo_Santa_Cruz / Brompton_Bicycle_logo_2019 / Bridgestone_logo / Panasonic_logo / Yamaha_logo_text）。取り込み時に固定の width/height を外し、無い4点は viewBox を補った。色は実物どおり。高さは縦横比から個別に（`--h`、見た目の面積をそろえる）。
