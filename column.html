@@ -53,92 +53,66 @@ ctaUrl: "/line/column/"
 
   {% include "nav-new.njk" %}
 
-  <!-- ヒーロー -->
+  <!-- ヒーロー（2026-09-28 改善：書き手の表示・主な3本はサムネイル付きカード・市町別4本は1ブロックに。文面は従来のまま） -->
   <section class="section" style="padding-bottom: clamp(28px,4vw,40px);">
-    <div class="wrap" style="max-width:760px;">
+    <div class="wrap" style="max-width:1000px;">
       <nav class="crumbs" aria-label="パンくず">
         <a href="/">トップ</a><span aria-hidden="true">›</span>コラム
       </nav>
       <h1 style="font-size:clamp(1.7rem,4.8vw,2.5rem); margin-bottom:14px;">自転車のお役立ちコラム</h1>
       <p class="lead" style="max-width:640px;">「バッテリーはどう捨てる？」「リコールの対象？」「まだ使える？」。お客さまからよくいただくご質問に、自転車整備士が答えています。買取や引き取りを考える前の判断材料としてお使いください。</p>
+      <a class="colauthor" href="/about/">
+        <img src="/images/about/portrait-360.webp" width="56" height="56" alt="">
+        <span><small>書いている人</small><b>高多 優典</b><em>自転車安全整備士・第二種電気工事士</em></span>
+      </a>
     </div>
   </section>
 
-  <!-- 記事一覧（罫線エディトリアル） -->
-  <section class="section" style="padding-top:0;">
-    <div class="wrap" style="max-width:760px;">
-
-      <ol class="collist">
-        <li class="colrow reveal">
-          <span class="colrow__n">01</span>
-          <div class="colrow__body">
+  <!-- 主な記事 -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:1000px;">
+      <div class="colcards">
+        <article class="colcard reveal">
+          <a class="colcard__img" href="/column/battery-disposal/" tabindex="-1" aria-hidden="true"><img src="/images/column/thumb-disposal.webp" width="480" height="480" loading="lazy" decoding="async" alt=""></a>
+          <div class="colcard__body">
             <div class="colrow__meta"><span class="chip">処分・捨て方</span><time datetime="2026-08-20">2026年8月</time></div>
-            <h2 class="colrow__h"><a href="/column/battery-disposal/">電動自転車バッテリーの処分方法と捨て方【石川版】</a></h2>
+            <h2 class="colcard__h"><a href="/column/battery-disposal/">電動自転車バッテリーの処分方法と捨て方【石川版】</a></h2>
             <p class="colrow__p">リチウムイオンバッテリーは家庭ごみ・粗大ごみに出せません。金沢市・かほく市など自治体のルール、JBRC協力店、販売店回収の使い方と、容量が残っていれば買取という出口があることを解説します。</p>
-            <a class="colrow__go" href="/column/battery-disposal/">読む →</a>
           </div>
-        </li>
-
-        <li class="colrow reveal">
-          <span class="colrow__n">02</span>
-          <div class="colrow__body">
+        </article>
+        <article class="colcard reveal">
+          <a class="colcard__img" href="/column/battery-check/" tabindex="-1" aria-hidden="true"><img src="/images/column/thumb-check.webp" width="480" height="480" loading="lazy" decoding="async" alt=""></a>
+          <div class="colcard__body">
             <div class="colrow__meta"><span class="chip">劣化の確認</span><time datetime="2026-08-20">2026年8月</time></div>
-            <h2 class="colrow__h"><a href="/column/battery-check/">電動アシスト自転車のバッテリー劣化を自分で確認する方法</a></h2>
+            <h2 class="colcard__h"><a href="/column/battery-check/">電動アシスト自転車のバッテリー劣化を自分で確認する方法</a></h2>
             <p class="colrow__p">残量ボタンの長押しで、バッテリーの実容量（劣化度）が分かります。パナソニック・ヤマハ・ブリヂストンのメーカー別に、ボタンの位置と表示の読み方を図解。診断結果の写真はそのまま査定に使えます。</p>
-            <a class="colrow__go" href="/column/battery-check/">読む →</a>
           </div>
-        </li>
-
-        <li class="colrow reveal">
-          <span class="colrow__n">03</span>
-          <div class="colrow__body">
+        </article>
+        <article class="colcard reveal">
+          <a class="colcard__img" href="/column/recall/" tabindex="-1" aria-hidden="true"><img src="/images/column/thumb-recall.webp" width="480" height="480" loading="lazy" decoding="async" alt=""></a>
+          <div class="colcard__body">
             <div class="colrow__meta"><span class="chip">リコール</span><time datetime="2026-08-21">2026年8月</time></div>
-            <h2 class="colrow__h"><a href="/column/recall/">電動アシスト自転車 リコールの調べ方【メーカー別】</a></h2>
+            <h2 class="colcard__h"><a href="/column/recall/">電動アシスト自転車 リコールの調べ方【メーカー別】</a></h2>
             <p class="colrow__p">パナソニック・ヤマハ（PAS）・ブリヂストンのリコール（無償回収・交換）を公式サイトで確認する手順と、対象だったときの対応。もう乗らない車体は買取・引き取りの相談もできます。</p>
-            <a class="colrow__go" href="/column/recall/">読む →</a>
           </div>
-        </li>
+        </article>
+      </div>
+    </div>
+  </section>
 
-        <li class="colrow reveal">
-          <span class="colrow__n">04</span>
-          <div class="colrow__body">
-            <div class="colrow__meta"><span class="chip">処分・捨て方</span><time datetime="2026-09-03">2026年9月</time></div>
-            <h2 class="colrow__h"><a href="/column/battery-disposal-kanazawa/">金沢市の電動自転車バッテリー処分方法</a></h2>
-            <p class="colrow__p">金沢市の公式案内をもとに、家庭ごみに出せない理由と、販売店・JBRC協力店・買取という3つの出口をまとめました。</p>
-            <a class="colrow__go" href="/column/battery-disposal-kanazawa/">読む →</a>
-          </div>
-        </li>
-
-        <li class="colrow reveal">
-          <span class="colrow__n">05</span>
-          <div class="colrow__body">
-            <div class="colrow__meta"><span class="chip">処分・捨て方</span><time datetime="2026-09-03">2026年9月</time></div>
-            <h2 class="colrow__h"><a href="/column/battery-disposal-kahoku/">かほく市の電動自転車バッテリー処分方法</a></h2>
-            <p class="colrow__p">かほく市の公式案内をもとに、家庭ごみに出せない理由と、販売店・JBRC協力店・買取という3つの出口をまとめました。</p>
-            <a class="colrow__go" href="/column/battery-disposal-kahoku/">読む →</a>
-          </div>
-        </li>
-
-        <li class="colrow reveal">
-          <span class="colrow__n">06</span>
-          <div class="colrow__body">
-            <div class="colrow__meta"><span class="chip">処分・捨て方</span><time datetime="2026-09-03">2026年9月</time></div>
-            <h2 class="colrow__h"><a href="/column/battery-disposal-hakusan/">白山市の電動自転車バッテリー処分方法</a></h2>
-            <p class="colrow__p">白山市の公式案内をもとに、家庭ごみに出せない理由と、販売店・JBRC協力店・買取という3つの出口をまとめました。</p>
-            <a class="colrow__go" href="/column/battery-disposal-hakusan/">読む →</a>
-          </div>
-        </li>
-
-        <li class="colrow reveal">
-          <span class="colrow__n">07</span>
-          <div class="colrow__body">
-            <div class="colrow__meta"><span class="chip">処分・捨て方</span><time datetime="2026-09-03">2026年9月</time></div>
-            <h2 class="colrow__h"><a href="/column/battery-disposal-nonoichi/">野々市市の電動自転車バッテリー処分方法</a></h2>
-            <p class="colrow__p">野々市市の公式案内をもとに、家庭ごみに出せない理由と、販売店・JBRC協力店・買取という3つの出口をまとめました。</p>
-            <a class="colrow__go" href="/column/battery-disposal-nonoichi/">読む →</a>
-          </div>
-        </li>
-      </ol>
+  <!-- 市町別のバッテリー処分 -->
+  <section class="section">
+    <div class="wrap" style="max-width:1000px;">
+      <div class="stack reveal" style="max-width:640px; margin-bottom:18px;">
+        <h2 style="font-size:clamp(1.4rem,3.8vw,1.9rem)">お住まいの市町のバッテリー処分</h2>
+        <p style="color:var(--ink-70); font-size:0.93rem; line-height:1.8; margin-top:6px;">各市町の公式案内をもとに、家庭ごみに出せない理由と、販売店・JBRC協力店・買取という3つの出口をまとめました。</p>
+      </div>
+      <div class="citycols reveal">
+          <a class="citycol" href="/column/battery-disposal-kanazawa/"><b>金沢市</b><span>金沢市の電動自転車バッテリー処分方法</span><time datetime="2026-09-03">2026年9月</time></a>
+          <a class="citycol" href="/column/battery-disposal-kahoku/"><b>かほく市</b><span>かほく市の電動自転車バッテリー処分方法</span><time datetime="2026-09-03">2026年9月</time></a>
+          <a class="citycol" href="/column/battery-disposal-hakusan/"><b>白山市</b><span>白山市の電動自転車バッテリー処分方法</span><time datetime="2026-09-03">2026年9月</time></a>
+          <a class="citycol" href="/column/battery-disposal-nonoichi/"><b>野々市市</b><span>野々市市の電動自転車バッテリー処分方法</span><time datetime="2026-09-03">2026年9月</time></a>
+      </div>
 
       <!-- CTA -->
       <div class="reveal" style="text-align:center; padding-top: clamp(36px,6vw,56px);">
@@ -150,7 +124,6 @@ ctaUrl: "/line/column/"
         </span>
         <p style="font-size:0.78rem; color:var(--ink-40); margin:10px 0 0;">タップすると入力済みのメッセージが開きます。そのまま送信してください。</p>
       </div>
-
     </div>
   </section>
 

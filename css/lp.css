@@ -1007,3 +1007,27 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .wfilter button.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
 .wfilter button.is-on span { color: rgba(255,255,255,0.75); }
 @media (min-width: 960px) { .bworks--6 { grid-template-columns: repeat(6, minmax(0,1fr)); } }
+
+/* /column/（2026-09-28 改善）：書き手・主な記事のカード・市町別の処分記事 */
+.colauthor { display: inline-flex; align-items: center; gap: 12px; margin-top: 18px; padding: 8px 16px 8px 8px; background: var(--card); border: 1px solid var(--line-hair); border-radius: 999px; text-decoration: none; color: var(--ink); }
+.colauthor img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+.colauthor span { display: flex; flex-direction: column; line-height: 1.35; }
+.colauthor small { font-size: 0.7rem; color: var(--ink-40); }
+.colauthor b { font-size: 0.95rem; }
+.colauthor em { font-style: normal; font-size: 0.74rem; color: var(--ink-55); }
+.colcards { display: grid; gap: 16px; }
+@media (min-width: 820px) { .colcards { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 20px; } }
+.colcard { display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); overflow: hidden; box-shadow: 0 16px 40px -28px rgba(22,24,29,0.4); }
+.colcard__img { display: flex; align-items: center; justify-content: center; background: #E6ECF2; aspect-ratio: 16 / 10; }
+.colcard__img img { height: 82%; width: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 18%; }
+.colcard__body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; }
+.colcard__h { font-size: 1.12rem; line-height: 1.5; margin: 0; }
+.colcard__h a { color: var(--ink); text-decoration: none; }
+.colcard__h a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+.citycols { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+@media (min-width: 820px) { .citycols { grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; } }
+.citycol { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); text-decoration: none; color: var(--ink); transition: border-color .2s, transform .2s; }
+.citycol:hover { border-color: var(--accent); transform: translateY(-1px); }
+.citycol b { font-size: 1.15rem; }
+.citycol span { font-size: 0.8rem; color: var(--ink-55); line-height: 1.5; }
+.citycol time { font-size: 0.72rem; color: var(--ink-40); }
