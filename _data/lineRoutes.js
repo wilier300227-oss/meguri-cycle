@@ -52,6 +52,14 @@ const routes = [
   { slug: "nanto", msg: "自転車の査定をお願いできますか？（南砺ページから）" },
 ];
 
-module.exports = routes.map(function (r) {
-  return { slug: r.slug, msg: r.msg, oaUrl: OA_BASE + encodeURIComponent(r.msg) };
-});
+// PC 用の QR（2026-09-28）：スマホで読むと、入力済みメッセージ付きで LINE が開く＝経路タグも残る。
+// ビルド時に qrcode（devDependency）で SVG を作る。外部サービスは使わない。
+const QRCode = require("qrcode");
+
+module.exports = async function () {
+  return Promise.all(routes.map(async function (r) {
+    const oaUrl = OA_BASE + encodeURIComponent(r.msg);
+    const qrSvg = await QRCode.toString(oaUrl, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#1a2b45", light: "#ffffff" } });
+    return { slug: r.slug, msg: r.msg, oaUrl: oaUrl, qrSvg: qrSvg };
+  }));
+};
