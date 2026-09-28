@@ -34,35 +34,93 @@ ctaUrl: "/line/price/"
 
   {% include "nav-new.njk" %}
 
+  <!-- 2026-09-28 見た目を改善（文字だけだったため）。出張費の文面・表・注記は従来のまま（方針が決まるまで変えない） -->
   <section class="section">
-    <div class="wrap" style="max-width:980px;">
+    <div class="wrap" style="max-width:900px;">
+      <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">Price</p>
       <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(1.9rem,5vw,2.7rem); margin-bottom:12px;">料金・出張費</h1>
       <p class="lead" style="max-width:640px;"><strong>買取のご依頼なら、査定もお引き取りも無料です。</strong>出張費がかかるのは、値段がつかない車体を引き取る場合のみです。</p>
+      <div class="fork fork--page reveal" role="group" aria-label="買取と引取の料金" style="margin-top:clamp(28px,4vw,40px);">
+        <div class="fork__lane fork__lane--buy">
+          <span class="fork__if">値段がつく車体</span>
+          <strong class="fork__to">買取</strong>
+          <ul class="pricelist">
+            <li><span>査定</span><b>0円</b></li>
+            <li><span>出張費</span><b>0円</b></li>
+            <li><span>お支払い</span><b>買取額をお支払い</b></li>
+          </ul>
+        </div>
+        <div class="fork__lane fork__lane--take">
+          <span class="fork__if">値段がつかない車体</span>
+          <strong class="fork__to">引取</strong>
+          <ul class="pricelist">
+            <li><span>査定</span><b>0円</b></li>
+            <li><span>処分費</span><b>0円</b></li>
+            <li><span>出張費</span><b><a href="#fee">距離で決まります ↓</a></b></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <div class="cols2" style="margin-top:36px;">
+  <!-- 出張費（引取のみ）。写真は /hikitori/ のヒーローと同じ Gemini 生成画像 -->
+  <section class="section section--alt" id="fee">
+    <div class="wrap" style="max-width:980px;">
+      <div class="pricefee">
         <div class="reveal">
-          <h2 style="font-size:1.3rem; margin-bottom:6px;">出張費の目安（出張引取のみ）</h2>
+          <h2 style="font-size:clamp(1.5rem,4vw,2rem); margin-bottom:8px;">出張費の目安（出張引取のみ）</h2>
           <p style="color:var(--ink-55); font-size:0.9rem; margin-bottom:16px;">かほく市役所を起点とした、Googleマップの走行距離（片道）で決まります。訪問というお仕事への費用で、引き取る車体の台数・種類とは連動しません。</p>
           <div class="card" style="margin-bottom:12px;">
             {% set feeTableHead = "片道距離（かほく市役所起点）" %}{% include "fee-table.njk" %}
           </div>
           <p style="font-size:0.8rem; color:var(--ink-40);">※ 市区町村をお知らせいただければ、出張費はこちらで計算して事前にご案内します。ガソリン代により改定する場合があります。</p>
         </div>
-        <div class="reveal">
-          <div class="card" style="margin-bottom:16px;">
-            <h2 style="font-size:1.3rem; margin-bottom:10px;">査定の考え方</h2>
-            <p style="color:var(--ink-70); font-size:0.94rem;">同型車の直近の相場をもとに、整備・送料などを差し引いた<strong>確定額</strong>でご提示します（幅ではなく一本の金額）。写真・情報と現物が一致していれば変わりません。有効期限は<strong>7日間</strong>です。お支払いは現金、30,000円を超える場合は銀行振込です。実際についた金額と、金額が変わる理由は<a href="/souba/" style="text-decoration:underline;">買取相場</a>をご覧ください。</p>
-            <p style="font-size:0.8rem; color:var(--ink-40); margin-top:10px;">※ 購入レシート・保証書・鍵2本・充電器がそろっていると、査定アップの対象になる場合があります。</p>
-          </div>
-          <div class="card">
-            <h2 style="font-size:1.3rem; margin-bottom:8px;">対応エリア</h2>
-            <p style="color:var(--ink-70); font-size:0.94rem;"><strong>石川県・富山県の全26市町</strong>（金沢市・津幡町・内灘町・白山市・野々市市・小松市・氷見市・高岡市など）。そのほかの地域も、まずはLINEまたはメールよりお気軽にご相談ください。</p>
-            <p style="margin-top:12px;"><a href="/kanazawa/" style="color:var(--accent-d); font-weight:600; text-decoration:none;">金沢市の自転車買取について詳しく →</a> ／ <a href="/area/" style="color:var(--accent-d); font-weight:600; text-decoration:none;">対応エリア →</a></p>
-          </div>
-        </div>
+        <figure class="pricefee__img reveal">
+          <img src="/images/hikitori/hero.webp" width="1376" height="768" loading="lazy" decoding="async" alt="軽バンでご自宅まで自転車を引き取りに伺う様子">
+          <figcaption>写真はイメージです</figcaption>
+        </figure>
       </div>
+    </div>
+  </section>
 
-      <div class="reveal" style="margin-top:40px; display:flex; gap:14px; flex-wrap:wrap;">
+  <!-- 査定の考え方（3つの数字は下の本文と同じ内容） -->
+  <section class="section">
+    <div class="wrap" style="max-width:900px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2rem); margin-bottom:18px;">査定の考え方</h2>
+      <div class="pricestats reveal">
+        <div class="pricestat"><img src="/images/icons/ic-price.webp" width="44" height="44" loading="lazy" decoding="async" alt=""><span>金額</span><b>確定額で一本</b><small>幅ではなく一本の金額</small></div>
+        <div class="pricestat"><img src="/images/icons/ic-calendar.webp" width="44" height="44" loading="lazy" decoding="async" alt=""><span>有効期限</span><b>7日間</b><small>査定額の有効期限</small></div>
+        <div class="pricestat"><img src="/images/icons/ic-shield.webp" width="44" height="44" loading="lazy" decoding="async" alt=""><span>お支払い</span><b>現金</b><small>30,000円を超える場合は銀行振込</small></div>
+      </div>
+      <div class="card reveal" style="margin-top:16px;">
+        <p style="color:var(--ink-70); font-size:0.94rem;">同型車の直近の相場をもとに、整備・送料などを差し引いた<strong>確定額</strong>でご提示します（幅ではなく一本の金額）。写真・情報と現物が一致していれば変わりません。有効期限は<strong>7日間</strong>です。お支払いは現金、30,000円を超える場合は銀行振込です。実際についた金額と、金額が変わる理由は<a href="/souba/" style="text-decoration:underline;">買取相場</a>をご覧ください。</p>
+        <p style="font-size:0.8rem; color:var(--ink-40); margin-top:10px;">※ 購入レシート・保証書・鍵2本・充電器がそろっていると、査定アップの対象になる場合があります。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 対応エリア -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:900px;">
+      <div class="card reveal pricearea">
+        <h2 style="font-size:clamp(1.3rem,3.6vw,1.6rem); margin-bottom:8px;">対応エリア</h2>
+        <p style="color:var(--ink-70); font-size:0.94rem;"><strong>石川県・富山県の全26市町</strong>（金沢市・津幡町・内灘町・白山市・野々市市・小松市・氷見市・高岡市など）。そのほかの地域も、まずはLINEまたはメールよりお気軽にご相談ください。</p>
+        <div class="areachips">
+          <p class="areachips__pref">石川県</p>
+          <div class="areachips__list"><a href="/kahoku/">かほく市</a><a href="/kanazawa/">金沢市</a><a href="/tsubata/">津幡町</a><a href="/hodatsushimizu/">宝達志水町</a><a href="/uchinada/">内灘町</a><a href="/hakui/">羽咋市</a><a href="/nonoichi/">野々市市</a><a href="/nomi/">能美市</a><a href="/kawakita/">川北町</a><a href="/shika/">志賀町</a><a href="/nakanoto/">中能登町</a><a href="/hakusan/">白山市</a><a href="/nanao/">七尾市</a><a href="/komatsu/">小松市</a><a href="/kaga/">加賀市</a><a href="/wajima/">輪島市</a><a href="/suzu/">珠洲市</a><a href="/anamizu/">穴水町</a><a href="/notomachi/">能登町</a></div>
+          <p class="areachips__pref">富山県</p>
+          <div class="areachips__list"><a href="/himi/">氷見市</a><a href="/takaoka/">高岡市</a><a href="/oyabe/">小矢部市</a><a href="/imizu/">射水市</a><a href="/tonami/">砺波市</a><a href="/toyama/">富山市</a><a href="/nanto/">南砺市</a></div>
+        </div>
+        <p style="margin-top:12px;"><a href="/kanazawa/" style="color:var(--accent-d); font-weight:600; text-decoration:none;">金沢市の自転車買取について詳しく →</a> ／ <a href="/area/" style="color:var(--accent-d); font-weight:600; text-decoration:none;">対応エリア →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta">
+    <div class="wrap stack reveal" style="max-width:620px;">
+      <h2 style="font-size:clamp(1.5rem,4.2vw,2.1rem)">まずは写真で、無料査定</h2>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; justify-content:center;">
         <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
         <a class="btn btn--ghost" href="/terms/">ご利用条件</a>
       </div>

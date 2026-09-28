@@ -910,3 +910,26 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 /* トップのブランドウォール：文字→実際のロゴ（2026-09-28、/brands/ と同じ images/brands/*.svg） */
 .brand--logo img { height: var(--h, 26px); width: auto; display: block; }
 @media (max-width: 720px) { .brand--logo { padding: 0 24px; } .brand--logo::after { margin-left: 24px; } .brand--logo img { height: calc(var(--h, 26px) * 0.8); } }
+
+/* /price/（2026-09-28 改善）：買取／引取の料金の二股・出張費の写真・査定の3つの数字 */
+.pricelist { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.pricelist li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-top: 6px; border-top: 1px solid color-mix(in srgb, currentColor 22%, transparent); font-size: 0.88rem; }
+.pricelist b { font-size: 1.05rem; }
+.pricelist a { color: inherit; }
+.pricefee { display: grid; gap: clamp(24px,4vw,44px); align-items: start; }
+@media (min-width: 860px) { .pricefee { grid-template-columns: minmax(0,1.05fr) minmax(0,0.95fr); } .pricefee__img { position: sticky; top: 92px; } }
+.pricefee__img { margin: 0; position: relative; }
+.pricefee__img img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: 64% 50%; display: block; border-radius: var(--radius); box-shadow: 0 24px 48px -30px rgba(22,24,29,0.5); }
+.pricefee__img figcaption { position: absolute; right: 10px; bottom: 8px; font-size: 0.68rem; color: rgba(255,255,255,0.75); }
+.pricestats { display: grid; gap: 12px; }
+@media (min-width: 640px) { .pricestats { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
+.pricestat { display: grid; grid-template-columns: 44px 1fr; column-gap: 12px; align-items: center; padding: 16px 18px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); }
+.pricestat img { grid-row: span 3; width: 44px; height: 44px; }
+.pricestat span { font-size: 0.78rem; color: var(--ink-55); }
+.pricestat b { font-size: 1.25rem; color: var(--ink); line-height: 1.3; }
+.pricestat small { font-size: 0.76rem; color: var(--ink-55); }
+.areachips { margin-top: 16px; }
+.areachips__pref { font-size: 0.8rem; font-weight: 700; color: var(--ink-55); margin: 12px 0 8px; }
+.areachips__list { display: flex; flex-wrap: wrap; gap: 6px; }
+.areachips__list a { padding: 6px 12px; border: 1px solid var(--line-hair); border-radius: 999px; background: #fff; color: var(--ink); font-size: 0.84rem; text-decoration: none; }
+.areachips__list a:hover { border-color: var(--accent); }
