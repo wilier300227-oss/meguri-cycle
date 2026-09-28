@@ -34,25 +34,74 @@ ctaUrl: "/line/brands/"
 
   {% include "nav-new.njk" %}
 
-  <!-- ヒーロー -->
-  <section class="section" style="padding-bottom: clamp(40px,6vw,64px);">
-    <div class="wrap" style="max-width:760px;">
-      <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">Brands We Buy</p>
-      <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(2rem,5.5vw,3rem); line-height:1.24; margin-bottom:20px;">買取強化ブランド一覧</h1>
-      <p class="lead" style="margin-bottom:12px;">有名メーカーの自転車は、<strong>特に力を入れて買い取っています。</strong>下記は主な対象ブランドの一例です。ロード・クロス・マウンテンバイク（MTB）・ミニベロ・電動アシストまで、幅広く査定します。</p>
-      <p style="color:var(--ink-55); font-size:0.9rem; margin-bottom:24px;">※ 記載のないメーカー・ノーブランドの車体も査定します。まずは写真をお送りください。</p>
-      <span class="cta-underline">
-        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
-        <span class="rainbow-line" aria-hidden="true"></span>
-      </span>
+  <!-- ヒーロー＋主要ブランドのロゴ（2026-09-28 文字だけだったページを写真・ロゴ化） -->
+  <section class="section" style="padding-bottom: clamp(44px,6vw,72px);">
+    <div class="wrap" style="max-width:960px;">
+      <div style="max-width:760px;">
+        <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">Brands We Buy</p>
+        <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(2rem,5.5vw,3rem); line-height:1.24; margin-bottom:20px;">買取強化ブランド一覧</h1>
+        <p class="lead" style="margin-bottom:12px;">有名メーカーの自転車は、<strong>特に力を入れて買い取っています。</strong>下記は主な対象ブランドの一例です。ロード・クロス・マウンテンバイク（MTB）・ミニベロ・電動アシストまで、幅広く査定します。</p>
+        <p style="color:var(--ink-55); font-size:0.9rem; margin-bottom:24px;">※ 記載のないメーカー・ノーブランドの車体も査定します。まずは写真をお送りください。</p>
+        <span class="cta-underline">
+          <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+          <span class="rainbow-line" aria-hidden="true"></span>
+        </span>
+      </div>
+      <div class="reveal" style="margin-top:clamp(36px,5vw,52px);">
+        <h2 style="font-size:1.15rem; margin-bottom:14px;">主な買取強化ブランド</h2>
+        <ul class="logowall" aria-label="主な買取強化ブランド">
+          <li><img src="/images/brands/bianchi.svg" width="158" height="22" style="--h:22px" loading="lazy" decoding="async" alt="Bianchi（ビアンキ）"></li>
+          <li><img src="/images/brands/specialized.svg" width="183" height="19" style="--h:19px" loading="lazy" decoding="async" alt="Specialized（スペシャライズド）"></li>
+          <li><img src="/images/brands/trek.svg" width="152" height="23" style="--h:23px" loading="lazy" decoding="async" alt="Trek（トレック）"></li>
+          <li><img src="/images/brands/cannondale.svg" width="161" height="21" style="--h:21px" loading="lazy" decoding="async" alt="Cannondale（キャノンデール）"></li>
+          <li><img src="/images/brands/giant.svg" width="161" height="21" style="--h:21px" loading="lazy" decoding="async" alt="Giant（ジャイアント）"></li>
+          <li><img src="/images/brands/pinarello.svg" width="217" height="19" style="--h:19px" loading="lazy" decoding="async" alt="Pinarello（ピナレロ）"></li>
+          <li><img src="/images/brands/colnago.svg" width="160" height="22" style="--h:22px" loading="lazy" decoding="async" alt="Colnago（コルナゴ）"></li>
+          <li><img src="/images/brands/wilier.svg" width="194" height="27" style="--h:27px" loading="lazy" decoding="async" alt="Wilier（ウィリエール）"></li>
+          <li><img src="/images/brands/cervelo.svg" width="137" height="24" style="--h:24px" loading="lazy" decoding="async" alt="Cervélo（サーヴェロ）"></li>
+          <li><img src="/images/brands/bmc.svg" width="118" height="29" style="--h:29px" loading="lazy" decoding="async" alt="BMC（ビーエムシー）"></li>
+          <li><img src="/images/brands/canyon.svg" width="156" height="22" style="--h:22px" loading="lazy" decoding="async" alt="Canyon（キャニオン）"></li>
+          <li><img src="/images/brands/scott.svg" width="130" height="27" style="--h:27px" loading="lazy" decoding="async" alt="Scott（スコット）"></li>
+          <li><img src="/images/brands/merida.svg" width="216" height="19" style="--h:19px" loading="lazy" decoding="async" alt="Merida（メリダ）"></li>
+          <li><img src="/images/brands/santacruz.svg" width="54" height="54" style="--h:54px" loading="lazy" decoding="async" alt="Santa Cruz（サンタクルズ）"></li>
+          <li><img src="/images/brands/brompton.svg" width="118" height="29" style="--h:29px" loading="lazy" decoding="async" alt="Brompton（ブロンプトン）"></li>
+          <li><img src="/images/brands/bridgestone.svg" width="162" height="20" style="--h:20px" loading="lazy" decoding="async" alt="BRIDGESTONE（ブリヂストン）"></li>
+          <li><img src="/images/brands/panasonic.svg" width="150" height="23" style="--h:23px" loading="lazy" decoding="async" alt="Panasonic（パナソニック）"></li>
+          <li><img src="/images/brands/yamaha.svg" width="113" height="31" style="--h:31px" loading="lazy" decoding="async" alt="YAMAHA（ヤマハ）"></li>
+        </ul>
+        <p class="logowall__note">掲載のロゴは各社の商標または登録商標です。めぐり自転車は各メーカーの販売店・提携先ではなく、お手持ちの中古自転車の買取を行っています。</p>
+      </div>
     </div>
   </section>
 
-  <!-- ブランド一覧（カテゴリ別） -->
+  <!-- ブランド車の買取実績（2026-09-28 追加。実際に買い取った車体の写真。金額つきの実例は /works/） -->
   <section class="section section--alt">
+    <div class="wrap" style="max-width:1040px;">
+      <div class="stack reveal" style="max-width:620px; margin-bottom:clamp(22px,3vw,30px);">
+        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">ブランド車の買取実績</h2>
+        <p class="lead" style="margin-top:10px;">これまでに買い取った車体の一部です。フレームだけ、年式の古いものも査定します。</p>
+      </div>
+      <div class="bworks reveal">
+        <figure class="bwork"><img src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" decoding="async" alt="買い取ったビアンキのロードバイク"><figcaption><b>Bianchi</b><span>ロードバイク</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-road-caad3.webp" width="594" height="378" loading="lazy" decoding="async" alt="買い取ったキャノンデールのロードバイク"><figcaption><b>Cannondale</b><span>ロードバイク</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-gravel-topstone.webp" width="594" height="414" loading="lazy" decoding="async" alt="買い取ったキャノンデールのグラベルロード"><figcaption><b>Cannondale</b><span>グラベルロード</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-gravel-araya.webp" width="594" height="390" loading="lazy" decoding="async" alt="買い取ったアラヤのグラベルロード"><figcaption><b>ARAYA</b><span>グラベルロード</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/frame-wilier.webp" width="594" height="599" loading="lazy" decoding="async" alt="買い取ったウィリエールのフレーム"><figcaption><b>Wilier</b><span>フレーム</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/frame-giant.webp" width="594" height="484" loading="lazy" decoding="async" alt="買い取ったジャイアントのフレーム"><figcaption><b>Giant</b><span>フレーム</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/works-commencal.webp" width="1226" height="674" loading="lazy" decoding="async" alt="買い取ったCOMMENCALのフルサスペンションMTB"><figcaption><b>COMMENCAL</b><span>マウンテンバイク</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-mini-brompton.webp" width="594" height="599" loading="lazy" decoding="async" alt="買い取ったブロンプトンの折りたたみ自転車"><figcaption><b>Brompton</b><span>折りたたみ自転車</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" decoding="async" alt="買い取ったブリヂストン bikke（電動アシスト）"><figcaption><b>BRIDGESTONE</b><span>bikke（電動アシスト）</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/work-vivi-10000.webp" width="1200" height="800" loading="lazy" decoding="async" alt="買い取ったパナソニック ビビ TX（電動アシスト）"><figcaption><b>Panasonic</b><span>ビビ（電動アシスト）</span></figcaption></figure>
+      </div>
+      <p class="reveal" style="font-size:0.88rem; margin-top:18px;"><a href="/works/" style="color:var(--accent-d);">金額つきの買取実績を見る →</a></p>
+    </div>
+  </section>
+
+  <!-- ブランド一覧（カテゴリ別）。見出しの写真は images/target（トップの対象タイル）と BMX は実物写真 -->
+  <section class="section">
     <div class="wrap" style="max-width:960px; display:grid; grid-template-columns:minmax(0,1fr); gap:40px;">
       <div class="reveal brandcat">
-        <h2>ロードバイク</h2>
+        <h2 class="brandcat__h"><img src="/images/target/t-road.webp" width="64" height="64" loading="lazy" decoding="async" alt="">ロードバイク</h2>
         <ul class="brandix">
           <li><span class="en">Wilier</span><span class="jp">ウィリエール</span></li>
           <li><span class="en">Pinarello</span><span class="jp">ピナレロ</span></li>
@@ -90,7 +139,7 @@ ctaUrl: "/line/brands/"
         </ul>
       </div>
       <div class="reveal brandcat">
-        <h2>クロスバイク・シティ・国内メーカー</h2>
+        <h2 class="brandcat__h"><img src="/images/target/t-cross.webp" width="64" height="64" loading="lazy" decoding="async" alt="">クロスバイク・シティ・国内メーカー</h2>
         <ul class="brandix">
           <li><span class="en">BRIDGESTONE / ANCHOR</span><span class="jp">ブリヂストン／アンカー</span></li>
           <li><span class="en">Panasonic</span><span class="jp">パナソニック</span></li>
@@ -112,7 +161,7 @@ ctaUrl: "/line/brands/"
         </ul>
       </div>
       <div class="reveal brandcat">
-        <h2>マウンテンバイク（MTB）</h2>
+        <h2 class="brandcat__h"><img src="/images/target/t-mtb.webp" width="64" height="64" loading="lazy" decoding="async" alt="">マウンテンバイク（MTB）</h2>
         <ul class="brandix">
           <li><span class="en">Santa Cruz</span><span class="jp">サンタクルズ</span></li>
           <li><span class="en">YETI</span><span class="jp">イエティ</span></li>
@@ -128,7 +177,7 @@ ctaUrl: "/line/brands/"
         </ul>
       </div>
       <div class="reveal brandcat">
-        <h2>ミニベロ・折りたたみ</h2>
+        <h2 class="brandcat__h"><img src="/images/target/t-folding.webp" width="64" height="64" loading="lazy" decoding="async" alt="">ミニベロ・折りたたみ</h2>
         <ul class="brandix">
           <li><span class="en">Brompton</span><span class="jp">ブロンプトン</span></li>
           <li><span class="en">DAHON</span><span class="jp">ダホン</span></li>
@@ -145,7 +194,7 @@ ctaUrl: "/line/brands/"
         </ul>
       </div>
       <div class="reveal brandcat">
-        <h2>電動アシスト・E-bike</h2>
+        <h2 class="brandcat__h"><img src="/images/target/t-ebike.webp" width="64" height="64" loading="lazy" decoding="async" alt="">電動アシスト・E-bike</h2>
         <ul class="brandix">
           <li><span class="en">YAMAHA PAS</span><span class="jp">ヤマハ</span></li>
           <li><span class="en">Panasonic</span><span class="jp">パナソニック</span></li>
@@ -158,7 +207,7 @@ ctaUrl: "/line/brands/"
         </ul>
       </div>
       <div class="reveal brandcat">
-        <h2>クロモリ・ヴィンテージ・ツーリング</h2>
+        <h2 class="brandcat__h"><img src="/images/target/t-vintage.webp" width="64" height="64" loading="lazy" decoding="async" alt="">クロモリ・ヴィンテージ・ツーリング</h2>
         <ul class="brandix brandix--2">
           <li><span class="en">CHERUBIM</span><span class="jp">ケルビム</span></li>
           <li><span class="en">TOEI</span><span class="jp">トーエイ</span></li>
@@ -167,7 +216,7 @@ ctaUrl: "/line/brands/"
         </ul>
       </div>
       <div class="reveal brandcat">
-        <h2>BMX・その他</h2>
+        <h2 class="brandcat__h"><img src="/images/works/bike-bmx.webp" width="64" height="64" loading="lazy" decoding="async" alt="">BMX・その他</h2>
         <ul class="brandix brandix--2">
           <li><span class="en">SCHWINN</span><span class="jp">シュウィン</span></li>
           <li><span class="en">Sunday</span><span class="jp">サンデー</span></li>
@@ -177,11 +226,7 @@ ctaUrl: "/line/brands/"
         </ul>
       </div>
     </div>
-  </section>
-
-  <!-- 記載外について -->
-  <section class="section">
-    <div class="wrap" style="max-width:760px;">
+    <div class="wrap" style="max-width:760px; margin-top:clamp(40px,6vw,64px);">
       <div class="card reveal">
         <h2 style="font-size:1.2rem; margin-bottom:10px;">記載のないブランドも査定します</h2>
         <p style="color:var(--ink-70); font-size:0.94rem; margin-bottom:12px;">上記はあくまで一例です。ここに載っていないメーカーや、ブランドの分からない車体、ノーブランドの自転車も査定します。整備士がフレームと駆動系の状態を見て、確定額でお伝えします。</p>

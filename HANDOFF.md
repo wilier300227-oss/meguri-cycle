@@ -142,6 +142,13 @@ C:/Users/user/meguri-cycle/
 
 ---
 
+## 2026-09-28 /brands/ を写真・ロゴ化（文字だけのページを改善）
+
+- ヒーロー直下に「主な買取強化ブランド」ロゴ18社（`.logowall`、`images/brands/*.svg`）。ロゴは **Wikimedia Commons のパブリックドメイン（PD-textlogo）の SVG**（Bianchi_logo / Specialized_wordmark / Trek_wordmark / Cannondale_Logo / Giant_bycicles_logo / Pinarello_wordmark / Colnago_logo_2021 / Wilier_logo / Cervelo_2019_logo / BMC_Switzerland_logo / CanyonBicycles / Scott_Sports_logo / Merida_2013_wordmark / Logo_Santa_Cruz / Brompton_Bicycle_logo_2019 / Bridgestone_logo / Panasonic_logo / Yamaha_logo_text）。取り込み時に固定の width/height を外し、無い4点は viewBox を補った。色は実物どおり。高さは縦横比から個別に（`--h`、見た目の面積をそろえる）。
+- 商標の注記「各社の商標…販売店・提携先ではなく中古の買取」をロゴの下に。ARAYA・MIYATA・DAHON・Tern・COMMENCAL などは Commons に PD のロゴが無い（MIYATA は CC BY-SA）ので文字のまま。Commons は連続ダウンロードで 429 になる→20秒間隔で。
+- 「ブランド車の買取実績」：実物写真10枚（`.bworks`、works の Bianchi・Cannondale×2・ARAYA・Wilier/Giant フレーム・COMMENCAL・Brompton・bikke・ビビ）。金額は出さず /works/ へリンク。
+- カテゴリ一覧の見出しに写真（`images/target/t-*.webp`、BMX は works/bike-bmx.webp）。「記載のないブランドも査定します」カードは一覧セクションの末尾へ移動（背景の交互をそろえるため）。文言は変更なし。
+
 ## 2026-09-28 /hikitori/ を写真化（文字だけのページを他ページと同じ水準に）
 
 - ヒーローを市町ページと同じ `hero hero--city`＋「写真はイメージです」に。背景は `.hero__bg--hikitori`（`images/hikitori/hero.webp`、人物が右寄りなので position 64% 55%）。
