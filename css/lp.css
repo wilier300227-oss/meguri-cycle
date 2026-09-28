@@ -994,3 +994,5 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .bizinfo th { width: 7.5em; color: var(--ink-55); font-weight: 500; white-space: nowrap; }
 .bizinfo a { color: var(--accent-d); }
 .about-story__body p { margin: 0; }
+.creds__more { margin-top: 14px; font-size: 0.84rem; color: var(--ink-55); line-height: 1.8; }
+.creds__more b { display: block; font-size: 0.8rem; color: var(--ink-70); margin-bottom: 2px; }
