@@ -1031,3 +1031,15 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .citycol b { font-size: 1.15rem; }
 .citycol span { font-size: 0.8rem; color: var(--ink-55); line-height: 1.5; }
 .citycol time { font-size: 0.72rem; color: var(--ink-40); }
+
+/* お客様の声（2026-09-28、_includes/reviews.njk。トップ #works と /works/ で共通） */
+.reviews { margin: clamp(28px,4vw,40px) 0 clamp(20px,3vw,28px); }
+.reviews__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 12px; }
+.reviews__h { font-size: 1.15rem; margin: 0; }
+.reviews__src { font-size: 0.8rem; color: var(--accent-d); }
+.reviews__list { display: grid; gap: 12px; }
+@media (min-width: 760px) { .reviews__list { grid-template-columns: 1fr 1fr; gap: 16px; } }
+.review { margin: 0; padding: 18px 20px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); display: flex; flex-direction: column; gap: 8px; }
+.review__stars { color: #E9A400; letter-spacing: 0.12em; font-size: 0.95rem; }
+.review blockquote { margin: 0; color: var(--ink); font-size: 0.93rem; line-height: 1.85; }
+.review figcaption { font-size: 0.76rem; color: var(--ink-55); }
