@@ -185,7 +185,7 @@ C:/Users/user/meguri-cycle/
 
 ## 2026-09-28 /faq/ を改善（文字だけのページを分類・折りたたみ・写真つきに）
 
-- ヒーロー右に代表の実物写真（/about/ と同じ `images/about/portrait-360.webp`）、下に分類ボタン4つ（`.faqnav`、アイコンは未使用だった `images/icons/ic-clipboard|price|shield|calendar.webp`）。
+- ヒーロー右に本人の実物写真（同日オーナー判断で削除。顔写真は /about/ だけ）、下に分類ボタン4つ（`.faqnav`、アイコンは未使用だった `images/icons/ic-clipboard|price|shield|calendar.webp`）。
 - 11問を「査定について／料金・お支払い／手続き・お申し込みの条件／日程・キャンセル」に分け、各見出しにアイコン（`.faqgrp`）。回答は折りたたみ（`.faq-acc`、/hikitori/ と同じ）。質問・回答の文面と JSON-LD は変更なし（並び順だけ分類に合わせた）。
 - 末尾に「ここにないご質問は、LINEでどうぞ」の CTA 節。変換は scratchpad の faq_build.py（11問すべて使われたかを assert で確認）。
 

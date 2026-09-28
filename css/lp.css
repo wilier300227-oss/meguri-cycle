@@ -877,7 +877,7 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 
 /* /faq/（2026-09-28 改善）：ヒーローに代表の写真と分類ボタン・分類ごとの見出しアイコン */
 .faqhero__in { display: grid; gap: clamp(28px,5vw,56px); align-items: center; max-width: 960px; }
-@media (min-width: 820px) { .faqhero__in { grid-template-columns: minmax(0,1fr) 260px; } }
+
 .faqhero__fig { margin: 0; justify-self: center; text-align: center; }
 .faqhero__fig img { width: min(240px, 44vw); aspect-ratio: 1 / 1; object-fit: cover; border-radius: 50%; display: block; box-shadow: 0 24px 48px -30px rgba(22,24,29,0.5); }
 .faqhero__fig figcaption { margin-top: 10px; font-size: 0.8rem; color: var(--ink-55); }
