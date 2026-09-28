@@ -933,3 +933,32 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .areachips__list { display: flex; flex-wrap: wrap; gap: 6px; }
 .areachips__list a { padding: 6px 12px; border: 1px solid var(--line-hair); border-radius: 999px; background: #fff; color: var(--ink); font-size: 0.84rem; text-decoration: none; }
 .areachips__list a:hover { border-color: var(--accent); }
+
+/* /area/（2026-09-28）：クリックできる地図と地域別の市町。色は地域ごと（地図・見出しの点・凡例で共通） */
+:root { --reg-near: #1E3A5F; --reg-kaga: #3E6A9A; --reg-noto: #6F95BF; --reg-toyama: #8FA9C4; }
+.areamap { display: grid; gap: clamp(24px,4vw,48px); align-items: start; }
+@media (min-width: 880px) { .areamap { grid-template-columns: minmax(0,1.05fr) minmax(0,0.95fr); } }
+.areamap__fig { margin: 0; }
+.areamap__svg { width: 100%; height: auto; display: block; }
+.areamap__fig figcaption { margin-top: 8px; font-size: 0.8rem; color: var(--ink-55); line-height: 1.6; }
+.areamap__fig figcaption span { font-size: 0.7rem; color: var(--ink-40); }
+.am { stroke: #fff; stroke-width: 1; transition: fill .2s; }
+.am--off { fill: #dcdcd6; }
+.am--near { fill: var(--reg-near); } .am--kaga { fill: var(--reg-kaga); } .am--noto { fill: var(--reg-noto); } .am--toyama { fill: var(--reg-toyama); }
+.areamap__svg a:hover .am, .areamap__svg a:focus .am { fill: #FFD24D; }
+.areamap__svg a:focus { outline: none; }
+.am-labels, .am-basemark { pointer-events: none; }
+.al { font-size: 14px; fill: #fff; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: rgba(0,0,0,.35); stroke-width: 2px; }
+.al--s { font-size: 11px; }
+.al--out { fill: var(--reg-near); stroke: #fff; stroke-width: 3px; text-anchor: end; }
+.am-basemark circle { fill: #FFD24D; stroke: var(--reg-near); stroke-width: 2; }
+.areamap__grp { margin-top: 16px; }
+.areamap__reg { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; }
+.areamap__reg a { color: var(--ink); text-decoration: none; }
+.areamap__dot { width: 12px; height: 12px; border-radius: 3px; flex: 0 0 auto; display: inline-block; }
+.areamap__dot--near { background: var(--reg-near); } .areamap__dot--kaga { background: var(--reg-kaga); } .areamap__dot--noto { background: var(--reg-noto); } .areamap__dot--toyama { background: var(--reg-toyama); }
+.areagrp { scroll-margin-top: 84px; }
+.areagrp__h { display: flex; align-items: center; gap: 10px; font-size: clamp(1.4rem,4vw,1.9rem); margin-bottom: 18px; }
+.areagrp__h .areamap__dot { width: 16px; height: 16px; }
+@media (max-width: 879px) { .areamap__side { order: -1; } }
+@media (max-width: 600px) { .al--s { display: none; } .al { font-size: 16px; } .al--out { font-size: 15px; } }
