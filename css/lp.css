@@ -857,3 +857,20 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .reuse__img { margin: 0; position: relative; }
 .reuse__img img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; border-radius: var(--radius); box-shadow: 0 24px 48px -30px rgba(22,24,29,0.5); }
 .reuse__img figcaption { position: absolute; right: 10px; bottom: 8px; font-size: 0.68rem; color: rgba(255,255,255,0.75); pointer-events: none; }
+
+/* /brands/（2026-09-28 写真・ロゴ化）：主要ブランドのロゴ一覧・ブランド車の買取実績・カテゴリ見出しの写真 */
+.logowall { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+@media (min-width: 560px) { .logowall { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+@media (min-width: 860px) { .logowall { grid-template-columns: repeat(6, minmax(0,1fr)); gap: 12px; } }
+.logowall li { height: 76px; display: flex; align-items: center; justify-content: center; padding: 10px 14px; background: #fff; border: 1px solid var(--line-hair); border-radius: 10px; }
+.logowall img { height: var(--h, 24px); width: auto; max-width: 100%; object-fit: contain; display: block; } /* 高さは縦横比から個別に（見た目の面積をそろえる） */
+.logowall__note { margin-top: 12px; font-size: 0.74rem; line-height: 1.6; color: var(--ink-40); }
+.bworks { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+@media (min-width: 720px) { .bworks { grid-template-columns: repeat(5, minmax(0,1fr)); gap: 14px; } }
+.bwork { margin: 0; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); overflow: hidden; }
+.bwork img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+.bwork figcaption { padding: 9px 12px 11px; display: flex; flex-direction: column; gap: 1px; line-height: 1.35; }
+.bwork b { font-family: "Barlow Semi Condensed", sans-serif; font-weight: 600; font-size: 1rem; letter-spacing: 0.04em; color: var(--ink); }
+.bwork span { font-size: 0.74rem; color: var(--ink-55); }
+.brandcat__h { display: flex; align-items: center; gap: 14px; }
+.brandcat__h img { width: 56px; height: 56px; flex: 0 0 auto; object-fit: cover; border-radius: 10px; }
