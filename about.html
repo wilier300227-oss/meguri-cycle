@@ -73,90 +73,139 @@ ogImage: "https://meguri-cycle.com/images/about/portrait.webp"
 
   {% include "nav-new.njk" %}
 
-  <!-- ヒーロー -->
-  <section class="section" style="padding-bottom: clamp(32px,5vw,48px);">
-    <div class="wrap" style="max-width:720px;">
-      <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">About</p>
-      <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(2rem,5.5vw,3rem); line-height:1.24; margin-bottom:18px;">めぐり自転車について</h1>
-      <div class="about-hero">
-        <p class="lead">自転車の買取と引き取りをしています。かほく市を拠点に、石川県と富山県をあちこち回っています。どんな人間がやっているのか、すこしだけ自己紹介させてください。</p>
-        <figure class="about-hero__fig">
+  <!-- ヒーロー（2026-09-28 組み直し。文章は従来のまま、資格・お約束・経歴・事業者情報を見える形に。写真は本人と実物の車体だけ＝Gemini の人物写真は使わない） -->
+  <section class="section" style="padding-bottom: clamp(36px,5vw,56px);">
+    <div class="wrap" style="max-width:980px;">
+      <div class="abouthero">
+        <div>
+          <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">About</p>
+          <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(2rem,5.5vw,3rem); line-height:1.24; margin-bottom:18px;">めぐり自転車について</h1>
+          <p class="lead">自転車の買取と引き取りをしています。かほく市を拠点に、石川県と富山県をあちこち回っています。どんな人間がやっているのか、すこしだけ自己紹介させてください。</p>
+          <p class="abouthero__name"><span>代表</span>高多 優典<small>自転車安全整備士・第二種電気工事士</small></p>
+        </div>
+        <figure class="abouthero__fig">
           <img src="/images/about/portrait.webp" srcset="/images/about/portrait-360.webp 360w, /images/about/portrait.webp 692w" sizes="(min-width: 720px) 240px, 200px" width="692" height="692" alt="めぐり自転車 代表 高多優典。整備中のマウンテンバイクの前で" fetchpriority="high">
-          <figcaption>代表 高多 優典</figcaption>
         </figure>
       </div>
     </div>
   </section>
 
-  <section class="section" style="padding-top:0;">
-    <div class="wrap" style="max-width:720px;">
-      <div style="display:grid; gap:clamp(32px,5vw,48px);">
+  <!-- 資格・許可（従来はページ末尾） -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:980px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2rem); margin-bottom:18px;">資格・許可</h2>
+      <div class="creds reveal">
+        <div class="cred"><img src="/images/icons/ic-inspect.webp" width="48" height="48" loading="lazy" decoding="async" alt=""><div><b>自転車安全整備士</b><span>自転車の点検・整備の資格</span></div></div>
+        <div class="cred"><img src="/images/icons/ic-ebike.webp" width="48" height="48" loading="lazy" decoding="async" alt=""><div><b>第二種電気工事士</b><span>国家資格。電動アシストの電気の部分も確認できます</span></div></div>
+        <div class="cred"><img src="/images/icons/ic-shield.webp" width="48" height="48" loading="lazy" decoding="async" alt=""><div><b>古物商許可</b><span>石川県公安委員会 第511090015059号</span></div></div>
+      </div>
+    </div>
+  </section>
 
-        <section class="reveal">
-          <h2 style="font-size:1.4rem; margin-bottom:14px;">整備の現場で、<span style="white-space:nowrap;">自転車をみてきました</span></h2>
-          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
+  <!-- お約束（本文に書いてあることを4つに） -->
+  <section class="section">
+    <div class="wrap" style="max-width:980px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2rem); margin-bottom:18px;">お約束していること</h2>
+      <div class="promises reveal">
+        <div class="promise"><b>金額は、伺う前に確定</b><p>写真を拝見して、お伺いする前に確定額でお伝えします。</p></div>
+        <div class="promise"><b>玄関先で値引き交渉をしない</b><p>売るかどうかは、金額を見てゆっくり決めてください。</p></div>
+        <div class="promise"><b>営業のお電話をかけない</b><p>ご連絡は LINE とメールだけ。こちらから電話はしません。</p></div>
+        <div class="promise"><b>当日は代表が一人で</b><p>作業は玄関先で10〜15分ほど。お家に上がることはありません。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 経歴（本文の経歴をタイムラインに） -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:760px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2rem); margin-bottom:22px;">経歴</h2>
+      <ol class="timeline reveal">
+        <li class="tl"><span class="tl__n" aria-hidden="true">1</span><div class="tl__body"><h3 class="tl__t">スポーツ用品店・アウトドアショップ</h3><p class="tl__d">整備士として、クロスバイクやロードバイク、ツーリング用の自転車を扱う。</p></div></li>
+        <li class="tl"><span class="tl__n" aria-hidden="true">2</span><div class="tl__body"><h3 class="tl__t">自転車量販店</h3><p class="tl__d">シティサイクル（ママチャリ）や電動アシストが中心。毎日の足として使われている自転車を直す日々。</p></div></li>
+        <li class="tl"><span class="tl__n" aria-hidden="true">3</span><div class="tl__body"><h3 class="tl__t">電気工事・買取・配送など</h3><p class="tl__d">自転車のほかにも、いろんな現場を経験。</p></div></li>
+        <li class="tl"><span class="tl__n" aria-hidden="true">4</span><div class="tl__body"><h3 class="tl__t">めぐり自転車</h3><p class="tl__d">40代のいま、原点に戻って自転車の仕事を。かほく市を拠点に、石川県・富山県へ出張買取・引き取りに伺っています。</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 代表から（本文は従来のまま） -->
+  <section class="section">
+    <div class="wrap" style="max-width:720px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2rem); margin-bottom:6px;">代表から</h2>
+      <div class="about-story">
+        <section class="reveal about-story__sec">
+          <h3>整備の現場で、<span style="white-space:nowrap;">自転車をみてきました</span></h3>
+          <div class="about-story__body">
             <p>スポーツ用品店・アウトドアショップ・自転車量販店で、整備士として働いていました。</p>
             <p>はじめはスポーツ用品店やアウトドアショップで、クロスバイクやロードバイク、ツーリング用の自転車を扱っていました。そのあとは量販店で、シティサイクル（ママチャリ）や電動アシストが中心に。毎日の足として使われている自転車を、ひたすら直す日々です。スポーツ車から街乗りの一台まで、ひと通り触ってきたことになります。</p>
             <p>自転車のほかにも、電気工事や買取の仕事、配送など、いろんな現場を経験してきました。40代のいま、原点に戻って自転車の仕事をしています。休みの日は、アコースティックギターを弾いたり、走ったり。冬はスキーとスノーボードに行きます。</p>
           </div>
         </section>
-
-        <section class="reveal">
-          <h2 style="font-size:1.4rem; margin-bottom:14px;">捨てる前に、開けてみる</h2>
-          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
+        <section class="reveal about-story__sec">
+          <h3>捨てる前に、開けてみる</h3>
+          <div class="about-story__body">
             <p>整備士のころ、「もう動かない」という自転車をたくさん見てきました。開けてみると、原因は案外単純なことも多い。手を入れて、また走り出す。その瞬間が、この仕事でいちばん好きです。</p>
             <p>中身を開けて直してきた経験があるので、いまは写真と外からの様子で、状態のだいたいの見当がつきます。写真を送るだけで金額をお出しできるのは、そのためです。</p>
             <p>一台の自転車には、たくさんの部品と手間が詰まっています。まだ使えるものを捨てるのは惜しい。走れなくなった車体でも、部品は次に活かせることが少なくありません。買い取れない車体もお引き取りしているのは、そういう理由です。</p>
           </div>
         </section>
-
-        <section class="reveal">
-          <h2 style="font-size:1.4rem; margin-bottom:14px;">一台ずつ、ちゃんと見る</h2>
-          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
+        <section class="reveal about-story__sec">
+          <h3>一台ずつ、ちゃんと見る</h3>
+          <div class="about-story__body">
             <p>この仕事をしていると、きれいなままの子ども用自転車が捨てられていくのをよく見かけます。レトロで価値のある一台が、古いという理由だけで処分されてしまうことも。</p>
             <p>年式や見た目だけで、一律に切り捨てたくない。だから、一台ずつ状態を見て値段をつけます。古い車体でも、まずは写真を送ってみてください。</p>
             <p>金額は、お伺いする前に確定でお伝えします。玄関先での値引き交渉はしません。売るかどうかは、金額を見てゆっくり決めてもらえばいい。手放すときは、スッキリした気持ちで見送ってほしいからです。</p>
+            <div class="about-photos">
+              <figure><img src="/images/works/work-kids-yellow-take.webp" width="1200" height="800" loading="lazy" decoding="async" alt="お引き取りした黄色の幼児用自転車"><figcaption>お引き取りした幼児用自転車（砺波市）</figcaption></figure>
+              <figure><img src="/images/works/bike-road-caad3.webp" width="594" height="378" loading="lazy" decoding="async" alt="買い取ったキャノンデールのロードバイク"><figcaption>買い取ったキャノンデールのロードバイク</figcaption></figure>
+            </div>
           </div>
         </section>
-
-        <section class="reveal">
-          <h2 style="font-size:1.4rem; margin-bottom:14px;">ペダルと電気の乗り物</h2>
-          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
+        <section class="reveal about-story__sec">
+          <h3>ペダルと電気の乗り物</h3>
+          <div class="about-story__body">
             <p>電動アシスト自転車には、車にもバイクにもない感覚があります。自分の足でペダルを漕ぐ動きに、電気の力がすっと重なって進んでいく。あの感覚が好きです。</p>
             <p>電動アシストは、ふつうの自転車の部分に加えて、モーターやバッテリーという電気の部分も見る必要があります。わたしは自転車安全整備士と第二種電気工事士の両方を持っているので、機械と電気の両面から状態を確認して査定できます。ここは、ちょっと自信のあるところです。</p>
           </div>
         </section>
-
-        <section class="reveal">
-          <h2 style="font-size:1.4rem; margin-bottom:14px;">「めぐり」に込めた意味</h2>
-          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
+        <section class="reveal about-story__sec">
+          <h3>「めぐり」に込めた意味</h3>
+          <div class="about-story__body">
             <p>「めぐり自転車」の「めぐり」は、一台の自転車を次の人へめぐらせたい、という思いからつけました。自転車は、誰もが一度は乗る身近な乗り物です。あなたの一台が役目を終えても、その先でまた誰かの毎日を走る。その入り口になれたらと思っています。</p>
           </div>
         </section>
+      </div>
+    </div>
+  </section>
 
-        <section class="reveal">
-          <h2 style="font-size:1.4rem; margin-bottom:14px;">当日のこと</h2>
-          <div style="color:var(--ink-70); line-height:1.9; display:grid; gap:14px;">
-            <p>当日は、わたしが一人でお伺いします。作業は玄関先で10〜15分ほど。お家に上がることはありません。</p>
-          </div>
-        </section>
+  <!-- 事業者情報 -->
+  <section class="section section--alt">
+    <div class="wrap" style="max-width:760px;">
+      <h2 class="reveal" style="font-size:clamp(1.5rem,4vw,2rem); margin-bottom:18px;">事業者情報</h2>
+      <div class="card reveal">
+        <table class="bizinfo">
+          <tbody>
+            <tr><th scope="row">サービス名</th><td>めぐり自転車</td></tr>
+            <tr><th scope="row">屋号</th><td>RAINBOW（「めぐり自転車」は RAINBOW が運営するサービス名です）</td></tr>
+            <tr><th scope="row">代表者</th><td>高多 優典</td></tr>
+            <tr><th scope="row">拠点</th><td>石川県かほく市</td></tr>
+            <tr><th scope="row">古物商許可</th><td>石川県公安委員会 第511090015059号（自転車類区分）</td></tr>
+            <tr><th scope="row">資格</th><td>自転車安全整備士／第二種電気工事士（国家資格）</td></tr>
+            <tr><th scope="row">対応エリア</th><td>石川県・富山県の全26市町（<a href="/area/">対応エリア</a>）</td></tr>
+            <tr><th scope="row">ご連絡</th><td>LINE・メール（<a href="mailto:info@meguri-cycle.com">info@meguri-cycle.com</a>）</td></tr>
+          </tbody>
+        </table>
+        <p style="color:var(--ink-70); font-size:0.9rem; margin-top:14px;">めぐり自転車は、店舗を持たない出張専門の買取です。ご連絡はLINEとメールで受け付けています。写真を送るだけで査定ができ、こちらから営業のお電話をかけることはありません。気になることは、LINEやメールで気軽にお問い合わせください。</p>
+      </div>
+    </div>
+  </section>
 
-        <section class="reveal">
-          <h2 style="font-size:1.4rem; margin-bottom:14px;">資格・許可</h2>
-          <div class="card">
-            <ul class="list-plain" style="margin-bottom:14px;">
-              <li>第二種電気工事士（国家資格）</li>
-              <li>自転車安全整備士</li>
-              <li>古物商許可 石川県公安委員会 第511090015059号</li>
-            </ul>
-            <p style="color:var(--ink-70); font-size:0.94rem;">めぐり自転車は、店舗を持たない出張専門の買取です。ご連絡はLINEとメールで受け付けています。写真を送るだけで査定ができ、こちらから営業のお電話をかけることはありません。気になることは、LINEやメールで気軽にお問い合わせください。</p>
-          </div>
-        </section>
-
-        <div class="reveal">
-          <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
-        </div>
-
+  <!-- CTA -->
+  <section class="section cta">
+    <div class="wrap stack reveal" style="max-width:620px;">
+      <h2 style="font-size:clamp(1.5rem,4.2vw,2.1rem)">まずは写真を送ってみてください</h2>
+      <div style="display:flex; justify-content:center;">
+        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
       </div>
     </div>
   </section>
