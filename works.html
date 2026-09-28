@@ -41,6 +41,12 @@ ctaUrl: "/line/top/"
       <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(2rem,5.5vw,3rem); line-height:1.24; margin-bottom:20px;">買取・引取の実績一覧</h1>
       <p class="lead" style="margin-bottom:12px;">これまでにお引き取りした車体です。<strong>値段がついたものも、つかずに無料で引き取ったものも</strong>、そのまま載せています。金額は1台ごとの年式と状態で決まります。</p>
       <p style="color:var(--ink-55); font-size:0.9rem; margin-bottom:24px;">※ 同じ車種でも同じ金額になるとは限りません。写真を送っていただければ、伺う前に確定額をお伝えします。</p>
+      <div class="wstats">
+        <div><b><span data-c="all">11</span><small>台</small></b><span>掲載している実績</span></div>
+        <div><b><span data-c="kind:buy">6</span><small>台</small></b><span>買取</span></div>
+        <div><b><span data-c="kind:take">5</span><small>台</small></b><span>無料引取（値段がつかなかった車体）</span></div>
+        <div><b><span data-c="areas">6</span><small>市町</small></b><span>石川県・富山県</span></div>
+      </div>
       <span class="cta-underline">
         <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
         <span class="rainbow-line" aria-hidden="true"></span>
@@ -48,12 +54,26 @@ ctaUrl: "/line/top/"
     </div>
   </section>
 
+  <div class="wfilter-scope"><!-- 追従する絞り込みの範囲＝月別の実績だけ -->
+  <!-- 絞り込み（2026-09-28。figure の data-kind / data-type で切り替え。1枚もない月は見出しごと隠す） -->
+  <div class="wfilter-bar">
+    <div class="wrap wfilter" role="group" aria-label="実績の絞り込み">
+      <button type="button" class="is-on" data-f="all">すべて <span>11</span></button>
+      <button type="button" data-f="kind:buy">買取 <span>6</span></button>
+      <button type="button" data-f="kind:take">無料引取 <span>5</span></button>
+      <button type="button" data-f="type:dendo">電動 <span>2</span></button>
+      <button type="button" data-f="type:kids">子ども用 <span>4</span></button>
+      <button type="button" data-f="type:sports">スポーツ・クロス <span>3</span></button>
+      <button type="button" data-f="type:city">ママチャリ <span>2</span></button>
+    </div>
+  </div>
+
   <!-- 2026年9月 -->
   <section class="section section--alt works-all">
     <div class="wrap" style="max-width:1100px;">
       <h2 class="reveal works-all__h">2026年9月</h2>
       <div class="works-feature reveal">
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="buy" data-type="dendo">
           <img src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" alt="買い取ったブリヂストン bikke（2020年式・グレー・チャイルドシート2つ）">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">ブリヂストン bikke（電動アシスト）</span></span>
@@ -63,7 +83,7 @@ ctaUrl: "/line/top/"
             <span class="wfeat__area"><a href="/kanazawa/">金沢市</a></span>
           </figcaption>
         </figure>
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="buy" data-type="sports">
           <img src="/images/works/work-leader-20000.webp" width="1200" height="800" loading="lazy" alt="買い取った LEADER 721 のピストバイク（2020年式・赤・要部品交換）">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">LEADER 721（ピストバイク）</span></span>
@@ -73,7 +93,7 @@ ctaUrl: "/line/top/"
             <span class="wfeat__area"><a href="/komatsu/">小松市</a></span>
           </figcaption>
         </figure>
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="buy" data-type="dendo">
           <img src="/images/works/work-vivi-10000.webp" width="1200" height="800" loading="lazy" alt="買い取ったパナソニック ビビ TX（2018年式・サビあり）">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">パナソニック ビビ TX（電動アシスト）</span></span>
@@ -83,7 +103,7 @@ ctaUrl: "/line/top/"
             <span class="wfeat__area"><a href="/kanazawa/">金沢市</a></span>
           </figcaption>
         </figure>
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="buy" data-type="kids">
           <img src="/images/works/work-dbike-2000.webp" width="1200" height="800" loading="lazy" alt="買い取った d-bike の幼児用自転車（黒×緑・サビ、傷、使用感あり）">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">d-bike（幼児用自転車）</span></span>
@@ -93,7 +113,7 @@ ctaUrl: "/line/top/"
             <span class="wfeat__area"><a href="/tonami/">砺波市</a></span>
           </figcaption>
         </figure>
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="take" data-type="kids">
           <img src="/images/works/work-kids-yellow-take.webp" width="1200" height="800" loading="lazy" alt="引き取った黄色の幼児用自転車">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">幼児用自転車</span></span>
@@ -102,7 +122,7 @@ ctaUrl: "/line/top/"
             <span class="wfeat__area"><a href="/tonami/">砺波市</a></span>
           </figcaption>
         </figure>
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="take" data-type="city">
           <img src="/images/works/work-city-gold-take.webp" width="1200" height="800" loading="lazy" alt="引き取ったシャンパンゴールドのシティサイクル">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">シティサイクル（ママチャリ）</span></span>
@@ -121,7 +141,7 @@ ctaUrl: "/line/top/"
       <h2 class="reveal works-all__h">2026年8月</h2>
       <p class="reveal" style="color:var(--ink-70); font-size:0.92rem; margin:-10px 0 20px;">かほく市の4台は、お一人のお客様からまとめてのご依頼です。値段がついた2台と、つかなかった2台を一度にお引き取りしました。</p>
       <div class="works-feature reveal">
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="buy" data-type="kids">
           <img src="/images/works/work-coghorn-black-5000.webp" width="1200" height="800" loading="lazy" alt="買い取った COGHORN の子供用マウンテンバイク（黒）">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">COGHORN 子供用MTB（黒）</span></span>
@@ -131,7 +151,7 @@ ctaUrl: "/line/top/"
             <span class="wfeat__area"><a href="/kahoku/">かほく市</a></span>
           </figcaption>
         </figure>
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="buy" data-type="kids">
           <img src="/images/works/work-coghorn-navy-5000.webp" width="1200" height="800" loading="lazy" alt="買い取った COGHORN の子供用マウンテンバイク（紺）">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">COGHORN 子供用MTB（紺）</span></span>
@@ -141,7 +161,7 @@ ctaUrl: "/line/top/"
             <span class="wfeat__area"><a href="/kahoku/">かほく市</a></span>
           </figcaption>
         </figure>
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="take" data-type="sports">
           <img src="/images/works/work-cross-white-take.webp" width="1200" height="800" loading="lazy" alt="引き取った白のクロスバイク（サビ・傷あり）">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">クロスバイク（白）</span></span>
@@ -151,7 +171,7 @@ ctaUrl: "/line/top/"
             <span class="wfeat__area"><a href="/kahoku/">かほく市</a></span>
           </figcaption>
         </figure>
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="take" data-type="sports">
           <img src="/images/works/work-cross-black-take.webp" width="1200" height="800" loading="lazy" alt="引き取った黒のクロスバイク（サビ・傷あり）">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">クロスバイク（黒）</span></span>
@@ -161,7 +181,7 @@ ctaUrl: "/line/top/"
             <span class="wfeat__area"><a href="/kahoku/">かほく市</a></span>
           </figcaption>
         </figure>
-        <figure class="wfeat">
+        <figure class="wfeat" data-kind="take" data-type="city">
           <img src="/images/works/work-city-fudousha.webp" width="1100" height="505" loading="lazy" alt="引き取ったシティサイクル（ママチャリ・錆あり・長期保管品）">
           <figcaption class="wfeat__cap">
             <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">シティサイクル（ママチャリ）</span></span>
@@ -175,8 +195,35 @@ ctaUrl: "/line/top/"
     </div>
   </section>
 
+  </div><!-- /.wfilter-scope -->
+
+  <!-- 写真のみの買取実績（2026-09-28。金額の記録がない分。トップのカルーセル・/brands/ と同じ実物写真） -->
+  <section class="section section--alt" id="more">
+    <div class="wrap" style="max-width:1100px;">
+      <div class="stack reveal" style="max-width:640px; margin-bottom:clamp(20px,3vw,28px);">
+        <h2 style="font-size:clamp(1.5rem,4vw,2rem)">そのほかに買い取った車体</h2>
+        <p class="lead" style="margin-top:8px;">金額の記録を載せていない分の、写真だけの実績です。スポーツ車はフレームやパーツだけでも査定します。</p>
+      </div>
+      <div class="bworks bworks--6 reveal">
+        <figure class="bwork"><img src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" decoding="async" alt="買い取ったBianchi ロードバイク"><figcaption><b>Bianchi</b><span>ロードバイク</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-road-caad3.webp" width="594" height="378" loading="lazy" decoding="async" alt="買い取ったCannondale ロードバイク"><figcaption><b>Cannondale</b><span>ロードバイク</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-gravel-topstone.webp" width="594" height="414" loading="lazy" decoding="async" alt="買い取ったCannondale グラベルロード"><figcaption><b>Cannondale</b><span>グラベルロード</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-gravel-araya.webp" width="594" height="390" loading="lazy" decoding="async" alt="買い取ったARAYA グラベルロード"><figcaption><b>ARAYA</b><span>グラベルロード</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/works-commencal.webp" width="1226" height="674" loading="lazy" decoding="async" alt="買い取ったCOMMENCAL フルサスMTB"><figcaption><b>COMMENCAL</b><span>フルサスMTB</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-mini-brompton.webp" width="594" height="599" loading="lazy" decoding="async" alt="買い取ったBrompton 折りたたみ"><figcaption><b>Brompton</b><span>折りたたみ</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-bmx.webp" width="594" height="599" loading="lazy" decoding="async" alt="買い取ったBMX"><figcaption><b>BMX</b><span>&nbsp;</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-ebike.webp" width="1188" height="648" loading="lazy" decoding="async" alt="買い取った電動アシスト"><figcaption><b>電動アシスト</b><span>&nbsp;</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/bike-kids.webp" width="1188" height="648" loading="lazy" decoding="async" alt="買い取った子供用 幼児車・キッズMTB"><figcaption><b>子供用</b><span>幼児車・キッズMTB</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/frame-wilier.webp" width="594" height="599" loading="lazy" decoding="async" alt="買い取ったWilier フレーム"><figcaption><b>Wilier</b><span>フレーム</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/frame-giant.webp" width="594" height="484" loading="lazy" decoding="async" alt="買い取ったGiant フレーム"><figcaption><b>Giant</b><span>フレーム</span></figcaption></figure>
+        <figure class="bwork"><img src="/images/works/works-ultegra.webp" width="1113" height="505" loading="lazy" decoding="async" alt="買い取ったシマノ アルテグラのコンポーネント一式"><figcaption><b>ULTEGRA</b><span>シマノのコンポーネント一式</span></figcaption></figure>
+      </div>
+      <p class="reveal" style="font-size:0.88rem; margin-top:18px;"><a href="/brands/" style="color:var(--accent-d);">買取強化ブランド一覧 →</a>　<a href="/souba/" style="color:var(--accent-d);">金額が変わる理由（買取相場）→</a></p>
+    </div>
+  </section>
+
   <!-- CTA -->
-  <section class="section section--alt">
+  <section class="section cta">
     <div class="wrap" style="max-width:760px; text-align:center;">
       <h2 style="font-size:clamp(1.5rem,4vw,2rem); margin-bottom:12px;">まずは写真を送ってください</h2>
       <p style="color:var(--ink-70); margin-bottom:22px;">車体全体・ロゴ・傷やサビの写真と、お住まいの市町名だけで確定額をお伝えします。値段がつかない場合も、処分費0円でお引き取りできます。</p>
@@ -187,6 +234,33 @@ ctaUrl: "/line/top/"
     </div>
   </section>
 
+  <script>
+  // 実績の絞り込み（2026-09-28）
+  (function () {
+    var bar = document.querySelector('.wfilter'); if (!bar) return;
+    // 件数はカードから数え直す（実績を足したときの直し忘れ防止。HTML の数字は JS なしのときの表示）
+    var cards = [].slice.call(document.querySelectorAll('.works-all .wfeat'));
+    var count = function (f) { if (f === 'all') return cards.length; var k = f.split(':'); return cards.filter(function (el) { return el.getAttribute('data-' + k[0]) === k[1]; }).length; };
+    [].forEach.call(bar.querySelectorAll('button'), function (b) { var sp = b.querySelector('span'); if (sp) sp.textContent = count(b.getAttribute('data-f')); });
+    [].forEach.call(document.querySelectorAll('.wstats [data-c]'), function (el) {
+      var f = el.getAttribute('data-c');
+      el.textContent = f === 'areas' ? new Set(cards.map(function (c) { var a = c.querySelector('.wfeat__area a'); return a ? a.textContent : null; }).filter(Boolean)).size : count(f);
+    });
+    bar.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      [].forEach.call(bar.querySelectorAll('button'), function (x) { x.classList.toggle('is-on', x === b); });
+      var f = b.getAttribute('data-f'), k = f.split(':');
+      [].forEach.call(document.querySelectorAll('.works-all .wfeat'), function (el) {
+        var show = f === 'all' || el.getAttribute('data-' + k[0]) === k[1];
+        el.hidden = !show;
+        if (show) el.closest('.reveal') && el.closest('.reveal').classList.add('in');
+      });
+      [].forEach.call(document.querySelectorAll('.works-all'), function (sec) {
+        sec.hidden = !sec.querySelector('.wfeat:not([hidden])');
+      });
+    });
+  })();
+  </script>
   {% include "footer-new.njk" %}
 </body>
 </html>
