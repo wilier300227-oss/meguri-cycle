@@ -906,3 +906,7 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .reason img { width: 48px; height: 48px; flex: 0 0 auto; }
 .reason h3 { font-size: 1.05rem; margin-bottom: 6px; }
 .reason p { color: var(--ink-70); font-size: 0.9rem; line-height: 1.75; margin: 0; }
+
+/* トップのブランドウォール：文字→実際のロゴ（2026-09-28、/brands/ と同じ images/brands/*.svg） */
+.brand--logo img { height: var(--h, 26px); width: auto; display: block; }
+@media (max-width: 720px) { .brand--logo { padding: 0 24px; } .brand--logo::after { margin-left: 24px; } .brand--logo img { height: calc(var(--h, 26px) * 0.8); } }
