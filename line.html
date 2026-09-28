@@ -13,20 +13,44 @@ eleventyExcludeFromCollections: true
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>LINEを開いています…｜めぐり自転車</title>
-  <!-- JS無効環境向けフォールバック（3秒後に遷移） -->
-  <meta http-equiv="refresh" content="3;url={{ route.oaUrl }}">
+  <!-- JS無効環境向けフォールバック（3秒後に遷移）。JS が動く環境では下の script が振り分ける（PC は自動で飛ばさない） -->
+  <noscript><meta http-equiv="refresh" content="3;url={{ route.oaUrl }}"></noscript>
   <style>
     body{margin:0;font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;background:#fff;color:#1a2b45;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center}
     .box{padding:24px}
     p{margin:0 0 14px;font-size:1rem;line-height:1.7}
     a{color:#0aa04a;font-weight:700}
     .site{font-size:0.8rem;color:#8a93a3;margin-top:22px}
+    /* PC 用（2026-09-28）：友だち追加ページに飛ばすと入力済みメッセージが消えるので、QR とメールを出す */
+    .pc{display:none;max-width:420px}
+    .is-pc .sp{display:none}
+    .is-pc .pc{display:block}
+    .pc h1{font-size:1.25rem;margin:0 0 8px}
+    .pc .qr{width:220px;height:220px;margin:14px auto 6px;padding:10px;border:1px solid #dfe3ea;border-radius:14px;background:#fff}
+    .pc .qr svg{width:100%;height:100%;display:block}
+    .pc .note{font-size:0.86rem;color:#5b6576}
+    .pc .alt{margin-top:22px;padding-top:18px;border-top:1px solid #e6e9ef}
+    .pc .btn{display:inline-block;margin-top:6px;padding:11px 20px;border-radius:999px;background:#1a2b45;color:#fff;text-decoration:none;font-weight:700}
+    .pc .sub{font-size:0.8rem;margin-top:14px}
+    .pc .sub a{color:#5b6576;font-weight:500}
   </style>
 </head>
 <body>
   <div class="box">
-    <p>LINEを開いています…</p>
-    <p><a id="go" href="{{ route.oaUrl }}" rel="nofollow">開かない場合はこちら</a></p>
+    <div class="sp">
+      <p>LINEを開いています…</p>
+      <p><a id="go" href="{{ route.oaUrl }}" rel="nofollow">開かない場合はこちら</a></p>
+    </div>
+    <div class="pc">
+      <h1>スマホの LINE で続けてください</h1>
+      <p class="note">スマホのカメラでこの QR を読み取ると、LINE が開いてメッセージが入力された状態になります。そのまま送信してください。</p>
+      <div class="qr" role="img" aria-label="LINE で相談するための QR コード">{{ route.qrSvg | safe }}</div>
+      <div class="alt">
+        <p class="note">LINE を使っていない方は、メールでも受け付けています。</p>
+        <a class="btn" href="{{ site.mailtoUrl }}">メールで写真を送る</a>
+      </div>
+      <p class="sub"><a href="https://line.me/R/ti/p/@136bpsyc" rel="nofollow">PC 版 LINE で友だち追加する</a>　<a href="javascript:history.back()">← 前のページに戻る</a></p>
+    </div>
     <p class="site">めぐり自転車</p>
   </div>
   <script>
@@ -35,10 +59,12 @@ eleventyExcludeFromCollections: true
     // location.replace で履歴に中間ページを残さない（戻るで元ページに直接戻す）。
     (function () {
       var a = document.getElementById('go');
-      var dest = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-        ? a.href
-        : 'https://line.me/R/ti/p/@136bpsyc';
-      a.href = dest;
+      if (!/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // PC：自動では飛ばさず、QR とメールの案内を出す（2026-09-28）
+        document.documentElement.classList.add('is-pc');
+        return;
+      }
+      var dest = a.href;
       addEventListener('load', function () {
         setTimeout(function () { location.replace(dest); }, 400);
       });
