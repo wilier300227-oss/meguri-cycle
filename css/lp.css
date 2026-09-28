@@ -974,7 +974,7 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .creds { display: grid; gap: 12px; }
 @media (min-width: 760px) { .creds { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
 .cred { display: flex; gap: 14px; align-items: center; padding: 18px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); }
-.cred img { width: 48px; height: 48px; flex: 0 0 auto; }
+.cred img { width: 72px; height: 72px; flex: 0 0 auto; border-radius: 18%; } /* Gemini 生成のバッジ（角の白を丸く切る） */
 .cred b { display: block; font-size: 1.05rem; color: var(--ink); margin-bottom: 2px; }
 .cred span { font-size: 0.8rem; color: var(--ink-55); line-height: 1.5; }
 .about-story { display: grid; gap: clamp(30px,5vw,44px); margin-top: 18px; }
