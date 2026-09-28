@@ -1009,7 +1009,7 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 @media (min-width: 960px) { .bworks--6 { grid-template-columns: repeat(6, minmax(0,1fr)); } }
 
 /* /column/（2026-09-28 改善）：書き手・主な記事のカード・市町別の処分記事 */
-.colauthor { display: inline-flex; align-items: center; gap: 12px; margin-top: 18px; padding: 8px 16px 8px 8px; background: var(--card); border: 1px solid var(--line-hair); border-radius: 999px; text-decoration: none; color: var(--ink); }
+.colauthor { display: inline-flex; align-items: center; gap: 12px; margin-top: 18px; padding: 10px 18px; background: var(--card); border: 1px solid var(--line-hair); border-radius: 999px; text-decoration: none; color: var(--ink); }
 .colauthor img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
 .colauthor span { display: flex; flex-direction: column; line-height: 1.35; }
 .colauthor small { font-size: 0.7rem; color: var(--ink-40); }

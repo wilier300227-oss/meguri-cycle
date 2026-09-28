@@ -144,7 +144,7 @@ C:/Users/user/meguri-cycle/
 
 ## 2026-09-28 /column/ を改善（書き手・サムネイル付きカード・市町別4本を1ブロックに）
 
-- 冒頭に書き手（`.colauthor`、本人写真・高多 優典・資格、/about/ へリンク）。主な3本（処分方法・劣化確認・リコール）はサムネイル付きカード（`.colcards`、`images/column/thumb-disposal|check|recall.webp`）。市町別の処分4本は「お住まいの市町のバッテリー処分」にまとめた（`.citycols`）。文面・JSON-LD は従来のまま。変換は scratchpad の column_build.py。
+- 冒頭に書き手（`.colauthor`、高多 優典・資格、/about/ へリンク。顔写真はオーナー判断で載せない）。主な3本（処分方法・劣化確認・リコール）はサムネイル付きカード（`.colcards`、`images/column/thumb-disposal|check|recall.webp`）。市町別の処分4本は「お住まいの市町のバッテリー処分」にまとめた（`.citycols`）。文面・JSON-LD は従来のまま。変換は scratchpad の column_build.py。
 - サムネイルは Gemini で資格アイコンと同じ絵柄を依頼中。届くまでは images/icons の線画を合成した仮画像（公開前に差し替え）。
 
 ## 2026-09-28 「代表」の表現をやめる（一人事業なので固い、オーナー判断）
