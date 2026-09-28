@@ -888,3 +888,21 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .faqgrp { scroll-margin-top: 84px; }
 .faqgrp__h { display: flex; align-items: center; gap: 12px; font-size: clamp(1.3rem,3.6vw,1.6rem); margin-bottom: 10px; }
 .faqgrp__h img { width: 44px; height: 44px; flex: 0 0 auto; }
+
+/* /souba/（2026-09-28 作り直し）：車種へのジャンプ・車種ごとの実例・金額が変わる理由 */
+.soubanav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.soubanav a { padding: 8px 14px; border: 1px solid var(--line-hair); border-radius: 999px; background: var(--card); color: var(--ink); font-size: 0.86rem; font-weight: 700; text-decoration: none; }
+.soubanav a:hover { border-color: var(--accent); }
+.soubacat { scroll-margin-top: 84px; }
+.soubacat__h { display: flex; align-items: center; gap: 14px; font-size: clamp(1.25rem,3.4vw,1.5rem); margin-bottom: 8px; }
+.soubacat__h img { width: 56px; height: 56px; flex: 0 0 auto; object-fit: cover; border-radius: 10px; }
+.soubacat__lead { color: var(--ink-70); font-size: 0.94rem; line-height: 1.8; margin-bottom: 16px; max-width: 680px; }
+.soubacat .works-feature { margin-bottom: 0; }
+.soubacat__more { margin-top: 12px; font-size: 0.86rem; color: var(--ink-55); }
+.soubacat__more a { color: var(--accent-d); }
+.reasons { display: grid; gap: 12px; }
+@media (min-width: 760px) { .reasons { grid-template-columns: 1fr 1fr; gap: 16px; } }
+.reason { display: flex; gap: 14px; align-items: flex-start; padding: 18px 18px 20px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); }
+.reason img { width: 48px; height: 48px; flex: 0 0 auto; }
+.reason h3 { font-size: 1.05rem; margin-bottom: 6px; }
+.reason p { color: var(--ink-70); font-size: 0.9rem; line-height: 1.75; margin: 0; }

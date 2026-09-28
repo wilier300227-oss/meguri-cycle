@@ -142,6 +142,13 @@ C:/Users/user/meguri-cycle/
 
 ---
 
+## 2026-09-28 /souba/ を作り直し（「〜円〜」の目安表をやめ、実際についた金額＋金額が変わる理由に）
+
+- **オーナー判断**：相場の金額は状態で大きく変わり、あってないようなもの。「〜円〜」は最低保証に読める（例：クロス「一般的な状態 3,000円〜」なのに実績のクロス2台は無料引取）→ 表を撤去。
+- 構成：車種ジャンプ → 「実際についた金額」（電動＝bikke/ビビ、ロード・スポーツ＝LEADER、子ども用＝COGHORN/d-bike、ママチャリ・クロス＝無料引取2台。カードは works.html の wfeat を画像名で抜き出してそのまま使う＝金額の二重管理なし）→ 「金額が変わる理由」5枚（サビ・傷・不調／パーツのグレード／バッテリー容量／ブランドと年式／付属品、アイコンは images/icons）→ 確定額の説明 → CTA。実例のない車種は数字を出さない。
+- title・H1「自転車の買取相場」は検索の入口なので維持。description/og は「実例と理由」に変更。変換は scratchpad の souba_build.py。
+- **残り**：同じ「〜円〜」の目安がトップ・/price/・/dendo/ と市町14ページ（imizu・kaga・kanazawa・kawakita・komatsu・nakanoto・nanao・nanto・nomi・nonoichi・takaoka・tonami・toyama・tsubata）に残っている。同じ考え方に揃えるかはオーナー確認待ち。
+
 ## 2026-09-28 /faq/ を改善（文字だけのページを分類・折りたたみ・写真つきに）
 
 - ヒーロー右に代表の実物写真（/about/ と同じ `images/about/portrait-360.webp`）、下に分類ボタン4つ（`.faqnav`、アイコンは未使用だった `images/icons/ic-clipboard|price|shield|calendar.webp`）。
