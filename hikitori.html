@@ -93,48 +93,104 @@ ctaUrl: "/line/hikitori/"
 
   {% include "nav-new.njk" %}
 
-  <!-- ヒーロー -->
-  <section class="section" style="padding-bottom: clamp(40px,6vw,64px);">
-    <div class="wrap" style="max-width:760px;">
-      <p class="num" style="font-size:0.72rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--ink-40); margin-bottom:14px;">Free Pickup, Ishikawa</p>
-      <h1 style="font-family:'Zen Old Mincho',serif; font-size:clamp(2rem,5.5vw,3rem); line-height:1.24; margin-bottom:20px;">自転車の処分・出張引き取り</h1>
-      <p class="lead" style="margin-bottom:14px;">捨てる前に、まず<strong>値段がつかないかを確認します。</strong>値段がつけば買取としてお支払いし、<strong>部品として活かせる車体は無料でお引き取りします</strong>（処分費はいただきません）。</p>
-      <p class="lead" style="margin-bottom:24px;">写真を送るだけ。買取になるか引き取りになるかは、こちらからご提案します。ご自宅まで伺います。</p>
-      <span class="cta-underline">
-        <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
-        <span class="rainbow-line" aria-hidden="true"></span>
-      </span>
-      <div class="badges" style="margin-top:24px;" aria-label="安心のポイント">
-        <span class="badge badge--on-light"><b style="background:#E53935"></b>古物商許可 取得済み</span>
-        <span class="badge badge--on-light"><b style="background:#43A047"></b>引き取りは無償</span>
-        <span class="badge badge--on-light"><b style="background:#1E88E5"></b>防犯登録抹消を代行</span>
-        <span class="badge badge--on-light"><b style="background:#FB8C00"></b>部品を次に活かします</span>
+  <!-- ヒーロー（2026-09-28 写真ヒーロー化。市町ページと同じ hero--city 構造。背景は lp.css の .hero__bg--hikitori） -->
+  <section class="hero hero--city">
+    <div class="hero__bg hero__bg--hikitori" aria-hidden="true"></div>
+    <span class="hero__imgnote">写真はイメージです</span>
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="wrap hero__inner">
+      <div class="stack reveal hero__copy">
+        <span class="eyebrow">Free Pickup ・ Ishikawa &amp; Toyama</span>
+        <h1>自転車の<br><em><span class="nw">処分・出張引き取り</span></em></h1>
+        <p class="lead">捨てる前に、まず<strong>値段がつかないかを確認します。</strong>値段がつけば買取としてお支払いし、<strong>部品として活かせる車体は無料でお引き取りします</strong>（処分費はいただきません）。</p>
+        <p class="lead" style="font-size:0.98rem;">写真を送るだけ。買取になるか引き取りになるかは、こちらからご提案します。ご自宅まで伺います。</p>
+        <div class="badges" aria-label="安心のポイント">
+          <span class="badge">古物商許可 取得済み</span>
+          <span class="badge">引き取りは無償</span>
+          <span class="badge">防犯登録抹消を代行</span>
+          <span class="badge">部品を次に活かします</span>
+        </div>
+        <div class="hero__cta">
+          <span class="cta-underline">
+            <a class="btn btn--primary" href="{{ ctaUrl }}" target="_blank" rel="noopener noreferrer">LINE無料査定（写真を送るだけ）</a>
+            <span class="rainbow-line" aria-hidden="true"></span>
+          </span>
+        </div>
+        <p style="font-size:0.78rem; color:rgba(255,255,255,0.66); margin:0;">※部品として活かせる車体が対象です。お引き取りできない車体もあります → <a href="/terms/" style="color:#fff;">ご利用条件</a></p>
       </div>
-      <p style="font-size:0.8rem; color:var(--ink-40); margin-top:12px;">※部品として活かせる車体が対象です。お引き取りできない車体もあります → <a href="/terms/" style="color:var(--accent-d);">ご利用条件</a></p>
     </div>
   </section>
 
-  <!-- 買取と引き取りの違い -->
+  <!-- 買取と引き取りの違い（2026-09-28 トップ #flow の分かれ道 .fork の見た目に。文言は従来のまま） -->
   <section class="section section--alt">
     <div class="wrap" style="max-width:900px;">
-      <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:32px;">買取と引き取りの違い</h2>
-      <div class="cols2 reveal" style="gap:clamp(24px,4vw,48px); align-items:start;">
-        <div style="border-left:3px solid var(--accent); padding-left:20px;">
-          <p style="font-size:0.72rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--accent); margin-bottom:8px;">Buy</p>
-          <h3 style="font-family:'Zen Old Mincho',serif; font-size:1.25rem; margin-bottom:10px;">買取</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem; line-height:1.8;">値段がつく車体は、査定額をお支払いしてお引き取りします。オンライン査定も出張費も無料です。</p>
+      <div class="stack reveal" style="max-width:620px; margin-bottom:clamp(20px,3vw,28px);">
+        <h2 style="font-size:clamp(1.7rem,4.5vw,2.4rem)">買取と引き取りの違い</h2>
+        <p class="lead" style="margin-top:10px;">写真を拝見して、どちらになるかはこちらからご提案します。ご自身で見分けていただく必要はありません。</p>
+      </div>
+      <div class="fork fork--page reveal" role="group" aria-label="査定の結果による分かれ道">
+        <div class="fork__lane fork__lane--buy">
+          <span class="fork__if">値段がつく車体</span>
+          <strong class="fork__to">買取</strong>
+          <span class="fork__note">査定額をお支払いしてお引き取りします。オンライン査定も出張費も無料です。</span>
         </div>
-        <div style="border-left:3px solid var(--ink-20,#c8c8c4); padding-left:20px;">
-          <p style="font-size:0.72rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--ink-40); margin-bottom:8px;">Free Pickup</p>
-          <h3 style="font-family:'Zen Old Mincho',serif; font-size:1.25rem; margin-bottom:10px;">無償引き取り</h3>
-          <p style="color:var(--ink-70); font-size:0.94rem; line-height:1.8;">値段はつかないけれど部品として活かせる車体は、無償でお引き取りします。処分費はいただきません（出張費のみ）。</p>
+        <div class="fork__lane fork__lane--take">
+          <span class="fork__if">値段はつかないけれど、部品として活かせる車体</span>
+          <strong class="fork__to">無償引き取り</strong>
+          <span class="fork__note">無償でお引き取りします。処分費はいただきません（出張費のみ）。</span>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 引き取りの流れ（2026-09-28 新設。文はトップ #flow の記述から。新しい約束は書かない） -->
+  <section class="section" id="flow">
+    <div class="wrap" style="max-width:1000px;">
+      <div class="stack reveal" style="max-width:600px; margin-bottom:clamp(28px,4vw,40px);">
+        <h2 style="font-size:clamp(1.7rem,4.5vw,2.4rem)">お引き取りまでの流れ</h2>
+        <p class="lead" style="margin-top:10px;">写真を送るだけ。お持ち込みは不要です。</p>
+      </div>
+      <div class="flowgrid">
+        <ol class="timeline reveal">
+          <li class="tl">
+            <span class="tl__n" aria-hidden="true">1</span>
+            <div class="tl__body">
+              <h3 class="tl__t">LINE で写真を送る</h3>
+              <p class="tl__d">まずは全体がわかる写真3枚から。あとはLINEの案内にそって、撮る場所を順番にお伝えします。お住まいの市町名もあわせて送ってください。</p>
+            </div>
+          </li>
+          <li class="tl">
+            <span class="tl__n" aria-hidden="true">2</span>
+            <div class="tl__body">
+              <h3 class="tl__t">買取か引き取りかをご連絡</h3>
+              <p class="tl__d">整備士が写真を拝見し、原則48時間以内にお返事します。値段がつけば確定額を、つかなければ無償でのお引き取りをご提案します。</p>
+            </div>
+          </li>
+          <li class="tl">
+            <span class="tl__n" aria-hidden="true">3</span>
+            <div class="tl__body">
+              <h3 class="tl__t">訪問日を調整</h3>
+              <p class="tl__d">ご納得いただけたら、お引き取りの日程を調整します。もちろんお断りいただいてもかまいません。</p>
+            </div>
+          </li>
+          <li class="tl">
+            <span class="tl__n" aria-hidden="true">4</span>
+            <div class="tl__body">
+              <h3 class="tl__t">ご自宅でお引き取り</h3>
+              <p class="tl__d">現物を確認してお引き取りします。防犯登録の抹消手続きもその場で代行します。本人確認書類をご提示ください。引き取りの場合は、出張費のみをお引き取りの際にいただきます。</p>
+            </div>
+          </li>
+        </ol>
+        <figure class="flowpromise reveal">
+          <img src="/images/why/why-2.webp" width="1264" height="848" loading="lazy" decoding="async" alt="金額は訪問前に確定">
+          <figcaption>玄関先での交渉はありません。ご納得いただいてから、お伺いします。</figcaption>
+        </figure>
       </div>
     </div>
   </section>
 
   <!-- 無償でお引き取りする車体 -->
-  <section class="section">
+  <section class="section section--alt">
     <div class="wrap" style="max-width:900px;">
       <h2 class="reveal" style="font-size:clamp(1.7rem,4.5vw,2.4rem); margin-bottom:28px;">無償でお引き取りする車体</h2>
       <div class="split reveal" style="align-items:start; gap:clamp(28px,5vw,60px);">
@@ -147,6 +203,67 @@ ctaUrl: "/line/hikitori/"
             <p style="font-size:0.88rem; color:var(--ink-55); margin-bottom:6px; font-weight:600;">例外的にお断りする場合</p>
             <p style="font-size:0.88rem; color:var(--ink-55); line-height:1.75;">フレーム・ホイール・駆動系のすべてが再利用できず、部品が一点も取り出せない車体のみです。所有者の確認ができない場合もお断りします。迷ったときは写真をお送りください。→ <a href="/terms/" style="color:var(--accent-d);">ご利用条件</a></p>
           </div>
+        </div>
+      </div>
+
+      <!-- 引き取りの実例（2026-09-28 追加。写真・キャプションは works.html の実例と同じ） -->
+      <h3 class="reveal" style="font-size:1.15rem; margin:clamp(36px,5vw,52px) 0 16px;">これまでにお引き取りした車体</h3>
+      <div class="works-feature reveal">
+        <figure class="wfeat">
+          <img src="/images/works/work-city-gold-take.webp" width="1200" height="800" loading="lazy" alt="引き取ったシャンパンゴールドのシティサイクル">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">シティサイクル（ママチャリ）</span></span>
+            <span class="wfeat__meta">値段がつかない車体</span>
+            <span class="wfeat__price">無料引取<span class="wfeat__price-sub">（処分費0円／出張費のみ）</span></span>
+            <span class="wfeat__area"><a href="/takaoka/">高岡市</a></span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-kids-yellow-take.webp" width="1200" height="800" loading="lazy" alt="引き取った黄色の幼児用自転車">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">幼児用自転車</span></span>
+            <span class="wfeat__meta">使用感あり</span>
+            <span class="wfeat__price">無料引取<span class="wfeat__price-sub">（処分費0円／出張費のみ）</span></span>
+            <span class="wfeat__area"><a href="/tonami/">砺波市</a></span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-cross-white-take.webp" width="1200" height="800" loading="lazy" alt="引き取った白のクロスバイク（サビ・傷あり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">クロスバイク（白）</span></span>
+            <span class="wfeat__meta">サビ・傷あり</span>
+            <span class="wfeat__price">無料引取<span class="wfeat__price-sub">（処分費0円）</span></span>
+            <span class="wfeat__note">※ 4台まとめてのご依頼</span>
+            <span class="wfeat__area"><a href="/kahoku/">かほく市</a></span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-cross-black-take.webp" width="1200" height="800" loading="lazy" alt="引き取った黒のクロスバイク（サビ・傷あり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">クロスバイク（黒）</span></span>
+            <span class="wfeat__meta">サビ・傷あり</span>
+            <span class="wfeat__price">無料引取<span class="wfeat__price-sub">（処分費0円）</span></span>
+            <span class="wfeat__note">※ 4台まとめてのご依頼</span>
+            <span class="wfeat__area"><a href="/kahoku/">かほく市</a></span>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="reveal" style="font-size:0.88rem;"><a href="/works/" style="color:var(--accent-d);">買取・引取の実績をもっと見る →</a></p>
+    </div>
+  </section>
+
+  <!-- 引き取った自転車のその後（2026-09-28 新設。バッジ「部品を次に活かします」の中身。写真は Gemini 生成 images/hikitori/reuse.webp） -->
+  <section class="section">
+    <div class="wrap" style="max-width:1000px;">
+      <div class="reuse reveal">
+        <figure class="reuse__img">
+          <img src="/images/hikitori/reuse.webp" width="1200" height="805" loading="lazy" decoding="async" alt="取り外した部品を工房で仕分けて手入れする様子">
+          <figcaption>写真はイメージです</figcaption>
+        </figure>
+        <div class="stack">
+          <h2 style="font-size:clamp(1.6rem,4.2vw,2.2rem)">お引き取りした自転車の、その後</h2>
+          <p class="lead" style="margin-top:10px;">整備士が、まだ使える部品を一つずつ取り外し、次の一台に活かします。</p>
+          <p style="color:var(--ink-70); font-size:0.94rem; line-height:1.85;">ホイール・クランク・サドル・ブレーキなど、車体としては値段がつかなくても、部品には役目が残っています。だから処分費をいただかずに、お引き取りできます。</p>
         </div>
       </div>
     </div>
