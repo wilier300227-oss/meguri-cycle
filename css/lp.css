@@ -996,3 +996,19 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .about-story__body p { margin: 0; }
 .creds__more { margin-top: 14px; font-size: 0.84rem; color: var(--ink-55); line-height: 1.8; }
 .creds__more b { display: block; font-size: 0.8rem; color: var(--ink-70); margin-bottom: 2px; }
+
+/* /works/（2026-09-28）：冒頭の数字・絞り込みボタン（上部に追従）・写真のみの実績 */
+.wstats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin: 6px 0 26px; }
+@media (min-width: 720px) { .wstats { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+.wstats > div { padding: 14px 16px; background: var(--card); border: 1px solid var(--line-hair); border-radius: 12px; }
+.wstats b { display: block; font-family: "Barlow Semi Condensed", sans-serif; font-size: 1.9rem; line-height: 1.1; color: var(--ink); }
+.wstats b small { font-family: inherit; font-size: 0.9rem; margin-left: 2px; }
+.wstats span { font-size: 0.76rem; color: var(--ink-55); line-height: 1.45; display: block; margin-top: 2px; }
+.wfilter-bar { position: sticky; top: 62px; z-index: 20; background: color-mix(in srgb, var(--paper, #f4f4f0) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line-hair); }
+.wfilter { display: flex; gap: 8px; overflow-x: auto; padding-top: 10px; padding-bottom: 10px; scrollbar-width: none; }
+.wfilter::-webkit-scrollbar { display: none; }
+.wfilter button { flex: 0 0 auto; padding: 7px 14px; border: 1px solid var(--line-hair); border-radius: 999px; background: #fff; color: var(--ink); font: inherit; font-size: 0.86rem; font-weight: 700; cursor: pointer; }
+.wfilter button span { font-weight: 500; color: var(--ink-40); margin-left: 2px; }
+.wfilter button.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.wfilter button.is-on span { color: rgba(255,255,255,0.75); }
+@media (min-width: 960px) { .bworks--6 { grid-template-columns: repeat(6, minmax(0,1fr)); } }
