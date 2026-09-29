@@ -64,6 +64,13 @@ ctaUrl: "/line/top/"
 </head>
 <body>
 
+  <!-- 冬前の帯（2026-09-30）：10/1〜11/30 だけブラウザの日付で表示。JS が動かないときと期間外は hidden のまま。経路 /line/fuyu/（冬前の帯から） -->
+  <a class="fuyu-band" id="fuyuBand" href="/line/fuyu/" target="_blank" rel="noopener noreferrer" hidden>雪でしまう前に、金額だけ確かめませんか？<span aria-hidden="true">→</span></a>
+  <script>
+    function fuyuBandOn(d) { var m = d.getMonth() + 1; return m === 10 || m === 11; }
+    if (fuyuBandOn(new Date())) document.getElementById('fuyuBand').hidden = false;
+  </script>
+
   <!-- ヘッダー -->
   <header class="nav">
     <div class="wrap nav__in">
@@ -91,18 +98,17 @@ ctaUrl: "/line/top/"
     <div class="wrap hero__inner">
       <div class="stack reveal hero__copy">
         <span class="eyebrow">めぐり自転車 ・ 石川県かほく市発 ・ 出張対応</span>
-        <h1>整備士がいる、<br><em>自転車の<span class="nw">出張買取・</span><span class="nw">出張引取</span></em></h1>
+        <h1>乗らなくなった自転車、<br><em>売れるか処分か</em>、写真でわかります。<span style="display:block; margin-top:14px; font-size:0.4em; font-weight:600; color:rgba(255,255,255,0.72); letter-spacing:0.04em;">石川・富山の自転車出張買取・引取</span></h1>
         <p class="lead">
-          お持ち込み不要。<strong>査定は写真だけでオンライン完結</strong>し、金額にご納得いただいてからお引き取りに伺います。
-          買取か処分か迷ったままで大丈夫。写真を見て、こちらからご提案します。
+          金額は訪問前にお伝えします。ご納得いただけたら、ご自宅までお引き取りに伺います。
         </p>
         <div class="badges" aria-label="安心のポイント">
           <span class="badge">古物商許可 取得済み</span>
           <span class="badge">自転車安全整備士</span>
-          <span class="badge">訪問前に金額を確定</span>
+          <span class="badge">年式不問</span>
           <span class="badge">最短30分で査定</span>
           <span class="badge">玄関先で値下げ交渉なし</span>
-          <span class="badge">防犯登録抹消を代行</span>
+          <span class="badge">バッテリー実容量診断</span>
         </div>
         <div class="hero__cta">
           <span class="cta-underline">
@@ -112,11 +118,123 @@ ctaUrl: "/line/top/"
           </span>
           <a class="btn btn--light-ghost" href="#contact">メールで相談</a>
         </div>
+        <p style="font-size:0.84rem; color:rgba(255,255,255,0.82); margin:0;">写真3枚からでOK。金額を見てから断っても大丈夫です。</p>
         {% include "line-24h.njk" %}
         <p style="font-size:0.76rem; color:rgba(255,255,255,0.6); margin:0;">タップすると入力済みのメッセージが開きます。そのまま送信してください。</p>
       </div>
     </div>
   </section>
+
+  <!-- 1.5 困りごと起点の入口（2026-09-30）。イラストは images/consult/（480px・白地 → mix-blend-mode: multiply でカードの地になじませる） -->
+  <section class="section" id="consult">
+    <div class="wrap" style="max-width:1000px;">
+      <div class="stack reveal" style="margin-bottom:clamp(22px,3.5vw,32px);">
+        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">こんなご相談をお受けしています</h2>
+      </div>
+      <ul class="consult reveal">
+        <li class="consult__item">
+          <img class="consult__img" src="/images/consult/consult-furima.webp" alt="スマホを見てため息をつく女性と自転車" width="480" height="480" loading="lazy" decoding="async">
+          <div><p class="consult__q">フリマに出したけど、売れなかった</p><p class="consult__a"><span aria-hidden="true">→</span><span>整備士が、直して乗れるかまで見て金額を出します</span></p></div>
+        </li>
+        <li class="consult__item">
+          <img class="consult__img" src="/images/consult/consult-mendou.webp" alt="ほこりをかぶった自転車の横で頭を抱える男性" width="480" height="480" loading="lazy" decoding="async">
+          <div><p class="consult__q">売ろうと思ったまま、出品が面倒でそのまま</p><p class="consult__a"><span aria-hidden="true">→</span><span>出品も、買い手とのやり取りも、発送もいりません</span></p></div>
+        </li>
+        <li class="consult__item">
+          <img class="consult__img" src="/images/consult/consult-hikkoshi.webp" alt="引っ越しのダンボールと自転車の横で腕時計を見て焦る男性" width="480" height="480" loading="lazy" decoding="async">
+          <div><p class="consult__q">引っ越しが決まって、売れるのを待てない</p><p class="consult__a"><span aria-hidden="true">→</span><span>当日・翌日にお引き取りした実績もあります</span></p></div>
+        </li>
+        <li class="consult__item">
+          <img class="consult__img" src="/images/consult/consult-jama.webp" alt="玄関をふさぐ自転車の横をすり抜ける女性" width="480" height="480" loading="lazy" decoding="async">
+          <div><p class="consult__q">場所をとって邪魔</p><p class="consult__a"><span aria-hidden="true">→</span><span>値段がつかなくても、処分費0円（出張費のみ）でお引き取りします</span></p></div>
+        </li>
+        <li class="consult__item">
+          <img class="consult__img" src="/images/consult/consult-bouhan.webp" alt="書類を手に困っている年配の男性と自転車" width="480" height="480" loading="lazy" decoding="async">
+          <div><p class="consult__q">防犯登録の手続きがよくわからない</p><p class="consult__a"><span aria-hidden="true">→</span><span>抹消はその場で代行します</span></p></div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6. 実績（買取・引取した車体：カルーセル） -->
+  <section class="section section--alt" id="works">
+    <div class="wrap">
+      <div class="stack reveal" style="max-width:560px; margin-bottom:34px;">
+        <span class="eyebrow">Works</span>
+        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">買取・引取の実績</h2>
+        <p class="lead">これまでにお引き取りした車体の一部です。シティサイクルから電動・子供車、スポーツバイクまで。</p>
+      </div>
+      <div class="works-feature reveal">
+        <figure class="wfeat">
+          <img src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" alt="買い取ったブリヂストン bikke（2020年式・グレー・チャイルドシート2つ）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">ブリヂストン bikke（電動アシスト）</span></span>
+            <span class="wfeat__meta">2020年式・長押し診断でランプ5つ（容量良好）・サビ、ブレーキの効きが不良</span>
+            <span class="wfeat__price">買取 45,000円</span>
+            <span class="wfeat__note">※ ベルの破損・サビ・ブレーキ不良があっても、この金額でした</span>
+            <span class="wfeat__area"><a href="/kanazawa/">金沢市</a></span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-leader-20000.webp" width="1200" height="800" loading="lazy" alt="買い取った LEADER 721 のピストバイク（2020年式・赤・要部品交換）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">LEADER 721（ピストバイク）</span></span>
+            <span class="wfeat__meta">2020年式・パンクなど要部品交換が多数</span>
+            <span class="wfeat__price">買取 20,000円</span>
+            <span class="wfeat__note">※ 修理が必要な状態でも、スポーツ車は相場から値がつきます</span>
+            <span class="wfeat__area"><a href="/komatsu/">小松市</a></span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-vivi-10000.webp" width="1200" height="800" loading="lazy" alt="買い取ったパナソニック ビビ TX（2018年式・サビあり）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">パナソニック ビビ TX（電動アシスト）</span></span>
+            <span class="wfeat__meta">2018年式・サビ多め・バッテリー実容量 約70%</span>
+            <span class="wfeat__price">買取 10,000円</span>
+            <span class="wfeat__note">※ サビが多くても値がつきました</span>
+            <span class="wfeat__area"><a href="/kanazawa/">金沢市</a></span>
+          </figcaption>
+        </figure>
+        <figure class="wfeat">
+          <img src="/images/works/work-city-fudousha.webp" width="1100" height="505" loading="lazy" alt="引き取ったシティサイクル（ママチャリ・錆あり・長期保管品）">
+          <figcaption class="wfeat__cap">
+            <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">シティサイクル（ママチャリ）</span></span>
+            <span class="wfeat__meta">錆あり・長期保管品</span>
+            <span class="wfeat__price">無料引取<span class="wfeat__price-sub">（処分費0円／出張費のみ 1,000円〜）</span></span>
+            <span class="wfeat__area"><a href="/tsubata/">津幡町</a></span>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:-18px;">※ 金額は1台ごとの状態で決まります。過去の実例で、同じ金額を保証するものではありません。</p>
+    </div>
+    <div class="marquee reveal" aria-label="買取・引取した車体の写真">
+      <div class="marquee__track" style="--speed:42s">
+        <div class="work work--cap"><img src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" alt="買い取ったビアンキのロードバイク"><span class="work__cap">ロードバイク</span></div>
+        <div class="work work--cap"><img src="/images/works/works-commencal.webp" width="1226" height="674" loading="lazy" alt="買い取ったCOMMENCEALのフルサスペンションMTB"><span class="work__cap">マウンテンバイク</span></div>
+        <div class="work work--cap"><img src="/images/works/bike-mini-brompton.webp" width="594" height="599" loading="lazy" alt="買い取ったブロンプトンの折りたたみ自転車"><span class="work__cap">折りたたみ自転車</span></div>
+        <div class="work work--cap"><img src="/images/works/bike-gravel-topstone.webp" width="594" height="414" loading="lazy" alt="買い取ったキャノンデールのグラベルロード"><span class="work__cap">グラベルロード</span></div>
+        <div class="work work--cap"><img src="/images/works/bike-kids.webp" width="1188" height="648" loading="lazy" alt="買い取った子供用自転車（幼児車とキッズMTB）"><span class="work__cap">子供用自転車</span></div>
+        <div class="work work--cap"><img src="/images/works/bike-bmx.webp" width="594" height="599" loading="lazy" alt="買い取ったBMX"><span class="work__cap">BMX</span></div>
+        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" alt=""><span class="work__cap">ロードバイク</span></div>
+        <div class="work work--cap" aria-hidden="true"><img src="/images/works/works-commencal.webp" width="1226" height="674" loading="lazy" alt=""><span class="work__cap">マウンテンバイク</span></div>
+        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-mini-brompton.webp" width="594" height="599" loading="lazy" alt=""><span class="work__cap">折りたたみ自転車</span></div>
+        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-gravel-topstone.webp" width="594" height="414" loading="lazy" alt=""><span class="work__cap">グラベルロード</span></div>
+        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-kids.webp" width="1188" height="648" loading="lazy" alt=""><span class="work__cap">子供用自転車</span></div>
+        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-bmx.webp" width="594" height="599" loading="lazy" alt=""><span class="work__cap">BMX</span></div>
+      </div>
+    </div>
+    <div class="wrap">
+      <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:8px;">※ 状態によってはお引き取りをお断りする場合があります → <a href="/terms/" style="color:var(--accent-d);">ご利用条件</a></p>
+      <p class="reveal" style="font-size:0.86rem; color:var(--ink-70); margin-top:10px;">金沢市での買取事例と出張費は<a href="/kanazawa/" style="color:var(--accent-d); font-weight:600;">金沢市の自転車出張買取</a>にまとめています。</p>
+      <p class="reveal" style="margin-top:18px;"><a class="btn btn--ghost" href="/works/">買取・引取の実績をすべて見る（11件）→</a></p>
+      {% include "reviews.njk" %}
+    </div>
+  </section>
+
+  <!-- 金額実績カードは上の .works-feature に統合済み（実物写真＋メタ）。
+       追加する場合は works-feature に <figure class="wfeat"> を足す。
+       ※ 旧#dealsブロックはコメント入れ子でレンダリングされる不具合があり撤去した。 -->
+
 
   <!-- 2. ご利用の流れ（2026-09-24 旧「2つのサービス」分岐図を吸収。1本のレールがステップ2で買取／引取に分かれ、3以降は共通） -->
   <section class="section" id="flow">
@@ -298,88 +416,8 @@ ctaUrl: "/line/top/"
     </div>
   </section>
 
-  <!-- 6. 実績（買取・引取した車体：カルーセル） -->
-  <section class="section section--alt" id="works">
-    <div class="wrap">
-      <div class="stack reveal" style="max-width:560px; margin-bottom:34px;">
-        <span class="eyebrow">Works</span>
-        <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">買取・引取の実績</h2>
-        <p class="lead">これまでにお引き取りした車体の一部です。シティサイクルから電動・子供車、スポーツバイクまで。</p>
-      </div>
-      <div class="works-feature reveal">
-        <figure class="wfeat">
-          <img src="/images/works/work-bikke-45000.webp" width="1200" height="800" loading="lazy" alt="買い取ったブリヂストン bikke（2020年式・グレー・チャイルドシート2つ）">
-          <figcaption class="wfeat__cap">
-            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">ブリヂストン bikke（電動アシスト）</span></span>
-            <span class="wfeat__meta">2020年式・長押し診断でランプ5つ（容量良好）・サビ、ブレーキの効きが不良</span>
-            <span class="wfeat__price">買取 45,000円</span>
-            <span class="wfeat__note">※ ベルの破損・サビ・ブレーキ不良があっても、この金額でした</span>
-            <span class="wfeat__area"><a href="/kanazawa/">金沢市</a></span>
-          </figcaption>
-        </figure>
-        <figure class="wfeat">
-          <img src="/images/works/work-leader-20000.webp" width="1200" height="800" loading="lazy" alt="買い取った LEADER 721 のピストバイク（2020年式・赤・要部品交換）">
-          <figcaption class="wfeat__cap">
-            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">LEADER 721（ピストバイク）</span></span>
-            <span class="wfeat__meta">2020年式・パンクなど要部品交換が多数</span>
-            <span class="wfeat__price">買取 20,000円</span>
-            <span class="wfeat__note">※ 修理が必要な状態でも、スポーツ車は相場から値がつきます</span>
-            <span class="wfeat__area"><a href="/komatsu/">小松市</a></span>
-          </figcaption>
-        </figure>
-        <figure class="wfeat">
-          <img src="/images/works/work-vivi-10000.webp" width="1200" height="800" loading="lazy" alt="買い取ったパナソニック ビビ TX（2018年式・サビあり）">
-          <figcaption class="wfeat__cap">
-            <span class="wfeat__row"><span class="wfeat__tag">買取</span><span class="wfeat__t">パナソニック ビビ TX（電動アシスト）</span></span>
-            <span class="wfeat__meta">2018年式・サビ多め・バッテリー実容量 約70%</span>
-            <span class="wfeat__price">買取 10,000円</span>
-            <span class="wfeat__note">※ サビが多くても値がつきました</span>
-            <span class="wfeat__area"><a href="/kanazawa/">金沢市</a></span>
-          </figcaption>
-        </figure>
-        <figure class="wfeat">
-          <img src="/images/works/work-city-fudousha.webp" width="1100" height="505" loading="lazy" alt="引き取ったシティサイクル（ママチャリ・錆あり・長期保管品）">
-          <figcaption class="wfeat__cap">
-            <span class="wfeat__row"><span class="wfeat__tag wfeat__tag--take">引取</span><span class="wfeat__t">シティサイクル（ママチャリ）</span></span>
-            <span class="wfeat__meta">錆あり・長期保管品</span>
-            <span class="wfeat__price">無料引取<span class="wfeat__price-sub">（処分費0円／出張費のみ 1,000円〜）</span></span>
-            <span class="wfeat__area"><a href="/tsubata/">津幡町</a></span>
-          </figcaption>
-        </figure>
-      </div>
-      <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:-18px;">※ 金額は1台ごとの状態で決まります。過去の実例で、同じ金額を保証するものではありません。</p>
-    </div>
-    <div class="marquee reveal" aria-label="買取・引取した車体の写真">
-      <div class="marquee__track" style="--speed:42s">
-        <div class="work work--cap"><img src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" alt="買い取ったビアンキのロードバイク"><span class="work__cap">ロードバイク</span></div>
-        <div class="work work--cap"><img src="/images/works/works-commencal.webp" width="1226" height="674" loading="lazy" alt="買い取ったCOMMENCEALのフルサスペンションMTB"><span class="work__cap">マウンテンバイク</span></div>
-        <div class="work work--cap"><img src="/images/works/bike-mini-brompton.webp" width="594" height="599" loading="lazy" alt="買い取ったブロンプトンの折りたたみ自転車"><span class="work__cap">折りたたみ自転車</span></div>
-        <div class="work work--cap"><img src="/images/works/bike-gravel-topstone.webp" width="594" height="414" loading="lazy" alt="買い取ったキャノンデールのグラベルロード"><span class="work__cap">グラベルロード</span></div>
-        <div class="work work--cap"><img src="/images/works/bike-kids.webp" width="1188" height="648" loading="lazy" alt="買い取った子供用自転車（幼児車とキッズMTB）"><span class="work__cap">子供用自転車</span></div>
-        <div class="work work--cap"><img src="/images/works/bike-bmx.webp" width="594" height="599" loading="lazy" alt="買い取ったBMX"><span class="work__cap">BMX</span></div>
-        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-road-bianchi.webp" width="481" height="606" loading="lazy" alt=""><span class="work__cap">ロードバイク</span></div>
-        <div class="work work--cap" aria-hidden="true"><img src="/images/works/works-commencal.webp" width="1226" height="674" loading="lazy" alt=""><span class="work__cap">マウンテンバイク</span></div>
-        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-mini-brompton.webp" width="594" height="599" loading="lazy" alt=""><span class="work__cap">折りたたみ自転車</span></div>
-        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-gravel-topstone.webp" width="594" height="414" loading="lazy" alt=""><span class="work__cap">グラベルロード</span></div>
-        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-kids.webp" width="1188" height="648" loading="lazy" alt=""><span class="work__cap">子供用自転車</span></div>
-        <div class="work work--cap" aria-hidden="true"><img src="/images/works/bike-bmx.webp" width="594" height="599" loading="lazy" alt=""><span class="work__cap">BMX</span></div>
-      </div>
-    </div>
-    <div class="wrap">
-      <p class="reveal" style="font-size:0.8rem; color:var(--ink-40); margin-top:8px;">※ 状態によってはお引き取りをお断りする場合があります → <a href="/terms/" style="color:var(--accent-d);">ご利用条件</a></p>
-      <p class="reveal" style="font-size:0.86rem; color:var(--ink-70); margin-top:10px;">金沢市での買取事例と出張費は<a href="/kanazawa/" style="color:var(--accent-d); font-weight:600;">金沢市の自転車出張買取</a>にまとめています。</p>
-      <p class="reveal" style="margin-top:18px;"><a class="btn btn--ghost" href="/works/">買取・引取の実績をすべて見る（11件）→</a></p>
-      {% include "reviews.njk" %}
-    </div>
-  </section>
-
-  <!-- 金額実績カードは上の .works-feature に統合済み（実物写真＋メタ）。
-       追加する場合は works-feature に <figure class="wfeat"> を足す。
-       ※ 旧#dealsブロックはコメント入れ子でレンダリングされる不具合があり撤去した。 -->
-
-
   <!-- 7. 電動アシストは診断つき（→/dendo/） -->
-  <section class="section" id="dendo-intro" style="padding: clamp(44px,6vw,72px) 0;">
+  <section class="section section--alt" id="dendo-intro" style="padding: clamp(44px,6vw,72px) 0;">
     <div class="wrap" style="max-width:840px;">
       <h2 class="reveal" style="font-size:clamp(1.5rem,4.2vw,2.1rem); margin-bottom:16px;">電動アシスト自転車は、バッテリー診断つきで買取します</h2>
       <ul class="list-plain reveal" style="margin-bottom:22px;">
@@ -393,7 +431,7 @@ ctaUrl: "/line/top/"
   </section>
 
   <!-- 8. 料金・出張費（図解A: 距離帯図）。詳細な距離別表は /price/ に集約 -->
-  <section class="section section--alt" id="price">
+  <section class="section" id="price">
     <div class="wrap" style="max-width:960px;">
       <h2 class="reveal" style="font-size:clamp(1.8rem,5vw,2.6rem); margin-bottom:16px;">料金・出張費</h2>
       <p class="lead reveal" style="margin-bottom:24px; max-width:640px;"><strong>買取は査定もお引き取りも無料。</strong>出張費がかかるのは、値段がつかない車体の引取のみです。かほく市役所からの走行距離に応じて 1,000円〜3,000円（買取が成立すれば0円）。</p>
@@ -475,7 +513,7 @@ ctaUrl: "/line/top/"
   <!-- 防犯登録の詳細は /terms/ へ移設（トップはヒーローバッジ＋選ばれる理由でカバー） -->
 
   <!-- FAQ -->
-  <section class="section" id="faq">
+  <section class="section section--alt" id="faq">
     <div class="wrap" style="max-width:760px;">
       <div class="stack reveal" style="margin-bottom:28px;">
         <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">よくある質問</h2>
@@ -499,7 +537,7 @@ ctaUrl: "/line/top/"
         </details>
         <details class="faq-item">
           <summary>引き取った自転車はどうなりますか？</summary>
-          <div class="faq-item__a"><p>古物営業の許可に基づき、法令に沿って適正に取り扱います。</p></div>
+          <div class="faq-item__a"><p>点検・整備をして、リユース品として次に乗る方へ販売します。直せない車体は、使える部品を取り出して活かします。</p></div>
         </details>
         <details class="faq-item">
           <summary>どれくらい早く来てもらえますか？</summary>
@@ -511,7 +549,7 @@ ctaUrl: "/line/top/"
   </section>
 
   <!-- お問い合わせ -->
-  <section class="section section--alt" id="contact">
+  <section class="section" id="contact">
     <div class="wrap" style="max-width:820px;">
       <div class="stack reveal" style="margin-bottom:24px; max-width:620px;">
         <h2 style="font-size:clamp(1.6rem,4.5vw,2.3rem)">お問い合わせ・査定のお申し込み</h2>
@@ -545,7 +583,7 @@ ctaUrl: "/line/top/"
   </section>
 
   <!-- 事業者情報 -->
-  <section class="section" id="company">
+  <section class="section section--alt" id="company">
     <div class="wrap" style="max-width:760px;">
       <div class="stack reveal" style="margin-bottom:28px;">
         <span class="eyebrow">Company</span>

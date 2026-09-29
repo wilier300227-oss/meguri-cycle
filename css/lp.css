@@ -368,6 +368,20 @@ h1, h2, h3 {
 .cta h2 { font-size: clamp(1.7rem, 4.5vw, 2.6rem); }
 .line-24h { margin: 10px 0 0; font-size: 0.8rem; line-height: 1.6; color: var(--ink-70); } /* 2026-09-29 LINE査定は24時間受付（CTAの下の注記）。_includes/line-24h.njk */
 .hero .line-24h { color: rgba(255,255,255,0.8); }
+/* 2026-09-30 トップ「こんなご相談をお受けしています」（#consult）。イラストは白地 → multiply でカードの地になじませる。PC 幅は仮（オーナー確認待ち） */
+.consult { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.consult__item { display: flex; align-items: center; gap: 14px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); padding: 12px 18px 12px 10px; }
+.consult__img { flex: 0 0 84px; width: 84px; height: 84px; mix-blend-mode: multiply; }
+.consult__q { margin: 0; font-size: 0.95rem; font-weight: 700; line-height: 1.5; color: var(--ink); }
+.consult__a { display: flex; gap: 6px; margin: 4px 0 0; font-size: 0.82rem; line-height: 1.6; color: var(--ink-70); }
+.consult__a > span:first-child { flex: 0 0 auto; color: var(--accent); font-weight: 700; }
+@media (min-width: 680px) { .consult { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 960px) { .consult { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* 2026-09-30 冬前の帯（トップのみ・10/1〜11/30） */
+.fuyu-band { display: block; padding: 8px 16px; background: #FFD24D; color: var(--ink); font-size: 0.86rem; font-weight: 700; text-align: center; text-decoration: none; line-height: 1.5; }
+.fuyu-band:hover, .fuyu-band:focus-visible { background: #FFC61A; color: var(--ink); }
+.fuyu-band span { margin-left: 6px; }
+.fuyu-band[hidden] { display: none; }
 .cta .line-24h { text-align: center; }
 .foot { padding: 56px 0 96px; border-top: 1px solid var(--line-hair); color: var(--ink-55); }
 .foot__top { display: grid; gap: 36px; }
@@ -839,7 +853,7 @@ h1, h2, h3 {
 }
 
 /* 2026-09-25 BudouX（.eleventy.js の transform が文節に <wbr> を入れる）：語中では折り返さない */
-h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li, .tl__t, .opt__t { word-break: keep-all; overflow-wrap: anywhere; line-break: strict; }
+h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li, .tl__t, .opt__t, .consult__q, .consult__a { word-break: keep-all; overflow-wrap: anywhere; line-break: strict; }
 .nw { white-space: nowrap; }
 /* 「おすすめ」札：PC では箇条書きの1行目に接触するため枠の上辺に載せる（B6） */
 @media (min-width: 860px) { .tb-best__tag { top: -13px; right: 18px; } }
