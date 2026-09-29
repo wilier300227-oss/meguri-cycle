@@ -26,8 +26,11 @@ function v2Reply_(event, messages) {
 
 /* ── 質問文 ── */
 function v2AskEbike_(s) {
+  // 2026-09-30: サイトの LINE ボタン（トップ・市町ページ・その他の経路）から始めたときは、買取か処分か決めていない前提の中立な見出し
   const head = s.intent === 'shobun'
     ? ['♻️ 処分・引取のお申し込みありがとうございます！', '処分費は0円、出張費のみです。値段がつく車体は買取に切り替えてご案内します。']
+    : (s.data && s.data.siteStart)
+    ? ['🚲 ご相談ありがとうございます！', '買取か処分かは、写真を見てこちらからご提案します。決めていなくても大丈夫です。', '古くても、壊れていても、そのまま撮ってください。', 'どちらの場合も、金額は訪問前にお伝えします。']
     : ['💰 買取のお申し込みありがとうございます！', '査定は写真だけで大丈夫です。金額が決まってからお伺いします（買取なら費用はかかりません）。'];
   return v2Msg_(head.concat(['', 'まず、電動アシスト自転車ですか？']).join('\n'), [
     qrPostback_('⚡ 電動アシスト', v2Pb_(s.flow, 1, 'next', 'ebike')),
@@ -97,6 +100,18 @@ function v2BatteryCheckMessage_() {
     '',
     '動画のように、ランプが光るところまでを動画で撮って送ってください。写真でも、点灯した数を文字で教えていただいても大丈夫です（できなくても大丈夫です）。',
     '文字で読みたい方はこちら👇',
+    V2_BATTERY_CHECK_URL,
+  ].join('\n'));
+}
+/** 2026-09-30: 査定フロー（satei step2 で「どれもない」）用の長押し診断の案内。点灯数の自己申告や写真では
+ *  2回押しの5灯表示と見分けられないため、査定では動画だけを受け付ける。診断コラムの battery フローは v2BatteryCheckMessage_ のまま */
+function v2BatteryCheckSateiMessage_() {
+  return v2Msg_([
+    'ありがとうございます。',
+    '🔋 上の動画のように残量ボタンを長押しすると、バッテリーの弱り具合がわかり、その結果で金額を出せます。',
+    '押す指とランプが両方映るように、押し始めから止めずに動画で撮って送ってください。',
+    '動画がない場合は、バッテリーは控えめに見て金額を出します。',
+    '文字の説明はこちら👇',
     V2_BATTERY_CHECK_URL,
   ].join('\n'));
 }
@@ -206,7 +221,7 @@ function v2Transition_(userId, s, pb) {
       if (pb.val === 'bat_ng') { out.messages = [v2BatteryNgMessage_('satei', 2)]; return out; }       // step は 2 のまま（次のボタン待ち）
       if (pb.val === 'body_only') { s.data.bodyOnly = true; s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
       if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = [v2BatteryUnknownMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
-      s.step = 3; out.messages = [v2BatteryVideoMessage_(), v2BatteryCheckMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out;  // bat_ok
+      s.step = 3; out.messages = [v2BatteryVideoMessage_(), v2BatteryCheckSateiMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out;  // bat_ok
     }
     if (s.step === 3) {                       // 写真工程 → 次へ進む（旧「写真を追加する」は写真の案内を出し直すだけ）
       if (pb.val === 'more_photos') { out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
@@ -287,7 +302,7 @@ function v2StartFlowFromRoute_(event, userId, routeId) {
     v2SetSession_(userId, s);
     return true;
   }
-  v2StartFlow_(event, userId, 'satei', 'kaitori');   // トップ・市町ページ・その他の「（〜から）」
+  v2StartFlow_(event, userId, 'satei', 'kaitori', { siteStart: true, route: routeId });   // トップ・市町ページ・その他の「（〜から）」。siteStart で最初の見出しを中立に（v2AskEbike_）
   return true;
 }
 
