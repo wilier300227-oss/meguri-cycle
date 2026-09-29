@@ -366,6 +366,9 @@ h1, h2, h3 {
 /* ---------- CTA / フッター ---------- */
 .cta { text-align: center; }
 .cta h2 { font-size: clamp(1.7rem, 4.5vw, 2.6rem); }
+.line-24h { margin: 10px 0 0; font-size: 0.8rem; line-height: 1.6; color: var(--ink-70); } /* 2026-09-29 LINE査定は24時間受付（CTAの下の注記）。_includes/line-24h.njk */
+.hero .line-24h { color: rgba(255,255,255,0.8); }
+.cta .line-24h { text-align: center; }
 .foot { padding: 56px 0 96px; border-top: 1px solid var(--line-hair); color: var(--ink-55); }
 .foot__top { display: grid; gap: 36px; }
 @media (min-width: 760px) { .foot__top { grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 40px; } }
