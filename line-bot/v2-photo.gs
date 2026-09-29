@@ -67,7 +67,9 @@ function v2PhotoGroups_(s) {
   ];
   if (!bodyOnly) {
     g.push({ title: 'バッテリーの鍵・型番シール・充電器', need: 3, kinds: ['image', 'video'], img: 'ebike/set5' });
-    if (!noCharge) g.push(VIDEO);
+    // 2026-09-30 オーナー決定：査定の診断は動画だけ受け付ける（点灯数の申告や写真では、2回押しの5灯表示と見分けられない）。
+    // 動画がなければ［動画がない］で先へ進み、バッテリーは控えめに見て金額を出す。診断コラム（battery）の VIDEO は従来どおり
+    if (!noCharge) g.push({ title: 'バッテリー診断の動画', need: 1, kinds: ['video'], img: null, video: true, sateiVideo: true, optional: true, skipLabel: '動画がない' });
   }
   return g;
 }
@@ -127,9 +129,15 @@ function v2PhotoGroupMsgs_(s, prefix) {
   const g = gs[p.g - 1];
   const head = (gs.length > 1 ? '【' + p.g + '/' + gs.length + '】' : '') + g.title + (g.need ? '（' + g.need + (g.video ? '本' : '枚') + '）' : '');
   const lines = [(prefix ? prefix + '\n' : '') + head];
-  if (g.video) lines.push('上の動画のように、長押しでランプが光るところまでを動画で撮って送ってください。', g.alt || '');
+  if (g.sateiVideo) lines.push(
+    '🔋 上の動画のように残量ボタンを長押しすると、バッテリーの弱り具合がわかり、その結果で金額を出せます。',
+    '押す指とランプが両方映るように、押し始めから止めずに動画で撮って送ってください。',
+    '動画がない場合は、バッテリーは控えめに見て金額を出します。',
+    '文字の説明はこちら👇',
+    V2_BATTERY_CHECK_URL);
+  else if (g.video) lines.push('上の動画のように、長押しでランプが光るところまでを動画で撮って送ってください。', g.alt || '');
   else if (p.g === 1) lines.push('見本のように、枠の部分が大きく写るように撮ってください。');
-  if (g.optional) lines.push('あれば撮って送ってください。なければ「' + g.skipLabel + '」を押してください。');
+  if (g.optional && !g.sateiVideo) lines.push('あれば撮って送ってください。なければ「' + g.skipLabel + '」を押してください。');
   if (g.tip) lines.push(g.tip);
   const msgs = [];
   if (g.video) msgs.push(v2BatteryVideoMessage_());
@@ -220,9 +228,12 @@ function v2PhotoOnMedia_(event, userId, s0, kind) {
     if (!p.uid) p.uid = userId;
     const gs = v2PhotoGroups_(s);
     const g = gs[p.g - 1];
-    p.c[p.g] = (p.c[p.g] || 0) + 1;
+    const wrongKind = !!(g.kinds && g.kinds.indexOf(kind) < 0);   // 2026-09-30 査定の診断工程に写真が来た → 数えずに動画をお願いする
+    if (!wrongKind) {
+      p.c[p.g] = (p.c[p.g] || 0) + 1;
+      s.data.photos = (s.data.photos || 0) + 1;
+    }
     p.t = new Date().toISOString();
-    s.data.photos = (s.data.photos || 0) + 1;
     const set = event.message && event.message.imageSet;
     if (set && set.id) {
       p.sets[set.id] = (p.sets[set.id] || 0) + 1;
@@ -230,7 +241,9 @@ function v2PhotoOnMedia_(event, userId, s0, kind) {
     }
     n = p.c[p.g]; gi = p.g;
     unit = (kind === 'video' ? '本' : '枚');
-    if (shouldReply) {
+    if (shouldReply && wrongKind) {
+      out = { messages: [v2Msg_('ランプの確認は、写真ではなく動画でお願いします（写真では長押しかどうか見分けられないため）。' + String.fromCharCode(10) + '動画がない場合は「' + (g.skipLabel || '次へ') + '」を押してください。', v2PhotoQuick_(s, g))], menu: 'photo', done: false };
+    } else if (shouldReply) {
       const received = n + unit + '受け取りました📷';
       if (g.need > 0 && n >= g.need) {
         out = v2PhotoAdvance_(s, received, true); advanced = true;
@@ -305,6 +318,7 @@ function v2PhotoSummaryLines_(s) {
     const n = p.c[i + 1] || 0;
     parts.push((i + 1) + ':' + n + (g.need ? '/' + g.need : ''));
     if (g.need && n < (g.min || g.need) && !g.optional) missing.push('工程' + (i + 1) + ' ' + g.title + '（' + n + '/' + g.need + '）');
+    if (g.sateiVideo && n === 0 && p.g >= i + 1) missing.push('診断動画なし（バッテリーは控えめに査定）');
   });
   const lines = ['写真（工程別）: ' + parts.join('  ') + (p.skip ? '  飛ばした:' + p.skip + '回' : '')];
   if (missing.length) lines.push('未送: ' + missing.join(' / '));

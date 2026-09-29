@@ -275,8 +275,8 @@ function v2HandlePostback_(event, userId, pb) {
 }
 
 /* ── フロー制御（本文は v2-flows.gs）── */
-function v2StartFlow_(event, userId, flow, intent) {
-  const s = { flow: flow, step: 1, intent: intent || '', data: {} };
+function v2StartFlow_(event, userId, flow, intent, data) {
+  const s = { flow: flow, step: 1, intent: intent || '', data: data || {} };
   // 体感の遅さ対策: 先に返信し、そのあとでメニュー切替とセッション保存（シート書き込み）をする
   v2Reply_(event, v2FlowStartMessages_(s));
   v2LinkMenu_(userId, 'inflow');
