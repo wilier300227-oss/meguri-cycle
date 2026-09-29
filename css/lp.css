@@ -1043,3 +1043,9 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .review__stars { color: #E9A400; letter-spacing: 0.12em; font-size: 0.95rem; }
 .review blockquote { margin: 0; color: var(--ink); font-size: 0.93rem; line-height: 1.85; }
 .review figcaption { font-size: 0.76rem; color: var(--ink-55); }
+/* /area/ 冒頭の要点（2026-09-28） */
+.areapts { list-style: none; margin: 22px 0 26px; padding: 0; display: grid; gap: 10px; }
+@media (min-width: 720px) { .areapts { grid-template-columns: repeat(3, 1fr); } }
+.areapts li { padding: 14px 16px; background: var(--card); border: 1px solid var(--line-hair); border-left: 4px solid #FFD24D; border-radius: 10px; }
+.areapts b { display: block; font-size: 0.98rem; color: var(--ink); margin-bottom: 4px; }
+.areapts span { font-size: 0.8rem; color: var(--ink-55); line-height: 1.6; }
