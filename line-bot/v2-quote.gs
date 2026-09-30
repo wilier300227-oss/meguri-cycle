@@ -234,10 +234,12 @@ function v2HandleQuotePostback_(event, userId, pb) {
   if (pb.val === 'accept') {
     if (row.answer === 'accept') { logEvent_(event, 'quote:accept_dup', pb.q); return true; }   // 2度目の決定は無視（ログのみ）
     v2UpdateQuote_(pb.q, { status: 'accepted', 回答: 'accept', 回答時刻: new Date(), 回答時スナップショット: row.body });
-    v2Reply_(event, [v2Msg_(v2AcceptedText_(row))]);
+    // 2026-09-30 買取は申込フォーム（/moushikomi/）で住所と防犯登録の名義を入力してもらう。トークンが作れなければ従来どおりトークで住所を聞く
+    const formUrl = (row.q && row.q.kind === 'hikitori') ? '' : v2MoushikomiUrl_(userId, row.custNo, pb.q);
+    v2Reply_(event, formUrl ? [v2Msg_(v2AcceptedText_(row, true)), v2MoushikomiButton_(formUrl)] : [v2Msg_(v2AcceptedText_(row))]);
     try { setUserFields_(userId, { state: 'S3' }); } catch (e) {}
     try { setManualMode_(userId); } catch (e) {}
-    v2NotifyOwnerNow_(userId, '✅ 「この金額で決定」', row.custNo + ' ' + pb.q + '\n' + v2Yen_(row.total) + '\n→ 日時と住所の返信を待って人が対応');
+    v2NotifyOwnerNow_(userId, '✅ 「この金額で決定」', row.custNo + ' ' + pb.q + '\n' + v2Yen_(row.total) + (formUrl ? '\n→ 日時の返信と申込フォームを待って人が対応' : '\n→ 日時と住所の返信を待って人が対応'));
     logEvent_(event, 'quote:accept', pb.q); return true;
   }
   if (pb.val === 'decline') {   // 引取の提示で「やめる」（2026-09-16）。お礼を返して終わり。以後は人が対応
@@ -257,8 +259,38 @@ function v2HandleQuotePostback_(event, userId, pb) {
   }
   v2ReplyReselect_(event); return true;
 }
-function v2AcceptedText_(row) {
+/* ── 申込フォーム（2026-09-30）。トークンは問い合わせシートの「申込トークン」に保存し、フォーム受付の専用 GAS（moushikomi-gas/）が照合する。
+   URL にはトークンだけを付ける（個人情報は入れない）。列：token／顧客番号／userId／見積ID／発行日時／使用日時 ── */
+const V2_MOUSHIKOMI_URL = 'https://meguri-cycle.com/moushikomi/';
+function v2MoushikomiUrl_(userId, custNo, quoteId) {
+  try {
+    const ssId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+    if (!ssId) return '';
+    const ss = SpreadsheetApp.openById(ssId);
+    let sh = ss.getSheetByName('申込トークン');
+    if (!sh) { sh = ss.insertSheet('申込トークン'); sh.appendRow(['token', '顧客番号', 'userId', '見積ID', '発行日時', '使用日時']); sh.setFrozenRows(1); }
+    const token = Utilities.getUuid().replace(/-/g, '').toLowerCase();
+    sh.appendRow([token, custNo || '', userId || '', quoteId || '', new Date(), '']);
+    return V2_MOUSHIKOMI_URL + '?t=' + token;
+  } catch (e) { console.error('v2MoushikomiUrl_ ' + e); return ''; }
+}
+function v2MoushikomiButton_(url) {
+  return { type: 'template', altText: '申込情報の入力はこちら', template: { type: 'buttons', text: 'ご住所と防犯登録の名義の入力（1〜2分）',
+    actions: [{ type: 'uri', label: '申込情報を入力する', uri: url }] } };
+}
+function v2AcceptedText_(row, withForm) {
   const hikitori = row.q && row.q.kind === 'hikitori';
+  if (withForm) return [
+    'ありがとうございます。' + v2Yen_(row.total) + 'で決定しました。',
+    '',
+    'お伺いの準備のため、次の2つをお願いします。',
+    '',
+    '① ご希望の日時を、このトークに送ってください',
+    '　（例：〇日の午前中、〇日の夕方以降／第2希望もあれば助かります）',
+    '② ご住所と防犯登録の名義を、下のボタンから入力してください（1〜2分）',
+    '',
+    '担当者が確認して、日時をご連絡します。',
+  ].join('\n');
   return [
     // 引取は「誰が払うか」を明記（2026-09-17）。買取の文面は従来どおり
     hikitori ? 'ありがとうございます。出張費' + v2Yen_(row.total) + '（お客様のご負担）で、お引き取りを承りました。' : 'ありがとうございます。' + v2Yen_(row.total) + 'で決定しました。',
