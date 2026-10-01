@@ -171,7 +171,8 @@ ctaUrl: "/line/top/"
         <h2 class="vs-title">ほかの売り方と<span class="vs-hl">比べると</span></h2>
         <p class="vs-lead">自転車の売り方を、手間と安心で並べてみました。</p>
       </div>
-      <div class="vs-wrap reveal" tabindex="0" role="region" aria-label="売り方の比較表（横にずらせます）">
+      <p class="vs-scroll-hint" aria-hidden="true"><span class="vs-scroll-hint__arrow">←</span> 表は横にスワイプして、ほかの売り方とも比べられます</p>
+      <div class="vs-wrap reveal" id="vsWrap" tabindex="0" role="region" aria-label="売り方の比較表（横にずらせます）">
         <table class="vs">
           <thead>
             <tr>
@@ -191,7 +192,21 @@ ctaUrl: "/line/top/"
           </tbody>
         </table>
       </div>
-      <p class="vs-scroll-hint" aria-hidden="true">← 横にずらすと、ほかの売り方も見られます</p>
+      <script>
+        // スマホで表が初めて見えたとき、1回だけ少し横に動かして戻す（横にずらせると気づいてもらう）。動きを減らす設定の人には動かさない
+        (function () {
+          var w = document.getElementById('vsWrap');
+          if (!w || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          var io = new IntersectionObserver(function (es) {
+            if (!es[0].isIntersecting) return;
+            io.disconnect();
+            if (w.scrollWidth <= w.clientWidth + 4 || w.scrollLeft > 0) return;
+            setTimeout(function () { w.scrollTo({ left: 140, behavior: 'smooth' }); }, 500);
+            setTimeout(function () { if (w.scrollLeft > 100) w.scrollTo({ left: 0, behavior: 'smooth' }); }, 1500);
+          }, { threshold: 0.6 });
+          io.observe(w);
+        })();
+      </script>
       <p class="reveal vs-note">※ 一般的な例です。実際の手間や費用はお店・サービスにより異なります。</p>
     </div>
   </section>

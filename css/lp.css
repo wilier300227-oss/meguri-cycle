@@ -423,8 +423,11 @@ h1, h2, h3 {
 .vs-mk--x::before, .vs-mk--x::after { content: ""; position: absolute; left: 50%; top: 50%; width: 30px; height: 3.5px; border-radius: 2px; background: #9AA3AF; }
 .vs-mk--x::before { transform: translate(-50%, -50%) rotate(45deg); }
 .vs-mk--x::after { transform: translate(-50%, -50%) rotate(-45deg); }
-.vs-scroll-hint { display: none; margin: 10px 0 0; font-size: 0.78rem; color: var(--ink-55); text-align: center; }
-@media (max-width: 799px) { .vs-scroll-hint { display: block; } .vs tbody th { width: 96px; } .vs-pill { font-size: 0.72rem; padding: 5px 9px; } .vs .vs-self { width: 118px; min-width: 118px; } .vs-col--self { font-size: 0.92rem; } .vs-self .vs-t { font-size: 0.76rem; } }
+.vs-scroll-hint { display: none; width: max-content; max-width: 100%; margin: 0 auto 10px; padding: 6px 14px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 0.78rem; font-weight: 700; text-align: center; }
+.vs-scroll-hint__arrow { display: inline-block; color: #FFE14D; animation: vs-nudge 1.4s ease-in-out infinite; }
+@keyframes vs-nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-5px); } }
+@media (prefers-reduced-motion: reduce) { .vs-scroll-hint__arrow { animation: none; } }
+@media (max-width: 799px) { .vs-scroll-hint { display: block; } .vs tbody th { width: 96px; } .vs-pill { font-size: 0.72rem; padding: 5px 9px; } .vs .vs-self { width: 118px; min-width: 118px; box-shadow: -12px 0 14px -10px rgba(20,40,80,0.55); } .vs-col--self { font-size: 0.92rem; } .vs-self .vs-t { font-size: 0.76rem; } }
 .vs-note { margin: 12px 0 0; font-size: 0.8rem; color: var(--ink-40); text-align: center; }
 
 .cta .line-24h { text-align: center; }
