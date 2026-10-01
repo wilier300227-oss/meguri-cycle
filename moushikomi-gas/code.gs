@@ -65,9 +65,13 @@ function doPost(e) {
       LABEL.bohan[d.bohan], d.owner ? LABEL.owner[d.owner] : '', d.ownerName, d.ownerRel,
       d.changes.map(function (c) { return LABEL.change[c]; }).join('・'),
       d.oldAddrs.join('\n'), d.oldNames.join('\n'), d.oldTels.join('\n'), '同意する', '', '', '', ''];
-    applySheet_(applyBook_()).appendRow(row.map(safeCell_));
+    const book = applyBook_();
+    const ash = applySheet_(book);
+    ash.appendRow(row.map(safeCell_));
+    // Discord から、その行をすぐ開けるリンク（2026-10-01 オーナー指示）
+    const rowUrl = 'https://docs.google.com/spreadsheets/d/' + book.getId() + '/edit#gid=' + ash.getSheetId() + '&range=A' + ash.getLastRow();
     hit.sheet.getRange(hit.row, 6).setValue(new Date());   // 使用日時
-    notify_(hit, d);
+    notify_(hit, d, rowUrl);
     return json_({ ok: true });
   } catch (err) {
     console.error('doPost ' + err);
@@ -198,14 +202,14 @@ function applySheet_(ss) {
 function safeCell_(v) {
   return (typeof v === 'string' && /^[=+\-@]/.test(v)) ? "'" + v : v;
 }
-function notify_(hit, d) {
+function notify_(hit, d, rowUrl) {
   const url = PropertiesService.getScriptProperties().getProperty('DISCORD_WEBHOOK_URL');
   if (!url) return;
   const text = '📝 申込フォーム受付 ' + hit.custNo + (hit.quoteId ? '（' + hit.quoteId + '）' : '') + '\n'
     + '第1希望: ' + d.wish[0] + (d.wish.length > 1 ? '（ほか' + (d.wish.length - 1) + '件）' : '') + '\n'
     + '防犯登録: ' + LABEL.bohan[d.bohan] + (d.owner ? '／名義: ' + LABEL.owner[d.owner] : '')
     + (d.changes.length ? '／変わったこと: ' + d.changes.map(function (c) { return LABEL.change[c]; }).join('・') : '') + '\n'
-    + '→ 「' + APPLY_SHEET + '」シートを見て電話照会';
+    + '→ 電話照会：' + (rowUrl || '「' + APPLY_BOOK_NAME + '」');
   try {
     UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify({ content: text.slice(0, 1900), allowed_mentions: { parse: [] } }) });
   } catch (e) { console.error('notify_ ' + e); }
