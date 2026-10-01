@@ -165,6 +165,11 @@ function v2HandleOwnerCommand_(event, userId, text) {
   if (!v2IsOwner_(userId)) return false;
   const nt = v2NormalizeCmd_(text);
   if (v2HandleMenuCommand_(event, userId, text)) return true;   // メニュー確認 / メニュー切替 / メニュー戻す
+  if (/^手動解除$/.test(nt)) {   // 自分の手動対応・停止フラグ・セッションを解除して通常メニューへ（自分をお客さま役にして試したあと用。2026-09-22）
+    clearManualMode_(userId); try { setUserFields_(userId, { opt_out: '', opt_out_reason: '' }); } catch (e) {}
+    v2ClearSession_(userId); v2LinkMenu_(userId, 'normal');
+    v2ReplyText_(event, '手動対応を解除しました。通常メニューに戻します🚲'); logEvent_(event, 'owner:manual_clear', 'ok'); return true;
+  }
   // 対話式（「見積」「みつもり」「見積り」だけ、または #見積 だけ）→ 相手をボタンで選ぶ流れへ
   if (/^#?(見積|見積り|みつもり|引取)$/.test(nt)) return ownerqStart_(event, userId);
   if (ownerqGet_(userId) && !/^#(見積|引取)\s/.test(nt)) return ownerqHandleText_(event, userId, text);
@@ -203,9 +208,17 @@ function v2HandleQuotePostback_(event, userId, pb) {
     if (!raw) { v2ReplyText_(event, '⚠ 下書きの期限（10分）が切れました。コマンドをもう一度送ってください'); logEvent_(event, 'quote:draft_expired', pb.q); return true; }
     const q = JSON.parse(raw);
     CacheService.getScriptCache().remove('quotedraft_' + pb.q);
-    const quoteId = v2SendQuote_(q);
-    v2ReplyText_(event, '✅ 送信しました（' + quoteId + '）。回答があれば通知します');
-    logEvent_(event, 'quote:sent', quoteId + ' ' + q.custNo + ' ' + q.total);
+    const sent = v2SendQuote_(q);
+    if (sent.ok) {
+      v2ReplyText_(event, '✅ 送信しました（' + sent.quoteId + '）。回答があれば通知します');
+      logEvent_(event, 'quote:sent', sent.quoteId + ' ' + q.custNo + ' ' + q.total);
+    } else {
+      // 届いていないので、前の見積は失効させず、状態も変えていない（v2SendQuote_ 側で制御）
+      v2ReplyText_(event, sent.monthlyLimit
+        ? '⚠ 見積を送れませんでした。今月のPush上限（200通）に達しています。お客さまには届いていません'
+        : '⚠ 見積を送れませんでした（' + sent.status + ' ' + sent.message + '）。お客さまには届いていません');
+      logEvent_(event, 'quote:send_failed', sent.quoteId + ' ' + sent.status + ' ' + sent.message);
+    }
     return true;
   }
   // お客さまの回答
@@ -221,10 +234,12 @@ function v2HandleQuotePostback_(event, userId, pb) {
   if (pb.val === 'accept') {
     if (row.answer === 'accept') { logEvent_(event, 'quote:accept_dup', pb.q); return true; }   // 2度目の決定は無視（ログのみ）
     v2UpdateQuote_(pb.q, { status: 'accepted', 回答: 'accept', 回答時刻: new Date(), 回答時スナップショット: row.body });
-    v2Reply_(event, [v2Msg_(v2AcceptedText_(row))]);
+    // 2026-09-30 買取は申込フォーム（/moushikomi/）で住所と防犯登録の名義を入力してもらう。トークンが作れなければ従来どおりトークで住所を聞く
+    const formUrl = (row.q && row.q.kind === 'hikitori') || !v2MoushikomiAllowed_(userId) ? '' : v2MoushikomiUrl_(userId, row.custNo, pb.q);
+    v2Reply_(event, formUrl ? [v2Msg_(v2AcceptedText_(row, true)), v2MoushikomiButton_(formUrl)] : [v2Msg_(v2AcceptedText_(row))]);
     try { setUserFields_(userId, { state: 'S3' }); } catch (e) {}
     try { setManualMode_(userId); } catch (e) {}
-    v2NotifyOwnerNow_(userId, '✅ 「この金額で決定」', row.custNo + ' ' + pb.q + '\n' + v2Yen_(row.total) + '\n→ 日時と住所の返信を待って人が対応');
+    v2NotifyOwnerNow_(userId, '✅ 「この金額で決定」', row.custNo + ' ' + pb.q + '\n' + v2Yen_(row.total) + (formUrl ? '\n→ 申込フォーム（希望日時・住所・名義）を待って人が対応' : '\n→ 日時と住所の返信を待って人が対応'));
     logEvent_(event, 'quote:accept', pb.q); return true;
   }
   if (pb.val === 'decline') {   // 引取の提示で「やめる」（2026-09-16）。お礼を返して終わり。以後は人が対応
@@ -244,8 +259,40 @@ function v2HandleQuotePostback_(event, userId, pb) {
   }
   v2ReplyReselect_(event); return true;
 }
-function v2AcceptedText_(row) {
+/* ── 申込フォーム（2026-09-30）。トークンは問い合わせシートの「申込トークン」に保存し、フォーム受付の専用 GAS（moushikomi-gas/）が照合する。
+   URL にはトークンだけを付ける（個人情報は入れない）。列：token／顧客番号／userId／見積ID／発行日時／使用日時 ── */
+const V2_MOUSHIKOMI_URL = 'https://meguri-cycle.com/moushikomi/';
+/** 申込フォームを出す相手。2026-10-01 オーナー指示で全員に公開（それまでは MOUSHIKOMI_USER_IDS の人だけだった）。
+ *  止めたいときはスクリプト プロパティ MOUSHIKOMI_OFF を 1 にする（その間は従来どおりトークで住所を聞く） */
+function v2MoushikomiAllowed_(userId) {
+  return String(PropertiesService.getScriptProperties().getProperty('MOUSHIKOMI_OFF') || '').trim() !== '1';
+}
+function v2MoushikomiUrl_(userId, custNo, quoteId) {
+  try {
+    const ssId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
+    if (!ssId) return '';
+    const ss = SpreadsheetApp.openById(ssId);
+    let sh = ss.getSheetByName('申込トークン');
+    if (!sh) { sh = ss.insertSheet('申込トークン'); sh.appendRow(['token', '顧客番号', 'userId', '見積ID', '発行日時', '使用日時', '防犯登録（LINEの回答）']); sh.setFrozenRows(1); }
+    if (!sh.getRange(1, 7).getValue()) sh.getRange(1, 7).setValue('防犯登録（LINEの回答）');
+    const token = Utilities.getUuid().replace(/-/g, '').toLowerCase();
+    // 7列目：ボットでの防犯登録の答え（bohan_yes など。個人情報ではない）。フォームはこれを見て「防犯登録はありますか？」を省く（2026-10-01）
+    sh.appendRow([token, custNo || '', userId || '', quoteId || '', new Date(), '', v2UserExtra_(userId, 'bohan') || '']);
+    return V2_MOUSHIKOMI_URL + '?t=' + token;
+  } catch (e) { console.error('v2MoushikomiUrl_ ' + e); return ''; }
+}
+function v2MoushikomiButton_(url) {
+  return { type: 'template', altText: '申込情報の入力はこちら', template: { type: 'buttons', text: 'ご希望の日時・ご住所・防犯登録の名義の入力（2〜3分）',
+    actions: [{ type: 'uri', label: '申込情報を入力する', uri: url }] } };
+}
+function v2AcceptedText_(row, withForm) {
   const hikitori = row.q && row.q.kind === 'hikitori';
+  // 2026-10-01 オーナー指示：希望日時もフォームで聞く（3つまで、第1希望だけ必須）。文面は3行に（お客さまの工程が増えたため簡潔に）
+  if (withForm) return [
+    'ありがとうございます。' + v2Yen_(row.total) + 'で決定しました。',
+    '下のボタンから、ご希望の日時・ご住所・防犯登録の名義を入力してください（2〜3分）。',
+    '担当者が確認して、日時をご連絡します。',
+  ].join('\n');
   return [
     // 引取は「誰が払うか」を明記（2026-09-17）。買取の文面は従来どおり
     hikitori ? 'ありがとうございます。出張費' + v2Yen_(row.total) + '（お客様のご負担）で、お引き取りを承りました。' : 'ありがとうございます。' + v2Yen_(row.total) + 'で決定しました。',
@@ -262,23 +309,42 @@ function v2AcceptedText_(row) {
 }
 
 /* ── 送信・記録 ── */
+/** 見積を送る。**お客さまに届いたときだけ**「送信済み」として確定する。
+ *  失敗時は、前の見積を失効させない・状態を S3 にしない・新しい行は send_failed で残す
+ *  （提示していない記録として。quotes は提示金額のログを兼ねるため、行自体は消さない）。
+ *  戻り値：{ quoteId, ok, status, message, monthlyLimit } */
 function v2SendQuote_(q) {
-  const quoteId = 'Q' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyMMdd') + '-' + Utilities.getUuid().slice(0, 4).toUpperCase();
-  // 同じお客さまの過去の提示は expired にする（古いボタンが押されても金額を再掲しない）
+  const quoteId = 'Q' + Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyMMdd') + '-' + Utilities.getUuid().slice(0, 4);
   const sh = getQuotesSheet_();
+  const iS = QUOTE_COLS.indexOf('status');
+  let newRow = 0;
+
+  // 先に行を書く（「届いたのに記録が無い」状態を作らない）。status は送信結果で確定する
   if (sh) {
-    const data = sh.getDataRange().getValues();
-    const iU = QUOTE_COLS.indexOf('userId'), iS = QUOTE_COLS.indexOf('status');
-    for (let r = 1; r < data.length; r++) {
-      if (String(data[r][iU]) === q.userId && (data[r][iS] === 'sent' || data[r][iS] === 'hold')) sh.getRange(r + 1, iS + 1).setValue('expired');
-    }
     sh.appendRow([quoteId, q.userId, getDisplayName_(q.userId), q.custNo, new Date(), 'owner', q.kind, q.amounts.length, q.total,
       JSON.stringify({ mode: q.mode, amounts: q.amounts, names: q.names, ebike: q.ebike, bodyOnly: q.bodyOnly, note: q.note || '' }),
-      q.bodyText, new Date(q.expiresIso), 'sent', '', '', '']);
+      q.bodyText, new Date(q.expiresIso), 'sending', '', '', '']);
+    newRow = sh.getLastRow();
   }
-  pushMessage_(q.userId, [v2QuoteFlex_(q, quoteId, q.bodyText)]);
-  try { setUserFields_(q.userId, { state: 'S3' }); } catch (e) {}
-  return quoteId;
+
+  const res = pushMessage_(q.userId, [v2QuoteFlex_(q, quoteId, q.bodyText)]);
+
+  if (sh && newRow) sh.getRange(newRow, iS + 1).setValue(res.ok ? 'sent' : 'send_failed');
+
+  if (res.ok) {
+    // 届いたときだけ、同じお客さまの過去の提示を expired にする（古いボタンで金額が確定しないように）
+    if (sh) {
+      const data = sh.getDataRange().getValues();
+      const iU = QUOTE_COLS.indexOf('userId');
+      for (let r = 1; r < data.length; r++) {
+        if (r + 1 === newRow) continue; // 今書いた行は対象外
+        if (String(data[r][iU]) === q.userId && (data[r][iS] === 'sent' || data[r][iS] === 'hold')) sh.getRange(r + 1, iS + 1).setValue('expired');
+      }
+    }
+    try { setUserFields_(q.userId, { state: 'S3' }); } catch (e) {}
+  }
+
+  return { quoteId: quoteId, ok: res.ok, status: res.status, message: res.message, monthlyLimit: res.monthlyLimit };
 }
 function v2FindQuote_(quoteId) {
   const sh = getQuotesSheet_();
@@ -309,8 +375,8 @@ function v2UpdateQuote_(quoteId, fields) {
 function v2NotifyOwnerNow_(userId, subject, body) {
   try {
     const name = getDisplayName_(userId);
-    try { appendInquiryRow_(new Date(), 'LINE', name, subject, body, 'quote_' + Date.now()); }
-    catch (e) { notifyOwner_('LINE', name, subject, body); }
+    try { appendInquiryRow_(new Date(), 'LINE', name, subject, body, 'quote_' + Date.now(), null, false, userId); }
+    catch (e) { notifyOwner_('LINE', name, subject, body, userId); }
   } catch (e) {}
 }
 

@@ -103,18 +103,6 @@ function v2BatteryCheckMessage_() {
     V2_BATTERY_CHECK_URL,
   ].join('\n'));
 }
-/** 2026-09-30: 査定フロー（satei step2 で「どれもない」）用の長押し診断の案内。点灯数の自己申告や写真では
- *  2回押しの5灯表示と見分けられないため、査定では動画だけを受け付ける。診断コラムの battery フローは v2BatteryCheckMessage_ のまま */
-function v2BatteryCheckSateiMessage_() {
-  return v2Msg_([
-    'ありがとうございます。',
-    '🔋 上の動画のように残量ボタンを長押しすると、バッテリーの弱り具合がわかり、その結果で金額を出せます。',
-    '押す指とランプが両方映るように、押し始めから止めずに動画で撮って送ってください。',
-    '動画がない場合は、バッテリーは控えめに見て金額を出します。',
-    '文字の説明はこちら👇',
-    V2_BATTERY_CHECK_URL,
-  ].join('\n'));
-}
 function v2BatteryVideoMessage_() {
   return { type: 'video', originalContentUrl: V2_BATTERY_VIDEO_URL, previewImageUrl: V2_BATTERY_VIDEO_PREVIEW_URL };
 }
@@ -140,7 +128,7 @@ function v2PhotoStepQuick_() {
 }
 function v2AskCityMessage_() {
   // 既存ボットと同じ聞き方（町名まで。番地は金額決定後にしか聞かない＝handoff §10-5）
-  return v2Msg_('📍 お住まいの市町名を教えてください（例：金沢市片町）。\n\nこの下の入力欄に打ち込んで送ってください。');
+  return v2Msg_('📍 お住まいの市町名を教えてください（例：金沢市片町、富山市総曲輪）。\n\nこの下の入力欄に打ち込んで送ってください。');
 }
 /** サビの程度（買取のみ、写真のあと）。ボタンで答えるだけ。回答は受付通知に載せる（2026-09-16） */
 function v2AskRustMessage_() {
@@ -154,7 +142,8 @@ const V2_RUST_LABELS = { rust_none: 'ほとんどない', rust_some: '少しあ�
 
 function v2AskBohanMessage_(flow) {
   // 「シールは車体に貼ってあるが控えの紙はない」が多いので、その選択肢を用意する（2026-09-16 オーナー指摘）
-  return v2Msg_('🔖 防犯登録はありますか？\n（自転車を買ったときに登録した、車体のシールと控えの紙のことです。抹消の手続きは当方で代行します）', [
+  // 2026-10-01 オーナー決定：名義の条件を最後に知って不満にならないよう、ここで「ご本人以外の名義でも大丈夫・こちらで確認」と先に伝える
+  return v2Msg_('🔖 防犯登録はありますか？\n（自転車を買ったときに登録した、車体のシールと控えの紙のことです。抹消の手続きは、登録内容が確認できれば当方で代行します）\n※ご家族など、ご本人以外の名義でも大丈夫です。お引き取りの前にこちらで確認します。', [
     qrPostback_('シールも紙もある', v2Pb_(flow, 5, 'next', 'bohan_yes')),
     qrPostback_('シールだけ（紙はない）', v2Pb_(flow, 5, 'next', 'bohan_seal')),
     qrPostback_('ない', v2Pb_(flow, 5, 'next', 'bohan_no')),
@@ -174,6 +163,7 @@ function v2DoneLines_(intent) {
   const head = intent === 'shobun'
     ? ['ありがとうございます、受付は以上です🚲', '担当者が写真と出張費を確認して、確定した金額をご連絡します（原則48時間以内）。']
     : ['ありがとうございます、受付は以上です🚲', '担当者が写真を確認して、確定した買取金額をご連絡します（原則48時間以内）。'];
+  if (intent === 'shobun') return head;   // 処分は査定しないので「状態について」は聞かない（2026-09-22 オーナー指示）
   return head.concat([
     '',
     '【状態について】',
@@ -212,18 +202,20 @@ function v2Transition_(userId, s, pb) {
   if (s.flow === 'satei') {
     if (s.step === 1) {                       // 電動の有無
       s.data.ebike = pb.val;
-      if (pb.val === 'normal') { s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; }
+      if (pb.val === 'normal') { s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; }
       else { s.step = 2; out.messages = [v2AskBattery_('satei', 2)]; }
       return out;
     }
     if (s.step === 2) {                       // バッテリー状態
       if (pb.val.indexOf('bat_') === 0) s.data.battery = pb.val;   // body_only で bat_ng を上書きしない
       if (pb.val === 'bat_ng') { out.messages = [v2BatteryNgMessage_('satei', 2)]; return out; }       // step は 2 のまま（次のボタン待ち）
-      if (pb.val === 'body_only') { s.data.bodyOnly = true; s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
-      if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = [v2BatteryUnknownMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
-      s.step = 3; out.messages = [v2BatteryVideoMessage_(), v2BatteryCheckSateiMessage_(), v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out;  // bat_ok
+      if (pb.val === 'body_only') { s.data.bodyOnly = true; s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out; }
+      if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out; }
+      s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out;  // bat_ok（診断動画はまとまり6で案内する）
     }
-    if (s.step === 3) {                       // 写真工程 → 次へ進む（旧「写真を追加する」は写真の案内を出し直すだけ）
+    if (s.step === 3) {                       // 写真工程（v2-photo.gs）。まとまり単位の受け付け
+      const pt = v2PhotoTransition_(userId, s, pb);
+      if (pt) { out.messages = pt.messages; out.menu = pt.menu || null; out.done = !!pt.done; return out; }
       if (pb.val === 'more_photos') { out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
       // 2026-09-16: 買取は写真のあとにサビの程度をボタンで1問（現地で写真より状態が悪い事例への対策。写真は3枚のまま）
       if (pb.val && pb.val.indexOf('rust_') === 0) { s.data.rust = pb.val; delete s.data.rustAsk; s.step = 4; out.messages = [v2AskCityMessage_()]; out.menu = 'inflow'; return out; }
@@ -240,14 +232,15 @@ function v2Transition_(userId, s, pb) {
     if (s.step === 1) {
       if (pb.val.indexOf('bat_') === 0) s.data.battery = pb.val;
       if (pb.val === 'bat_ng') { out.messages = [v2BatteryNgMessage_('battery', 1)]; return out; }
-      if (pb.val === 'body_only') { s.flow = 'satei'; s.intent = 'kaitori'; s.data.ebike = 'ebike'; s.data.bodyOnly = true; s.step = 3; out.messages = [v2PhotoGuideMessage_(s)]; out.menu = 'photo'; return out; }
-      if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = [v2BatteryUnknownMessage_()]; out.menu = 'photo'; return out; }
+      if (pb.val === 'body_only') { s.flow = 'satei'; s.intent = 'kaitori'; s.data.ebike = 'ebike'; s.data.bodyOnly = true; s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out; }
+      if (pb.val === 'bat_unknown') { s.data.batteryPhoto = true; s.step = 3; out.messages = v2PhotoStartMsgs_(s, userId); out.menu = 'photo'; return out; }
       // bat_ok: 診断の案内で終了（買取したい人はメニューから）
       out.messages = [v2BatteryVideoMessage_(), v2BatteryCheckMessage_(), v2Msg_('買取をご希望のときは、下のメニューの「買取を申し込む」からどうぞ🚲')];
       out.stop = true; out.menu = 'normal'; return out;
     }
-    if (s.step === 3) {                       // 写真 → 人が判断
-      if (pb.val === 'more_photos') { out.messages = [v2BatteryUnknownMessage_()]; out.menu = 'photo'; return out; }
+    if (s.step === 3) {                       // 写真（バッテリー単体の4ステップ）→ 人が判断
+      const pt = v2PhotoTransition_(userId, s, pb);
+      if (pt) { out.messages = pt.messages; out.menu = pt.menu || null; out.done = !!pt.done; return out; }
       out.messages = [v2Msg_('ありがとうございます。担当者が写真を確認してご連絡します🚲')];
       out.done = true; return out;
     }
@@ -267,23 +260,20 @@ function v2Complete_(event, userId, s, extraLines) {
     'サビ（自己申告）: ' + (V2_RUST_LABELS[d.rust] || '-'),
     '住所: ' + (d.address || d.city || '-') + (d.fee ? '（出張費 ' + d.fee + '）' : ''),
     '防犯登録: ' + ({ bohan_yes: 'シールも紙もある', bohan_seal: 'シールだけ（紙はない）', bohan_no: 'ない', bohan_unknown: 'わからない' }[d.bohan] || '-'),
-  ].join('\n');
+  ].concat(v2PhotoSummaryLines_(s)).join('\n');
   try { setUserFields_(userId, { state: 'S2', intent: s.intent || '', city: d.city || '', town: d.town || '' }); } catch (e) {}
+  if (d.bohan) v2Defer_(function () { v2UserExtra_(userId, 'bohan', d.bohan); });   // 2026-10-01 申込フォームで「防犯登録はありますか？」を省くため
   try { setManualMode_(userId); } catch (e) {}
   // 受付完了の通知はバースト抑制の対象にしない（直前の通知に潰されると査定依頼を見落とす）
   try {
     const name = getDisplayName_(userId);
     const id = 'line_' + (event.webhookEventId || (event.message && event.message.id));
-    try { appendInquiryRow_(new Date(), 'LINE', name, '📝 v2 受付完了（要査定）', summary, id); }
-    catch (e) { notifyOwner_('LINE', name, '📝 v2 受付完了（要査定）', summary); }
-    // 2026-09-16: 通知の直後に「見積を送る」ボタンを添える（オーナーは個人 LINE の通知から1タップで、この相手の見積入力に入れる）
-    if (cust && typeof ownerqPb_ === 'function' && OWNER_LINE_USER_ID && OWNER_LINE_USER_ID.indexOf('ここに') !== 0) {
-      try {
-        pushMessage_(OWNER_LINE_USER_ID, [v2Msg_('👆 ' + cust + '（' + name + '）に見積を送るときは、このボタンからどうぞ', [
-          qrPostback_('💰 ' + cust + ' に見積を送る', ownerqPb_(1, 'next', cust)),
-        ])]);
-      } catch (e) {}
-    }
+    // 受付完了だけは LINE に残す（オーナーが個人 LINE の通知から見積を送れるように）。
+    // 記録は今までどおり中央シートへ。通知は本文＋ボタンを 1 リクエスト（Push 1通）にまとめる（2026-09-22 Push通数対策）
+    let wrote = true;
+    try { wrote = appendInquiryRow_(new Date(), 'LINE', name, '📝 v2 受付完了（要査定）', summary, id, null, true); }
+    catch (e) { wrote = true; } // シート書き込みが例外でも通知は試みる（今までどおり）
+    if (wrote) v2NotifyReceipt_(name, cust, summary, userId);
   } catch (e) {}
   v2LinkMenu_(userId, 'normal');
   v2ClearSession_(userId);
@@ -359,23 +349,26 @@ function v2PromptMessages_(s) {
   if (s.flow === 'satei' && s.step === 1) return [v2AskEbike_(s)];
   if (s.flow === 'satei' && s.step === 2) return [v2AskBattery_('satei', 2)];
   if (s.flow === 'battery' && s.step === 1) return [v2AskBattery_('battery', 1)];
-  if (s.flow === 'battery' && s.step === 3) return [v2BatteryUnknownMessage_()];
   if (s.flow === 'satei' && s.step === 3 && s.data && s.data.rustAsk) return [v2AskRustMessage_()];   // サビの質問中に文字が来た → 同じ質問を出し直す
-  if (s.step === 3) return [v2PhotoGuideMessage_(s)];
+  if (s.step === 3) return v2PhotoPromptMsgs_(s);
   if (s.flow === 'satei' && s.step === 4) return [v2AskCityMessage_()];
   if (s.flow === 'satei' && s.step === 5) return [v2AskBohanMessage_('satei')];
   return v2FlowStartMessages_(s);
 }
 
-/** 画像の受け口（handleEvent から呼ぶ）。写真工程なら枚数を数えて初回だけ受領確認。処理したら true */
-function v2HandleImage_(event, userId) {
+/** 画像・動画の受け口（handleEvent から呼ぶ）。写真工程なら v2-photo.gs が数えて返事する。
+ *  写真工程以外で届いた画像は、受け取ったうえで今の質問を1回だけ出し直す（2回目以降は無言で数えるだけ） */
+function v2HandleImage_(event, userId, kind) {
   const s = v2GetSession_(userId);
   if (!s) return false;
+  if (v2PhotoOnMedia_(event, userId, s, kind || 'image')) return true;
   s.data = s.data || {};
   s.data.photos = (s.data.photos || 0) + 1;
   if (s.step !== 3) {
-    // 写真工程の前後に写真が来た → 受け取ったうえで、今の質問をもう一度出す（写真は記録に残す）
-    v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\nあわせて、こちらにもお答えください👇')].concat(v2PromptMessages_(s)));
+    if (!s.data.extraImg) {
+      s.data.extraImg = 1;
+      v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\nあわせて、こちらにもお答えください👇')].concat(v2PromptMessages_(s)));
+    }
   } else if (s.data.photos === 1) {
     v2Reply_(event, [v2Msg_('📸 お写真ありがとうございます、受け取りました！\n続けて送れます。送り終わったら「次へ進む」を押してください🚲', v2PhotoStepQuick_())]);
   }
@@ -383,4 +376,21 @@ function v2HandleImage_(event, userId) {
   try { logLineInquiry_(userId, '写真を送信（v2）', '(画像メッセージ ' + s.data.photos + '枚目)', 'line_' + event.message.id); } catch (e) {}
   logEvent_(event, 'v2:' + s.flow + '/' + s.step + '/image', '写真 ' + s.data.photos + '枚目');
   return true;
+}
+
+/** 受付完了の自分宛て通知。2026-09-22 オーナー決定：通知は全部 Discord に統一（LINE の Push を消費しない）。
+ *  見積は、オーナーが自分の LINE からボットに「見積」と送って相手を選ぶ。Discord が未設定・失敗のときだけ、これまでどおり LINE に本文＋ボタンを1通。 */
+function v2NotifyReceipt_(name, cust, summary, userId) {
+  const text = ownerNotifyText_('LINE', name, '📝 v2 受付完了（要査定）', summary, userId);
+  const hint = cust ? '（見積を送るときは、ボットに「見積」と送って ' + cust + ' を選んでください）' : '';
+  if (postDiscord_(text + String.fromCharCode(10) + hint)) return;
+  const messages = [{ type: 'text', text: text }];
+  if (cust && typeof ownerqPb_ === 'function') {
+    messages.push(v2Msg_('👆 ' + cust + '（' + name + '）に見積を送るときは、このボタンからどうぞ', [
+      qrPostback_('💰 ' + cust + ' に見積を送る', ownerqPb_(1, 'next', cust)),
+    ]));
+  }
+  if (OWNER_LINE_USER_ID && OWNER_LINE_USER_ID.indexOf('ここに') !== 0) {
+    try { pushMessage_(OWNER_LINE_USER_ID, messages); } catch (e) {}
+  }
 }

@@ -101,9 +101,11 @@ function v2GetSession_(userId) {
     for (let r = 1; r < data.length; r++) {
       if (String(data[r][0]) === userId) {
         const upd = data[r][5] ? new Date(data[r][5]).getTime() : 0;
-        if (!data[r][1] || Date.now() - upd > V2_SESSION_TTL_SEC * 1000) return null;
-        const s = { flow: data[r][1], step: Number(data[r][2]) || 0, intent: data[r][3] || '', data: {} };
-        try { s.data = JSON.parse(data[r][4] || '{}'); } catch (e) {}
+        let d = {}; try { d = JSON.parse(data[r][4] || '{}'); } catch (e) {}
+        // 写真工程のセッションは 7 日（「あとで続きから送れます」の約束。2026-09-22）。それ以外は 6 時間
+        const ttl = (d.photo && !d.photoDone) ? V2_PHOTO_TTL_SEC : V2_SESSION_TTL_SEC;
+        if (!data[r][1] || Date.now() - upd > ttl * 1000) return null;
+        const s = { flow: data[r][1], step: Number(data[r][2]) || 0, intent: data[r][3] || '', data: d };
         CacheService.getScriptCache().put(v2SessionKey_(userId), JSON.stringify(s), V2_SESSION_TTL_SEC);
         return s;
       }
@@ -137,6 +139,29 @@ function v2WriteSessionRow_(userId, s) {
 }
 
 /* ── お客さま番号（§10-6）。users タブの cust_no 列。無ければ列を足して採番する ── */
+/** users シートの USER_COLS より右の列を、見出し名で読み書きする（cust_no と同じやり方。列の位置に依存しない）。
+ *  value を渡すと書く（行が無ければ何もしない）、渡さなければ読む（無ければ ''） */
+function v2UserExtra_(userId, key, value) {
+  if (!userId || !key) return '';
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(5000);
+    const sh = getUsersSheet_();
+    if (!sh) return '';
+    const header = sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), 1)).getValues()[0];
+    let col = header.indexOf(key);
+    if (col === -1 && value === undefined) return '';
+    if (col === -1) { col = header.length; sh.getRange(1, col + 1).setValue(key); }
+    const ids = sh.getRange(1, 1, sh.getLastRow(), 1).getValues();
+    for (let r = 1; r < ids.length; r++) {
+      if (String(ids[r][0]) !== userId) continue;
+      if (value === undefined) return String(sh.getRange(r + 1, col + 1).getValue() || '');
+      sh.getRange(r + 1, col + 1).setValue(value);
+      return value;
+    }
+    return '';
+  } catch (e) { return ''; } finally { try { lock.releaseLock(); } catch (e) {} }
+}
 function v2CustNo_(userId) {
   if (!userId) return '';
   const lock = LockService.getScriptLock();
@@ -286,9 +311,14 @@ function v2Prompt_(event, userId, s) {
   v2LinkMenu_(userId, s.step === 3 ? 'photo' : 'inflow');
 }
 /** ボタンの val に応じて次の状態へ */
+/** 返信のあとに回す重い処理（写真ログの書き込みなど）。v2Transition_ の中で積んで、v2Advance_ が返信後に実行する（2026-09-22 速度対策） */
+let __V2_AFTER = [];
+function v2Defer_(fn) { __V2_AFTER.push(fn); }
+function v2RunDeferred_() { const q = __V2_AFTER; __V2_AFTER = []; q.forEach(function (f) { try { f(); } catch (e) { console.error('deferred ' + e); } }); }
 function v2Advance_(event, userId, s, pb) {
   const t = v2Transition_(userId, s, pb);
   if (t.messages.length) v2Reply_(event, t.messages);
+  v2RunDeferred_();
   if (t.done) { v2Complete_(event, userId, s); return; }
   if (t.stop) { v2LinkMenu_(userId, 'normal'); v2ClearSession_(userId); return; }
   if (t.menu) v2LinkMenu_(userId, t.menu);

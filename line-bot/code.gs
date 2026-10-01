@@ -201,7 +201,9 @@ function setupLineSheets() {
   Logger.log('セットアップ完了。INQUIRY_SHEET_ID=' + id);
   return 'OK INQUIRY_SHEET_ID=' + id;
 }
+let __T0 = 0, __TREPLY = 0;   // 計測用（2026-09-22）：受信〜返信までの ms
 function doPost(e) {
+  __T0 = Date.now(); __TREPLY = 0;
   try {
     const body = JSON.parse(e.postData.contents);
     (body.events || []).forEach(handleEvent);
@@ -281,7 +283,8 @@ function handleEvent(event) {
 
   // v2（2026-09-16）: 進行中フローのテキスト入力（市町名）と、旧タイル文言の v2 写像。停止希望の語は v2 より先に見る
   if (msg.type === 'text' && !detectOptOut_(text) && v2HandleText_(event, userId, text)) return;
-  if (msg.type === 'image' && v2HandleImage_(event, userId)) return;
+  if (msg.type === 'image' && v2HandleImage_(event, userId, 'image')) return;
+  if (msg.type === 'video' && v2HandleImage_(event, userId, 'video')) return;   // 診断動画・充電器の動画（v2-photo.gs）
 
   if (msg.type === 'text') {
     if (REVIEW_AUTO_ENABLED && userId && REVIEW_CANCEL_KEYWORDS.some(function (kw) { return text.indexOf(kw) !== -1; })) {
@@ -420,8 +423,8 @@ function logRouteMessage_(userId, routeId, text) {
 function notifyRouteMessage_(event, userId, routeId, text) {
   const name = userId ? getDisplayName_(userId) : '';
   const id = 'line_' + (event.message && event.message.id);
-  try { appendInquiryRow_(new Date(), 'LINE', name, '🆕 サイトCTA ' + routeId, text, id); }
-  catch (e) { notifyOwner_('LINE', name, '🆕 サイトCTA ' + routeId, text); }
+  try { appendInquiryRow_(new Date(), 'LINE', name, '🆕 サイトCTA ' + routeId, text, id, null, false, userId); }
+  catch (e) { notifyOwner_('LINE', name, '🆕 サイトCTA ' + routeId, text, userId); }
 }
 
 /** H改: 経路CTAへの受付応答（経路別）。サイト側の案内（/dendo/ 確認要項v2）と同じ内容に揃える。 */
@@ -439,7 +442,7 @@ function replyRouteCta_(event, userId, routeId) {
         '',
         'あわせて3つ教えてください。',
         '・鍵の本数',
-        '・お住まいの市町名（例：金沢市片町）',
+        '・お住まいの市町名（例：金沢市片町、富山市総曲輪）',
         '・防犯登録の有無',
         '',
         '🔋 残量ボタンの長押し診断ができると、実容量を反映した確定額を出せます。やり方は下のボタンからメーカーを選んでください（できなくても、パネル写真だけで大丈夫です）🚲',
@@ -456,7 +459,7 @@ function replyRouteCta_(event, userId, routeId) {
         '状態を確認しますので、次を教えてください：',
         '・バッテリーの写真（型番が見える面）',
         '・膨らみ・液漏れの有無',
-        '・お住まいの市町名（例：金沢市片町）',
+        '・お住まいの市町名（例：金沢市片町、富山市総曲輪）',
         '',
         '容量が残っていれば買取できる場合があります。車体ごとの場合は、車体の写真もどうぞ🚲',
       ].join('\n'),
@@ -488,7 +491,7 @@ function replyRouteCta_(event, userId, routeId) {
         '📷 自転車ぜんぶが写る写真をお送りください。',
         '',
         'あわせて2つ教えてください。',
-        '・お住まいの市町名（例：金沢市片町）',
+        '・お住まいの市町名（例：金沢市片町、富山市総曲輪）',
         '・防犯登録の有無',
         '',
         '担当が確認して、確定の金額・ご案内をお送りします。',
@@ -550,7 +553,7 @@ function logEvent_(event, matchedRule, replySummary) {
     const flags = 'expect_city=' + (userId && expectsCity_(userId) ? '1' : '0');
     sheet.appendRow([
       new Date(), userId, userId ? getDisplayName_(userId) : '',
-      event.type || '', msg.type || '', body, '', matchedRule || '', replySummary || '', flags,
+      event.type || '', msg.type || '', body, '', matchedRule || '', (replySummary || '') + (__TREPLY ? ' ⏱' + __TREPLY + 'ms' : ''), flags,
     ]);
   } catch (e) {
     // ログ失敗は無視（webhookの本処理を止めない）
@@ -575,9 +578,9 @@ function notifyUnmatched_(event, userId, text) {
   const name = getDisplayName_(userId);
   const id = 'line_' + (event.message && event.message.id);
   try {
-    appendInquiryRow_(new Date(), 'LINE', name, '⚠要返信（自動分類不可）', text, id);
+    appendInquiryRow_(new Date(), 'LINE', name, '⚠要返信（自動分類不可）', text, id, null, false, userId);
   } catch (e) {
-    notifyOwner_('LINE', name, '⚠要返信（自動分類不可）', text); // 中央シート未設定でも通知は試みる
+    notifyOwner_('LINE', name, '⚠要返信（自動分類不可）', text, userId); // 中央シート未設定でも通知は試みる
   }
 }
 /** 顧客へは短い受付一文を1セッション（6時間）に1回だけ。無応答でも可だが到達不安をなくすため。 */
@@ -627,7 +630,7 @@ function getUserState_(userId) {
       }
     }
   } catch (e) {}
-  try { cache.put(ck, JSON.stringify(result), 60); } catch (e) {}
+  try { cache.put(ck, JSON.stringify(result), 600); } catch (e) {}
   return result;
 }
 /** userId の指定フィールドだけ更新（無ければ新規行）。LockServiceで競合防止 */
@@ -730,8 +733,8 @@ function notifyManualIncoming_(event, userId, msg, text, subject) {
   const name = getDisplayName_(userId);
   const body = (text || ('(' + (msg && msg.type) + ')')) + (suppressed ? '\n（ほか ' + suppressed + ' 件の新着を省略）' : '');
   const id = 'line_' + (msg && msg.id);
-  try { appendInquiryRow_(new Date(), 'LINE', name, subject || '💬 手動対応中の新着', body, id); }
-  catch (e) { notifyOwner_('LINE', name, subject || '💬 手動対応中の新着', body); }
+  try { appendInquiryRow_(new Date(), 'LINE', name, subject || '💬 手動対応中の新着', body, id, null, false, userId); }
+  catch (e) { notifyOwner_('LINE', name, subject || '💬 手動対応中の新着', body, userId); }
 }
 
 /**
@@ -846,7 +849,7 @@ function photoGuideMessage(withIntake) {
   const intake = withIntake ? [
     '',
     'あわせて2つ教えてください。',
-    '・お住まいの市町名（例：金沢市片町）',
+    '・お住まいの市町名（例：金沢市片町、富山市総曲輪）',
     '・防犯登録の有無',
   ] : [];
   const text = [
@@ -919,7 +922,7 @@ function replyHikitoriApply(replyToken, userId) {
     '',
     '処分費は0円。出張費のみで引取に伺います（金額をご確認いただいてから訪問日を決めます）。',
     '',
-    'お写真とあわせて「お住まいの市町名」だけ教えてください（例：金沢市片町）。',
+    'お写真とあわせて「お住まいの市町名」だけ教えてください（例：金沢市片町、富山市総曲輪）。',
     '',
     'いただいた内容を確認しだい、担当者からご連絡いたします🚲',
   ].join('\n');
@@ -1053,8 +1056,8 @@ function sendReviewRequests() {
     if (status !== 'pending') continue;
     const daysPassed = (now - new Date(receivedAt)) / (1000 * 60 * 60 * 24);
     if (daysPassed < REVIEW_REQUEST_DELAY_DAYS) continue;
-    pushMessage_(userId, [{ type: 'text', text: REVIEW_MESSAGE_TEXT }]);
-    sheet.getRange(i + 1, 3).setValue('sent');
+    const r = pushMessage_(userId, [{ type: 'text', text: REVIEW_MESSAGE_TEXT }]);
+    if (r.ok) sheet.getRange(i + 1, 3).setValue('sent'); // 届いたときだけ sent（失敗は pending のまま）
   }
 }
 
@@ -1080,7 +1083,7 @@ function replyKaitori(replyToken) {
   const text = [
     '💰 買取のご希望、ありがとうございます！',
     '',
-    '買取の場合、査定・お引き取りの出張費・防犯登録の抹消代行まで、費用は一切かかりません。',
+    '買取の場合、査定・お引き取りの出張費・防犯登録の抹消代行（登録内容が確認できた場合）まで、費用は一切かかりません。',
     '',
     'まだでしたら「お住まいの市区町村」と「メーカー名・車種」を教えてください。',
     '写真とあわせて確認のうえ、確定の査定額をご連絡します🚲',
@@ -1271,7 +1274,7 @@ function replyFaq_(replyToken) {
     'A. 買取の場合は査定・出張とも無料です。断っても費用はかかりません。',
     '',
     'Q. 防犯登録カードとは何ですか？',
-    'A. 購入時にもらう白い紙（登録の控え）です。抹消手続きは当方で代行します。',
+    'A. 購入時にもらう白い紙（登録の控え）です。抹消手続きは、登録内容が確認できれば当方で代行します。',
     '',
     'Q. 何台まで一度に依頼できますか？',
     'A. 複数台まとめて大丈夫です。',
@@ -1381,7 +1384,7 @@ function replyCityReprompt_(replyToken, userId) {
   markCityReprompted_(userId);
   reply(replyToken, [{
     type: 'text',
-    text: '🙏 市町名を読み取れませんでした。下のボタンから選ぶか、市町名だけをもう一度お送りください（例：金沢市片町）。',
+    text: '🙏 市町名を読み取れませんでした。下のボタンから選ぶか、市町名だけをもう一度お送りください（例：金沢市片町、富山市総曲輪）。',
     quickReply: { items: cityQuickReplyItems_() },
   }]);
 }
@@ -1493,7 +1496,7 @@ function logLineInquiry_(userId, subject, content, id) {
   if (cache.get(key)) return;
   cache.put(key, '1', 21600); // 21600秒 = 6時間（CacheServiceの上限）
   const name = getDisplayName_(userId);
-  appendInquiryRow_(new Date(), 'LINE', name, subject, content, id);
+  appendInquiryRow_(new Date(), 'LINE', name, subject, content, id, null, false, userId);
 }
 
 /** LINEのプロフィールAPIで表示名を取得する（1時間キャッシュ、失敗時はuserIdをそのまま返す） */
@@ -1519,25 +1522,74 @@ function getDisplayName_(userId) {
 }
 
 /** 新しい問い合わせが中央スプレッドシートに記録されたとき、オーナー個人のLINEに通知する（inquiry-sync.gsから呼ばれる） */
-function notifyOwner_(channel, from, subject, content) {
-  if (!OWNER_LINE_USER_ID || OWNER_LINE_USER_ID.indexOf('ここに') === 0) return; // 未設定ならスキップ
+/** LINE 公式アカウントのチャット画面の URL。ボットの ID は初回に /v2/bot/info から取ってプロパティ LINE_BOT_USER_ID に保存する */
+function lineChatBotId_() {
+  const ps = PropertiesService.getScriptProperties();
+  let id = ps.getProperty('LINE_BOT_USER_ID');
+  if (id) return id;
+  try {
+    const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/info', { headers: { Authorization: 'Bearer ' + getChannelAccessToken_() }, muteHttpExceptions: true });
+    if (res.getResponseCode() === 200) { id = (JSON.parse(res.getContentText()) || {}).userId || ''; if (id) ps.setProperty('LINE_BOT_USER_ID', id); }
+  } catch (e) {}
+  return id || '';
+}
+function lineChatUrl_(userId) {
+  const b = lineChatBotId_();
+  if (!b) return '';
+  return 'https://chat.line.biz/' + b + (userId ? '/chat/' + userId : '');
+}
+
+/** 自分宛て通知の本文を組み立てる（LINE・Discord で共通）。LINE 経路はチャット画面へのリンク、それ以外は中央シート */
+function ownerNotifyText_(channel, from, subject, content, userId) {
   const sheetId = PropertiesService.getScriptProperties().getProperty('INQUIRY_SHEET_ID');
   const sheetUrl = sheetId ? 'https://docs.google.com/spreadsheets/d/' + sheetId + '/edit' : '';
-
-  const text = [
+  const link = (channel === 'LINE' ? lineChatUrl_(userId) : '') || sheetUrl;
+  return [
     '📩 新しい問い合わせ（' + channel + '）',
     from,
     subject,
     flattenText_(String(content)).slice(0, 200), // 空行だらけのメール本文でも通知は詰めて表示（flattenText_はinquiry-sync.gs側）
     '',
-    sheetUrl,
+    link,
   ].filter(String).join('\n');
+}
 
+/** Discord の Webhook に送る。成功したら true。
+ *  URL はスクリプト プロパティ DISCORD_WEBHOOK_URL から読む（コードにもリポジトリにも書かない）。
+ *  成功は 204（wait なし）。content は 2000 文字まで。
+ *  allowed_mentions.parse を空にして、お客さまの文面に @everyone などがあってもメンションさせない。 */
+function postDiscord_(text) {
+  const url = PropertiesService.getScriptProperties().getProperty('DISCORD_WEBHOOK_URL');
+  if (!url) return false;
+  try {
+    const res = UrlFetchApp.fetch(url, {
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify({ content: String(text).slice(0, 1900), allowed_mentions: { parse: [] } }),
+      muteHttpExceptions: true,
+    });
+    const status = res.getResponseCode();
+    if (status >= 200 && status < 300) return true;
+    console.error('discord failed: ' + status + ' ' + String(res.getContentText() || '').slice(0, 200));
+    return false;
+  } catch (e) {
+    console.error('discord exception: ' + e);
+    return false;
+  }
+}
+
+/** 自分宛ての通知。Discord を優先し、未設定か失敗のときだけ LINE Push に送る。
+ *  （LINE の Push は月200通の無料枠を消費するため。2026-09-22） */
+function notifyOwner_(channel, from, subject, content, userId) {
+  const text = ownerNotifyText_(channel, from, subject, content, userId);
+  if (postDiscord_(text)) return;
+  if (!OWNER_LINE_USER_ID || OWNER_LINE_USER_ID.indexOf('ここに') === 0) return; // 未設定ならスキップ
   pushMessage_(OWNER_LINE_USER_ID, [{ type: 'text', text: text }]);
 }
 
 /** LINEへの返信共通処理 */
 function reply(replyToken, messages) {
+  if (__T0 && !__TREPLY) __TREPLY = Date.now() - __T0;
   UrlFetchApp.fetch('https://api.line.me/v2/bot/message/reply', {
     method: 'post',
     contentType: 'application/json',
@@ -1548,14 +1600,30 @@ function reply(replyToken, messages) {
 }
 
 /** LINEへのプッシュ送信共通処理（ユーザーの発言なしに、こちらから送るとき用） */
+/** LINE の Push 送信。例外は投げず、結果を { ok, status, message, monthlyLimit } で返す。
+ *  ok は HTTP 200 のときだけ true。Push は月の無料通数（200通）を消費し、使い切ると失敗する。
+ *  月上限もレート制限も同じ 429 で返るため、本文の "monthly limit" で見分ける（2026-09-22 確認）。 */
 function pushMessage_(userId, messages) {
-  UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
-    method: 'post',
-    contentType: 'application/json',
-    headers: { Authorization: 'Bearer ' + getChannelAccessToken_() },
-    payload: JSON.stringify({ to: userId, messages: messages }),
-    muteHttpExceptions: true,
-  });
+  try {
+    const res = UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { Authorization: 'Bearer ' + getChannelAccessToken_() },
+      payload: JSON.stringify({ to: userId, messages: messages }),
+      muteHttpExceptions: true,
+    });
+    const status = res.getResponseCode();
+    const body = String(res.getContentText() || '');
+    let message = '';
+    try { message = (JSON.parse(body) || {}).message || ''; } catch (e) { message = body.slice(0, 200); }
+    const ok = status === 200;
+    const monthlyLimit = status === 429 && /monthly limit/i.test(body);
+    if (!ok) console.error('push failed: ' + status + ' ' + body.slice(0, 200));
+    return { ok: ok, status: status, message: message, monthlyLimit: monthlyLimit };
+  } catch (e) {
+    console.error('push exception: ' + e);
+    return { ok: false, status: 0, message: String(e), monthlyLimit: false };
+  }
 }
 
 /* =========================================================
