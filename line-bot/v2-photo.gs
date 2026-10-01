@@ -186,6 +186,8 @@ function v2PhotoNextPressed_(s) {
   const g = v2PhotoGroups_(s)[p.g - 1];
   const n = p.c[p.g] || 0;
   const min = g.min || g.need;   // min があれば、その枚数で「足りている」扱い（品番シールが無い自転車。2026-09-22）
+  const short = v2PhotoShobunShort_(s, g, n);
+  if (short) return short;
   if (g.need > 0 && n < min && !g.optional && !p.ask) {
     p.ask = 1;
     return { messages: [v2Msg_((n === 0 ? 'まだ写真が届いていません。' : 'まだ' + (min - n) + '枚届いていません。') + 'このまま進みますか？足りない分は、確認できない部分の金額が下がる可能性があります。', [
@@ -195,6 +197,14 @@ function v2PhotoNextPressed_(s) {
   }
   if (g.need > 0 && n < min) p.skip = (p.skip || 0) + 1;
   return v2PhotoAdvance_(s, '');
+}
+/** 処分（出張引取）は買取金額がないので「金額が下がる」は出さず、写真2枚がそろうまで先へ進めない（2026-10-01 オーナー指示） */
+function v2PhotoShobunShort_(s, g, n) {
+  if (!(s.flow === 'satei' && s.intent === 'shobun')) return null;
+  const min = g.min || g.need;
+  if (!(g.need > 0 && n < min)) return null;
+  return { messages: [v2Msg_('処分のお申し込みには、自転車ぜんぶが写った写真が' + min + '枚（右から・左から）必要です。'
+    + (n === 0 ? '' : 'あと' + (min - n) + '枚、') + 'このトークに送ってください📷', v2PhotoQuick_(s, g))], menu: 'photo', done: false };
 }
 /** postback（v2Transition_ の step3 から）。処理したら out、対象外なら null */
 function v2PhotoTransition_(userId, s, pb) {
@@ -207,6 +217,8 @@ function v2PhotoTransition_(userId, s, pb) {
   if (pb.val === 'photo_next' || pb.val === 'photos_done') return v2PhotoNextPressed_(s);
   if (pb.val === 'photo_go') {
     const p = s.data.photo; const g = v2PhotoGroups_(s)[p.g - 1];
+    const short = v2PhotoShobunShort_(s, g, p.c[p.g] || 0);   // 前の版の「このまま進む」ボタンが押されても、処分は2枚そろうまで進めない
+    if (short) return short;
     if (g.need > 0 && (p.c[p.g] || 0) < (g.min || g.need)) p.skip = (p.skip || 0) + 1;
     return v2PhotoAdvance_(s, '');
   }
