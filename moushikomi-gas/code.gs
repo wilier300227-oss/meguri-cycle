@@ -37,7 +37,10 @@ function setup() {
 function doGet(e) {
   const t = String((e && e.parameter && e.parameter.check) || '');
   const hit = t ? findToken_(t) : null;
-  return json_({ ok: !!(hit && !hit.used && !hit.expired), reason: !hit ? 'token' : hit.used ? 'used' : hit.expired ? 'expired' : '' });
+  const ok = !!(hit && !hit.used && !hit.expired);
+  // hint：ボットでの防犯登録の答え（yes／seal だけ返す。個人情報は返さない）。フォームが「防犯登録はありますか？」を省くのに使う
+  const hint = ok ? ({ bohan_yes: 'yes', bohan_seal: 'seal' }[hit.lineBohan] || '') : '';
+  return json_({ ok: ok, reason: !hit ? 'token' : hit.used ? 'used' : hit.expired ? 'expired' : '', hint: hint });
 }
 
 function doPost(e) {
@@ -82,15 +85,15 @@ function normalize_(b) {
   };
   // 希望日時（2026-10-01）：3つまで、第1希望は必須。日付は今日以降、時間帯は決まった選択肢だけ。保存は「10/5(日) 午前」の形
   const today = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
-  const TIMES = ['午前', '午後', '夕方以降', '何時でも'];
+  const TIMES = ['午前', '午後', '夕方以降', '何時でも', '時間を指定'];
   d.wish = [];
   const wishes = (Array.isArray(b.wish) ? b.wish : []).slice(0, 3);
   for (let i = 0; i < wishes.length; i++) {
-    const w = wishes[i] || {}; const ds = s(w.d, 10); const ts = s(w.t, 10);
+    const w = wishes[i] || {}; const ds = s(w.d, 10); const ts = s(w.t, 10); const xs = ts === '時間を指定' ? s(w.x, 30) : '';
     if (!ds && !ts) continue;
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(ds) || ds < today || TIMES.indexOf(ts) === -1) return { error: 'd' + (i + 1) };
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(ds) || ds < today || TIMES.indexOf(ts) === -1 || (ts === '時間を指定' && !xs)) return { error: 'd' + (i + 1) };
     const y = Number(ds.slice(0, 4)), m = Number(ds.slice(5, 7)), day = Number(ds.slice(8, 10));
-    d.wish.push(m + '/' + day + '(' + '日月火水木金土'.charAt(new Date(Date.UTC(y, m - 1, day)).getUTCDay()) + ') ' + ts);
+    d.wish.push(m + '/' + day + '(' + '日月火水木金土'.charAt(new Date(Date.UTC(y, m - 1, day)).getUTCDay()) + ') ' + (xs || ts));
   }
   if (!d.wish.length) return { error: 'd1' };
   if (d.changes.length > 1) d.changes = d.changes.filter(function (c) { return c !== 'none'; });   // 「変わっていない」はほかと両立しない
@@ -138,7 +141,7 @@ function findToken_(t) {
       const issued = data[r][4] ? new Date(data[r][4]).getTime() : 0;
       return {
         ss: ss, sheet: sh, row: r + 1, custNo: String(data[r][1] || ''), userId: String(data[r][2] || ''), quoteId: String(data[r][3] || ''),
-        used: !!data[r][5], expired: !issued || Date.now() - issued > TOKEN_TTL_DAYS * 86400000,
+        lineBohan: String(data[r][6] || ''), used: !!data[r][5], expired: !issued || Date.now() - issued > TOKEN_TTL_DAYS * 86400000,
       };
     }
   }
