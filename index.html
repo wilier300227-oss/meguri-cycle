@@ -65,7 +65,7 @@ ctaUrl: "/line/top/"
 <body>
 
   <!-- 冬前の帯（2026-09-30）：10/1〜11/30 だけブラウザの日付で表示。JS が動かないときと期間外は hidden のまま。経路 /line/fuyu/（冬前の帯から） -->
-  <a class="fuyu-band" id="fuyuBand" href="/line/fuyu/" target="_blank" rel="noopener noreferrer" hidden>雪でしまう前に、金額だけ確かめませんか？<span aria-hidden="true">→</span></a>
+  <a class="fuyu-band" id="fuyuBand" href="/line/fuyu/" target="_blank" rel="noopener noreferrer" hidden><svg class="fuyu-band__flake" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2.5v19M3.8 7.25l16.4 9.5M3.8 16.75l16.4-9.5"/><path d="M9.6 4.2 12 6.3l2.4-2.1M9.6 19.8 12 17.7l2.4 2.1M4.6 10.4l3.1-.9-.7-3.1M19.4 13.6l-3.1.9.7 3.1M4.6 13.6l3.1.9-.7 3.1M19.4 10.4l-3.1-.9.7-3.1"/></g></svg><span class="fuyu-band__t">雪でしまう前に、金額だけ確かめませんか？</span><span class="fuyu-band__go" aria-hidden="true">›</span></a>
   <script>
     function fuyuBandOn(d) { var m = d.getMonth() + 1; return m === 10 || m === 11; }
     if (fuyuBandOn(new Date())) document.getElementById('fuyuBand').hidden = false;
@@ -98,7 +98,7 @@ ctaUrl: "/line/top/"
     <div class="wrap hero__inner">
       <div class="stack reveal hero__copy">
         <span class="eyebrow">めぐり自転車 ・ 石川県かほく市発 ・ 出張対応</span>
-        <h1>乗らなくなった自転車、<br><em>売れるか処分か</em>、写真でわかります。<span style="display:block; margin-top:14px; font-size:0.4em; font-weight:600; color:rgba(255,255,255,0.72); letter-spacing:0.04em;">石川・富山の自転車出張買取・引取</span></h1>
+        <h1 class="hero__h1-3"><span class="nw">乗らなくなった自転車、</span><br><span class="nw"><em>売れるか処分か</em>、</span><br><span class="nw">写真でわかります。</span><span style="display:block; margin-top:14px; font-size:0.4em; font-weight:600; color:rgba(255,255,255,0.72); letter-spacing:0.04em;">石川・富山の自転車出張買取・引取</span></h1>
         <p class="lead">
           金額は訪問前にお伝えします。ご納得いただけたら、ご自宅までお引き取りに伺います。
         </p>

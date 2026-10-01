@@ -226,6 +226,7 @@ h1, h2, h3 {
 /* 見出しの虹下線：2行に折り返しても行ごとに引けるよう背景方式（絶対配置の ::after は折り返しで位置が崩れていた。2026-09-24） */
 .hero h1 em { font-style: normal; background-image: var(--rainbow); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 0.07em; padding-bottom: 0.06em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .hero h1 .nw { white-space: nowrap; }
+@media (max-width: 480px) { .hero h1.hero__h1-3 { font-size: clamp(1.4rem, 7.2vw, 2.1rem); } }   /* トップの見出しを3行のまま収める（いちばん長い行は11字。7.6vw だと 390px で2px はみ出して割れた） */
 @media (max-width: 420px) { .hero .eyebrow { letter-spacing: 0.16em; font-size: 0.68rem; } }
 .hero .eyebrow { color: rgba(255,255,255,0.65); }
 .hero .lead { color: rgba(255,255,255,0.86); }
@@ -378,9 +379,12 @@ h1, h2, h3 {
 @media (min-width: 680px) { .consult { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 960px) { .consult { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 /* 2026-09-30 冬前の帯（トップのみ・10/1〜11/30） */
-.fuyu-band { display: block; padding: 8px 16px; background: #FFD24D; color: var(--ink); font-size: 0.86rem; font-weight: 700; text-align: center; text-decoration: none; line-height: 1.5; }
-.fuyu-band:hover, .fuyu-band:focus-visible { background: #FFC61A; color: var(--ink); }
-.fuyu-band span { margin-left: 6px; }
+.fuyu-band { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 16px; color: #5C4433; font-size: 0.88rem; font-weight: 500; letter-spacing: 0.02em; line-height: 1.5; text-decoration: none; border-bottom: 1px solid #EAD8B8;
+  background-color: #FBF3E3; background-image: radial-gradient(rgba(255,255,255,0.95) 1.3px, transparent 1.8px), radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1.5px); background-size: 36px 36px, 23px 23px; background-position: 4px 6px, 15px 17px; }
+.fuyu-band:hover, .fuyu-band:focus-visible { background-color: #F6E9D0; color: #4A3628; }
+.fuyu-band:hover .fuyu-band__t { text-decoration: underline; text-underline-offset: 3px; }
+.fuyu-band__flake { flex: 0 0 auto; width: 17px; height: 17px; color: #7FA4C2; }
+.fuyu-band__go { flex: 0 0 auto; color: #B0793A; font-size: 1.15rem; font-weight: 700; line-height: 1; }
 .fuyu-band[hidden] { display: none; }
 .cta .line-24h { text-align: center; }
 .foot { padding: 56px 0 96px; border-top: 1px solid var(--line-hair); color: var(--ink-55); }
