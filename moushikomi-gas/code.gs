@@ -209,7 +209,8 @@ function notify_(hit, d, rowUrl) {
     + '第1希望: ' + d.wish[0] + (d.wish.length > 1 ? '（ほか' + (d.wish.length - 1) + '件）' : '') + '\n'
     + '防犯登録: ' + LABEL.bohan[d.bohan] + (d.owner ? '／名義: ' + LABEL.owner[d.owner] : '')
     + (d.changes.length ? '／変わったこと: ' + d.changes.map(function (c) { return LABEL.change[c]; }).join('・') : '') + '\n'
-    + '→ 電話照会：' + (rowUrl || '「' + APPLY_BOOK_NAME + '」');
+    + (d.bohan === 'deleted' ? '→ 削除カードの写真を LINE で待つ（無ければシールの番号で照会）\n' : d.bohan === 'none' ? '→ 購入証明の写真を LINE で待つ（現地でシールやはがした跡があれば照会）\n' : '')
+    + '→ ' + (d.bohan === 'registered' || d.bohan === 'unknown' ? '電話照会：' : '申込の行：') + (rowUrl || '「' + APPLY_BOOK_NAME + '」');
   try {
     UrlFetchApp.fetch(url, { method: 'post', contentType: 'application/json', muteHttpExceptions: true, payload: JSON.stringify({ content: text.slice(0, 1900), allowed_mentions: { parse: [] } }) });
   } catch (e) { console.error('notify_ ' + e); }

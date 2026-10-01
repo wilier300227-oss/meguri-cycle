@@ -181,10 +181,11 @@ permalink: /moushikomi/
               <div class="mf__opts" role="radiogroup" aria-labelledby="lBohan">
                 <label class="mf__opt"><input type="radio" name="bohan" value="registered"> 登録している</label>
                 <label class="mf__opt"><input type="radio" name="bohan" value="deleted"> 抹消済み</label>
-                <label class="mf__opt"><input type="radio" name="bohan" value="none"> 登録していない</label>
+                <label class="mf__opt"><input type="radio" name="bohan" value="none"> 登録していない（期限切れを含む）</label>
                 <label class="mf__opt"><input type="radio" name="bohan" value="unknown"> わからない</label>
               </div>
               </div>
+              <p class="mf__hint" id="fBohanNote" hidden style="margin-top:8px; color:var(--ink); font-weight:700;"></p>
               <p class="mf__err" data-err="bohan"></p>
             </div>
 
@@ -309,6 +310,8 @@ permalink: /moushikomi/
     function refresh() {
       var b = val('bohan');
       $('fOwnerBox').hidden = !(b === 'registered' || b === 'unknown');
+      var BN = { deleted: '送信のあと、抹消の控え（削除カード）の写真を LINE で送ってください。', none: '送信のあと、購入したことが分かるもの（レシート・保証書・ネット注文の画面など）の写真を LINE で送ってください。' };
+      $('fBohanNote').textContent = BN[b] || ''; $('fBohanNote').hidden = !BN[b];
       $('fFamilyBox').hidden = val('owner') !== 'family';
       var c = chgs();
       $('fMoveBox').hidden = c.indexOf('move') < 0;
@@ -441,7 +444,10 @@ permalink: /moushikomi/
         .then(function (j) {
           if (j && j.ok) {
             try { sessionStorage.removeItem('mfT'); } catch (e) {}
-            showState('ありがとうございます。受け付けました。', '防犯登録の照会ができしだい、LINEでご連絡します。');
+            var sent = d.bohan;
+            showState('ありがとうございます。受け付けました。', sent === 'deleted' ? '抹消の控え（削除カード）の写真を LINE で送ってください。確認できしだいご連絡します。'
+              : sent === 'none' ? '購入したことが分かるもの（レシート・保証書・ネット注文の画面など）の写真を LINE で送ってください。確認できしだいご連絡します。'
+              : '防犯登録の照会ができしだい、LINEでご連絡します。');
             return;
           }
           if (j && j.reason === 'input') { showErrors([j.field]); btn.disabled = false; btn.textContent = '送信する'; return; }
