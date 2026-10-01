@@ -262,12 +262,10 @@ function v2HandleQuotePostback_(event, userId, pb) {
 /* ── 申込フォーム（2026-09-30）。トークンは問い合わせシートの「申込トークン」に保存し、フォーム受付の専用 GAS（moushikomi-gas/）が照合する。
    URL にはトークンだけを付ける（個人情報は入れない）。列：token／顧客番号／userId／見積ID／発行日時／使用日時 ── */
 const V2_MOUSHIKOMI_URL = 'https://meguri-cycle.com/moushikomi/';
-/** 申込フォームを出す相手。スクリプト プロパティ MOUSHIKOMI_USER_IDS（カンマ区切りの userId、全員に出すときは *）。
- *  未設定なら誰にも出さない＝従来どおり（2026-09-30 オーナー指示：まずはオーナーの LINE 2つだけで本番運用） */
+/** 申込フォームを出す相手。2026-10-01 オーナー指示で全員に公開（それまでは MOUSHIKOMI_USER_IDS の人だけだった）。
+ *  止めたいときはスクリプト プロパティ MOUSHIKOMI_OFF を 1 にする（その間は従来どおりトークで住所を聞く） */
 function v2MoushikomiAllowed_(userId) {
-  const v = String(PropertiesService.getScriptProperties().getProperty('MOUSHIKOMI_USER_IDS') || '').trim();
-  if (v === '*') return true;
-  return !!userId && v.split(',').map(function (s) { return s.trim(); }).indexOf(userId) !== -1;
+  return String(PropertiesService.getScriptProperties().getProperty('MOUSHIKOMI_OFF') || '').trim() !== '1';
 }
 function v2MoushikomiUrl_(userId, custNo, quoteId) {
   try {
