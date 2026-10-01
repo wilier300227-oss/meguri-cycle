@@ -404,6 +404,7 @@ h1, h2, h3 {
 .vs-col { display: inline-block; font-weight: 700; font-size: 0.92rem; color: var(--ink); }
 .vs tbody th { width: 128px; background: #fff; }
 .vs-pill { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 0.78rem; font-weight: 700; line-height: 1.4; }
+.vs-pill small { display: block; font-size: 0.82em; font-weight: 500; opacity: 0.85; }
 .vs-t { display: block; margin-top: 6px; color: var(--ink-70); font-size: 0.8rem; line-height: 1.5; }
 /* めぐり自転車の列：濃い青の地＋白文字、右端に固定 */
 .vs .vs-self { position: sticky; right: 0; z-index: 1; width: 150px; min-width: 150px; background: #2F6BDB; color: #fff; border-bottom-color: rgba(255,255,255,0.25); }
