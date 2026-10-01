@@ -171,7 +171,10 @@ function v2PhotoAdvance_(s, receivedLine, deferLog) {
   }
   s.data.photoDone = 1;
   if (!deferLog) v2Defer_(function () { v2PhotoLog_(s, 'done'); });
-  const thanks = (receivedLine ? receivedLine + '\n' : '') + '写真ありがとうございました📷' + (s.intent === 'shobun' ? '' : '（写真は査定のためだけに使います）');
+  // 2026-10-01 オーナー指摘：診断動画が届いたのに「写真ありがとう」だけだったので、動画が1本でもあれば「写真と動画」に
+  const gotVideo = gs.some(function (g, i) { return g.video && (p.c[i + 1] || 0) > 0; });
+  const thanks = (receivedLine ? receivedLine + '\n' : '') + (gotVideo ? '写真と動画をありがとうございました📷' : '写真ありがとうございました📷')
+    + (s.intent === 'shobun' ? '' : gotVideo ? '（写真と動画は査定のためだけに使います）' : '（写真は査定のためだけに使います）');
   const out = { messages: [], menu: 'inflow', done: false, logStatus: 'done' };
   if (s.flow === 'battery') { out.messages = [v2Msg_(thanks)]; out.done = true; return out; }
   if (s.intent === 'kaitori' && !s.data.rust) { s.data.rustAsk = 1; out.messages = [v2Msg_(thanks), v2AskRustMessage_()]; return out; }
@@ -244,7 +247,7 @@ function v2PhotoOnMedia_(event, userId, s0, kind) {
     if (shouldReply && wrongKind) {
       out = { messages: [v2Msg_('ランプの確認は、写真ではなく動画でお願いします（写真では長押しかどうか見分けられないため）。' + String.fromCharCode(10) + '動画がない場合は「' + (g.skipLabel || '次へ') + '」を押してください。', v2PhotoQuick_(s, g))], menu: 'photo', done: false };
     } else if (shouldReply) {
-      const received = n + unit + '受け取りました📷';
+      const received = n + unit + '受け取りました' + (kind === 'video' ? '🎥' : '📷');
       if (g.need > 0 && n >= g.need) {
         out = v2PhotoAdvance_(s, received, true); advanced = true;
       } else {

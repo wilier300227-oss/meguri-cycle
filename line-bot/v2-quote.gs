@@ -239,7 +239,7 @@ function v2HandleQuotePostback_(event, userId, pb) {
     v2Reply_(event, formUrl ? [v2Msg_(v2AcceptedText_(row, true)), v2MoushikomiButton_(formUrl)] : [v2Msg_(v2AcceptedText_(row))]);
     try { setUserFields_(userId, { state: 'S3' }); } catch (e) {}
     try { setManualMode_(userId); } catch (e) {}
-    v2NotifyOwnerNow_(userId, '✅ 「この金額で決定」', row.custNo + ' ' + pb.q + '\n' + v2Yen_(row.total) + (formUrl ? '\n→ 日時の返信と申込フォームを待って人が対応' : '\n→ 日時と住所の返信を待って人が対応'));
+    v2NotifyOwnerNow_(userId, '✅ 「この金額で決定」', row.custNo + ' ' + pb.q + '\n' + v2Yen_(row.total) + (formUrl ? '\n→ 申込フォーム（希望日時・住所・名義）を待って人が対応' : '\n→ 日時と住所の返信を待って人が対応'));
     logEvent_(event, 'quote:accept', pb.q); return true;
   }
   if (pb.val === 'decline') {   // 引取の提示で「やめる」（2026-09-16）。お礼を返して終わり。以後は人が対応
@@ -282,19 +282,20 @@ function v2MoushikomiUrl_(userId, custNo, quoteId) {
   } catch (e) { console.error('v2MoushikomiUrl_ ' + e); return ''; }
 }
 function v2MoushikomiButton_(url) {
-  return { type: 'template', altText: '申込情報の入力はこちら', template: { type: 'buttons', text: 'ご住所と防犯登録の名義の入力（1〜2分）',
+  return { type: 'template', altText: '申込情報の入力はこちら', template: { type: 'buttons', text: 'ご希望の日時・ご住所・防犯登録の名義の入力（2〜3分）',
     actions: [{ type: 'uri', label: '申込情報を入力する', uri: url }] } };
 }
 function v2AcceptedText_(row, withForm) {
   const hikitori = row.q && row.q.kind === 'hikitori';
+  // 2026-10-01 オーナー指示：希望日時もフォームで聞く（3つまで、第1希望だけ必須）
   if (withForm) return [
     'ありがとうございます。' + v2Yen_(row.total) + 'で決定しました。',
     '',
-    'お伺いの準備のため、次の2つをお願いします。',
+    'お伺いの準備のため、下のボタンから次の3つを入力してください（2〜3分）。',
     '',
-    '① ご希望の日時を、このトークに送ってください',
-    '　（例：〇日の午前中、〇日の夕方以降／第2希望もあれば助かります）',
-    '② ご住所と防犯登録の名義を、下のボタンから入力してください（1〜2分）',
+    '・ご希望の日時（3つまで）',
+    '・ご住所',
+    '・防犯登録の名義',
     '',
     '担当者が確認して、日時をご連絡します。',
   ].join('\n');
