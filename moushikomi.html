@@ -16,6 +16,10 @@ permalink: /moushikomi/
     .mf { max-width: 640px; margin: 0 auto; }
     .mf h1 { font-size: clamp(1.45rem, 5vw, 1.9rem); margin: 0 0 10px; }
     .mf__lead { color: var(--ink-70); font-size: 0.92rem; line-height: 1.8; margin: 0 0 22px; }
+    /* 2026-10-01 オーナー指摘「申込者の情報か名義の情報か分かりづらい」→ ①あなた ②日時 ③防犯登録の名義 の3段に見出しを付けた */
+    .mf__step { display: flex; align-items: center; gap: 10px; font-size: 1.12rem; margin: 26px 0 6px; }
+    .mf__step span { display: inline-grid; place-items: center; flex: 0 0 auto; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 0.95rem; }
+    .mf__stepnote { font-size: 0.86rem; color: var(--ink-70); line-height: 1.7; margin: 0 0 12px; }
     .mf fieldset { border: 1px solid var(--line-hair); border-radius: var(--radius); background: var(--card); padding: 18px 16px 20px; margin: 0 0 16px; min-width: 0; }
     .mf legend { font-weight: 700; font-size: 1.02rem; padding: 0 6px; }
     .mf__f { margin: 14px 0 0; }
@@ -72,7 +76,10 @@ permalink: /moushikomi/
 
         <form id="mf" novalidate hidden>
           <h1>お申し込み情報の入力</h1>
-          <p class="mf__lead">お伺いの日程と、防犯登録の抹消の手続きに使います。2〜3分で終わります。</p>
+          <p class="mf__lead">お伺いの日程と、防犯登録の抹消の手続きに使います。3つの項目があり、2〜3分で終わります。</p>
+
+          <h2 class="mf__step"><span>1</span>お申し込みの方（あなた）</h2>
+          <p class="mf__stepnote">いま自転車をお持ちで、お申し込みいただいた方の情報です。防犯登録の名義（登録した人）は、3でお聞きします。</p>
 
           <fieldset>
             <legend>お名前とご連絡先</legend>
@@ -94,7 +101,7 @@ permalink: /moushikomi/
           </fieldset>
 
           <fieldset>
-            <legend>ご住所</legend>
+            <legend>ご住所（いまお住まいの住所）</legend>
             <div class="mf__f">
               <label class="mf__l" for="fZip">郵便番号<span class="mf__req">必須</span></label>
               <div class="mf__zip">
@@ -120,6 +127,7 @@ permalink: /moushikomi/
           </fieldset>
 
           <!-- 希望日時（2026-10-01 オーナー指示：3つまで、第1希望だけ必須） -->
+          <h2 class="mf__step"><span>2</span>ご希望の日時</h2>
           <fieldset>
             <legend>ご希望の日時</legend>
             <p class="mf__hint" style="margin:6px 0 0;">3つまで選べます。候補がいくつかあると、日程を早く決められます。</p>
@@ -149,6 +157,9 @@ permalink: /moushikomi/
             </div>
           </fieldset>
 
+          <h2 class="mf__step"><span>3</span>防犯登録の名義（登録した人）</h2>
+          <p class="mf__stepnote">自転車を買ったときに防犯登録をした人の情報です。1の「あなた」と同じ人とは限りません。</p>
+
           <!-- 名義についての案内（防犯登録の質問の直前）。文面は handoff 2026-09-30「フォームの文面（案）」のとおり -->
           <div class="mf__notice">
             <h2>防犯登録の名義について（大切なお願い）</h2>
@@ -165,9 +176,9 @@ permalink: /moushikomi/
           </div>
 
           <fieldset>
-            <legend>防犯登録</legend>
+            <legend>防犯登録の名義</legend>
             <div class="mf__f">
-              <span class="mf__l" id="lBohan">防犯登録の状態<span class="mf__req">必須</span></span>
+              <span class="mf__l" id="lBohan">この自転車の防犯登録<span class="mf__req">必須</span></span>
               <div class="mf__opts" role="radiogroup" aria-labelledby="lBohan">
                 <label class="mf__opt"><input type="radio" name="bohan" value="registered"> 登録している</label>
                 <label class="mf__opt"><input type="radio" name="bohan" value="deleted"> 抹消済み</label>
@@ -179,16 +190,16 @@ permalink: /moushikomi/
 
             <div id="fOwnerBox" hidden>
               <div class="mf__f">
-                <span class="mf__l" id="lOwner">登録の名義<span class="mf__req">必須</span></span>
+                <span class="mf__l" id="lOwner">防犯登録は、誰の名前で登録していますか？<span class="mf__req">必須</span></span>
                 <div class="mf__opts" role="radiogroup" aria-labelledby="lOwner">
-                  <label class="mf__opt"><input type="radio" name="owner" value="self"> 自分</label>
-                  <label class="mf__opt"><input type="radio" name="owner" value="family"> 家族</label>
+                  <label class="mf__opt"><input type="radio" name="owner" value="self"> わたし（1と同じ人）</label>
+                  <label class="mf__opt"><input type="radio" name="owner" value="family"> 家族（1とは別の人）</label>
                   <label class="mf__opt"><input type="radio" name="owner" value="prev"> 前の持ち主</label>
                   <label class="mf__opt"><input type="radio" name="owner" value="unknown"> わからない</label>
                 </div>
                 <p class="mf__err" data-err="owner"></p>
                 <div class="mf__sub" id="fFamilyBox" hidden>
-                  <label class="mf__l" for="fOwnerName">名義のご家族のお名前<span class="mf__req">必須</span></label>
+                  <label class="mf__l" for="fOwnerName">登録しているご家族のお名前<span class="mf__req">必須</span></label>
                   <input type="text" id="fOwnerName" maxlength="40">
                   <label class="mf__l" for="fOwnerRel" style="margin-top:10px;">続柄<span class="mf__req">必須</span></label>
                   <input type="text" id="fOwnerRel" maxlength="20" placeholder="例：夫、妻、子、父、母">
@@ -197,7 +208,7 @@ permalink: /moushikomi/
               </div>
 
               <div class="mf__f">
-                <span class="mf__l" id="lChg">登録したあとに変わったこと<span class="mf__req">必須</span></span>
+                <span class="mf__l" id="lChg">登録したときから、登録した人の名前・住所・電話番号で変わったことは？<span class="mf__req">必須</span></span>
                 <p class="mf__hint" style="margin:0 0 8px;">あてはまるものをすべて選んでください。</p>
                 <div class="mf__opts" role="group" aria-labelledby="lChg">
                   <label class="mf__opt"><input type="checkbox" name="chg" value="none"> 変わっていない</label>
@@ -361,7 +372,7 @@ permalink: /moushikomi/
       name: 'お名前を入力してください。', kana: 'フリガナを入力してください。', tel: '電話番号を、市外局番から数字10〜11桁で入力してください。',
       zip: '郵便番号を数字7桁で入力してください。', addr: '住所を入力してください。', visit: 'お伺い先のご住所を入力してください。',
       d1: '第1希望の日付と時間帯を選んでください。', d2: '第2希望は、日付と時間帯の両方を選んでください（今日以降）。', d3: '第3希望は、日付と時間帯の両方を選んでください（今日以降）。',
-      bohan: '防犯登録の状態を選んでください。', owner: '登録の名義を選んでください。', ownerName: 'ご家族のお名前と続柄を入力してください。',
+      bohan: 'この自転車の防犯登録について選んでください。', owner: '誰の名前で登録しているかを選んでください。', ownerName: 'ご家族のお名前と続柄を入力してください。',
       changes: 'あてはまるものを選んでください（分からなければ「わからない」）。', oldAddrs: '登録したときの住所を入力してください。',
       oldNames: '登録したときのお名前を入力してください。', oldTels: '登録したときの電話番号を入力してください。', consent: '同意にチェックを入れてください。',
     };
