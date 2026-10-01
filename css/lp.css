@@ -386,6 +386,47 @@ h1, h2, h3 {
 .fuyu-band__flake { flex: 0 0 auto; width: 17px; height: 17px; color: #7FA4C2; }
 .fuyu-band__go { flex: 0 0 auto; color: #B0793A; font-size: 1.15rem; font-weight: 700; line-height: 1; }
 .fuyu-band[hidden] { display: none; }
+/* 2026-10-01 トップの比較表（#compare）。参考：比較テンプレート（明るい青の地・黒いピルの見出し・自社列は濃い青＋黄色の◎）
+   スマホは横スクロール、めぐり自転車の列は右端に固定（position: sticky） */
+.vs-sec { background: linear-gradient(180deg, #EAF2FD 0%, #F6F9FE 100%); }
+.vs-head { position: relative; text-align: center; margin: 0 auto clamp(22px,3.5vw,32px); max-width: 720px; }
+.vs-title { font-size: clamp(1.7rem, 5.4vw, 2.7rem); line-height: 1.3; margin: 0; }
+.vs-hl { display: inline-block; margin-left: 0.15em; padding: 0 0.25em; background: #FFE14D; border: 3px solid var(--ink); border-radius: 6px; box-shadow: 4px 4px 0 var(--ink); }
+.vs-lead { color: var(--ink-70); font-size: 0.95rem; margin: 14px 0 0; }
+.vs-sticker { position: absolute; left: 0; top: -14px; display: grid; place-items: center; width: 74px; height: 74px; border-radius: 50%; background: #FFE14D; color: var(--ink); font-size: 0.72rem; font-weight: 700; line-height: 1.25; text-align: center; transform: rotate(-12deg); box-shadow: 0 6px 14px -8px rgba(0,0,0,0.4); }
+@media (max-width: 719px) { .vs-sticker { width: 58px; height: 58px; font-size: 0.6rem; top: -26px; left: -6px; } }
+.vs-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 18px; background: #fff; box-shadow: 0 18px 40px -26px rgba(30,58,95,0.55); }
+.vs-wrap:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.vs { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 760px; font-size: 0.86rem; }
+.vs th, .vs td { padding: 14px 10px; text-align: center; vertical-align: middle; border-bottom: 1.5px solid #D9E4F3; }
+.vs tbody tr:last-child th, .vs tbody tr:last-child td { border-bottom: 0; }
+.vs thead th { padding: 16px 10px 12px; background: #F3F7FD; border-bottom: 2px solid #C8D8EE; }
+.vs-col { display: inline-block; font-weight: 700; font-size: 0.92rem; color: var(--ink); }
+.vs tbody th { width: 128px; background: #fff; }
+.vs-pill { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 0.78rem; font-weight: 700; line-height: 1.4; }
+.vs-t { display: block; margin-top: 6px; color: var(--ink-70); font-size: 0.8rem; line-height: 1.5; }
+/* めぐり自転車の列：濃い青の地＋白文字、右端に固定 */
+.vs .vs-self { position: sticky; right: 0; z-index: 1; width: 150px; min-width: 150px; background: #2F6BDB; color: #fff; border-bottom-color: rgba(255,255,255,0.25); }
+.vs thead .vs-self { background: #2457BD; border-top-right-radius: 18px; }
+.vs-self .vs-t { color: #fff; font-weight: 700; }
+.vs-col--self { color: #fff; font-size: 1.02rem; }
+.vs-col__sub { display: block; font-size: 0.72rem; font-weight: 500; opacity: 0.85; margin-top: 2px; }
+.vs-badge { display: block; width: max-content; margin: 0 auto 6px; padding: 2px 10px; border-radius: 999px; background: #FFE14D; color: var(--ink); font-size: 0.72rem; font-weight: 700; }
+/* 記号（◎ ○ △ ×）を図形で */
+.vs-mk { display: inline-block; position: relative; width: 30px; height: 30px; vertical-align: middle; }
+.vs-mk--best { border-radius: 50%; border: 3px solid #2F6BDB; box-sizing: border-box; }
+.vs-mk--best::after { content: ""; position: absolute; inset: 4px; border-radius: 50%; border: 3px solid #2F6BDB; }
+.vs-self .vs-mk--best, .vs-self .vs-mk--best::after { border-color: #FFE14D; }
+.vs-mk--ok { border-radius: 50%; border: 3px solid #5B8EE6; box-sizing: border-box; }
+.vs-mk--so { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 26px solid #9AA3AF; }
+.vs-mk--so::after { content: ""; position: absolute; left: -9px; top: 9px; border-left: 9px solid transparent; border-right: 9px solid transparent; border-bottom: 14px solid #fff; }
+.vs-mk--x::before, .vs-mk--x::after { content: ""; position: absolute; left: 50%; top: 50%; width: 30px; height: 3.5px; border-radius: 2px; background: #9AA3AF; }
+.vs-mk--x::before { transform: translate(-50%, -50%) rotate(45deg); }
+.vs-mk--x::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.vs-scroll-hint { display: none; margin: 10px 0 0; font-size: 0.78rem; color: var(--ink-55); text-align: center; }
+@media (max-width: 799px) { .vs-scroll-hint { display: block; } .vs tbody th { width: 96px; } .vs-pill { font-size: 0.72rem; padding: 5px 9px; } }
+.vs-note { margin: 12px 0 0; font-size: 0.8rem; color: var(--ink-40); text-align: center; }
+
 .cta .line-24h { text-align: center; }
 .foot { padding: 56px 0 96px; border-top: 1px solid var(--line-hair); color: var(--ink-55); }
 .foot__top { display: grid; gap: 36px; }
