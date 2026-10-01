@@ -898,7 +898,7 @@ h1, h2, h3 {
 }
 
 /* 2026-09-25 BudouX（.eleventy.js の transform が文節に <wbr> を入れる）：語中では折り返さない */
-h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li, .tl__t, .opt__t, .consult__q, .consult__a { word-break: keep-all; overflow-wrap: anywhere; line-break: strict; }
+h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li, .tl__t, .opt__t, .consult__q, .consult__a, .vs-t, .vs-pill { word-break: keep-all; overflow-wrap: anywhere; line-break: strict; }
 .nw { white-space: nowrap; }
 /* 「おすすめ」札：PC では箇条書きの1行目に接触するため枠の上辺に載せる（B6） */
 @media (min-width: 860px) { .tb-best__tag { top: -13px; right: 18px; } }

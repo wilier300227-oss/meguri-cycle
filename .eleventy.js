@@ -51,7 +51,7 @@ module.exports = function (eleventyConfig) {
     }).join("");
   const segInner = (inner) => inner.split(/(<[^>]+>)/).map((piece, i) => (i % 2 === 1 ? piece : segText(piece))).join("");
   const RE_TAG = /<(h1|h2|h3|h4|summary|li)(\s[^>]*)?>([\s\S]*?)<\/\1>/g;
-  const RE_CLS = /<(p|span)(\s[^>]*class="[^"]*\b(?:lead|genre__jp|wfeat__t|badge)\b[^"]*"[^>]*)>([\s\S]*?)<\/\1>/g;
+  const RE_CLS = /<(p|span)(\s[^>]*class="[^"]*\b(?:lead|genre__jp|wfeat__t|badge|vs-t|vs-pill|consult__q)\b[^"]*"[^>]*)>([\s\S]*?)<\/\1>/g;
   eleventyConfig.addTransform("budoux", function (content) {
     const out = this.page && this.page.outputPath;
     if (!out || !out.endsWith(".html")) return content;
