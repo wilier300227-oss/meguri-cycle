@@ -424,7 +424,7 @@ h1, h2, h3 {
 .vs-mk--x::before { transform: translate(-50%, -50%) rotate(45deg); }
 .vs-mk--x::after { transform: translate(-50%, -50%) rotate(-45deg); }
 .vs-scroll-hint { display: none; margin: 10px 0 0; font-size: 0.78rem; color: var(--ink-55); text-align: center; }
-@media (max-width: 799px) { .vs-scroll-hint { display: block; } .vs tbody th { width: 96px; } .vs-pill { font-size: 0.72rem; padding: 5px 9px; } }
+@media (max-width: 799px) { .vs-scroll-hint { display: block; } .vs tbody th { width: 96px; } .vs-pill { font-size: 0.72rem; padding: 5px 9px; } .vs .vs-self { width: 118px; min-width: 118px; } .vs-col--self { font-size: 0.92rem; } .vs-self .vs-t { font-size: 0.76rem; } }
 .vs-note { margin: 12px 0 0; font-size: 0.8rem; color: var(--ink-40); text-align: center; }
 
 .cta .line-24h { text-align: center; }
