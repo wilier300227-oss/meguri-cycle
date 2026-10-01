@@ -142,7 +142,8 @@ const V2_RUST_LABELS = { rust_none: 'ほとんどない', rust_some: '少しあ�
 
 function v2AskBohanMessage_(flow) {
   // 「シールは車体に貼ってあるが控えの紙はない」が多いので、その選択肢を用意する（2026-09-16 オーナー指摘）
-  return v2Msg_('🔖 防犯登録はありますか？\n（自転車を買ったときに登録した、車体のシールと控えの紙のことです。抹消の手続きは当方で代行します）', [
+  // 2026-10-01 オーナー決定：名義の条件を最後に知って不満にならないよう、ここで「ご本人以外の名義でも大丈夫・こちらで確認」と先に伝える
+  return v2Msg_('🔖 防犯登録はありますか？\n（自転車を買ったときに登録した、車体のシールと控えの紙のことです。抹消の手続きは当方で代行します）\n※ご家族など、ご本人以外の名義でも大丈夫です。お引き取りの前にこちらで確認します。', [
     qrPostback_('シールも紙もある', v2Pb_(flow, 5, 'next', 'bohan_yes')),
     qrPostback_('シールだけ（紙はない）', v2Pb_(flow, 5, 'next', 'bohan_seal')),
     qrPostback_('ない', v2Pb_(flow, 5, 'next', 'bohan_no')),
@@ -261,6 +262,7 @@ function v2Complete_(event, userId, s, extraLines) {
     '防犯登録: ' + ({ bohan_yes: 'シールも紙もある', bohan_seal: 'シールだけ（紙はない）', bohan_no: 'ない', bohan_unknown: 'わからない' }[d.bohan] || '-'),
   ].concat(v2PhotoSummaryLines_(s)).join('\n');
   try { setUserFields_(userId, { state: 'S2', intent: s.intent || '', city: d.city || '', town: d.town || '' }); } catch (e) {}
+  if (d.bohan) v2Defer_(function () { v2UserExtra_(userId, 'bohan', d.bohan); });   // 2026-10-01 申込フォームで「防犯登録はありますか？」を省くため
   try { setManualMode_(userId); } catch (e) {}
   // 受付完了の通知はバースト抑制の対象にしない（直前の通知に潰されると査定依頼を見落とす）
   try {

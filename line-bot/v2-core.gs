@@ -139,6 +139,29 @@ function v2WriteSessionRow_(userId, s) {
 }
 
 /* ── お客さま番号（§10-6）。users タブの cust_no 列。無ければ列を足して採番する ── */
+/** users シートの USER_COLS より右の列を、見出し名で読み書きする（cust_no と同じやり方。列の位置に依存しない）。
+ *  value を渡すと書く（行が無ければ何もしない）、渡さなければ読む（無ければ ''） */
+function v2UserExtra_(userId, key, value) {
+  if (!userId || !key) return '';
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(5000);
+    const sh = getUsersSheet_();
+    if (!sh) return '';
+    const header = sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), 1)).getValues()[0];
+    let col = header.indexOf(key);
+    if (col === -1 && value === undefined) return '';
+    if (col === -1) { col = header.length; sh.getRange(1, col + 1).setValue(key); }
+    const ids = sh.getRange(1, 1, sh.getLastRow(), 1).getValues();
+    for (let r = 1; r < ids.length; r++) {
+      if (String(ids[r][0]) !== userId) continue;
+      if (value === undefined) return String(sh.getRange(r + 1, col + 1).getValue() || '');
+      sh.getRange(r + 1, col + 1).setValue(value);
+      return value;
+    }
+    return '';
+  } catch (e) { return ''; } finally { try { lock.releaseLock(); } catch (e) {} }
+}
 function v2CustNo_(userId) {
   if (!userId) return '';
   const lock = LockService.getScriptLock();

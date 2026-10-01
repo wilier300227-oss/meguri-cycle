@@ -275,9 +275,11 @@ function v2MoushikomiUrl_(userId, custNo, quoteId) {
     if (!ssId) return '';
     const ss = SpreadsheetApp.openById(ssId);
     let sh = ss.getSheetByName('申込トークン');
-    if (!sh) { sh = ss.insertSheet('申込トークン'); sh.appendRow(['token', '顧客番号', 'userId', '見積ID', '発行日時', '使用日時']); sh.setFrozenRows(1); }
+    if (!sh) { sh = ss.insertSheet('申込トークン'); sh.appendRow(['token', '顧客番号', 'userId', '見積ID', '発行日時', '使用日時', '防犯登録（LINEの回答）']); sh.setFrozenRows(1); }
+    if (!sh.getRange(1, 7).getValue()) sh.getRange(1, 7).setValue('防犯登録（LINEの回答）');
     const token = Utilities.getUuid().replace(/-/g, '').toLowerCase();
-    sh.appendRow([token, custNo || '', userId || '', quoteId || '', new Date(), '']);
+    // 7列目：ボットでの防犯登録の答え（bohan_yes など。個人情報ではない）。フォームはこれを見て「防犯登録はありますか？」を省く（2026-10-01）
+    sh.appendRow([token, custNo || '', userId || '', quoteId || '', new Date(), '', v2UserExtra_(userId, 'bohan') || '']);
     return V2_MOUSHIKOMI_URL + '?t=' + token;
   } catch (e) { console.error('v2MoushikomiUrl_ ' + e); return ''; }
 }
@@ -287,16 +289,10 @@ function v2MoushikomiButton_(url) {
 }
 function v2AcceptedText_(row, withForm) {
   const hikitori = row.q && row.q.kind === 'hikitori';
-  // 2026-10-01 オーナー指示：希望日時もフォームで聞く（3つまで、第1希望だけ必須）
+  // 2026-10-01 オーナー指示：希望日時もフォームで聞く（3つまで、第1希望だけ必須）。文面は3行に（お客さまの工程が増えたため簡潔に）
   if (withForm) return [
     'ありがとうございます。' + v2Yen_(row.total) + 'で決定しました。',
-    '',
-    'お伺いの準備のため、下のボタンから次の3つを入力してください（2〜3分）。',
-    '',
-    '・ご希望の日時（3つまで）',
-    '・ご住所',
-    '・防犯登録の名義',
-    '',
+    '下のボタンから、ご希望の日時・ご住所・防犯登録の名義を入力してください（2〜3分）。',
     '担当者が確認して、日時をご連絡します。',
   ].join('\n');
   return [
