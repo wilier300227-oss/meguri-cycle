@@ -27,6 +27,10 @@ permalink: /moushikomi/
     .mf textarea { min-height: 76px; resize: vertical; line-height: 1.6; }
     .mf input:focus, .mf textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(30,58,95,0.15); }
     .mf__zip { display: flex; gap: 8px; }
+    .mf__dt { display: flex; gap: 8px; }
+    .mf input[type=date], .mf select { flex: 1 1 0; min-width: 0; min-height: 48px; box-sizing: border-box; padding: 8px 10px; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1.5px solid rgba(22,24,29,0.22); border-radius: 10px; }
+    .mf select { flex: 0 0 8.5em; }
+    .mf__opt-note { font-weight: 400; font-size: 0.78rem; color: var(--ink-55); margin-left: 6px; }
     .mf__zip input { max-width: 11em; }
     .mf__zipbtn { flex: 0 0 auto; min-height: 48px; padding: 0 14px; border-radius: 10px; border: 1.5px solid var(--accent); background: #fff; color: var(--accent); font: inherit; font-weight: 700; font-size: 0.9rem; }
     .mf__opts { display: grid; gap: 8px; }
@@ -68,7 +72,7 @@ permalink: /moushikomi/
 
         <form id="mf" novalidate hidden>
           <h1>お申し込み情報の入力</h1>
-          <p class="mf__lead">お引き取りの準備と、防犯登録の抹消の手続きに使います。1〜2分で終わります。ご希望の日時は、これまでどおり LINE でお知らせください。</p>
+          <p class="mf__lead">お伺いの日程と、防犯登録の抹消の手続きに使います。2〜3分で終わります。</p>
 
           <fieldset>
             <legend>お名前とご連絡先</legend>
@@ -112,6 +116,36 @@ permalink: /moushikomi/
                 <textarea id="fVisit" maxlength="120" rows="2" placeholder="市町名・町名・番地まで。建物名・お部屋番号も"></textarea>
                 <p class="mf__err" data-err="visit"></p>
               </div>
+            </div>
+          </fieldset>
+
+          <!-- 希望日時（2026-10-01 オーナー指示：3つまで、第1希望だけ必須） -->
+          <fieldset>
+            <legend>ご希望の日時</legend>
+            <p class="mf__hint" style="margin:6px 0 0;">3つまで選べます。候補がいくつかあると、日程を早く決められます。</p>
+            <div class="mf__f">
+              <label class="mf__l" for="fD1">第1希望<span class="mf__req">必須</span></label>
+              <div class="mf__dt">
+                <input type="date" id="fD1" aria-label="第1希望の日付">
+                <select id="fT1" aria-label="第1希望の時間帯"><option value="">時間帯</option><option>午前</option><option>午後</option><option>夕方以降</option><option>何時でも</option></select>
+              </div>
+              <p class="mf__err" data-err="d1"></p>
+            </div>
+            <div class="mf__f">
+              <label class="mf__l" for="fD2">第2希望<span class="mf__opt-note">（できれば）</span></label>
+              <div class="mf__dt">
+                <input type="date" id="fD2" aria-label="第2希望の日付">
+                <select id="fT2" aria-label="第2希望の時間帯"><option value="">時間帯</option><option>午前</option><option>午後</option><option>夕方以降</option><option>何時でも</option></select>
+              </div>
+              <p class="mf__err" data-err="d2"></p>
+            </div>
+            <div class="mf__f">
+              <label class="mf__l" for="fD3">第3希望<span class="mf__opt-note">（できれば）</span></label>
+              <div class="mf__dt">
+                <input type="date" id="fD3" aria-label="第3希望の日付">
+                <select id="fT3" aria-label="第3希望の時間帯"><option value="">時間帯</option><option>午前</option><option>午後</option><option>夕方以降</option><option>何時でも</option></select>
+              </div>
+              <p class="mf__err" data-err="d3"></p>
             </div>
           </fieldset>
 
@@ -244,6 +278,10 @@ permalink: /moushikomi/
     // 開いたときにトークンが使えるかだけ確かめる（通信できないときはそのまま入力してもらい、送信時に判定）
     fetch(GAS_URL + '?check=' + token).then(function (r) { return r.json(); }).then(function (j) { if (j && !j.ok && j.reason) showReason(j.reason); }).catch(function () {});
 
+    // 希望日の選べる範囲：今日以降（当日・翌日のお伺い実績もあるため今日から）
+    var today = (function () { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); })();
+    [1, 2, 3].forEach(function (i) { $('fD' + i).min = today; });
+
     /* ── 出し分け ── */
     function val(name) { var el = form.querySelector('input[name=' + name + ']:checked'); return el ? el.value : ''; }
     function chgs() { return Array.prototype.map.call(form.querySelectorAll('input[name=chg]:checked'), function (x) { return x.value; }); }
@@ -315,17 +353,19 @@ permalink: /moushikomi/
         zip: $('fZip').value.replace(/\D/g, ''), addr: $('fAddr').value.trim(), visit: visitSame ? '' : $('fVisit').value.trim(),
         bohan: val('bohan'), owner: val('owner'), ownerName: $('fOwnerName').value.trim(), ownerRel: $('fOwnerRel').value.trim(),
         changes: chgs(), oldAddrs: multi('oldAddrs'), oldNames: multi('oldNames'), oldTels: multi('oldTels'),
+        wish: [1, 2, 3].map(function (i) { return { d: $('fD' + i).value, t: $('fT' + i).value }; }),
         consent: $('fConsent').checked, _visitSame: visitSame,
       };
     }
     var MSG = {
       name: 'お名前を入力してください。', kana: 'フリガナを入力してください。', tel: '電話番号を、市外局番から数字10〜11桁で入力してください。',
       zip: '郵便番号を数字7桁で入力してください。', addr: '住所を入力してください。', visit: 'お伺い先のご住所を入力してください。',
+      d1: '第1希望の日付と時間帯を選んでください。', d2: '第2希望は、日付と時間帯の両方を選んでください（今日以降）。', d3: '第3希望は、日付と時間帯の両方を選んでください（今日以降）。',
       bohan: '防犯登録の状態を選んでください。', owner: '登録の名義を選んでください。', ownerName: 'ご家族のお名前と続柄を入力してください。',
       changes: 'あてはまるものを選んでください（分からなければ「わからない」）。', oldAddrs: '登録したときの住所を入力してください。',
       oldNames: '登録したときのお名前を入力してください。', oldTels: '登録したときの電話番号を入力してください。', consent: '同意にチェックを入れてください。',
     };
-    var FIELD = { name: 'fName', kana: 'fKana', tel: 'fTel', zip: 'fZip', addr: 'fAddr', visit: 'fVisit', ownerName: 'fOwnerName', oldAddrs: 'fOldAddr0', oldNames: 'fOldName0', oldTels: 'fOldTel0' };
+    var FIELD = { d1: 'fD1', d2: 'fD2', d3: 'fD3', name: 'fName', kana: 'fKana', tel: 'fTel', zip: 'fZip', addr: 'fAddr', visit: 'fVisit', ownerName: 'fOwnerName', oldAddrs: 'fOldAddr0', oldNames: 'fOldName0', oldTels: 'fOldTel0' };
     function check(d) {
       var e = [];
       if (!d.name) e.push('name');
@@ -334,6 +374,9 @@ permalink: /moushikomi/
       if (d.zip.length !== 7) e.push('zip');
       if (!d.addr) e.push('addr');
       if (!d._visitSame && !d.visit) e.push('visit');
+      d.wish.forEach(function (w, i) {
+        if ((i === 0 || w.d || w.t) && (!w.d || !w.t || w.d < today)) e.push('d' + (i + 1));
+      });
       if (!d.bohan) e.push('bohan');
       if (d.bohan === 'registered' || d.bohan === 'unknown') {
         if (!d.owner) e.push('owner');
@@ -368,6 +411,7 @@ permalink: /moushikomi/
       $('fSendErr').textContent = '';
       if (errs.length) return;
       delete d._visitSame;
+      d.wish = d.wish.filter(function (w) { return w.d && w.t; });
       var btn = $('fSubmit'); btn.disabled = true; btn.textContent = '送信しています…';
       // Content-Type を付けない（text/plain 扱い）＝プリフライトを避ける（タブレットの台帳送信と同じやり方）
       fetch(GAS_URL, { method: 'POST', body: JSON.stringify(d) })

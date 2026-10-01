@@ -16,7 +16,7 @@
 const TOKEN_SHEET = '申込トークン';
 const APPLY_SHEET = '申込';
 const TOKEN_TTL_DAYS = 30;
-const APPLY_COLS = ['受付日時', '顧客番号', 'LINE userId', '見積ID', '氏名', 'フリガナ', '電話', '郵便番号', '住所', 'お伺い先（住所と違う場合）',
+const APPLY_COLS = ['受付日時', '顧客番号', 'LINE userId', '見積ID', '氏名', 'フリガナ', '電話', '郵便番号', '住所', 'お伺い先（住所と違う場合）', '第1希望', '第2希望', '第3希望',
   '防犯登録の状態', '名義区分', '名義人氏名', '続柄', '変わったこと', '候補：当時の住所', '候補：当時のお名前', '候補：当時の電話', '同意',
   '照会結果', '一致した組み合わせ', '照会日時', '対応'];   // 照会結果〜対応はオーナーが電話照会のあとに手で入れる
 const LABEL = {
@@ -54,7 +54,7 @@ function doPost(e) {
     const v = normalize_(body);
     if (v.error) return json_({ ok: false, reason: 'input', field: v.error });
     const d = v.data;
-    const row = [new Date(), hit.custNo, hit.userId, hit.quoteId, d.name, d.kana, d.tel, d.zip, d.addr, d.visit,
+    const row = [new Date(), hit.custNo, hit.userId, hit.quoteId, d.name, d.kana, d.tel, d.zip, d.addr, d.visit, d.wish[0] || '', d.wish[1] || '', d.wish[2] || '',
       LABEL.bohan[d.bohan], d.owner ? LABEL.owner[d.owner] : '', d.ownerName, d.ownerRel,
       d.changes.map(function (c) { return LABEL.change[c]; }).join('・'),
       d.oldAddrs.join('\n'), d.oldNames.join('\n'), d.oldTels.join('\n'), '同意する', '', '', '', ''];
@@ -80,6 +80,19 @@ function normalize_(b) {
     changes: list(b.changes, 20).filter(function (c) { return LABEL.change[c]; }),
     oldAddrs: list(b.oldAddrs, 120), oldNames: list(b.oldNames, 40), oldTels: list(b.oldTels, 20),
   };
+  // 希望日時（2026-10-01）：3つまで、第1希望は必須。日付は今日以降、時間帯は決まった選択肢だけ。保存は「10/5(日) 午前」の形
+  const today = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
+  const TIMES = ['午前', '午後', '夕方以降', '何時でも'];
+  d.wish = [];
+  const wishes = (Array.isArray(b.wish) ? b.wish : []).slice(0, 3);
+  for (let i = 0; i < wishes.length; i++) {
+    const w = wishes[i] || {}; const ds = s(w.d, 10); const ts = s(w.t, 10);
+    if (!ds && !ts) continue;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(ds) || ds < today || TIMES.indexOf(ts) === -1) return { error: 'd' + (i + 1) };
+    const y = Number(ds.slice(0, 4)), m = Number(ds.slice(5, 7)), day = Number(ds.slice(8, 10));
+    d.wish.push(m + '/' + day + '(' + '日月火水木金土'.charAt(new Date(Date.UTC(y, m - 1, day)).getUTCDay()) + ') ' + ts);
+  }
+  if (!d.wish.length) return { error: 'd1' };
   if (d.changes.length > 1) d.changes = d.changes.filter(function (c) { return c !== 'none'; });   // 「変わっていない」はほかと両立しない
   if (!d.name) return { error: 'name' };
   if (!d.kana) return { error: 'kana' };
@@ -135,7 +148,14 @@ function findToken_(t) {
 /* ── シート・通知・応答 ── */
 function applySheet_(ss) {
   let sh = ss.getSheetByName(APPLY_SHEET);
-  if (!sh) { sh = ss.insertSheet(APPLY_SHEET); sh.appendRow(APPLY_COLS); sh.setFrozenRows(1); }
+  if (!sh) { sh = ss.insertSheet(APPLY_SHEET); sh.appendRow(APPLY_COLS); sh.setFrozenRows(1); return sh; }
+  // 列を足したとき（2026-10-01 希望日時）：まだ1件も無ければ見出しを今の列に書き直す。データがあるときは触らない（列ずれは人が直す）
+  if (sh.getLastRow() <= 1) {
+    const head = sh.getRange(1, 1, 1, Math.max(sh.getLastColumn(), 1)).getValues()[0];
+    if (head.join('|') !== APPLY_COLS.join('|')) { sh.clear(); sh.appendRow(APPLY_COLS); sh.setFrozenRows(1); }
+  } else if (sh.getLastColumn() !== APPLY_COLS.length) {
+    console.error('applySheet_: 「' + APPLY_SHEET + '」の列数が ' + sh.getLastColumn() + '（今のコードは ' + APPLY_COLS.length + '）');
+  }
   return sh;
 }
 /** 数式として解釈されないように（=,+,-,@ で始まる入力） */
@@ -146,6 +166,7 @@ function notify_(hit, d) {
   const url = PropertiesService.getScriptProperties().getProperty('DISCORD_WEBHOOK_URL');
   if (!url) return;
   const text = '📝 申込フォーム受付 ' + hit.custNo + (hit.quoteId ? '（' + hit.quoteId + '）' : '') + '\n'
+    + '第1希望: ' + d.wish[0] + (d.wish.length > 1 ? '（ほか' + (d.wish.length - 1) + '件）' : '') + '\n'
     + '防犯登録: ' + LABEL.bohan[d.bohan] + (d.owner ? '／名義: ' + LABEL.owner[d.owner] : '')
     + (d.changes.length ? '／変わったこと: ' + d.changes.map(function (c) { return LABEL.change[c]; }).join('・') : '') + '\n'
     + '→ 「' + APPLY_SHEET + '」シートを見て電話照会';
