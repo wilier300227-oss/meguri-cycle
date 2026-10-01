@@ -806,6 +806,7 @@ h1, h2, h3 {
 .whycard__p { color: var(--ink-70); font-size: 0.93rem; line-height: 1.75; margin: 0; }
 @media (min-width: 720px) {
   .whygrid { grid-template-columns: 1fr 1fr; }
+  .whygrid:has(> .whycard:nth-child(3):last-child) { grid-template-columns: repeat(3, 1fr); }   /* 2026-10-01 古物商のカードを外して3枚に */
 }
 
 /* §5.4 引取できないもの: ×アイコン付きリスト */
@@ -1037,7 +1038,7 @@ h1, h2, h3, h4, summary, .lead, .genre__jp, .wfeat__t, .badge, .tb-best__pts li,
 .abouthero__name span { font-size: 0.8rem; color: var(--ink-55); font-weight: 500; }
 .abouthero__name small { width: 100%; font-size: 0.82rem; color: var(--ink-55); font-weight: 500; }
 .creds { display: grid; gap: 12px; }
-@media (min-width: 760px) { .creds { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
+@media (min-width: 760px) { .creds { grid-template-columns: repeat(3, 1fr); gap: 14px; } .creds:has(> .cred:nth-child(2):last-child) { grid-template-columns: repeat(2, 1fr); } }
 .cred { display: flex; gap: 14px; align-items: center; padding: 18px; background: var(--card); border: 1px solid var(--line-hair); border-radius: var(--radius); }
 .cred img { width: 72px; height: 72px; flex: 0 0 auto; border-radius: 18%; } /* Gemini 生成のバッジ（角の白を丸く切る） */
 .cred b { display: block; font-size: 1.05rem; color: var(--ink); margin-bottom: 2px; }
