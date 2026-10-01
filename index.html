@@ -203,7 +203,7 @@ ctaUrl: "/line/top/"
             if (w.scrollWidth <= w.clientWidth + 4 || w.scrollLeft > 0) return;
             setTimeout(function () { w.scrollTo({ left: 140, behavior: 'smooth' }); }, 500);
             setTimeout(function () { if (w.scrollLeft > 100) w.scrollTo({ left: 0, behavior: 'smooth' }); }, 1500);
-          }, { threshold: 0.6 });
+          }, { rootMargin: '0px 0px -35% 0px' });   // 表は画面より縦に長いので「何割見えたら」ではなく「画面の下から35%の線を越えたら」
           io.observe(w);
         })();
       </script>
