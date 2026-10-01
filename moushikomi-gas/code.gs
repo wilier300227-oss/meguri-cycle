@@ -8,8 +8,11 @@
         → お客様がフォームから送信 → ここでトークンを照合 → 同じスプレッドシートの「申込」に1行追加
         → トークンを使用済みにする → Discord に「申込が来た」とだけ通知（個人情報は載せない）
 
+   2026-10-01 オーナー指示：申込は問い合わせシートのタブではなく、専用のスプレッドシート「めぐり自転車_申込（防犯登録）」に入れる
+   （トークンは今までどおり問い合わせシートの「申込トークン」）。初回の setup／送信で自動で作り、ID を APPLY_SHEET_ID に保存する。
    スクリプト プロパティ（コードにもリポジトリにも値を書かない）
      SHEET_IDS            … トークンを探すスプレッドシートの ID（カンマ区切り。本番と開発の問い合わせシート）
+     APPLY_SHEET_ID       … 申込の保存先（自動で入る）
      DISCORD_WEBHOOK_URL  … 通知先（LINE ボットと同じもの）
    初回は setup を ▶ 実行して権限を承認する。
    ========================================================= */
@@ -28,7 +31,8 @@ const LABEL = {
 function setup() {
   const ids = sheetIds_();
   if (!ids.length) throw new Error('スクリプト プロパティ SHEET_IDS を設定してから実行してください');
-  ids.forEach(function (id) { applySheet_(SpreadsheetApp.openById(id)); });
+  const book = applyBook_();
+  Logger.log('申込の保存先：' + book.getName() + ' ' + book.getUrl());
   if (!PropertiesService.getScriptProperties().getProperty('DISCORD_WEBHOOK_URL')) Logger.log('DISCORD_WEBHOOK_URL が未設定です（通知なしで動きます）');
   Logger.log('OK ' + ids.length + ' 件のスプレッドシートを確認しました');
 }
@@ -61,7 +65,7 @@ function doPost(e) {
       LABEL.bohan[d.bohan], d.owner ? LABEL.owner[d.owner] : '', d.ownerName, d.ownerRel,
       d.changes.map(function (c) { return LABEL.change[c]; }).join('・'),
       d.oldAddrs.join('\n'), d.oldNames.join('\n'), d.oldTels.join('\n'), '同意する', '', '', '', ''];
-    applySheet_(hit.ss).appendRow(row.map(safeCell_));
+    applySheet_(applyBook_()).appendRow(row.map(safeCell_));
     hit.sheet.getRange(hit.row, 6).setValue(new Date());   // 使用日時
     notify_(hit, d);
     return json_({ ok: true });
@@ -149,6 +153,35 @@ function findToken_(t) {
 }
 
 /* ── シート・通知・応答 ── */
+const APPLY_BOOK_NAME = 'めぐり自転車_申込（防犯登録）';
+/** 申込の保存先（専用のスプレッドシート）。無ければ作り、問い合わせシートに残っている「申込」タブの行を移す */
+function applyBook_() {
+  const props = PropertiesService.getScriptProperties();
+  const id = props.getProperty('APPLY_SHEET_ID');
+  if (id) { try { return SpreadsheetApp.openById(id); } catch (e) { console.error('APPLY_SHEET_ID が開けない ' + e); } }
+  const book = SpreadsheetApp.create(APPLY_BOOK_NAME);
+  const first = book.getSheets()[0];
+  first.setName(APPLY_SHEET); first.appendRow(APPLY_COLS); first.setFrozenRows(1);
+  props.setProperty('APPLY_SHEET_ID', book.getId());
+  migrateOldApplyTabs_(first);
+  return book;
+}
+/** 問い合わせシートの古い「申込」タブ → 新しい保存先へ、見出し名で列を合わせて行を写す。写し終えたタブは名前を変えて残す（消すのは人が判断） */
+function migrateOldApplyTabs_(dest) {
+  sheetIds_().forEach(function (sid) {
+    try {
+      const sh = SpreadsheetApp.openById(sid).getSheetByName(APPLY_SHEET);
+      if (!sh) return;
+      const data = sh.getDataRange().getValues();
+      const head = data[0] || [];
+      for (let r = 1; r < data.length; r++) {
+        if (!data[r].some(function (v) { return v !== ''; })) continue;
+        dest.appendRow(APPLY_COLS.map(function (c) { const i = head.indexOf(c); return i === -1 ? '' : data[r][i]; }));
+      }
+      sh.setName(APPLY_SHEET + '（移動済み・削除してよい）');
+    } catch (e) { console.error('migrateOldApplyTabs_ ' + e); }
+  });
+}
 function applySheet_(ss) {
   let sh = ss.getSheetByName(APPLY_SHEET);
   if (!sh) { sh = ss.insertSheet(APPLY_SHEET); sh.appendRow(APPLY_COLS); sh.setFrozenRows(1); return sh; }
