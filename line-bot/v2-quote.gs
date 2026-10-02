@@ -11,11 +11,39 @@
        #見積 C12 12000 期限 9/30            有効期限の上書き（既定は提示日＋7日）
    ・ボットはプレビュー（実際に送る Flex）をオーナーに返し、[送信する] で quotes に記録してお客さまへ push
    ・お客さま: [この金額で決定] → 日時・住所の依頼＋即時通知＋手動対応 / [もう少し考えます] → 期限案内＋ボタン再掲
+              [今回は見送る]（買取のみ）→ 理由をボタンで1問 → お詫びの一言で終わり（2026-10-02）
    ・ログ: quotes タブ（本文スナップショットを含む。保存7年＝§6 #10）
    ========================================================= */
 const QUOTE_COLS = ['quoteId', 'userId', 'displayName', 'cust_no', '提示時刻', '提示者', '種別', '台数', '金額合計', '内訳JSON',
   '本文スナップショット', '有効期限', 'status', '回答', '回答時刻', '回答時スナップショット'];
 const QUOTE_VALID_DAYS = 7;
+const QUOTE_LOW_TOTAL = 1000;   // これ以下の買取額は再査定の注意書きを1行にする（2026-10-02）
+/** 買取の「今回は見送る」のあとに聞く理由（2026-10-02）。label は quickReply の上限20字以内 */
+const QUOTE_PASS_REASONS = [   // 8択は横スクロールが大変なので5つに（2026-10-02 オーナー指示）
+  ['r_low', '思ったより安かった'],
+  ['r_other_shop', 'ほかで売る・売った'],
+  ['r_self', '自分で処分する・譲る'],
+  ['r_keep', '手放すのをやめた'],
+  ['r_etc', 'その他'],
+];
+/** 引取（出張費がお客様負担）の「やめる」のあとに聞く理由。「安かった」は合わないので別の並び（2026-10-02 オーナー指示）。
+ *  買取で申し込んで値段がつかなかった人だけ先頭に「買取できると思っていた」 */
+const QUOTE_DECLINE_REASONS_KAITORI = [['r_expect_buy', '買取できると思っていた']];
+const QUOTE_DECLINE_REASONS = [
+  ['r_fee', '出張費が思ったより高い'],
+  ['r_self', '自分で処分する・譲る'],
+  ['r_keep', '手放すのをやめた'],
+  ['r_etc', 'その他'],
+];
+function v2PassReasons_(row) {
+  if (!(row.q && row.q.kind === 'hikitori')) return QUOTE_PASS_REASONS;
+  const fromKaitori = String(row.body || '').indexOf('買取価格をおつけできませんでした') !== -1;
+  return (fromKaitori ? QUOTE_DECLINE_REASONS_KAITORI : []).concat(QUOTE_DECLINE_REASONS);
+}
+function v2PassReasonsMessage_(row, quoteId) {
+  return v2Msg_('承知しました。\nよろしければ、理由を教えてください（今後の参考にします）。',
+    v2PassReasons_(row).map(function (r) { return qrPostback_(r[1], 'v=2&flow=quote&step=1&act=submit&val=' + r[0] + '&q=' + quoteId); }));
+}
 const QUOTE_FORBIDDEN = ['高価買取', '転売', '前後', '目安', '〜', '～'];
 
 function getQuotesSheet_() {
@@ -134,7 +162,10 @@ function v2QuoteBodyText_(q) {
   if (q.bodyOnly) L.push('※ バッテリーは含みません（車体のみの金額です）');
   if (q.note && q.kind !== 'hikitori') L.push('', '📝 査定のポイント：' + q.note);
   L.push('有効期限は ' + v2FmtDate_(q.expires) + '（' + QUOTE_VALID_DAYS + '日間）です。');
-  if (q.kind !== 'hikitori') {
+  if (q.kind !== 'hikitori' && q.mode !== 'tiers' && q.total <= QUOTE_LOW_TOTAL) {
+    // 2026-10-02: 低い金額に3項目の注意書きは重く「さらに下がる」と読めるため1行に（オーナー指示）
+    L.push('', '※ 写真では分からない曲がり・故障・広いサビが当日見つかった場合は、改めて金額をご連絡します。');
+  } else if (q.kind !== 'hikitori') {
     L.push('', '※ 写真では分からない次の点が当日見つかった場合だけ、その場では決めず、再査定のうえ改めて金額をご連絡します。');
     L.push('　・フレームの曲がり、割れ', '　・変速またはブレーキが動かない', '　・写真では分からない広い範囲のサビや、部品の固着');
     if (q.ebike && !q.bodyOnly && q.mode !== 'tiers') L.push('　・バッテリー残量ランプが2点灯以下');
@@ -154,8 +185,8 @@ function v2QuoteFlex_(q, quoteId, bodyText) {
       header: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: q.kind === 'hikitori' ? 'お引き取りと出張費のご案内' : '査定結果のご案内', weight: 'bold', size: 'lg', color: '#1a2a28' }] },
       body: { type: 'box', layout: 'vertical', contents: [{ type: 'text', text: bodyText, wrap: true, size: 'md', lineSpacing: '4px' }] },
       // 引取（出張費の提示）は「この金額で決定」だけ（2026-09-16 オーナー指示）。買取は従来どおり2ボタン
-      // 引取（出張費の提示）は「この金額で決定」と「やめる」（2026-09-16 オーナー指示）。買取は従来どおり「もう少し考えます」
-      footer: { type: 'box', layout: 'vertical', spacing: 'sm', contents: q.kind === 'hikitori' ? [btn('この金額で決定', 'accept', 'primary'), btn('やめる', 'decline', 'secondary')] : [btn('この金額で決定', 'accept', 'primary'), btn('もう少し考えます', 'hold', 'secondary')] },
+      // 引取（出張費の提示）は「この金額で決定」と「やめる」（2026-09-16 オーナー指示）。買取は「もう少し考えます」＋「今回は見送る」（2026-10-02。黙って期限切れになる人の理由を聞くため）
+      footer: { type: 'box', layout: 'vertical', spacing: 'sm', contents: q.kind === 'hikitori' ? [btn('この金額で決定', 'accept', 'primary'), btn('やめる', 'decline', 'secondary')] : [btn('この金額で決定', 'accept', 'primary'), btn('もう少し考えます', 'hold', 'secondary'), btn('今回は見送る', 'pass', 'link')] },
     },
   };
 }
@@ -224,6 +255,22 @@ function v2HandleQuotePostback_(event, userId, pb) {
   // お客さまの回答
   const row = v2FindQuote_(pb.q);
   if (!row || row.userId !== userId) { v2ReplyReselect_(event); logEvent_(event, 'quote:unknown', pb.q); return true; }
+  if (pb.val === 'pass') {   // 買取の「今回は見送る」→ 理由をボタンで1問（答えなくてもよい。深追いしない）
+    if (row.answer === 'accept') { logEvent_(event, 'quote:pass_after_accept', pb.q); }
+    v2UpdateQuote_(pb.q, { status: 'declined', 回答: 'pass', 回答時刻: new Date(), 回答時スナップショット: row.body });
+    v2Reply_(event, [v2PassReasonsMessage_(row, pb.q)]);
+    try { setManualMode_(userId); } catch (e) {}
+    v2NotifyOwnerNow_(userId, '🙅 「今回は見送る」', row.custNo + ' ' + pb.q + ' ' + v2Yen_(row.total));
+    logEvent_(event, 'quote:pass', pb.q); return true;
+  }
+  const reason = QUOTE_PASS_REASONS.concat(QUOTE_DECLINE_REASONS_KAITORI, QUOTE_DECLINE_REASONS).filter(function (r) { return r[0] === pb.val; })[0];
+  if (reason) {   // 見送る理由。どれを選んでもお詫びの一言で終わり（その他も聞き返さない。2026-10-02 オーナー指示）
+    if (String(row.answer || '').indexOf('pass:') === 0) { logEvent_(event, 'quote:reason_dup', pb.q + ' ' + pb.val); return true; }
+    v2UpdateQuote_(pb.q, { status: 'declined', 回答: 'pass:' + reason[1], 回答時刻: new Date() });
+    v2Reply_(event, [v2Msg_('教えていただき、ありがとうございます。\nご希望にそえず申し訳ありません。また機会がありましたら、よろしくお願いいたします🚲')]);
+    v2NotifyOwnerNow_(userId, '📝 見送りの理由', row.custNo + ' ' + pb.q + ' ' + v2Yen_(row.total) + '\n' + reason[1]);
+    logEvent_(event, 'quote:pass_reason', pb.q + ' ' + pb.val); return true;
+  }
   const expired = row.status === 'expired' || (row.expires && new Date(row.expires).getTime() < Date.now());
   if (expired) {
     v2ReplyText_(event, 'この金額は有効期限を過ぎています。金額を再確認して、あらためてご連絡します🚲');
@@ -242,10 +289,10 @@ function v2HandleQuotePostback_(event, userId, pb) {
     v2NotifyOwnerNow_(userId, '✅ 「この金額で決定」', row.custNo + ' ' + pb.q + '\n' + v2Yen_(row.total) + (formUrl ? '\n→ 申込フォーム（希望日時・住所・名義）を待って人が対応' : '\n→ 日時と住所の返信を待って人が対応'));
     logEvent_(event, 'quote:accept', pb.q); return true;
   }
-  if (pb.val === 'decline') {   // 引取の提示で「やめる」（2026-09-16）。お礼を返して終わり。以後は人が対応
+  if (pb.val === 'decline') {   // 引取の提示で「やめる」（2026-09-16）。2026-10-02 から買取の「見送る」と同じく理由を1問（引取向けの選択肢）。以後は人が対応
     if (row.answer === 'decline') { logEvent_(event, 'quote:decline_dup', pb.q); return true; }
     v2UpdateQuote_(pb.q, { status: 'declined', 回答: 'decline', 回答時刻: new Date(), 回答時スナップショット: row.body });
-    v2Reply_(event, [v2Msg_('承知しました。今回はお役に立てず申し訳ありません。\nありがとうございました。またご縁がありましたら、よろしくお願いいたします🚲')]);
+    v2Reply_(event, [v2PassReasonsMessage_(row, pb.q)]);
     try { setManualMode_(userId); } catch (e) {}
     v2NotifyOwnerNow_(userId, '🙅 「やめる」（引取の提示）', row.custNo + ' ' + pb.q + ' ' + v2Yen_(row.total));
     logEvent_(event, 'quote:decline', pb.q); return true;
