@@ -19,14 +19,11 @@ const QUOTE_COLS = ['quoteId', 'userId', 'displayName', 'cust_no', '提示時刻
 const QUOTE_VALID_DAYS = 7;
 const QUOTE_LOW_TOTAL = 1000;   // これ以下の買取額は再査定の注意書きを1行にする（2026-10-02）
 /** 買取の「今回は見送る」のあとに聞く理由（2026-10-02）。label は quickReply の上限20字以内 */
-const QUOTE_PASS_REASONS = [
+const QUOTE_PASS_REASONS = [   // 8択は横スクロールが大変なので5つに（2026-10-02 オーナー指示）
   ['r_low', '思ったより安かった'],
-  ['r_other_shop', 'ほかの店で売る・売った'],
-  ['r_self', '自分で処分する'],
-  ['r_give', '家族や知人に譲る'],
+  ['r_other_shop', 'ほかで売る・売った'],
+  ['r_self', '自分で処分する・譲る'],
   ['r_keep', '手放すのをやめた'],
-  ['r_paper', '手続きが面倒・不安'],
-  ['r_date', '日程が合わない'],
   ['r_etc', 'その他'],
 ];
 const QUOTE_FORBIDDEN = ['高価買取', '転売', '前後', '目安', '〜', '～'];
