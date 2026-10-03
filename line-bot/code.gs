@@ -204,6 +204,17 @@ function setupLineSheets() {
 let __T0 = 0, __TREPLY = 0;   // 計測用（2026-09-22）：受信〜返信までの ms
 function doPost(e) {
   __T0 = Date.now(); __TREPLY = 0;
+  // 2026-10-03 受信元の確認（§10-8）。LINE 側 Webhook URL に ?k=<合言葉> を付け、
+  //   スクリプトプロパティ WEBHOOK_KEY と一致しないリクエストは処理しない。
+  //   GAS の WebApp は doPost に X-Line-Signature ヘッダを渡さないため署名検証は使えない。
+  //   代わりに URL の合言葉で受信元を絞る。合言葉はコードにもリポジトリにも文書にも書かない。
+  //   WEBHOOK_KEY 未設定の間は従来どおり通す（設定した瞬間から照合が有効になる＝切替中に止まらない）。
+  const __k = PropertiesService.getScriptProperties().getProperty('WEBHOOK_KEY');
+  if (__k && (!e || !e.parameter || e.parameter.k !== __k)) {
+    // 偽の受信元にも本物と同じ 200/ok を返す（存在や成否を手がかりにさせない）。処理はしない。
+    return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
   try {
     const body = JSON.parse(e.postData.contents);
     (body.events || []).forEach(handleEvent);
